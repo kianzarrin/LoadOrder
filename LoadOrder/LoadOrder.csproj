@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ManagedDLLPath>..\dependencies</ManagedDLLPath>
+    <SteamPath>~/Library/Application Support/Steam/</SteamPath>
+    <SteamPath Condition="! Exists ('$(SteamPath)')">$(ProgramFiles)\Steam</SteamPath>
+    <SteamPath Condition="! Exists ('$(SteamPath)')">$(Registry:HKEY_CURRENT_USER\Software\Valve\Steam@SteamPath)</SteamPath>
+    <CSPath>$(SteamPath)\steamapps\common\Cities_Skylines</CSPath>
+    <ManagedDLLPath Condition="!  Exists ('$(ManagedDLLPath)')">$(CSPath)\Cities_Data\Managed</ManagedDLLPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="CO\Plugins\**" />
+    <EmbeddedResource Remove="CO\Plugins\**" />
+    <None Remove="CO\Plugins\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Remove="CO\GameSettingsException.cs" />
+    <Compile Remove="CO\PlatformServices\ItemUpdateStatus.cs" />
+    <Compile Remove="CO\PlatformServices\PlatformService.cs" />
+    <Compile Remove="CO\PlatformServices\UGCDetails.cs" />
+    <Compile Remove="CO\PlatformServices\UGCHandle.cs" />
+    <Compile Remove="CO\PlatformServices\UGCMatchingUGCType.cs" />
+    <Compile Remove="CO\PlatformServices\UGCQuery.cs" />
+    <Compile Remove="CO\PlatformServices\UserID.cs" />
+    <Compile Remove="CO\PlatformServices\Workshop.cs" />
+    <Compile Remove="MyPluginManger.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ICities">
+      <HintPath>$(ManagedDLLPath)\ICities.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
