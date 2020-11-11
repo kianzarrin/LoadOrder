@@ -470,7 +470,7 @@ namespace ColossalFramework.Plugins
                 {
                     try
                     {
-                        Assembly asm = Assembly.Load(dllpath);
+                        Assembly asm = Assembly.LoadFrom(dllpath);
                         pluginInfo.m_Assemblies.Add(asm);
                         this.m_AssemblyLocations[asm] = dllpath;
                     }

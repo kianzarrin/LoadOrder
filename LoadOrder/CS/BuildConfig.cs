@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using ColossalFramework;
 //using ColossalFramework.Globalization;
 //using ColossalFramework.Packaging;
@@ -125,38 +127,22 @@ public class BuildConfig
 
 	internal static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 	{
-		for (int i = 0; i < BuildConfig.kIgnoreAssemblies.Length; i++)
-		{
-			if (args.Name == BuildConfig.kIgnoreAssemblies[i])
-			{
-				return null;
-			}
-		}
-		Assembly assembly = null;
+		Log.Info("CurrentDomain_AssemblyResolve() called");
+		var name0 = args.Name;
+		if (kIgnoreAssemblies.Contains(name0))
+			return null;
+
 		Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-		for (int j = 0; j < assemblies.Length; j++)
-		{
-			Assembly assembly2 = assemblies[j];
-			AssemblyName name = assembly2.GetName();
-			if (args.Name.StartsWith(name.Name))
+		foreach(var asm in assemblies) { 
+			var name = asm.GetName().Name;
+			if (name0.StartsWith(name))
 			{
-				//Log.VerboseWarn(string.Concat(new string[]
-				//{
-				//	"Assembly '",
-				//	args.Name,
-				//	"' resolved to '",
-				//	assembly2.Location,
-				//	"'"
-				//}));
-				//assembly = assembly2;
-				break;
+				Log.Info($"Assembly '{name0}' resolved to '{asm.Location}'");
+				return asm;
 			}
 		}
-		if (assembly != null)
-		{
-			return assembly;
-		}
-		Log.Error("Assembly resolution failure. No assembly named '" + args.Name + "' was found.");
+
+		Log.Error($"Assembly resolution failure. No assembly named '{name0}' was found.");
 		return null;
 	}
 
