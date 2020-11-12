@@ -118,18 +118,19 @@ namespace ColossalFramework.Plugins
 
             public int assemblyCount => m_Assemblies.Count;
 
-            public bool Include
+            public bool IsIncluded
             {
-                get => dirName.StartsWith("_");
+                get => !dirName.StartsWith("_");
                 set
                 {
-                    if (value == Include)
+                    if (value == IsIncluded)
                         return;
                     string targetPath;
                     if (value)
-                        targetPath = m_Path.Substring(1);
+                        targetPath = m_Path.Substring(1); // drop starting _
                     else
-                        targetPath = "_" + m_Path;
+                        targetPath = "_" + m_Path; // add starting _
+                    MoveToPath(targetPath);
                 }
             }
 
@@ -220,7 +221,7 @@ namespace ColossalFramework.Plugins
 
             public override string ToString()
             {
-                return $"PluginInfo: path={Path} included={Include} enabled={isEnabled} DisplayText={DisplayText} " +
+                return $"PluginInfo: path={Path} included={IsIncluded} enabled={isEnabled} DisplayText={DisplayText} " +
                     $"cachedName={m_CachedName} assemblies=" + assembliesString;
             }
 
