@@ -16,6 +16,7 @@ namespace LoadOrder
             InitializeComponent();
             this.dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
             Instance = this;
+            Populate(ModList.GetAllMods());
         }
 
         private void dataGridViewMods_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
@@ -52,8 +53,12 @@ namespace LoadOrder
             SuspendLayout();
             var rows = this.dataGridViewMods.Rows;
             rows.Clear();
+            Log.Info("Populating");
             foreach (var mod in modList)
-                rows.Add(mod.LoadOrder, mod.ModEnabled, mod.Text);
+            {
+                rows.Add(mod.LoadOrder, mod.isEnabled, mod.DisplayText);
+                Log.Info("row added: " + mod.ToString());
+            }
             ResumeLayout();
         }
     }

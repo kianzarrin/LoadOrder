@@ -1,18 +1,11 @@
-﻿using System;
+﻿
+using ColossalFramework.Plugins;
+using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Transactions;
 
 namespace LoadOrder
 {
-    public class ModDataItem
-    {
-        public int LoadOrder;
-        public bool ModEnabled;
-        public string Text;
-    }
-    public class ModList : List<ModDataItem>
+    public class ModList : List<PluginManager.PluginInfo>
     {
         public void SortByOrder()
         {
@@ -29,12 +22,19 @@ namespace LoadOrder
                     ++i;
                 }
             }
+            for (int i = 0; i < Count; ++i)
+                this[i].LoadOrder = i;
         }
 
-        //public static ModList GetAllMods()
-        //{
+        public ModList(IEnumerable<PluginManager.PluginInfo> list) : base(list) {
+            SortByOrder();
+        }
 
-        //}
+        public static ModList GetAllMods()
+        {
+            var mods = new ModList(PluginManager.instance.GetPluginsInfo());
+            return mods;
+        }
     }
 
 

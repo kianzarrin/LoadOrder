@@ -17,32 +17,32 @@ namespace ColossalFramework.IO
 
 		public static string sDevFolder = "Dev";
 
-		private static bool m_IsReady;
+		//private static bool m_IsReady;
 
 		private static bool m_IsEditor =false;
 
 		public static bool isMacOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
 		public static bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-		public static bool isEditor
-		{
-			get
-			{
-				return DataLocation.m_IsEditor;
-			}
-			set
-			{
-				DataLocation.m_IsEditor = value;
-				DataLocation.m_IsReady = true;
-			}
-		}
+		//public static bool isEditor
+		//{
+		//	get
+		//	{
+		//		return DataLocation.m_IsEditor;
+		//	}
+		//	set
+		//	{
+		//		DataLocation.m_IsEditor = value;
+		//		DataLocation.m_IsReady = true;
+		//	}
+		//}
 
-		private static void CheckReady()
-		{
-			if (!DataLocation.m_IsReady)
-			{
-				throw new Exception("DataLocation is not ready to be used yet because the editor flag has not been set");
-			}
-		}
+		//private static void CheckReady()
+		//{
+		//	if (!DataLocation.m_IsReady)
+		//	{
+		//		throw new Exception("DataLocation is not ready to be used yet because the editor flag has not been set");
+		//	}
+		//}
 
 		public static void DisplayStatus()
 		{
@@ -137,18 +137,18 @@ namespace ColossalFramework.IO
 			}
 		}
 
-		public static string applicationBase
-		{
-			get
-			{
-				DataLocation.CheckReady();
-				if (DataLocation.m_IsEditor)
-				{
-					return GamePath;
-				}
-				return DataLocation.executableDirectory;
-			}
-		}
+		public static string applicationBase => GamePath;
+		//{
+		//	get
+		//	{
+		//		DataLocation.CheckReady();
+		//		if (DataLocation.m_IsEditor)
+		//		{
+		//			return GamePath;
+		//		}
+		//		return DataLocation.executableDirectory;
+		//	}
+		//}
 
 		public static string gameContentPath
 		{

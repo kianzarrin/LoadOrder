@@ -6,26 +6,32 @@ using ICities;
 //using UnityEngine;
 using LoadOrder;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
 
 namespace ColossalFramework.Plugins
 {
     public class PluginManager : SingletonLite<PluginManager>
     {
+        public static bool TryGetID(string dir, out ulong id)
+        {
+            string dir2;
+            if (dir.StartsWith("_"))
+                dir2 = dir.Remove(0, 1);
+            else
+                dir2 = dir;
+            return ulong.TryParse(dir2, out id);
+        }
+
         public static IEnumerable<PublishedFileId> GetSubscribedItems()
         {
             foreach (var dir in Directory.GetDirectories(DataLocation.SteamContentPath))
             {
-                string dir2;
-                if (dir.StartsWith("_"))
-                    dir2 = dir.Remove(0, 1);
-                else
-                    dir2 = dir;
-                if (!ulong.TryParse(dir2, out ulong id)) continue;
+                if (!TryGetID(dir, out ulong id)) continue;
                 //if (!Directory.GetFiles(dir, "*.dll").Any()) continue;
                 yield return new PublishedFileId(id);
             }
@@ -72,15 +78,66 @@ namespace ColossalFramework.Plugins
 
             private bool m_Unloaded;
 
-            private PluginManager.OverrideState m_OverrideState;
-
             private string m_CachedName;
 
-            public string m_dllName;
+            public string dllName => userModImplementation?.Assembly.GetName().Name;
 
-            public string m_textName;
+            public bool isBuiltin => this.m_IsBuiltin;
 
-            public string m_finalName;
+            public string Path => this.m_Path;
+
+            public string dirName => this.m_CachedName;
+
+            public string name => this.m_CachedName;
+
+            public string DisplayText
+            {
+                get
+                {
+                    string ret = dllName;
+                    var id = publishedFileID;
+                    if (id != PublishedFileId.invalid)
+                    {
+                        ret = $"{id.AsUInt64}: " + ret;
+                    }
+                    return ret;
+                }
+            }
+
+            /// <summary>
+            /// precondition: all dependent assemblies are loaded.
+            /// </summary>
+            public bool isCameraScript => GetImplementation(cameraScriptType) != null;
+
+            /// <summary>
+            /// precondition: all dependent assemblies are loaded.
+            /// </summary>
+            public bool HasUserMod => userModImplementation != null;
+
+            public PublishedFileId publishedFileID => this.m_PublishedFileID;
+
+            public int assemblyCount => m_Assemblies.Count;
+
+            public bool Include
+            {
+                get => dirName.StartsWith("_");
+                set
+                {
+                    if (value == Include)
+                        return;
+                    string targetPath;
+                    if (value)
+                        targetPath = m_Path.Substring(1);
+                    else
+                        targetPath = "_" + m_Path;
+                }
+            }
+
+            public void MoveToPath(string targetPath)
+            {
+                Directory.Move(Path, targetPath);
+                m_Path = targetPath;
+            }
 
             private PublishedFileId m_PublishedFileID = PublishedFileId.invalid;
 
@@ -91,7 +148,7 @@ namespace ColossalFramework.Plugins
             public PluginInfo(string path, bool builtin, PublishedFileId id)
             {
                 this.m_Path = path;
-                this.m_CachedName = Path.GetFileNameWithoutExtension(path);
+                this.m_CachedName = System.IO.Path.GetFileNameWithoutExtension(path);
                 this.m_Assemblies = new List<Assembly>();
                 this.m_IsBuiltin = builtin;
                 this.m_PublishedFileID = id;
@@ -121,130 +178,50 @@ namespace ColossalFramework.Plugins
                 return false;
             }
 
-            public void Process()
+            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+            public unsafe int GetLegacyHashCode(string str)
             {
-                isCameraScript = GetImplementation(cameraScriptType) != null;
-                isMod = userModImplementation != null;
-            }
-
-            public bool isCameraScript { get; private set; }
-            public bool isMod { get; private set; }
-
-            public int assemblyCount => m_Assemblies.Count;
-
-            public bool isBuiltin => this.m_IsBuiltin;
-
-            public bool isEnabledNoOverride
-            {
-                get
+                fixed (char* ptr = str + RuntimeHelpers.OffsetToStringData / 2)
                 {
-                    //if (this.m_Unloaded)
-                    //{
-                    //    return false;
-                    //}
-                    if (!string.IsNullOrEmpty(PluginManager.assetStateSettingsFile))
+                    char* ptr2 = ptr;
+                    char* ptr3 = ptr2 + str.Length - 1;
+                    int num = 0;
+                    while (ptr2 < ptr3)
                     {
-                        SavedBool savedBool = new SavedBool(this.name + this.modPath.GetHashCode().ToString() + ".enabled", PluginManager.assetStateSettingsFile, false);
-                        return savedBool.value;
+                        num = (num << 5) - num + (int)(*ptr2);
+                        num = (num << 5) - num + (int)ptr2[1];
+                        ptr2 += 2;
                     }
-                    return true;
+                    ptr3++;
+                    if (ptr2 < ptr3)
+                    {
+                        num = (num << 5) - num + (int)(*ptr2);
+                    }
+                    return num;
                 }
             }
 
+            private string savedEnabledKey_ => name + GetLegacyHashCode(Path).ToString() + ".enabled";
+            public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, false);
             public bool isEnabled
             {
-                get
-                {
-                    if (this.m_Unloaded)
-                    {
-                        return false;
-                    }
-                    if (this.m_OverrideState != PluginManager.OverrideState.None)
-                    {
-                        return this.m_OverrideState == PluginManager.OverrideState.Enabled;
-                    }
-                    if (!string.IsNullOrEmpty(PluginManager.assetStateSettingsFile))
-                    {
-                        SavedBool savedBool = new SavedBool(this.name + this.modPath.GetHashCode().ToString() + ".enabled", PluginManager.assetStateSettingsFile, false);
-                        return savedBool.value;
-                    }
-                    return true;
-                }
-                set
-                {
-                    this.m_OverrideState = PluginManager.OverrideState.None;
-                    if (!string.IsNullOrEmpty(PluginManager.assetStateSettingsFile))
-                    {
-                        SavedBool savedBool = new SavedBool(this.name + this.modPath.GetHashCode().ToString() + ".enabled", PluginManager.assetStateSettingsFile, false);
-                        savedBool.value = value;
-                    }
-                }
+                get => SavedEnabled.value;
+                set => SavedEnabled.value = value;
             }
 
-            public PluginManager.OverrideState overrideState
+            private string savedLoadIndexKey_ => dllName + ".Order";
+            public SavedInt SavedOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 0);
+            public int LoadOrder
             {
-                get
-                {
-                    return this.m_OverrideState;
-                }
-                set
-                {
-                    if (value != this.m_OverrideState)
-                    {
-                        bool flag = true;
-                        if (this.m_OverrideState == PluginManager.OverrideState.None)
-                        {
-                            if (!string.IsNullOrEmpty(PluginManager.assetStateSettingsFile))
-                            {
-                                SavedBool savedBool = new SavedBool(this.name + this.modPath.GetHashCode().ToString() + ".enabled", PluginManager.assetStateSettingsFile, false);
-                                flag = savedBool.value;
-                            }
-                        }
-                        else
-                        {
-                            flag = (this.m_OverrideState == PluginManager.OverrideState.Enabled);
-                        }
-                        this.m_OverrideState = value;
-                        bool flag2 = true;
-                        if (this.m_OverrideState == PluginManager.OverrideState.None)
-                        {
-                            if (!string.IsNullOrEmpty(PluginManager.assetStateSettingsFile))
-                            {
-                                SavedBool savedBool2 = new SavedBool(this.name + this.modPath.GetHashCode().ToString() + ".enabled", PluginManager.assetStateSettingsFile, false);
-                                flag2 = savedBool2.value;
-                            }
-                        }
-                        else
-                        {
-                            flag2 = (this.m_OverrideState == PluginManager.OverrideState.Enabled);
-                        }
-                        if (flag2 != flag)
-                        {
-
-                        }
-                    }
-                }
+                get => SavedOrder.value;
+                set => SavedOrder.value = value; 
             }
 
-            public string name => this.m_CachedName;
-
-            public string modPath => this.m_Path;
-
-            public PublishedFileId publishedFileID => this.m_PublishedFileID;
 
             public override string ToString()
             {
-                int assemblyCount = this.assemblyCount;
-                string text = (assemblyCount > 0) ? string.Empty : "No assemblies";
-                for (int i = 0; i < assemblyCount; i++)
-                {
-                    text = text + this.m_Assemblies[i].GetName().Name + ".dll";
-                    if (i < assemblyCount - 1)
-                    {
-                        text += ", ";
-                    }
-                }
-                return string.Format("{0} [{1}]", this.modPath, text);
+                return $"PluginInfo: path={Path} included={Include} enabled={isEnabled} DisplayText={DisplayText} " +
+                    $"cachedName={m_CachedName} assemblies=" + assembliesString;
             }
 
             public string assembliesString
@@ -252,30 +229,29 @@ namespace ColossalFramework.Plugins
                 get
                 {
                     int assemblyCount = this.assemblyCount;
-                    string text = (assemblyCount > 0) ? string.Empty : "No assemblies";
+                    string strCount = (assemblyCount > 0) ? string.Empty : "No assemblies";
                     for (int i = 0; i < assemblyCount; i++)
                     {
-                        AssemblyName name = this.m_Assemblies[i].GetName();
-                        object obj = text;
-                        text = string.Concat(new object[]
+                        AssemblyName asmName = this.m_Assemblies[i].GetName();
+                        strCount = string.Concat(new object[]
                         {
-                            obj,
-                            name.Name,
+                            strCount,
+                            asmName.Name,
                             "[",
-                            name.Version,
+                            asmName.Version,
                             "]"
                         });
                         if (i < assemblyCount - 1)
                         {
-                            text += ", ";
+                            strCount += ", ";
                         }
                     }
-                    return text;
+                    return strCount;
                 }
             }
 
 
-            public object userModImplementation
+            public Type userModImplementation
             {
                 get
                 {
@@ -284,13 +260,21 @@ namespace ColossalFramework.Plugins
                         GetImplementation(PluginManager.userModType);
                 }
             }
-
+            /// <summary>
+            /// precondition: all dependent assemblies are loaded.            
+            /// </summary>
             public Type GetImplementation(Type type)
             {
                 for (int i = 0; i < this.m_Assemblies.Count; i++)
                 {
                     try
                     {
+                        var asm = m_Assemblies[i];
+                        if (!asm.GetReferencedAssemblies().Any(_asm => _asm?.Name == "ICities"))
+                        {
+                            // this also filters out non-CS mods.
+                            continue;
+                        }
                         foreach (Type type2 in this.m_Assemblies[i].GetExportedTypes())
                         {
                             if (type2.IsClass && !type2.IsAbstract)
@@ -303,9 +287,9 @@ namespace ColossalFramework.Plugins
                             }
                         }
                     }
-                    catch (Exception exception)
+                    catch (Exception ex)
                     {
-                        Log.Exception(exception);
+                        Log.Exception(new Exception("this can happen if not all dependencies are laoded", ex));
                     }
                 }
                 return null;
@@ -318,15 +302,19 @@ namespace ColossalFramework.Plugins
 
         public static bool noWorkshop;
 
-        private Dictionary<Assembly, string> m_AssemblyLocations = new Dictionary<Assembly, string>();
+        //private Dictionary<Assembly, string> m_AssemblyLocations = new Dictionary<Assembly, string>();
 
-        private Dictionary<string, PluginManager.PluginInfo> m_Plugins = new Dictionary<string, PluginManager.PluginInfo>();
+        //private Dictionary<string, PluginInfo> m_Plugins = new Dictionary<string, PluginInfo>();
+        private List<PluginInfo> m_Plugins = new List<PluginInfo>();
+
 
         private static int sUniqueCompilationID;
 
         private static string[] m_AdditionalAssemblies;
+         
+        public static string assetStateSettingsFile { get; set; } = "userGameState";
+        public static string LoadOrderSettingsFile { get; set; } = "LoadOrder";
 
-        public static string assetStateSettingsFile { get; set; }
 
         public static Type userModType { get; set; } = typeof(IUserMod);
 
@@ -338,88 +326,38 @@ namespace ColossalFramework.Plugins
 
         public event PluginManager.PluginsChangedHandler eventPluginsStateChanged;
 
-        public IEnumerable<PluginManager.PluginInfo> GetPluginsInfo()
-        {
-            foreach (KeyValuePair<string, PluginManager.PluginInfo> p in this.m_Plugins)
-            {
-                KeyValuePair<string, PluginManager.PluginInfo> keyValuePair = p;
-                if (!keyValuePair.Value.isCameraScript)
-                {
-                    KeyValuePair<string, PluginManager.PluginInfo> keyValuePair2 = p;
-                    yield return keyValuePair2.Value;
-                }
-            }
-            yield break;
-        }
+        public IEnumerable<PluginInfo> GetPluginsInfo() =>
+            m_Plugins.Where(p => p.HasUserMod);
 
-        public IEnumerable<PluginManager.PluginInfo> GetCameraPluginInfos()
-        {
-            foreach (KeyValuePair<string, PluginManager.PluginInfo> p in this.m_Plugins)
-            {
-                KeyValuePair<string, PluginManager.PluginInfo> keyValuePair = p;
-                if (keyValuePair.Value.isCameraScript)
-                {
-                    KeyValuePair<string, PluginManager.PluginInfo> keyValuePair2 = p;
-                    yield return keyValuePair2.Value;
-                }
-            }
-            yield break;
-        }
+        public IEnumerable<PluginInfo> GetCameraPluginInfos() =>
+             m_Plugins.Where(p => p.isCameraScript);
 
-        public int modCount
-        {
-            get
-            {
-                return this.m_Plugins.Count;
-            }
-        }
+        public int modCount => GetPluginsInfo().Count();
 
-        public int enabledModCountNoOverride
-        {
-            get
-            {
-                int num = 0;
-                foreach (KeyValuePair<string, PluginManager.PluginInfo> keyValuePair in this.m_Plugins)
-                {
-                    if (keyValuePair.Value.isEnabledNoOverride)
-                    {
-                        num++;
-                    }
-                }
-                return num;
-            }
-        }
-
-        public int enabledModCount
-        {
-            get
-            {
-                int num = 0;
-                foreach (KeyValuePair<string, PluginManager.PluginInfo> keyValuePair in this.m_Plugins)
-                {
-                    if (keyValuePair.Value.isEnabled)
-                    {
-                        num++;
-                    }
-                }
-                return num;
-            }
-        }
+        public int enabledModCount =>
+            GetPluginsInfo().Count(p => p.isEnabled);
 
         public void LoadPlugins()
         {
             string builtinModsPath = Path.Combine(DataLocation.gameContentPath, "Mods");
             string addonsModsPath = DataLocation.modsPath;
-            Dictionary<string, PluginManager.PluginInfo> plugins = new Dictionary<string, PluginManager.PluginInfo>();
+            m_Plugins = new List<PluginInfo>();
+
             try
             {
-                this.LoadPluginInfosAtPath(plugins, builtinModsPath, true);
-                this.LoadPluginInfosAtPath(plugins, addonsModsPath, false);
+                this.LoadPluginInfosAtPath(builtinModsPath, true);
+                this.LoadPluginInfosAtPath(addonsModsPath, false);
                 if (!PluginManager.noWorkshop)
                 {
-                    this.LoadWorkshopPluginInfos(plugins);
+                    this.LoadWorkshopPluginInfos();
                 }
-                this.LoadAssemblies(plugins);
+                this.LoadAssemblies();
+                Log.Debug($"{m_Plugins.Count} pluggins loaded.");
+
+                // purge plugins without a IUserMod Implementation. this also filters out non-cs mods.
+                // all dependent assemblies must be loaded before doing this.
+                m_Plugins = m_Plugins.Where(p => p.HasUserMod).ToList();
+                Log.Debug($"{m_Plugins.Count} pluggins remained after purging non-cs or non-mods.");
             }
             catch (Exception ex)
             {
@@ -431,20 +369,20 @@ namespace ColossalFramework.Plugins
             }
         }
 
-        private void LoadPluginInfosAtPath(Dictionary<string, PluginManager.PluginInfo> plugins, string path, bool builtin)
+        private void LoadPluginInfosAtPath(string path, bool builtin)
         {
             string[] directories = Directory.GetDirectories(path);
             foreach (string dir in directories)
             {
                 //if (!Path.GetFileName(dir).StartsWith("_"))
-                plugins[dir] = new PluginManager.PluginInfo(dir, builtin, PublishedFileId.invalid);
+                m_Plugins.Add(new PluginInfo(dir, builtin, PublishedFileId.invalid));
                 //else
                 //    PluginManager.LogMessage(PluginManager.MessageType.Message, "Inactive mod path found: " + Path.GetFileName(dir));
 
             }
         }
 
-        private void LoadWorkshopPluginInfos(Dictionary<string, PluginManager.PluginInfo> plugins)
+        private void LoadWorkshopPluginInfos()
         {
             var subscribedItems = GetSubscribedItems();
             if (subscribedItems != null)
@@ -454,17 +392,17 @@ namespace ColossalFramework.Plugins
                     string subscribedItemPath = GetSubscribedItemPath(id);
                     if (subscribedItemPath != null && Directory.Exists(subscribedItemPath))
                     {
-                        plugins[subscribedItemPath] = new PluginManager.PluginInfo(subscribedItemPath, false, id);
+                        m_Plugins.Add(new PluginInfo(subscribedItemPath, false, id));
                     }
                 }
             }
         }
 
-        private void LoadAssemblies(Dictionary<string, PluginManager.PluginInfo> plugins)
+        private void LoadAssemblies()
         {
-            foreach (PluginManager.PluginInfo pluginInfo in plugins.Values)
+            foreach (PluginInfo pluginInfo in m_Plugins)
             {
-                string modPath = pluginInfo.modPath;
+                string modPath = pluginInfo.Path;
                 string[] files = Directory.GetFiles(modPath, "*.dll", SearchOption.AllDirectories);
                 foreach (string dllpath in files)
                 {
@@ -472,17 +410,16 @@ namespace ColossalFramework.Plugins
                     {
                         Assembly asm = Assembly.LoadFrom(dllpath);
                         pluginInfo.m_Assemblies.Add(asm);
-                        this.m_AssemblyLocations[asm] = dllpath;
+                        //this.m_AssemblyLocations[asm] = dllpath;
+                        Log.Info("Assembly loaded: " + asm);
                     }
                     catch (Exception ex)
                     {
-                        Log.Error("Assembly at " + dllpath + " failed to load.\n" + ex.ToString());
+                        Log.Info("Assembly at " + dllpath + " failed to load.\n" + ex.Message);
                     }
                 }
             }
         }
-
-
 
         //public static void SetAdditionalAssemblies(params string[] assemblies)
         //{
@@ -625,17 +562,9 @@ namespace ColossalFramework.Plugins
         //    return !compilerResults.Errors.HasErrors;
         //}
 
-        public PluginManager.PluginInfo FindPluginInfo(Assembly asmRO)
-        {
-            foreach (PluginManager.PluginInfo pluginInfo in this.m_Plugins.Values)
-            {
-                if (pluginInfo.isEnabled && pluginInfo.ContainsAssembly(asmRO))
-                {
-                    return pluginInfo;
-                }
-            }
-            return null;
-        }
+        public PluginInfo FindPluginInfo(Assembly asmRO) =>
+            m_Plugins.FirstOrDefault(p => p.isEnabled && p.ContainsAssembly(asmRO));
+
 
         public PluginManager()
         {
@@ -643,6 +572,9 @@ namespace ColossalFramework.Plugins
 
         static PluginManager()
         {
+            var setttingsFile1 = new SettingsFile { fileName = assetStateSettingsFile };
+            var setttingsFile2 = new SettingsFile { fileName = LoadOrderSettingsFile };
+            GameSettings.AddSettingsFile(new[] { setttingsFile1, setttingsFile2 });
         }
     }
 }

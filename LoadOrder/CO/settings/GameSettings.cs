@@ -60,7 +60,7 @@ namespace ColossalFramework
 
 		public static SettingsFile FindSettingsFileByName(string name)
 		{
-			return SingletonLite<GameSettings>.instance.InternalFindSettingsFileByName(name);
+			return instance.InternalFindSettingsFileByName(name);
 		}
 
 		internal SettingsFile InternalFindSettingsFileByName(string name)

@@ -4,6 +4,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PathMap>$(MSBuildProjectDirectory)\=$(ProjectName)\</PathMap>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -14,7 +16,7 @@
     <CSPath>$(SteamPath)\steamapps\common\Cities_Skylines</CSPath>
     <ManagedDLLPath Condition="!  Exists ('$(ManagedDLLPath)')">$(CSPath)\Cities_Data\Managed</ManagedDLLPath>
   </PropertyGroup>
-
+      
   <ItemGroup>
     <Compile Remove="CO\Plugins\**" />
     <EmbeddedResource Remove="CO\Plugins\**" />
