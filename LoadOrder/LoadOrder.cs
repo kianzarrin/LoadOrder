@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace LoadOrder
@@ -11,19 +7,23 @@ namespace LoadOrder
     public partial class LoadOrder : Form
     {
         public static LoadOrder Instance;
+
+        ModList ModList;
+
         public LoadOrder()
         {
             InitializeComponent();
             this.dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
             Instance = this;
-            Populate(ModList.GetAllMods());
+            ModList = ModList.GetAllMods();
+            Populate();
         }
 
         private void dataGridViewMods_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
             e.Control.KeyPress -= U32TextBox_KeyPress;
             if (dataGridViewMods.CurrentCell.ColumnIndex == 0 && e.Control is TextBox tb) // Desired Column
-            { 
+            {
                 tb.KeyPress += U32TextBox_KeyPress;
                 tb.Leave += U32TextBox_Submit;
             }
@@ -39,7 +39,7 @@ namespace LoadOrder
 
         private void U32TextBox_Submit(object? sender, EventArgs e)
         {
-            if(sender is TextBox tb)
+            if (sender is TextBox tb)
             {
                 if (tb.Text == "")
                     tb.Text = "0";
@@ -48,13 +48,36 @@ namespace LoadOrder
             }
         }
 
-        public void Populate(ModList modList)
+        private void dataGridViewMods_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            var plugin = ModList[e.RowIndex];
+            var cell = dataGridViewMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            switch (e.ColumnIndex)
+            {
+                case 0:
+                    int newVal = Int32.Parse(cell.Value as string);
+                    int oldVal = e.RowIndex;
+                    ModList.MoveItem(oldVal, newVal);
+                    Populate();
+                    break;
+                case 1:
+                    bool isEnabled = (bool)cell.Value;
+                    plugin.isEnabled = isEnabled;
+                    break;
+                default:
+                    return;
+            }
+        }
+
+
+
+        public void Populate()
         {
             SuspendLayout();
             var rows = this.dataGridViewMods.Rows;
             rows.Clear();
             Log.Info("Populating");
-            foreach (var mod in modList)
+            foreach (var mod in ModList)
             {
                 rows.Add(mod.LoadOrder, mod.isEnabled, mod.DisplayText);
                 Log.Info("row added: " + mod.ToString());

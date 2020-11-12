@@ -15,6 +15,9 @@ namespace ColossalFramework
 
 		private static bool m_Run;
 
+		private static Thread m_SaveThread;
+
+
 		private static object m_LockObject = new object();
 
 		public static void AddSettingsFile(params SettingsFile[] settingsFiles)
@@ -135,13 +138,17 @@ namespace ColossalFramework
 			}
 		}
 
-		private void Awake()
+		public GameSettings()
 		{
 			Log.Info("GameSettings Monitor Started...");
+			GameSettings.m_SaveThread = new Thread(new ThreadStart(GameSettings.MonitorSave));
+			GameSettings.m_SaveThread.Name = "SaveSettingsThread";
+			GameSettings.m_SaveThread.IsBackground = true;
 			GameSettings.m_Run = true;
+			GameSettings.m_SaveThread.Start();
 		}
 
-		private void OnDestroy()
+		~GameSettings()
 		{
 			GameSettings.m_Run = false;
 			lock (GameSettings.m_LockObject)

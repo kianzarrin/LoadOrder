@@ -313,9 +313,8 @@ namespace ColossalFramework.Plugins
 
         private static string[] m_AdditionalAssemblies;
          
-        public static string assetStateSettingsFile { get; set; } = "userGameState";
-        public static string LoadOrderSettingsFile { get; set; } = "LoadOrder";
-
+        public static string assetStateSettingsFile => "userGameState";
+        public static string LoadOrderSettingsFile => "LoadOrder";
 
         public static Type userModType { get; set; } = typeof(IUserMod);
 
@@ -573,9 +572,14 @@ namespace ColossalFramework.Plugins
 
         static PluginManager()
         {
-            var setttingsFile1 = new SettingsFile { fileName = assetStateSettingsFile };
-            var setttingsFile2 = new SettingsFile { fileName = LoadOrderSettingsFile };
-            GameSettings.AddSettingsFile(new[] { setttingsFile1, setttingsFile2 });
+            if (GameSettings.FindSettingsFileByName(assetStateSettingsFile) == null)
+            {
+                GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = assetStateSettingsFile } });
+            }
+            if (GameSettings.FindSettingsFileByName(LoadOrderSettingsFile) == null)
+            {
+                GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = LoadOrderSettingsFile } });
+            }
         }
     }
 }
