@@ -133,17 +133,21 @@ public class BuildConfig
 			return null;
 
 		Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+		Assembly ret = null;
 		foreach(var asm in assemblies) { 
 			var name = asm.GetName().Name;
 			if (name0.StartsWith(name))
 			{
-				Log.Info($"Assembly '{name0}' resolved to '{asm.Location}'");
-				return asm;
+				// get latest assembly
+				if (ret == null || ret.GetName().Version < asm.GetName().Version)
+					ret = asm;
 			}
 		}
-
-		Log.Error($"Assembly resolution failure. No assembly named '{name0}' was found.");
-		return null;
+		if (ret != null)
+			Log.Info($"Assembly '{name0}' resolved to '{ret.Location}'");
+		else
+			Log.Error($"Assembly resolution failure. No assembly named '{name0}' was found.");
+		return ret;
 	}
 
 	//public static Type ResolveLegacyType(string type)

@@ -63,7 +63,6 @@ namespace LoadOrder
             }
         }
 
-
         private static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
             Exception ex = (Exception)args.ExceptionObject;
