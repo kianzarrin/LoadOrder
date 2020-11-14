@@ -1,9 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using COSettings.IO;
-//using ColossalFramework.PlatformServices;
-//using UnityEngine;
 using LoadOrder;
 
 namespace COSettings
@@ -348,13 +346,9 @@ namespace COSettings
 							InputKey value5 = binaryReader.ReadInt32();
 							this.m_SettingsInputKeyValues.Add(key5, value5);
 						}
-						goto IL_228;
 					}
-					goto IL_20D;
-					IL_228:
 					return;
 				}
-				IL_20D:
 				throw new GameHandledException("Setting file '" + this.fileName + "' header mismatch. The internal format of settings files has changed and your settings will be reset.");
 			}
 		}

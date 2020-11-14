@@ -1,10 +1,10 @@
-﻿using System;
-//using ColossalFramework.Globalization;
-using UnityEngine;
-
 namespace COSettings
 {
-	public class SavedInputKey : SavedValue
+        public enum KeyCode {
+            None = 0,
+        }
+
+        public class SavedInputKey : SavedValue
 	{
 		private const int MASK_KEY = 268435455;
 
@@ -89,41 +89,41 @@ namespace COSettings
 			return s.value;
 		}
 
-		public bool IsPressed()
-		{
-			int num = this.value;
-			KeyCode keyCode = (KeyCode)(num & 268435455);
-			return keyCode != KeyCode.None && Input.GetKey(keyCode) && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) == ((num & 1073741824) != 0) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) == ((num & 536870912) != 0) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt) || Input.GetKey(KeyCode.AltGr)) == ((num & 268435456) != 0);
-		}
+		//public bool IsPressed()
+		//{
+		//	int num = this.value;
+		//	KeyCode keyCode = (KeyCode)(num & 268435455);
+		//	return keyCode != KeyCode.None && Input.GetKey(keyCode) && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) == ((num & 1073741824) != 0) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) == ((num & 536870912) != 0) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt) || Input.GetKey(KeyCode.AltGr)) == ((num & 268435456) != 0);
+		//}
 
-		public bool IsKeyUp()
-		{
-			int num = this.value;
-			KeyCode keyCode = (KeyCode)(num & 268435455);
-			return keyCode != KeyCode.None && Input.GetKeyUp(keyCode) && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) == ((num & 1073741824) != 0) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) == ((num & 536870912) != 0) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt) || Input.GetKey(KeyCode.AltGr)) == ((num & 268435456) != 0);
-		}
+		//public bool IsKeyUp()
+		//{
+		//	int num = this.value;
+		//	KeyCode keyCode = (KeyCode)(num & 268435455);
+		//	return keyCode != KeyCode.None && Input.GetKeyUp(keyCode) && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) == ((num & 1073741824) != 0) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) == ((num & 536870912) != 0) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt) || Input.GetKey(KeyCode.AltGr)) == ((num & 268435456) != 0);
+		//}
 
-		public bool IsPressed(Event e)
-		{
-			if (e.type != EventType.KeyDown)
-			{
-				return false;
-			}
-			int num = this.value;
-			KeyCode keyCode = (KeyCode)(num & 268435455);
-			return keyCode != KeyCode.None && e.keyCode == keyCode && (e.modifiers & EventModifiers.Control) != EventModifiers.None == ((num & 1073741824) != 0) && (e.modifiers & EventModifiers.Shift) != EventModifiers.None == ((num & 536870912) != 0) && (e.modifiers & EventModifiers.Alt) != EventModifiers.None == ((num & 268435456) != 0);
-		}
+		//public bool IsPressed(Event e)
+		//{
+		//	if (e.type != EventType.KeyDown)
+		//	{
+		//		return false;
+		//	}
+		//	int num = this.value;
+		//	KeyCode keyCode = (KeyCode)(num & 268435455);
+		//	return keyCode != KeyCode.None && e.keyCode == keyCode && (e.modifiers & EventModifiers.Control) != EventModifiers.None == ((num & 1073741824) != 0) && (e.modifiers & EventModifiers.Shift) != EventModifiers.None == ((num & 536870912) != 0) && (e.modifiers & EventModifiers.Alt) != EventModifiers.None == ((num & 268435456) != 0);
+		//}
 
-		public bool IsPressed(EventType type, KeyCode keyCode, EventModifiers modifiers)
-		{
-			if (type != EventType.KeyDown)
-			{
-				return false;
-			}
-			int num = this.value;
-			KeyCode keyCode2 = (KeyCode)(num & 268435455);
-			return keyCode2 != KeyCode.None && keyCode == keyCode2 && (modifiers & EventModifiers.Control) != EventModifiers.None == ((num & 1073741824) != 0) && (modifiers & EventModifiers.Shift) != EventModifiers.None == ((num & 536870912) != 0) && (modifiers & EventModifiers.Alt) != EventModifiers.None == ((num & 268435456) != 0);
-		}
+		//public bool IsPressed(EventType type, KeyCode keyCode, EventModifiers modifiers)
+		//{
+		//	if (type != EventType.KeyDown)
+		//	{
+		//		return false;
+		//	}
+		//	int num = this.value;
+		//	KeyCode keyCode2 = (KeyCode)(num & 268435455);
+		//	return keyCode2 != KeyCode.None && keyCode == keyCode2 && (modifiers & EventModifiers.Control) != EventModifiers.None == ((num & 1073741824) != 0) && (modifiers & EventModifiers.Shift) != EventModifiers.None == ((num & 536870912) != 0) && (modifiers & EventModifiers.Alt) != EventModifiers.None == ((num & 268435456) != 0);
+		//}
 
 		public KeyCode Key
 		{
@@ -206,24 +206,24 @@ namespace COSettings
 			return str + this.Key.ToString();
 		}
 
-		private static bool IsCommandKey(KeyCode code)
-		{
-			return code == KeyCode.LeftCommand || code == KeyCode.RightCommand || code == KeyCode.LeftCommand || code == KeyCode.RightCommand || code == KeyCode.LeftWindows || code == KeyCode.RightWindows;
-		}
+		//private static bool IsCommandKey(KeyCode code)
+		//{
+		//	return code == KeyCode.LeftCommand || code == KeyCode.RightCommand || code == KeyCode.LeftCommand || code == KeyCode.RightCommand || code == KeyCode.LeftWindows || code == KeyCode.RightWindows;
+		//}
 
-		private static string UnityReportingWrongKeysHack(KeyCode code)
-		{
-			if (!SavedInputKey.IsCommandKey(code))
-			{
-				return code.ToString();
-			}
-			RuntimePlatform platform = Application.platform;
-			if (platform == RuntimePlatform.OSXEditor || platform == RuntimePlatform.OSXPlayer)
-			{
-				return KeyCode.LeftCommand.ToString();
-			}
-			return KeyCode.LeftWindows.ToString();
-		}
+		//private static string UnityReportingWrongKeysHack(KeyCode code)
+		//{
+		//	if (!SavedInputKey.IsCommandKey(code))
+		//	{
+		//		return code.ToString();
+		//	}
+		//	RuntimePlatform platform = Application.platform;
+		//	if (platform == RuntimePlatform.OSXEditor || platform == RuntimePlatform.OSXPlayer)
+		//	{
+		//		return KeyCode.LeftCommand.ToString();
+		//	}
+		//	return KeyCode.LeftWindows.ToString();
+		//}
 
 		//public string ToLocalizedString(string localeID)
 		//{

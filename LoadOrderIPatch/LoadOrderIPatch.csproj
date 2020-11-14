@@ -26,6 +26,9 @@
     <EmbeddedResource Remove="Settings\**" />
     <None Remove="Settings\**" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LoadOrder\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Mono.Cecil" Version="0.10.3" />

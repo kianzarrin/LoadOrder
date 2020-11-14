@@ -1,9 +1,7 @@
-﻿using COSettings.IO;
+#pragma warning disable 
+
+using COSettings.IO;
 using COSettings.PlatformServices;
-using ICities;
-//using ColossalFramework.Threading;
-//using ColossalFramework.UI;
-//using UnityEngine;
 using LoadOrder;
 using System;
 using System.Collections.Generic;
@@ -82,13 +80,13 @@ namespace COSettings.Plugins
 
             public string dllName => userModImplementation?.Assembly.GetName().Name;
 
-            public bool isBuiltin => this.m_IsBuiltin;
+            public bool isBuiltin => m_IsBuiltin;
 
-            public string Path => this.m_Path;
+            public string Path => m_Path;
 
-            public string dirName => this.m_CachedName;
+            public string dirName => m_CachedName;
 
-            public string name => this.m_CachedName;
+            public string name => m_CachedName;
 
             public string DisplayText
             {
@@ -308,17 +306,16 @@ namespace COSettings.Plugins
         //private Dictionary<string, PluginInfo> m_Plugins = new Dictionary<string, PluginInfo>();
         private List<PluginInfo> m_Plugins = new List<PluginInfo>();
 
-
         private static int sUniqueCompilationID;
 
         private static string[] m_AdditionalAssemblies;
-         
+
         public static string assetStateSettingsFile => "userGameState";
         public static string LoadOrderSettingsFile => "LoadOrder";
 
-        public static Type userModType { get; set; } = typeof(IUserMod);
+        public static Type userModType => Type.GetType("ICities.IUserMod, ICities");
 
-        public static Type cameraScriptType { get; set; } = typeof(ICameraExtension);
+        public static Type cameraScriptType => Type.GetType("ICities.ICameraExtension, ICities");
 
         public static event PluginManager.AddMessageHandler eventLogMessage;
 

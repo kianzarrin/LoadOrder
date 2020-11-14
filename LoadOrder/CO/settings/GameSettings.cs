@@ -1,9 +1,8 @@
-﻿using LoadOrder;
+using LoadOrder;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-//using ColossalFramework.UI;
-//using UnityEngine;
+
 
 namespace COSettings
 {

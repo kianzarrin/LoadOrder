@@ -134,7 +134,7 @@ namespace LoadOrder {
             if (!string.IsNullOrEmpty(m))
                 message = m + " -> \n" + message;
             LogImpl(message, LogLevel.Exception, true);
-            if (showInPanel) ;
+            //if (showInPanel) 
                 //UIView.ForwardException(e);
         }
 

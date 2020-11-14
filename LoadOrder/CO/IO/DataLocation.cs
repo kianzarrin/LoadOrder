@@ -1,4 +1,7 @@
-﻿using System;
+﻿#pragma warning disable
+
+
+using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -17,11 +20,11 @@ namespace COSettings.IO
 
 		public static string sDevFolder = "Dev";
 
-		//private static bool m_IsReady;
+        //private static bool m_IsReady;
 
-		private static bool m_IsEditor =false;
+        private static bool m_IsEditor =false;
 
-		public static bool isMacOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+        public static bool isMacOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
 		public static bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 		//public static bool isEditor
 		//{
