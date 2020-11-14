@@ -1,17 +1,44 @@
 ﻿#pragma warning disable
-
-
 using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using LoadOrderTool;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 namespace COSettings.IO
 {
 	public static class DataLocation
 	{
+		static string installLocationSubKey_ = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 255710";
+		static string installLocationKey_ = "InstallLocation";
+		static string SteamPathSubKey_ = @"Software\Valve\Steam";
+		static string SteamPathKey_ = "SteamPath";
+		static DataLocation()
+        {
+			try
+			{
+				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(installLocationSubKey_))
+				{
+					GamePath = key?.GetValue(installLocationKey_) as string;
+				}
+				using (RegistryKey key = Registry.CurrentUser.OpenSubKey(SteamPathSubKey_))
+				{
+					string steamPath = key?.GetValue(SteamPathKey_) as string;
+					SteamContentPath = Path.Combine(steamPath, @"steamapps\workshop\content\255710");
+				}
+				if (!Directory.Exists(GamePath))
+					throw new Exception("failed to get GamePath from registry: " + GamePath);
+				if (!Directory.Exists(SteamContentPath))
+					throw new Exception("failed to get SteamContentPath from registry: " + SteamContentPath);
+			}
+			catch (Exception ex)
+            {
+				Log.Exception(ex);
+			}
+		}
+
 		public static string sProductName = "Cities_Skylines";
 
 		public static string sCompanyName = "Colossal Order";
@@ -49,14 +76,16 @@ namespace COSettings.IO
 
 		public static void DisplayStatus()
 		{
-			Log.Debug("GamePath: " + DataLocation.GamePath);
-			Log.Debug("Temp Folder: " + DataLocation.tempFolder);
-			Log.Debug("Local Application Data: " + DataLocation.localApplicationData);
-			Log.Debug("Executable Directory: " + DataLocation.executableDirectory);
-			Log.Debug("Save Location: " + DataLocation.saveLocation);
-			Log.Debug("Application base: " + DataLocation.applicationBase);
-			Log.Debug("Addons path: " + DataLocation.addonsPath);
-			Log.Debug("Mods path: " + DataLocation.modsPath);
+			Log.Info("GamePath: " + DataLocation.GamePath);
+			Log.Info("Temp Folder: " + DataLocation.tempFolder);
+			Log.Info("Local Application Data: " + DataLocation.localApplicationData);
+			Log.Info("Executable Directory(Cities.exe): " + DataLocation.executableDirectory);
+			Log.Info("Save Location: " + DataLocation.saveLocation);
+			Log.Info("Application base: " + DataLocation.applicationBase);
+			Log.Info("Addons path: " + DataLocation.addonsPath);
+			Log.Info("Mods path: " + DataLocation.modsPath);
+			//Log.Debug("Current directory: " + Environment.CurrentDirectory);
+			//Log.Debug("Executing assembly: " + Assembly.GetExecutingAssembly().Location);
 		}
 
 		public static string migrateProductFrom
@@ -257,14 +286,14 @@ namespace COSettings.IO
 
 		
 		//TODO: make platform independant.
-		public static string GamePath => @"C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines";
-		public static string SteamContentPath => @"C:\Program Files (x86)\Steam\steamapps\workshop\content\255710";
-		public static string ManagedDLL => Path.Combine(GamePath, @"Cities_Data\Managed");
+		public static string GamePath { get; private set; } = @"C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines";
+		public static string DataPath => Path.Combine(GamePath, "Cities_Data");
+		public static string ManagedDLL => Path.Combine(DataPath, "Managed");
+		public static string SteamContentPath { get; private set; } = @"C:\Program Files (x86)\Steam\steamapps\workshop\content\255710";
 		public static string applicationSupportPathName = "~/Library/Application Support/"; //mac
 
 		public static string BuiltInContentPath => Path.Combine(GamePath, "Files");
 		public static string AssetStateSettingsFile => "userGameState";
-		public static string DataPath => Path.Combine(GamePath, "Cities_Data");
 		public static string executableDirectory = GamePath;
 		
 

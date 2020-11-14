@@ -69,8 +69,6 @@ namespace LoadOrderTool
             }
         }
 
-
-
         public void Populate()
         {
             SuspendLayout();

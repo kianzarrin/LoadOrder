@@ -5,6 +5,7 @@ namespace LoadOrderTool {
     using System.Reflection;
     using System.Linq;
     using COSettings.IO;
+    using System.Windows.Forms;
 
     /// <summary>
     /// A simple logging class.
@@ -33,7 +34,7 @@ namespace LoadOrderTool {
         /// <summary>
         /// Full path and file name of log file.
         /// </summary>
-        private static readonly string LogFilePath = Path.Combine(DataLocation.DataPath, LogFileName);
+        internal static readonly string LogFilePath; 
 
         /// <summary>
         /// Stopwatch used if <see cref="ShowTimestamp"/> is <c>true</c>.
@@ -45,7 +46,10 @@ namespace LoadOrderTool {
         /// Resets log file on startup.
         /// </summary>
         static Log() {
-            try {
+            try
+            {
+                LogFilePath = Path.Combine(DataLocation.DataPath, "Logs");
+                LogFilePath = Path.Combine(LogFilePath, LogFileName);
                 if (File.Exists(LogFilePath)) {
                     File.Delete(LogFilePath);
                 }
@@ -56,10 +60,14 @@ namespace LoadOrderTool {
 
                 AssemblyName details = typeof(Log).Assembly.GetName();
                 Info($"{details.Name} v{details.Version.ToString()}", true);
+
+                DataLocation.DisplayStatus();
             }
-            catch {
-                // ignore
+            catch (Exception ex) {
+                Log.Exception(ex);
             }
+
+
         }
 
         /// <summary>
@@ -134,9 +142,41 @@ namespace LoadOrderTool {
             string message = e.ToString() + $"\n\t-- {assemblyName_}:end of inner stack trace --";
             if (!string.IsNullOrEmpty(m))
                 message = m + " -> \n" + message;
+            if (showInPanel)
+            {
+                Form prompt = new Form {
+                    Width = 500,
+                    Height = 300,
+                    FormBorderStyle = FormBorderStyle.FixedDialog,
+                    Text = e.GetType().Name,
+                    StartPosition = FormStartPosition.CenterScreen
+                };
+                TextBox textBox = new TextBox()
+                {
+                    Left = 20,
+                    Top = 20,
+                    Width = prompt.Width - 60,
+                    Height = prompt.Height - 115,
+                    Text = e.ToString(),
+                    ReadOnly = true,
+                    ScrollBars = ScrollBars.Both,
+                    Multiline = true,
+                    WordWrap = false,
+                };
+                //Label textLabel = new Label() { Left = 20, Top = 20, Text = e.ToString()};
+                Button btnOK = new Button() { 
+                    Text = "Ok", 
+                    Left = prompt.Width-150, 
+                    Width = 100, 
+                    Top = prompt.Height - 80
+                };
+                btnOK.Click += (sender, e) => { prompt.Close(); };
+                prompt.Controls.Add(btnOK);
+                prompt.Controls.Add(textBox);
+                prompt.AcceptButton = btnOK;
+                prompt.ShowDialog();
+            }
             LogImpl(message, LogLevel.Exception, true);
-            //if (showInPanel) 
-                //UIView.ForwardException(e);
         }
 
         static string nl = Environment.NewLine;
