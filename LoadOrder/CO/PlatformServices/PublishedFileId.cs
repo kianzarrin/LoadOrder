@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ColossalFramework.PlatformServices
+namespace COSettings.PlatformServices
 {
 	public struct PublishedFileId : IEquatable<PublishedFileId>
 	{

@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadOrder", "LoadOrder\LoadOrder.csproj", "{B89FEAE6-A22E-4576-9683-D2B5A1732544}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadOrderWindowsTool", "LoadOrder\LoadOrderWindowsTool.csproj", "{B89FEAE6-A22E-4576-9683-D2B5A1732544}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadOrderMod", "LoadOrderMod\LoadOrderMod.csproj", "{F75E7E61-C575-44A8-AA22-690CD89E9BA2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadOrderIPatch", "LoadOrderIPatch\LoadOrderIPatch.csproj", "{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F75E7E61-C575-44A8-AA22-690CD89E9BA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F75E7E61-C575-44A8-AA22-690CD89E9BA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F75E7E61-C575-44A8-AA22-690CD89E9BA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

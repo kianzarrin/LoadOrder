@@ -1,5 +1,5 @@
-﻿using ColossalFramework.IO;
-using ColossalFramework.PlatformServices;
+﻿using COSettings.IO;
+using COSettings.PlatformServices;
 using ICities;
 //using ColossalFramework.Threading;
 //using ColossalFramework.UI;
@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 
-namespace ColossalFramework.Plugins
+namespace COSettings.Plugins
 {
     public class PluginManager : SingletonLite<PluginManager>
     {

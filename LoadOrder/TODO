@@ -1,0 +1,22 @@
+- modify prop x offset when stretching segment.
+   - done for close
+   - not working for lod
+
+- fix end node selector.
+
+- options for default universal behaviours:
+    - auto embankment for curved segments.
+
+- open and close corner table.
+- new Corner table organisation
+
+- corner offset to increase chances of train track connection.
+- fix the orientation of asym road
+- support for asymetric textures
+- lod support (not now)
+
+- Toggle Crossing tool mod activatble from UUI.
+
+bug : terrain height when setting middle node at tunnel entrance
+
+bug: dark texture when rendering middle node of a bridge where it meets the ground.

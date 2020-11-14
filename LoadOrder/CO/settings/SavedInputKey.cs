@@ -2,7 +2,7 @@
 //using ColossalFramework.Globalization;
 using UnityEngine;
 
-namespace ColossalFramework
+namespace COSettings
 {
 	public class SavedInputKey : SavedValue
 	{

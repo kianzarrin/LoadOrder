@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace ColossalFramework.IO
+namespace COSettings.IO
 {
 	public class PathUtils
 	{

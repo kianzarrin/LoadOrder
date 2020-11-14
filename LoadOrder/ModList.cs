@@ -1,5 +1,5 @@
 ﻿
-using ColossalFramework.Plugins;
+using COSettings.Plugins;
 using System;
 using System.Collections.Generic;
 

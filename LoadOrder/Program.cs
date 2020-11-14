@@ -1,5 +1,5 @@
-using ColossalFramework.IO;
-using ColossalFramework.Plugins;
+using COSettings.IO;
+using COSettings.Plugins;
 using System;
 using System.IO;
 using System.Reflection;

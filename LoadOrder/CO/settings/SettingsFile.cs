@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using ColossalFramework.IO;
+using COSettings.IO;
 //using ColossalFramework.PlatformServices;
 //using UnityEngine;
 using LoadOrder;
 
-namespace ColossalFramework
+namespace COSettings
 {
 	public class SettingsFile
 	{

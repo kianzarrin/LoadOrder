@@ -5,7 +5,7 @@ using System.Threading;
 //using ColossalFramework.UI;
 //using UnityEngine;
 
-namespace ColossalFramework
+namespace COSettings
 {
 	public class GameSettings : SingletonLite<GameSettings>
 	{

@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading;
 
-namespace ColossalFramework.IO
+namespace COSettings.IO
 {
 	public class SafeFileStream : Stream
 	{

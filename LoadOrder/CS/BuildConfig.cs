@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using ColossalFramework;
+using COSettings;
 //using ColossalFramework.Globalization;
 //using ColossalFramework.Packaging;
 using LoadOrder;

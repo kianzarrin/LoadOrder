@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ColossalFramework
+namespace COSettings
 {
 	public abstract class SavedValue
 	{

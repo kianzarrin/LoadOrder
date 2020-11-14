@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using LoadOrder;
 using System.Runtime.InteropServices;
 
-namespace ColossalFramework.IO
+namespace COSettings.IO
 {
 	public static class DataLocation
 	{

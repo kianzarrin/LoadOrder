@@ -1,7 +1,7 @@
 ﻿using LoadOrder;
 using System;
 
-namespace ColossalFramework
+namespace COSettings
 {
 	public abstract class SingletonLite<T> where T : new()
 	{

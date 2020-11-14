@@ -4,7 +4,7 @@ namespace LoadOrder {
     using System.IO;
     using System.Reflection;
     using System.Linq;
-    using ColossalFramework.IO;
+    using COSettings.IO;
     /// <summary>
     /// A simple logging class.
     ///
