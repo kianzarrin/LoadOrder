@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace LoadOrder
+namespace LoadOrderTool
 {
     public class DataGridViewU32Cell : DataGridViewTextBoxCell
     {

@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using LoadOrder;
+using LoadOrderTool;
 using System.Runtime.InteropServices;
 
 namespace COSettings.IO

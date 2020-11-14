@@ -1,11 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{F75E7E61-C575-44A8-AA22-690CD89E9BA2}</ProjectGuid>
-    <Product>LoadOrderMod</Product>
     <TargetFramework>net35</TargetFramework>
-    <AssemblyTitle>LoadOrderMod</AssemblyTitle>
-    <AssemblyName>LoadOrderMod</AssemblyName>
-    <RootNamespace>LoadOrderMod</RootNamespace>
     <Copyright>Copyright ©  2020</Copyright>
     <Deterministic>false</Deterministic>
     <AssemblyVersion>0.0.1.*</AssemblyVersion>

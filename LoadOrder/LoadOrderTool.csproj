@@ -33,14 +33,14 @@
     </GetAssemblyIdentity>
     <Message Importance="high" Text="$(SolutionName)" />
     <PropertyGroup>
-      <DeployDir>$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)\</DeployDir>
+      <DeployDir>$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)\Tool\</DeployDir>
       <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
     </PropertyGroup>
     <ItemGroup>
       <VersionNumber Include="@(Targets->'%(Version)')" />
       <AllFiles Include="$(TargetDir)*.*" />
     </ItemGroup>
-    <Copy SourceFiles="@(AllFiles)" DestinationFolder="$(DeployDir)"/>
+    <Copy SourceFiles="@(AllFiles)" DestinationFolder="$(DeployDir)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
   </Target>
 

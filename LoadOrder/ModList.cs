@@ -3,7 +3,7 @@ using COSettings.Plugins;
 using System;
 using System.Collections.Generic;
 
-namespace LoadOrder
+namespace LoadOrderTool
 {
     public class ModList : List<PluginManager.PluginInfo>
     {

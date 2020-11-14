@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using COSettings;
 //using ColossalFramework.Globalization;
 //using ColossalFramework.Packaging;
-using LoadOrder;
+using LoadOrderTool;
 
 public class BuildConfig
 {

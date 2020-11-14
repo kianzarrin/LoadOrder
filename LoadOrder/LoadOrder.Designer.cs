@@ -1,4 +1,4 @@
-﻿namespace LoadOrder
+﻿namespace LoadOrderTool
 {
     using System.Windows.Forms;
     partial class LoadOrder

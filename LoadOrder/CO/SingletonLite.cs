@@ -1,4 +1,4 @@
-﻿using LoadOrder;
+﻿using LoadOrderTool;
 using System;
 
 namespace COSettings

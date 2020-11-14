@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace LoadOrder
+namespace LoadOrderTool
 {
     static class Program
     {

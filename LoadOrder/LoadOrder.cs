@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace LoadOrder
+namespace LoadOrderTool
 {
     public partial class LoadOrder : Form
     {

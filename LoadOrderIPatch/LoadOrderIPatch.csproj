@@ -1,10 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}</ProjectGuid>
-    <Product>LoadOrderIPatch</Product>
-    <AssemblyTitle>LoadOrderIPatch</AssemblyTitle>
-    <AssemblyName>LoadOrderIPatch</AssemblyName>
-    <RootNamespace>LoadOrderIPatch</RootNamespace>
     <TargetFramework>net35</TargetFramework>
     <Copyright>Copyright ©  2020</Copyright>
     <Deterministic>true</Deterministic>

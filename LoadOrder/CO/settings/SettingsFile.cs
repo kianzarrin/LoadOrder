@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using COSettings.IO;
-using LoadOrder;
+using LoadOrderTool;
 
 namespace COSettings
 {

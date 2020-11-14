@@ -2,7 +2,7 @@
 
 using COSettings.IO;
 using COSettings.PlatformServices;
-using LoadOrder;
+using LoadOrderTool;
 using System;
 using System.Collections.Generic;
 using System.IO;

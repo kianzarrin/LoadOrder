@@ -1,10 +1,11 @@
-namespace LoadOrder {
+namespace LoadOrderTool {
     using System;
     using System.Diagnostics;
     using System.IO;
     using System.Reflection;
     using System.Linq;
     using COSettings.IO;
+
     /// <summary>
     /// A simple logging class.
     ///
