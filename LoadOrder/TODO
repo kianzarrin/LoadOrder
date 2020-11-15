@@ -1,8 +1,14 @@
-readable Load Order file.
+files:
+	readable Load Order file. 
+	Cache Mod names once the game is loaded.
+	make note of steam content path and game path once the game is loaded. *
 
-print before and after a mod is added.
+Mod:
+	print before and after a mod is added. *
+	separate UserMod construction phase and OnEnabled phase
+	Load only the latest version of shared dlls. (*.API *.Integration)
 
-Cache Mod names once the game is loaded.
+Tool:
+	do not sort mod automatically but rather provide auto sort buttons.
 
-do not sort mod automatically but rather provide auto sort buttons.
-
+* high Prioirty

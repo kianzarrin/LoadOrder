@@ -8,6 +8,7 @@ namespace LoadOrderMod.Util {
         static LoadOrderUtil() {
             if (GameSettings.FindSettingsFileByName(LoadOrderSettingsFile) == null) {
                 GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = LoadOrderSettingsFile } });
+                Log.Info("Added Settings file: "+ LoadOrderSettingsFile);
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
-    <AssemblyVersion>0.0.1.0</AssemblyVersion>
+    <AssemblyVersion>0.0.2.0</AssemblyVersion>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
@@ -40,7 +40,7 @@
       <VersionNumber Include="@(Targets->'%(Version)')" />
       <AllFiles Include="$(TargetDir)*.*" />
     </ItemGroup>
-    <Copy SourceFiles="@(AllFiles)" DestinationFolder="$(DeployDir)" />
+    <!--<Copy SourceFiles="@(AllFiles)" DestinationFolder="$(DeployDir)" />-->
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
   </Target>
 

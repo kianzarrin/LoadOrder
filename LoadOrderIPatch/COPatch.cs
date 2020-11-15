@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace LoadOrderIPatch.Patches {
     public class COPatch : IPatch {
-        public int PatchOrderAsc { get; } = 10;
+        public int PatchOrderAsc { get; } = 100;
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("ColossalManaged", new Version(0, 3, 0, 0));
         private ILogger logger_;
         private string workingPath_;
@@ -15,76 +15,63 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
-            assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
+            assemblyDefinition = LoadAssembliesPatch(assemblyDefinition); 
+                assemblyDefinition = LoadPluginsPatch(assemblyDefinition); 
             return assemblyDefinition;
         }
 
-        //public AssemblyDefinition GetAssemblyDefinition(string fileName)
-        //    => Util.GetAssemblyDefinition(workingPath_, fileName);
-
-        //public AssemblyDefinition AddPluginsPatch(AssemblyDefinition CO)
-        //{
-        //    var tPluginManager = CO.MainModule.Types
-        //        .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
-        //    var mAddPlugins = tPluginManager.Methods
-        //        .First(_m => _m.Name == "AddPlugins");
-
-        //    DefaultAssemblyResolver resolver = new DefaultAssemblyResolver();
-        //    resolver.AddSearchDirectory(workingPath_);
-        //    var dllPath = Path.Combine(workingPath_, "LoadOrderMod.dll");
-        //    var readerParams = new ReaderParameters { AssemblyResolver = resolver };
-        //    AssemblyDefinition LoadOrderMod = AssemblyDefinition.ReadAssembly(dllPath, readerParams);
-
-        //    var tAddPluginsPatch = LoadOrderMod.MainModule.Types
-        //        .First(_t => _t.Name == "AddPluginsPatch");
-        //    var mdAddPlugginsSorted = tAddPluginsPatch.Methods
-        //        .First(_m => _m.Name == "AddPlugginsSorted");
-        //    MethodReference mrAddPlugginsSorted = tPluginManager.Module.ImportReference(mdAddPlugginsSorted);
-
-        //    ILProcessor ilProcessor = mAddPlugins.Body.GetILProcessor();
-        //    Instruction loadArg1 = Instruction.Create(OpCodes.Ldarg_1); 
-        //    Instruction CallAddPlugginsSorted = Instruction.Create(OpCodes.Call, mrAddPlugginsSorted);
-        //    Instruction retInstr = Instruction.Create(OpCodes.Ret); 
-        //    Instruction first = mAddPlugins.Body.Instructions.First();
-        //    ilProcessor.InsertBefore(first, loadArg1); // load pluggins
-        //    ilProcessor.InsertAfter(loadArg1, CallAddPlugginsSorted); 
-        //    ilProcessor.InsertAfter(CallAddPlugginsSorted, retInstr); // skip stock code.
-        //    logger_.Info("AddPluginsPatch applied!");
-
-        //    return CO;
-        //}
-
+        public AssemblyDefinition GetAssemblyDefinition(string fileName)
+            => Util.GetAssemblyDefinition(workingPath_, fileName);
 
         public AssemblyDefinition LoadAssembliesPatch(AssemblyDefinition CO)
         {
             var tPluginManager = CO.MainModule.Types
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
-            var mAddPlugins = tPluginManager.Methods
+            MethodDefinition mTarget = tPluginManager.Methods
                 .First(_m => _m.Name == "LoadAssemblies");
 
-            DefaultAssemblyResolver resolver = new DefaultAssemblyResolver();
-            resolver.AddSearchDirectory(workingPath_);
-            var dllPath = Path.Combine(workingPath_, "LoadOrderMod.dll");
-            var readerParams = new ReaderParameters { AssemblyResolver = resolver };
-            AssemblyDefinition LoadOrderMod = AssemblyDefinition.ReadAssembly(dllPath, readerParams);
 
+            AssemblyDefinition LoadOrderMod = GetAssemblyDefinition("LoadOrderMod.dll");
             var tSortPlugins = LoadOrderMod.MainModule.Types
                 .First(_t => _t.Name == "SortPlugins");
-            var mdSort = tSortPlugins.Methods
+            MethodDefinition mdSort = tSortPlugins.Methods
                 .First(_m => _m.Name == "Sort");
             
             MethodReference mrInjection = tPluginManager.Module.ImportReference(mdSort);
-            ILProcessor ilProcessor = mAddPlugins.Body.GetILProcessor();
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
 
             Instruction loadArg1 = Instruction.Create(OpCodes.Ldarg_1);
-            Instruction CallInjection = Instruction.Create(OpCodes.Call, mrInjection);
-            Instruction first = mAddPlugins.Body.Instructions.First();
-            ilProcessor.InsertBefore(first, loadArg1); // load pluggins
-            ilProcessor.InsertAfter(loadArg1, CallInjection);
+            Instruction callInjection = Instruction.Create(OpCodes.Call, mrInjection);
+            Instruction first = mTarget.Body.Instructions.First();
+            ilProcessor.InsertBefore(first, loadArg1); // load pluggins arg
+            ilProcessor.InsertAfter(loadArg1, callInjection); 
             logger_.Info("LoadAssembliesPatch applied successfully!");
             return CO;
         }
 
+        public AssemblyDefinition LoadPluginsPatch(AssemblyDefinition CO)
+        {
+            var tPluginManager = CO.MainModule.Types
+                .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
+            MethodDefinition mTarget = tPluginManager.Methods
+                .First(_m => _m.Name == "LoadPlugins");
 
+            MethodDefinition mInjection = tPluginManager.Methods
+                .First(_m => _m.Name == "LoadPlugin");
+
+            var dllPath = Path.Combine(workingPath_, "LoadOrderMod.dll");
+
+            Instruction loadThis = Instruction.Create(OpCodes.Ldarg_0);
+            Instruction loadDllPath = Instruction.Create(OpCodes.Ldstr, dllPath);
+            Instruction callInjection = Instruction.Create(OpCodes.Call, mInjection);
+
+            Instruction first = mTarget.Body.Instructions.First();
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            ilProcessor.InsertBefore(first, loadThis); // load pluggins arg
+            ilProcessor.InsertAfter(loadThis, loadDllPath);
+            ilProcessor.InsertAfter(loadDllPath, callInjection);
+            logger_.Info("LoadPluginsPatch applied successfully!");
+            return CO;
+        }
     }
 }
