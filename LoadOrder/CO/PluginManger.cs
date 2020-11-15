@@ -27,9 +27,10 @@ namespace COSettings.Plugins
 
         public static IEnumerable<PublishedFileId> GetSubscribedItems()
         {
-            foreach (var dir in Directory.GetDirectories(DataLocation.SteamContentPath))
+            foreach (var path in Directory.GetDirectories(DataLocation.SteamContentPath))
             {
-                if (!TryGetID(dir, out ulong id)) continue;
+                var dirName = Path.GetFileName(path);
+                if (!TryGetID(dirName, out ulong id)) continue;
                 //if (!Directory.GetFiles(dir, "*.dll").Any()) continue;
                 yield return new PublishedFileId(id);
             }
@@ -38,10 +39,10 @@ namespace COSettings.Plugins
         public static string GetSubscribedItemPath(PublishedFileId id)
         {
             var ret = Path.Combine(DataLocation.SteamContentPath, id.AsUInt64.ToString());
-            if (File.Exists(ret))
+            if (Directory.Exists(ret))
                 return ret;
             ret = Path.Combine(DataLocation.SteamContentPath, "_" + id.AsUInt64.ToString());
-            if (File.Exists(ret))
+            if (Directory.Exists(ret))
                 return ret;
             return null;
         }
@@ -208,7 +209,7 @@ namespace COSettings.Plugins
                 set => SavedEnabled.value = value;
             }
 
-            private string savedLoadIndexKey_ => dllName + ".Order";
+            private string savedLoadIndexKey_ => name + "." + GetLegacyHashCode(Path).ToString() + ".Order";
             public SavedInt SavedOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 0);
             public int LoadOrder
             {
@@ -353,6 +354,10 @@ namespace COSettings.Plugins
 
                 // purge plugins without a IUserMod Implementation. this also filters out non-cs mods.
                 // all dependent assemblies must be loaded before doing this.
+                foreach(var p in m_Plugins)
+                {
+                    Log.Info($"hasUserMod:{p.HasUserMod} " + p);
+                }
                 m_Plugins = m_Plugins.Where(p => p.HasUserMod).ToList();
                 Log.Debug($"{m_Plugins.Count} pluggins remained after purging non-cs or non-mods.");
             }
@@ -382,6 +387,7 @@ namespace COSettings.Plugins
         private void LoadWorkshopPluginInfos()
         {
             var subscribedItems = GetSubscribedItems();
+            Log.Debug($"subscribed items are: " + string.Join(", ", subscribedItems));
             if (subscribedItems != null)
             {
                 foreach (var id in subscribedItems)
@@ -389,8 +395,14 @@ namespace COSettings.Plugins
                     string subscribedItemPath = GetSubscribedItemPath(id);
                     if (subscribedItemPath != null && Directory.Exists(subscribedItemPath))
                     {
+                        Log.Debug("scanned: " + subscribedItemPath);
                         m_Plugins.Add(new PluginInfo(subscribedItemPath, false, id));
                     }
+                    else
+                    {
+                        Log.Debug("direcotry does not exist: " + subscribedItemPath);
+                    }
+
                 }
             }
         }

@@ -4,6 +4,8 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Collections.Generic;
+
 
 namespace LoadOrderTool
 {
@@ -22,6 +24,7 @@ namespace LoadOrderTool
                 Application.SetCompatibleTextRenderingDefault(false);
                 Console.WriteLine("Hello!");
                 LoadAssemblies();
+
                 Application.Run(new LoadOrder());
             }
             catch (Exception ex)

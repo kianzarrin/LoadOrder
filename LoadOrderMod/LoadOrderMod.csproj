@@ -54,6 +54,10 @@
     <None Remove="KianCommons\KianCommons\Util\**" />
     <None Remove="KianCommons\libs\**" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Patches\CO\AddPluginsPatch.cs" />
+  </ItemGroup>
   <ItemGroup>
     <None Remove="KianCommons\.git" />
     <None Remove="KianCommons\.gitattributes" />
@@ -61,10 +65,7 @@
     <None Remove="KianCommons\KianCommons\.editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KianCommons\KianCommons\Math\MathUtil.cs" />
-    <Compile Include="KianCommons\KianCommons\Util\HelpersExtensions.cs" />
     <Compile Include="KianCommons\KianCommons\Util\Log.cs" />
-    <Compile Include="KianCommons\KianCommons\Util\PluginUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CitiesHarmony.API" Version="1.0.5" />
@@ -123,6 +124,12 @@
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
   </Target>
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\dell\source\repos\LoadOrder\LoadOrderMod\KianCommons\KianCommons\.editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\dell\source\repos\LoadOrder\LoadOrderMod\KianCommons\KianCommons\.editorconfig" />
+  </ItemGroup>
   <ItemGroup>
     <EditorConfigFiles Remove="C:\Users\dell\source\repos\LoadOrder\LoadOrderMod\KianCommons\KianCommons\.editorconfig" />
   </ItemGroup>

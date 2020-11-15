@@ -1,11 +1,11 @@
 using ColossalFramework.Plugins;
+using KianCommons;
 using LoadOrderMod.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using static ColossalFramework.Plugins.PluginManager;
-using KianCommons;
 
 namespace LoadOrderMod.Patches.CO {
     public static class AddPluginsPatch {
@@ -21,6 +21,22 @@ namespace LoadOrderMod.Patches.CO {
             mTriggerEventPluginsChanged.Invoke(PluginManager.instance, null);
 
         public static void AddPlugginsSorted(Dictionary<string, PluginInfo> plugins) {
+            List < KeyValuePair<string, object>> list = new List<KeyValuePair<string, object>>();
+            for(int i = 0; i < 1000; ++i) {
+                list.Add(new KeyValuePair<string, object>("KEY:" + i.ToString(), "VALUE:" + i.ToString()));
+            }
+            list.Reverse();
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+            foreach (var pair in list)
+                dict.Add(pair.Key, pair.Value);
+            foreach(string key in dict.Keys) {
+                Log.Info(key);
+            }
+
+
+
+
+
             var keys = plugins.Keys.ToList();
             int SortByLoadOrder(string path1, string path2) {
                 int _i1 = plugins[path1].GetLoadOrder();
