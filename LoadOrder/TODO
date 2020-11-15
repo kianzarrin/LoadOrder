@@ -1,7 +1,8 @@
-
 readable Load Order file.
+
+print before and after a mod is added.
 
 Cache Mod names once the game is loaded.
 
-print before and after a mod is added.
+do not sort mod automatically but rather provide auto sort buttons.
 

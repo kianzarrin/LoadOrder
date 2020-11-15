@@ -1,4 +1,4 @@
-namespace COSettings
+namespace CO
 {
         public enum KeyCode {
             None = 0,

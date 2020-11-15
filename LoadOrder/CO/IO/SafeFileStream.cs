@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading;
 
-namespace COSettings.IO
+namespace CO.IO
 {
 	public class SafeFileStream : Stream
 	{

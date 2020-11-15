@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace COSettings.PlatformServices
+namespace CO.PlatformServices
 {
 	public struct PublishedFileId : IEquatable<PublishedFileId>
 	{

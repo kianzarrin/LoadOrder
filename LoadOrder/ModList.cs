@@ -1,14 +1,14 @@
-﻿
-using COSettings.Plugins;
+﻿using CO.Plugins;
 using System;
 using System.Collections.Generic;
+using static CO.Plugins.PluginManager;
+using CO.PlatformServices;
 
 namespace LoadOrderTool
 {
     public class ModList : List<PluginManager.PluginInfo>
     {
         public ModList(IEnumerable<PluginManager.PluginInfo> list) : base(list) {
-            SortByOrder();
         }
 
         public static ModList GetAllMods()
@@ -16,21 +16,39 @@ namespace LoadOrderTool
             var mods = new ModList(PluginManager.instance.GetPluginsInfo());
             return mods;
         }
-        public void SortByOrder()
+
+        public static int DefaultComparison(PluginInfo p1, PluginInfo p2)
         {
-            for (int i = 0; i < Count - 1;)
+            var savedOrder1 = p1.SavedLoadOrder;
+            var savedOrder2 = p2.SavedLoadOrder;
+
+            // orderless harmony comes first
+            if (!savedOrder1.exists && p1.IsHarmonyMod())
+                return -1;
+            if (!savedOrder2.exists && p2.IsHarmonyMod())
+                return +1;
+
+            // if neither have order, use string comparison
+            // then builin first, workshop second, local last
+            // otherwise use string comparison
+            if (!savedOrder1.exists && !savedOrder2.exists)
             {
-                int j = i + 1;
-                if (this[i].LoadOrder > this[j].LoadOrder)
-                {
-                    (this[i], this[j]) = (this[j], this[i]);
-                    i = 0; // restart
-                }
-                else
-                {
-                    ++i;
-                }
+                int order(PluginInfo _p) =>
+                    _p.isBuiltin ? 0 :
+                    (_p.publishedFileID != PublishedFileId.invalid ? 1 : 2);
+                if (order(p1) != order(p2))
+                    return order(p1) - order(p2);
+                return p1.name.CompareTo(p2.name);
             }
+
+            // use assigned or default values
+            return savedOrder1 - savedOrder2;
+        }
+
+
+        public void DefaultSort()
+        {
+            Sort(DefaultComparison);
             for (int i = 0; i < Count; ++i)
                 this[i].LoadOrder = i;
         }

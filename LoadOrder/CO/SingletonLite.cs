@@ -1,7 +1,7 @@
 ﻿using LoadOrderTool;
 using System;
 
-namespace COSettings
+namespace CO
 {
 	public abstract class SingletonLite<T> where T : new()
 	{

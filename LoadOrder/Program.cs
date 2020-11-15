@@ -1,5 +1,5 @@
-using COSettings.IO;
-using COSettings.Plugins;
+using CO.IO;
+using CO.Plugins;
 using System;
 using System.IO;
 using System.Reflection;

@@ -7,7 +7,7 @@ using LoadOrderTool;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-namespace COSettings.IO
+namespace CO.IO
 {
 	public static class DataLocation
 	{

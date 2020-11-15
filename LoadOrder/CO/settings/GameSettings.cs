@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 
 
-namespace COSettings
+namespace CO
 {
 	public class GameSettings : SingletonLite<GameSettings>
 	{

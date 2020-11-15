@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace COSettings.IO
+namespace CO.IO
 {
 	public class DirectoryUtils
 	{

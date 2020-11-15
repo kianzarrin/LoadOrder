@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using COSettings.IO;
+using CO.IO;
 using LoadOrderTool;
 
-namespace COSettings
+namespace CO
 {
 	public class SettingsFile
 	{

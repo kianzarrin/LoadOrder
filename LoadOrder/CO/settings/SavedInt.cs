@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace COSettings
+namespace CO
 {
 	public class SavedInt : SavedValue
 	{

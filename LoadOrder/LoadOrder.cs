@@ -16,6 +16,7 @@ namespace LoadOrderTool
             this.dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
             Instance = this;
             ModList = ModList.GetAllMods();
+            ModList.DefaultSort();
             Populate();
         }
 

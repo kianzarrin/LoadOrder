@@ -4,7 +4,7 @@ namespace LoadOrderTool {
     using System.IO;
     using System.Reflection;
     using System.Linq;
-    using COSettings.IO;
+    using CO.IO;
     using System.Windows.Forms;
 
     /// <summary>

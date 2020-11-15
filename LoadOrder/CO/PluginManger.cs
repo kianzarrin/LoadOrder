@@ -1,7 +1,7 @@
 #pragma warning disable 
 
-using COSettings.IO;
-using COSettings.PlatformServices;
+using CO.IO;
+using CO.PlatformServices;
 using LoadOrderTool;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 
-namespace COSettings.Plugins
+namespace CO.Plugins
 {
     public class PluginManager : SingletonLite<PluginManager>
     {
@@ -107,6 +107,9 @@ namespace COSettings.Plugins
             /// precondition: all dependent assemblies are loaded.
             /// </summary>
             public bool isCameraScript => GetImplementation(cameraScriptType) != null;
+
+            public bool IsHarmonyMod() => name == "2040656402";
+
 
             /// <summary>
             /// precondition: all dependent assemblies are loaded.
@@ -210,11 +213,11 @@ namespace COSettings.Plugins
             }
 
             private string savedLoadIndexKey_ => name + "." + GetLegacyHashCode(Path).ToString() + ".Order";
-            public SavedInt SavedOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 0);
+            public SavedInt SavedLoadOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 0);
             public int LoadOrder
             {
-                get => SavedOrder.value;
-                set => SavedOrder.value = value; 
+                get => SavedLoadOrder.value;
+                set => SavedLoadOrder.value = value; 
             }
 
 
