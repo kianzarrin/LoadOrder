@@ -2,6 +2,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Patch.API;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace LoadOrderIPatch.Patches {
@@ -18,8 +19,8 @@ namespace LoadOrderIPatch.Patches {
             return assemblyDefinition;
         }
 
-        public AssemblyDefinition GetAssemblyDefinition(string fileName)
-            => Util.GetAssemblyDefinition(workingPath_, fileName);
+        //public AssemblyDefinition GetAssemblyDefinition(string fileName)
+        //    => Util.GetAssemblyDefinition(workingPath_, fileName);
 
         public AssemblyDefinition AddPluginsPatch(AssemblyDefinition CO)
         {
@@ -28,7 +29,12 @@ namespace LoadOrderIPatch.Patches {
             var mAddPlugins = tPluginManager.Methods
                 .First(_m => _m.Name == "AddPlugins");
 
-            AssemblyDefinition LoadOrderMod = GetAssemblyDefinition("LoadOrderMod.dll");
+            DefaultAssemblyResolver resolver = new DefaultAssemblyResolver();
+            resolver.AddSearchDirectory(workingPath_);
+            var dllPath = Path.Combine(workingPath_, "LoadOrderMod.dll");
+            var readerParams = new ReaderParameters { AssemblyResolver = resolver };
+            AssemblyDefinition LoadOrderMod = AssemblyDefinition.ReadAssembly(dllPath, readerParams);
+
             var tAddPluginsPatch = LoadOrderMod.MainModule.Types
                 .First(_t => _t.Name == "AddPluginsPatch");
             var mAddPlugginsSorted = tAddPluginsPatch.Methods
@@ -39,7 +45,7 @@ namespace LoadOrderIPatch.Patches {
             Instruction CallAddPlugginsSorted = Instruction.Create(OpCodes.Call, mAddPlugginsSorted);
             Instruction retInstr = Instruction.Create(OpCodes.Ret); 
             Instruction first = mAddPlugins.Body.Instructions.First();
-            ilProcessor.InsertBefore(loadArg1, first); // load pluggins
+            ilProcessor.InsertBefore(first, loadArg1); // load pluggins
             ilProcessor.InsertAfter(loadArg1, CallAddPlugginsSorted); 
             ilProcessor.InsertAfter(CallAddPlugginsSorted, retInstr); // skip stock code.
             logger_.Info("AddPluginsPatch applied!");
