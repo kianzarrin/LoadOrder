@@ -56,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Patches\CO\AddPluginsPatch.cs" />
+    <Compile Remove="Injections\CO\AddPluginsPatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="KianCommons\.git" />

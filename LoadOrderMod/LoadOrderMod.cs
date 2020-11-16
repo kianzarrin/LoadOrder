@@ -17,6 +17,11 @@ namespace LoadOrderMod
             //KianCommons.UI.TextureUtil.EmbededResources = false;
             //HelpersExtensions.VERBOSE = false;
             //HarmonyUtil.InstallHarmony(HARMONY_ID);
+            foreach(var p in ColossalFramework.Plugins.PluginManager.instance.GetPluginsInfo()) {
+                string savedKey = p.name + p.modPath.GetHashCode().ToString() + ".enabled";
+                Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.modPath}");
+            }
+
         }
 
         public void OnDisabled() {

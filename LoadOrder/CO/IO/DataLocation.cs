@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 using LoadOrderTool;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
+using System.Linq;
+using System.Text;
 
 namespace CO.IO
 {
@@ -15,6 +17,30 @@ namespace CO.IO
 		static string installLocationKey_ = "InstallLocation";
 		static string SteamPathSubKey_ = @"Software\Valve\Steam";
 		static string SteamPathKey_ = "SteamPath";
+
+		public static string RealPath(string path)
+		{
+			try
+			{
+				path = Path.GetFullPath(path);
+				var root = Path.GetPathRoot(path).ToUpper();
+				foreach (var name in path.Substring(root.Length).Split(Path.DirectorySeparatorChar))
+				{
+					var entries =  Directory.GetFileSystemEntries(root);
+					//Log.Debug($"{root} entries -> " + string.Join(", ", entries));
+					root = entries.First(
+						p => string.Equals(Path.GetFileName(p), name, StringComparison.OrdinalIgnoreCase));
+				}
+				//Log.Debug("returning " + root);
+				return root;
+			}
+			catch (Exception ex)
+			{
+				Log.Exception(ex, "Path not found: " + path);
+				return null;
+			}
+		}
+
 		static DataLocation()
         {
 			try
@@ -22,11 +48,14 @@ namespace CO.IO
 				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(installLocationSubKey_))
 				{
 					GamePath = key?.GetValue(installLocationKey_) as string;
+					GamePath = RealPath(GamePath);
+
 				}
 				using (RegistryKey key = Registry.CurrentUser.OpenSubKey(SteamPathSubKey_))
 				{
 					string steamPath = key?.GetValue(SteamPathKey_) as string;
 					SteamContentPath = Path.Combine(steamPath, @"steamapps\workshop\content\255710");
+					SteamContentPath = RealPath(SteamContentPath);
 				}
 				if (!Directory.Exists(GamePath))
 					throw new Exception("failed to get GamePath from registry: " + GamePath);
@@ -74,9 +103,12 @@ namespace CO.IO
 		//	}
 		//}
 
+
+
 		public static void DisplayStatus()
 		{
 			Log.Info("GamePath: " + DataLocation.GamePath);
+			Log.Info("Steam Content Path: " + DataLocation.SteamContentPath);
 			Log.Info("Temp Folder: " + DataLocation.tempFolder);
 			Log.Info("Local Application Data: " + DataLocation.localApplicationData);
 			Log.Info("Executable Directory(Cities.exe): " + DataLocation.executableDirectory);

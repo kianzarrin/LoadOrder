@@ -76,6 +76,11 @@ namespace LoadOrderTool
             var rows = this.dataGridViewMods.Rows;
             rows.Clear();
             Log.Info("Populating");
+            foreach (var p in ModList)
+            {
+                string savedKey = p.savedEnabledKey_;
+                Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.Path}");
+            }
             foreach (var mod in ModList)
             {
                 rows.Add(mod.LoadOrder, mod.isEnabled, mod.DisplayText);

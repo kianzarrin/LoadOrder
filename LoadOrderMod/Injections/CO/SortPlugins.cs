@@ -7,7 +7,7 @@ using System.Reflection;
 using static ColossalFramework.Plugins.PluginManager;
 using  ColossalFramework.PlatformServices;
 
-namespace LoadOrderMod.Patches.CO {
+namespace LoadOrderMod.Injections.CO {
     public static class SortPlugins {
         public static int Comparison(PluginInfo p1, PluginInfo p2) {
             var savedOrder1 = p1.SavedLoadOrder();

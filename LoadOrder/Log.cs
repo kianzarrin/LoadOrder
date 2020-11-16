@@ -61,6 +61,7 @@ namespace LoadOrderTool {
                 AssemblyName details = typeof(Log).Assembly.GetName();
                 Info($"{details.Name} v{details.Version.ToString()}", true);
 
+                DataLocation.RealPath(DataLocation.SteamContentPath);
                 DataLocation.DisplayStatus();
             }
             catch (Exception ex) {

@@ -41,8 +41,7 @@
             // 
             this.LoadIndex.HeaderText = "Index";
             this.LoadIndex.Name = "LoadIndex";
-            this.LoadIndex.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.LoadIndex.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.LoadIndex.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.LoadIndex.Width = 45;
             // 
             // ModEnabled
@@ -50,7 +49,6 @@
             this.ModEnabled.DataPropertyName = "(none)";
             this.ModEnabled.HeaderText = "Enabled";
             this.ModEnabled.Name = "ModEnabled";
-            this.ModEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.ModEnabled.Width = 55;
             // 
             // Description
@@ -58,8 +56,6 @@
             this.Description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.Description.HeaderText = "Description";
             this.Description.Name = "Description";
-            this.Description.ReadOnly = true;
-            this.Description.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.Description.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // LoadOrder
@@ -72,7 +68,7 @@
             // 
             this.dataGridViewMods.AllowUserToAddRows = false;
             this.dataGridViewMods.AllowUserToDeleteRows = false;
-            this.dataGridViewMods.AllowUserToResizeColumns = false;
+            this.dataGridViewMods.AllowUserToResizeColumns = true;
             this.dataGridViewMods.AllowUserToResizeRows = false;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
             this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;

@@ -73,5 +73,47 @@ namespace LoadOrderIPatch.Patches {
             logger_.Info("LoadPluginsPatch applied successfully!");
             return CO;
         }
+
+        public AssemblyDefinition AddPluginsPatch(AssemblyDefinition CO)
+        {
+            var tPluginManager = CO.MainModule.Types
+                .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
+            MethodDefinition mTarget = tPluginManager.Methods
+                .First(_m => _m.Name == "AddPlugins");
+
+            AssemblyDefinition LoadOrderMod = GetAssemblyDefinition("LoadOrderMod.dll");
+            var tLogs = LoadOrderMod.MainModule.Types
+                .First(_t => _t.Name == "Logs");
+
+            MethodDefinition mdPreCreateUserModInstance = tLogs.Methods
+                .First(_m => _m.Name == "PreCreateUserModInstance");
+            MethodReference mrPreCreateUserModInstance = tPluginManager.Module.ImportReference(mdPreCreateUserModInstance);
+
+            MethodDefinition mdBeforeEnable = tLogs.Methods
+                .First(_m => _m.Name == "BeforeEnable");
+            MethodReference mrBeforeEnable = tPluginManager.Module.ImportReference(mdBeforeEnable);
+
+            MethodDefinition mdAfterEnable = tLogs.Methods
+                .First(_m => _m.Name == "AfterEnable");
+            MethodReference mrAfterEnable = tPluginManager.Module.ImportReference(mdAfterEnable);
+
+            // find instructions
+            var codes = mTarget.Body.Instructions.ToList();
+            Instruction getUserModInstance = codes.First(_c => (_c.Operand as MethodDefinition).Name == "get_userModInstance");
+            Instruction InvokeOnEnabled = codes.First(_c => (_c.Operand as MethodDefinition).Name == "Invoke");
+
+            Instruction LoadPluginInfo = getUserModInstance.Previous.Duplicate();
+            Instruction callPreCreateUserModInstance = Instruction.Create(OpCodes.Call, mrPreCreateUserModInstance);
+            Instruction callBeforeEnable = Instruction.Create(OpCodes.Call, mrBeforeEnable);
+            Instruction callAfterEnable = Instruction.Create(OpCodes.Call, mrAfterEnable);
+
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            ilProcessor.InsertBefore(first, loadArg1); // load pluggins arg
+            ilProcessor.InsertAfter(loadArg1, callInjection);
+            logger_.Info("AddPluginsPatch applied successfully!");
+            return CO;
+        }
+
+        //PreCreateUserModInstance
     }
 }

@@ -204,7 +204,7 @@ namespace CO.Plugins
                 }
             }
 
-            private string savedEnabledKey_ => name + GetLegacyHashCode(Path).ToString() + ".enabled";
+            public string savedEnabledKey_ => name + GetLegacyHashCode(Path).ToString() + ".enabled";
             public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, false);
             public bool isEnabled
             {
