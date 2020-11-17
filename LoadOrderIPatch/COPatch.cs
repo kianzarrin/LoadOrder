@@ -1,4 +1,4 @@
-using Mono.Cecil;
+ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Patch.API;
 using System;
@@ -15,13 +15,14 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
-            assemblyDefinition = LoadAssembliesPatch(assemblyDefinition); 
-                assemblyDefinition = LoadPluginsPatch(assemblyDefinition); 
+            assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
+            assemblyDefinition = LoadPluginsPatch(assemblyDefinition);
+            assemblyDefinition = AddPluginsPatch(assemblyDefinition);
             return assemblyDefinition;
         }
 
         public AssemblyDefinition GetAssemblyDefinition(string fileName)
-            => Util.GetAssemblyDefinition(workingPath_, fileName);
+            => CecilUtil.GetAssemblyDefinition(workingPath_, fileName);
 
         public AssemblyDefinition LoadAssembliesPatch(AssemblyDefinition CO)
         {
@@ -88,28 +89,38 @@ namespace LoadOrderIPatch.Patches {
             MethodDefinition mdPreCreateUserModInstance = tLogs.Methods
                 .First(_m => _m.Name == "PreCreateUserModInstance");
             MethodReference mrPreCreateUserModInstance = tPluginManager.Module.ImportReference(mdPreCreateUserModInstance);
-
+            
             MethodDefinition mdBeforeEnable = tLogs.Methods
                 .First(_m => _m.Name == "BeforeEnable");
             MethodReference mrBeforeEnable = tPluginManager.Module.ImportReference(mdBeforeEnable);
-
+            
             MethodDefinition mdAfterEnable = tLogs.Methods
                 .First(_m => _m.Name == "AfterEnable");
             MethodReference mrAfterEnable = tPluginManager.Module.ImportReference(mdAfterEnable);
 
+
             // find instructions
             var codes = mTarget.Body.Instructions.ToList();
-            Instruction getUserModInstance = codes.First(_c => (_c.Operand as MethodDefinition).Name == "get_userModInstance");
-            Instruction InvokeOnEnabled = codes.First(_c => (_c.Operand as MethodDefinition).Name == "Invoke");
+            Instruction getUserModInstance = codes.First(
+                _c => (_c.Operand as MethodReference)?.Name == "get_userModInstance");
+            Instruction InvokeOnEnabled = codes.First(
+                _c => (_c.Operand as MethodReference)?.Name == "Invoke");
 
-            Instruction LoadPluginInfo = getUserModInstance.Previous.Duplicate();
+            Instruction LoadPluginInfo = getUserModInstance.Previous;
             Instruction callPreCreateUserModInstance = Instruction.Create(OpCodes.Call, mrPreCreateUserModInstance);
             Instruction callBeforeEnable = Instruction.Create(OpCodes.Call, mrBeforeEnable);
             Instruction callAfterEnable = Instruction.Create(OpCodes.Call, mrAfterEnable);
 
             ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
-            ilProcessor.InsertBefore(first, loadArg1); // load pluggins arg
-            ilProcessor.InsertAfter(loadArg1, callInjection);
+            ilProcessor.InsertBefore(getUserModInstance, callPreCreateUserModInstance); // insert call
+            ilProcessor.InsertBefore(callPreCreateUserModInstance, LoadPluginInfo.Duplicate()); // load argument for the call
+
+            ilProcessor.InsertBefore(InvokeOnEnabled, callBeforeEnable); // insert call
+            ilProcessor.InsertBefore(callBeforeEnable, LoadPluginInfo.Duplicate()); // load argument for the call
+
+            ilProcessor.InsertAfter(InvokeOnEnabled, callAfterEnable); // insert call
+            ilProcessor.InsertBefore(callAfterEnable, LoadPluginInfo.Duplicate()); // load argument for the call
+
             logger_.Info("AddPluginsPatch applied successfully!");
             return CO;
         }

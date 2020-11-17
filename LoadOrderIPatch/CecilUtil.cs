@@ -4,8 +4,18 @@ namespace LoadOrderIPatch {
     using System.Reflection;
     using Mono.Cecil;
     using Mono.Cecil.Cil;
+    using System.IO;
 
     public static class CecilUtil {
+        internal static AssemblyDefinition GetAssemblyDefinition(string dirPath, string fileName)
+        {
+            DefaultAssemblyResolver resolver = new DefaultAssemblyResolver();
+            resolver.AddSearchDirectory(dirPath);
+            var dllPath = Path.Combine(dirPath, fileName);
+            var readerParams = new ReaderParameters { AssemblyResolver = resolver };
+            return AssemblyDefinition.ReadAssembly(dllPath, readerParams);
+        }
+
         public static Instruction Duplicate(this Instruction instruction)
         {
             var ret = Instruction.Create(instruction.OpCode);

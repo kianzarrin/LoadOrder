@@ -2,6 +2,9 @@ files:
 	readable Load Order file. 
 	Cache Mod names once the game is loaded.
 	make note of steam content path and game path once the game is loaded. *
+	unity to log time stamps
+		patch : UnityEngine.DebugLogHandler.LogFormat()
+
 
 Mod:
 	print before and after a mod is added. *
