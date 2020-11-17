@@ -2,10 +2,8 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace LoadOrderTool
-{
-    public partial class LoadOrder : Form
-    {
+namespace LoadOrderTool {
+    public partial class LoadOrder : Form {
         public static LoadOrder Instance;
 
         ModList ModList;
@@ -32,16 +30,14 @@ namespace LoadOrderTool
 
         private void U32TextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-            {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) {
                 e.Handled = true;
             }
         }
 
         private void U32TextBox_Submit(object? sender, EventArgs e)
         {
-            if (sender is TextBox tb)
-            {
+            if (sender is TextBox tb) {
                 if (tb.Text == "")
                     tb.Text = "0";
                 else
@@ -51,23 +47,23 @@ namespace LoadOrderTool
 
         private void dataGridViewMods_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
+
             var plugin = ModList[e.RowIndex];
             var cell = dataGridViewMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            switch (e.ColumnIndex)
-            {
-                case 0:
-                    int newVal = Int32.Parse(cell.Value as string);
-                    int oldVal = e.RowIndex;
-                    ModList.MoveItem(oldVal, newVal);
-                    Populate();
-                    break;
-                case 1:
-                    bool isEnabled = (bool)cell.Value;
-                    plugin.isEnabled = isEnabled;
-                    break;
-                default:
-                    return;
+            var col = cell.OwningColumn;
+
+            if (col == LoadIndex) {
+                int newVal = Int32.Parse(cell.Value as string);
+                int oldVal = e.RowIndex;
+                ModList.MoveItem(oldVal, newVal);
+                Populate();
+            } else if (col == ModEnabled) {
+                bool isEnabled = (bool)cell.Value;
+                plugin.isEnabled = isEnabled;
+            } else {
+                return;
             }
+
         }
 
         public void Populate()
@@ -76,13 +72,11 @@ namespace LoadOrderTool
             var rows = this.dataGridViewMods.Rows;
             rows.Clear();
             Log.Info("Populating");
-            foreach (var p in ModList)
-            {
+            foreach (var p in ModList) {
                 string savedKey = p.savedEnabledKey_;
                 Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.Path}");
             }
-            foreach (var mod in ModList)
-            {
+            foreach (var mod in ModList) {
                 rows.Add(mod.LoadOrder, mod.isEnabled, mod.DisplayText);
                 Log.Info("row added: " + mod.ToString());
             }

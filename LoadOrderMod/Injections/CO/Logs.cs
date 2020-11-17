@@ -15,8 +15,8 @@ namespace LoadOrderMod.Injections.CO {
             var m_UserModInstance = AccessTools.DeclaredField(typeof(PluginInfo), "m_UserModInstance")?.GetValue(p);
             if (m_UserModInstance != null)
                 return; // too late. already instanciated.
-            BeforeUserModCtor(p);
 
+            BeforeUserModCtor(p);
             if (p.userModInstance == null)
                 return; // failed to instanciate.
             AfterUserModCtor(p);

@@ -18,9 +18,8 @@ namespace LoadOrderMod
         public string Description => "use LoadOrderTool.exe to manage the order in which mods are loaded.";
         public static string HARMONY_ID = "CS.Kian.LoadOrder";
 
-        static LoadOrderMod() => Log.Debug("Static Ctor "   + Environment.StackTrace);
-        public LoadOrderMod() => Log.Debug("Instance Ctor " + Environment.StackTrace);
-        
+        //static LoadOrderMod() => Log.Debug("Static Ctor "   + Environment.StackTrace);
+        //public LoadOrderMod() => Log.Debug("Instance Ctor " + Environment.StackTrace);
 
         public void OnEnabled() {
             Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: false);

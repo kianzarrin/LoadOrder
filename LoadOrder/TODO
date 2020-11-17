@@ -3,12 +3,12 @@ files:
 	Cache Mod names once the game is loaded.
 
 Mod:
-	bugfix: log instanciation of IUserMod.
 	Load only the latest version of shared dlls. (*.API *.Integration)
+	loading times *
 
 Tool:
 	do not sort mod automatically but rather provide auto sort buttons.
-	included checkbox
+	included/excluded checkbox *
 	enable/disable all button
 	include/exclude all button
 	auto-sort button.

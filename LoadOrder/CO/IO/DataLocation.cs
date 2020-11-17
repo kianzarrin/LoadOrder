@@ -40,7 +40,7 @@ namespace CO.IO {
         {
             try {
 
-                var data = LoadOrderMod.LoadOrderData.Deserialize(localApplicationData);
+                var data = LoadOrderMod.LoadOrderCache.Deserialize(localApplicationData);
                 if (Directory.Exists(data?.GamePath)) { 
                     GamePath = data.GamePath;
                 } else { 
@@ -101,8 +101,6 @@ namespace CO.IO {
         //		throw new Exception("DataLocation is not ready to be used yet because the editor flag has not been set");
         //	}
         //}
-
-
 
         public static void DisplayStatus()
         {

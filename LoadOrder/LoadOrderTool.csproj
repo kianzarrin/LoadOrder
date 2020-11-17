@@ -28,7 +28,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Include="..\LoadOrderMod\LoadOrderData.cs" Link="LoadOrderData.cs" />
+    <Compile Include="..\LoadOrderMod\LoadOrderCache.cs" Link="LoadOrderCache.cs" />
   </ItemGroup>
 
   <Target Name="DeployToModDirectory" AfterTargets="Build">
