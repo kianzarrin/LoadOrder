@@ -2,6 +2,7 @@ using ColossalFramework;
 using static ColossalFramework.Plugins.PluginManager;
 using KianCommons;
 using ICities;
+using System.IO;
 
 namespace LoadOrderMod.Util {
     public static class LoadOrderUtil {
@@ -16,7 +17,8 @@ namespace LoadOrderMod.Util {
         const int DEFAULT_ORDER = 1000; // unordered plugins come last.
 
         public static SavedInt SavedLoadOrder(this PluginInfo p) {
-            var savedLoadIndexKey = p.name + p.modPath.GetHashCode() + ".Order";
+            string parentDirName = Directory.GetParent(p.modPath).Name;
+            var savedLoadIndexKey = p.name + "." + parentDirName + ".Order";
             return new SavedInt(savedLoadIndexKey, LoadOrderSettingsFile, DEFAULT_ORDER, autoUpdate:true);
         }
         public static int GetLoadOrder(this PluginInfo p) => p.SavedLoadOrder().value;

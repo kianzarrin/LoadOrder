@@ -29,7 +29,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.LoadIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IsIncluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ModEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -47,17 +47,16 @@
             this.LoadIndex.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.LoadIndex.Width = 42;
             // 
-            // Include
+            // IsIncluded
             // 
             this.IsIncluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.IsIncluded.HeaderText = "Include";
-            this.IsIncluded.Name = "Include";
+            this.IsIncluded.Name = "IsIncluded";
             this.IsIncluded.Width = 52;
             // 
             // ModEnabled
             // 
             this.ModEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.ModEnabled.DataPropertyName = "(none)";
             this.ModEnabled.HeaderText = "Enabled";
             this.ModEnabled.Name = "ModEnabled";
             this.ModEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.True;
@@ -71,19 +70,13 @@
             this.Description.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Description.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // LoadOrder
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(557, 542);
-            // 
             // dataGridViewMods
             // 
             this.dataGridViewMods.AllowUserToAddRows = false;
             this.dataGridViewMods.AllowUserToDeleteRows = false;
             this.dataGridViewMods.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
-            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Beige;
+            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridViewMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewMods.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -95,12 +88,18 @@
             this.dataGridViewMods.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewMods.MultiSelect = false;
             this.dataGridViewMods.Name = "dataGridViewMods";
-            this.dataGridViewMods.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridViewMods.Size = new System.Drawing.Size(557, 542);
+            this.dataGridViewMods.Size = new System.Drawing.Size(476, 729);
             this.dataGridViewMods.TabIndex = 0;
             this.dataGridViewMods.Text = "Mods";
             this.dataGridViewMods.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewMods_CellValueChanged);
+            this.dataGridViewMods.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridViewMods_CurrentCellDirtyStateChanged);
             this.dataGridViewMods.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridViewMods_EditingControlShowing);
+            // 
+            // LoadOrder
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(476, 729);
             this.Controls.Add(this.dataGridViewMods);
             this.Name = "LoadOrder";
             this.Text = "LoadOrder";

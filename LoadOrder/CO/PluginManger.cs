@@ -78,6 +78,7 @@ namespace CO.Plugins
 
             private bool m_Unloaded;
 
+            /// <summary> dir name without prefix. </summary>
             private string m_CachedName;
 
             public string dllName => userModImplementation?.Assembly.GetName().Name;
@@ -86,8 +87,11 @@ namespace CO.Plugins
 
             public string ModPath => m_Path;
 
-            public string dirName => m_CachedName;
+            public string dirName => new DirectoryInfo(ModPath).Name;
 
+            public string parentDirName => Directory.GetParent(ModPath).Name;
+
+            /// <summary> dir name without prefix. </summary>
             public string name => m_CachedName;
 
             public string DisplayText
@@ -129,7 +133,7 @@ namespace CO.Plugins
                     Log.Debug($"set_IsIncluded current value = {IsIncluded} | target value = {value}");
                     if (value == IsIncluded)
                         return;
-                    string parentPath = Path.GetDirectoryName(m_Path);
+                    string parentPath = Directory.GetParent(m_Path).FullName;
                     string targetDirname = 
                         value
                         ? dirName.Substring(1)  // drop _ prefix
@@ -151,7 +155,6 @@ namespace CO.Plugins
                         throw new Exception("failed to move directory from {ModPath} to {targetPath}");
                     }
                     m_Path = targetPath;
-                    m_CachedName = Path.GetFileNameWithoutExtension(targetPath);
                 } catch (Exception ex) {
                     Log.Exception(ex);
                 }
@@ -167,6 +170,8 @@ namespace CO.Plugins
             {
                 this.m_Path = path;
                 this.m_CachedName = Path.GetFileNameWithoutExtension(path);
+                if (m_CachedName.StartsWith("_")) 
+                    m_CachedName = m_CachedName.Substring(1);
                 this.m_Assemblies = new List<Assembly>();
                 this.m_IsBuiltin = builtin;
                 this.m_PublishedFileID = id;
@@ -219,6 +224,9 @@ namespace CO.Plugins
                 }
             }
 
+
+
+
             public string savedEnabledKey_ => name + GetLegacyHashCode(ModPath).ToString() + ".enabled";
             public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, false);
             public bool isEnabled
@@ -227,7 +235,7 @@ namespace CO.Plugins
                 set => SavedEnabled.value = value;
             }
 
-            private string savedLoadIndexKey_ => name + "." + GetLegacyHashCode(ModPath).ToString() + ".Order";
+            private string savedLoadIndexKey_ => name + "." + parentDirName + ".Order";
             public SavedInt SavedLoadOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 0);
             public int LoadOrder
             {

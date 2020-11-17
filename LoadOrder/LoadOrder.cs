@@ -20,9 +20,10 @@ namespace LoadOrderTool {
 
         private void dataGridViewMods_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            e.Control.KeyPress -= U32TextBox_KeyPress;
             if (dataGridViewMods.CurrentCell.ColumnIndex == 0 && e.Control is TextBox tb) // Desired Column
             {
+                tb.KeyPress -= U32TextBox_KeyPress;
+                tb.Leave -= U32TextBox_Submit;
                 tb.KeyPress += U32TextBox_KeyPress;
                 tb.Leave += U32TextBox_Submit;
             }
@@ -64,7 +65,6 @@ namespace LoadOrderTool {
             } else {
                 return;
             }
-
         }
 
         public void Populate()
@@ -82,6 +82,13 @@ namespace LoadOrderTool {
                 Log.Debug("row added: " + mod.ToString());
             }
             ResumeLayout();
+        }
+
+        private void dataGridViewMods_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            if(dataGridViewMods.CurrentCell is DataGridViewCheckBoxCell) {
+                dataGridViewMods.EndEdit();
+            }
         }
     }
 }
