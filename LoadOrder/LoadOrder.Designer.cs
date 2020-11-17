@@ -31,6 +31,7 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.LoadIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IsIncluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ModEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewMods = new System.Windows.Forms.DataGridView();
@@ -44,6 +45,14 @@
             this.LoadIndex.Name = "LoadIndex";
             this.LoadIndex.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.LoadIndex.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.LoadIndex.Width = 42;
+            // 
+            // Include
+            // 
+            this.IsIncluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.IsIncluded.HeaderText = "Include";
+            this.IsIncluded.Name = "Include";
+            this.IsIncluded.Width = 52;
             // 
             // ModEnabled
             // 
@@ -52,6 +61,7 @@
             this.ModEnabled.HeaderText = "Enabled";
             this.ModEnabled.Name = "ModEnabled";
             this.ModEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.ModEnabled.Width = 55;
             // 
             // Description
             // 
@@ -72,13 +82,13 @@
             this.dataGridViewMods.AllowUserToAddRows = false;
             this.dataGridViewMods.AllowUserToDeleteRows = false;
             this.dataGridViewMods.AllowUserToResizeRows = false;
-            this.dataGridViewMods.AllowUserToResizeColumns = true;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
             this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridViewMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridViewMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewMods.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.LoadIndex,
+            this.IsIncluded,
             this.ModEnabled,
             this.Description});
             this.dataGridViewMods.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -102,6 +112,7 @@
         #endregion
         public System.Windows.Forms.DataGridView dataGridViewMods;
         private DataGridViewTextBoxColumn LoadIndex;
+        private DataGridViewCheckBoxColumn IsIncluded;
         private DataGridViewCheckBoxColumn ModEnabled;
         private DataGridViewTextBoxColumn Description;
     }

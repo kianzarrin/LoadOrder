@@ -47,7 +47,7 @@ namespace LoadOrderTool {
 
         private void dataGridViewMods_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-
+            Log.Debug("dataGridViewMods_CellValueChanged() called");
             var plugin = ModList[e.RowIndex];
             var cell = dataGridViewMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
             var col = cell.OwningColumn;
@@ -58,8 +58,9 @@ namespace LoadOrderTool {
                 ModList.MoveItem(oldVal, newVal);
                 Populate();
             } else if (col == ModEnabled) {
-                bool isEnabled = (bool)cell.Value;
-                plugin.isEnabled = isEnabled;
+                plugin.isEnabled = (bool)cell.Value;
+            } else if (col == IsIncluded) {
+                plugin.IsIncluded = (bool)cell.Value;
             } else {
                 return;
             }
@@ -74,11 +75,11 @@ namespace LoadOrderTool {
             Log.Info("Populating");
             foreach (var p in ModList) {
                 string savedKey = p.savedEnabledKey_;
-                Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.Path}");
+                Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.ModPath}");
             }
             foreach (var mod in ModList) {
-                rows.Add(mod.LoadOrder, mod.isEnabled, mod.DisplayText);
-                Log.Info("row added: " + mod.ToString());
+                rows.Add(mod.LoadOrder, mod.IsIncluded, mod.isEnabled, mod.DisplayText);
+                Log.Debug("row added: " + mod.ToString());
             }
             ResumeLayout();
         }

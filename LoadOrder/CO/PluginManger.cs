@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
+using System.Diagnostics;
 
 namespace CO.Plugins
 {
@@ -83,7 +84,7 @@ namespace CO.Plugins
 
             public bool isBuiltin => m_IsBuiltin;
 
-            public string Path => m_Path;
+            public string ModPath => m_Path;
 
             public string dirName => m_CachedName;
 
@@ -125,21 +126,35 @@ namespace CO.Plugins
                 get => !dirName.StartsWith("_");
                 set
                 {
+                    Log.Debug($"set_IsIncluded current value = {IsIncluded} | target value = {value}");
                     if (value == IsIncluded)
                         return;
-                    string targetPath;
-                    if (value)
-                        targetPath = m_Path.Substring(1); // drop starting _
-                    else
-                        targetPath = "_" + m_Path; // add starting _
+                    string parentPath = Path.GetDirectoryName(m_Path);
+                    string targetDirname = 
+                        value
+                        ? dirName.Substring(1)  // drop _ prefix
+                        : "_" + dirName; // add _ prefix
+                    string targetPath = Path.Combine(parentPath, targetDirname);
                     MoveToPath(targetPath);
                 }
             }
 
             public void MoveToPath(string targetPath)
             {
-                Directory.Move(Path, targetPath);
-                m_Path = targetPath;
+                try {
+                    Log.Debug($"moving mod from {ModPath} to {targetPath}");
+                    Directory.Move(ModPath, targetPath);
+                    if (Directory.Exists(targetPath))
+                        Log.Debug($"move successful!");
+                    else {
+                        Log.Debug($"FAILED!");
+                        throw new Exception("failed to move directory from {ModPath} to {targetPath}");
+                    }
+                    m_Path = targetPath;
+                    m_CachedName = Path.GetFileNameWithoutExtension(targetPath);
+                } catch (Exception ex) {
+                    Log.Exception(ex);
+                }
             }
 
             private PublishedFileId m_PublishedFileID = PublishedFileId.invalid;
@@ -151,7 +166,7 @@ namespace CO.Plugins
             public PluginInfo(string path, bool builtin, PublishedFileId id)
             {
                 this.m_Path = path;
-                this.m_CachedName = System.IO.Path.GetFileNameWithoutExtension(path);
+                this.m_CachedName = Path.GetFileNameWithoutExtension(path);
                 this.m_Assemblies = new List<Assembly>();
                 this.m_IsBuiltin = builtin;
                 this.m_PublishedFileID = id;
@@ -204,7 +219,7 @@ namespace CO.Plugins
                 }
             }
 
-            public string savedEnabledKey_ => name + GetLegacyHashCode(Path).ToString() + ".enabled";
+            public string savedEnabledKey_ => name + GetLegacyHashCode(ModPath).ToString() + ".enabled";
             public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, false);
             public bool isEnabled
             {
@@ -212,7 +227,7 @@ namespace CO.Plugins
                 set => SavedEnabled.value = value;
             }
 
-            private string savedLoadIndexKey_ => name + "." + GetLegacyHashCode(Path).ToString() + ".Order";
+            private string savedLoadIndexKey_ => name + "." + GetLegacyHashCode(ModPath).ToString() + ".Order";
             public SavedInt SavedLoadOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 0);
             public int LoadOrder
             {
@@ -223,7 +238,7 @@ namespace CO.Plugins
 
             public override string ToString()
             {
-                return $"PluginInfo: path={Path} included={IsIncluded} enabled={isEnabled} DisplayText={DisplayText} " +
+                return $"PluginInfo: path={ModPath} included={IsIncluded} enabled={isEnabled} DisplayText={DisplayText} " +
                     $"cachedName={m_CachedName} assemblies=" + assembliesString;
             }
 
@@ -414,7 +429,7 @@ namespace CO.Plugins
         {
             foreach (PluginInfo pluginInfo in m_Plugins)
             {
-                string modPath = pluginInfo.Path;
+                string modPath = pluginInfo.ModPath;
                 string[] files = Directory.GetFiles(modPath, "*.dll", SearchOption.AllDirectories);
                 foreach (string dllpath in files)
                 {
