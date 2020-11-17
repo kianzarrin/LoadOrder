@@ -6,17 +6,22 @@ using System.Linq;
 using static ColossalFramework.Plugins.PluginManager;
 using ColossalFramework.PlatformServices;
 using ICities;
+using System.Reflection;
+using HarmonyLib;
 
 namespace LoadOrderMod.Injections.CO {
     public static class Logs {
         public static void PreCreateUserModInstance(PluginInfo p) {
-            if (p.GetInstances<IUserMod>().Length > 0)
-                return;
-            BeforeUsrModCtor(p);
-            var temp = p.userModInstance;
+            var m_UserModInstance = AccessTools.DeclaredField(typeof(PluginInfo), "m_UserModInstance")?.GetValue(p);
+            if (m_UserModInstance != null)
+                return; // too late. already instanciated.
+            BeforeUserModCtor(p);
+
+            if (p.userModInstance == null)
+                return; // failed to instanciate.
             AfterUserModCtor(p);
         }
-        public static void BeforeUsrModCtor(PluginInfo p) {
+        public static void BeforeUserModCtor(PluginInfo p) {
             Log.Info($"adding plugin {p} ...", true);
         }
         public static void AfterUserModCtor(PluginInfo p) {

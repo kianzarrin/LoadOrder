@@ -27,7 +27,7 @@ namespace CO.Plugins
 
         public static IEnumerable<PublishedFileId> GetSubscribedItems()
         {
-            foreach (var path in Directory.GetDirectories(DataLocation.SteamContentPath))
+            foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath))
             {
                 var dirName = Path.GetFileName(path);
                 if (!TryGetID(dirName, out ulong id)) continue;
@@ -38,10 +38,10 @@ namespace CO.Plugins
 
         public static string GetSubscribedItemPath(PublishedFileId id)
         {
-            var ret = Path.Combine(DataLocation.SteamContentPath, id.AsUInt64.ToString());
+            var ret = Path.Combine(DataLocation.WorkshopContentPath, id.AsUInt64.ToString());
             if (Directory.Exists(ret))
                 return ret;
-            ret = Path.Combine(DataLocation.SteamContentPath, "_" + id.AsUInt64.ToString());
+            ret = Path.Combine(DataLocation.WorkshopContentPath, "_" + id.AsUInt64.ToString());
             if (Directory.Exists(ret))
                 return ret;
             return null;

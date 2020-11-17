@@ -1,17 +1,19 @@
 files:
 	readable Load Order file. 
 	Cache Mod names once the game is loaded.
-	make note of steam content path and game path once the game is loaded. *
-	unity to log time stamps
-		patch : UnityEngine.DebugLogHandler.LogFormat()
-
 
 Mod:
-	print before and after a mod is added. *
-	separate UserMod construction phase and OnEnabled phase
+	bugfix: log instanciation of IUserMod.
 	Load only the latest version of shared dlls. (*.API *.Integration)
 
 Tool:
 	do not sort mod automatically but rather provide auto sort buttons.
+	included checkbox
+	enable/disable all button
+	include/exclude all button
+	auto-sort button.
+	filters:
+		asset\mod included\excluded enabled\disabled workshop\local
+
 
 * high Prioirty

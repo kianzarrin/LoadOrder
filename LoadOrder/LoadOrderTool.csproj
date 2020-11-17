@@ -26,6 +26,10 @@
     <Compile Remove="CO\PlatformServices\Workshop.cs" />
     <Compile Remove="MyPluginManger.cs" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="..\LoadOrderMod\LoadOrderData.cs" Link="LoadOrderData.cs" />
+  </ItemGroup>
 
   <Target Name="DeployToModDirectory" AfterTargets="Build">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
