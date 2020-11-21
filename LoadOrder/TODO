@@ -8,7 +8,6 @@ Mod:
 
 Tool:
 	do not sort mod automatically but rather provide auto sort buttons.
-	included/excluded checkbox *
 	enable/disable all button
 	include/exclude all button
 	auto-sort button.

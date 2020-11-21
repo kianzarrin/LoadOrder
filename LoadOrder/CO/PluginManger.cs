@@ -236,7 +236,7 @@ namespace CO.Plugins
             }
 
             private string savedLoadIndexKey_ => name + "." + parentDirName + ".Order";
-            public SavedInt SavedLoadOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 0);
+            public SavedInt SavedLoadOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 1000);
             public int LoadOrder
             {
                 get => SavedLoadOrder.value;

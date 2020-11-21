@@ -4,7 +4,6 @@ using Patch.API;
 using System;
 using System.Linq;
 using System.Diagnostics;
-using UnityEngine;
 using ILogger = Patch.API.ILogger;
 
 namespace LoadOrderIPatch.Patches {
@@ -13,18 +12,14 @@ namespace LoadOrderIPatch.Patches {
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("UnityEngine", new Version());
         private ILogger logger_;
         private string workingPath_;
-        private FieldDefinition f_Timer_;
 
         public AssemblyDefinition Execute(AssemblyDefinition assemblyDefinition, ILogger logger, string patcherWorkingPath) {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
-
-
             assemblyDefinition = LogFormatPatch(assemblyDefinition);
             return assemblyDefinition;
         }
 
- 
         public AssemblyDefinition LogFormatPatch(AssemblyDefinition asmUnity)
         {
             var module = asmUnity.Modules.First();
@@ -59,6 +54,5 @@ namespace LoadOrderIPatch.Patches {
             }
             return m_Timer.ElapsedMilliseconds.ToString("0,0") + "ms | " + message;
         }
-
     }
 }

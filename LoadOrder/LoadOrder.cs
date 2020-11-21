@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace LoadOrderTool {
@@ -14,7 +16,7 @@ namespace LoadOrderTool {
             this.dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
             Instance = this;
             ModList = ModList.GetAllMods();
-            ModList.DefaultSort();
+            ModList.SortBy(ModList.HarmonyComparison);
             Populate();
         }
 
@@ -75,7 +77,8 @@ namespace LoadOrderTool {
             Log.Info("Populating");
             foreach (var p in ModList) {
                 string savedKey = p.savedEnabledKey_;
-                Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.ModPath}");
+                Log.Debug($"plugin info: dllName={p.dllName} harmonyVersion={ ModList.GetHarmonyOrder(p)} " +
+                     $"savedKey={savedKey} asms=[{p.assembliesString}]  modPath={p.ModPath}");
             }
             foreach (var mod in ModList) {
                 rows.Add(mod.LoadOrder, mod.IsIncluded, mod.isEnabled, mod.DisplayText);
@@ -89,6 +92,55 @@ namespace LoadOrderTool {
             if(dataGridViewMods.CurrentCell is DataGridViewCheckBoxCell) {
                 dataGridViewMods.EndEdit();
             }
+        }
+
+        private void SortByHarmony_Click(object sender, EventArgs e)
+        {
+            foreach (var p in ModList)
+                p.SavedLoadOrder.Delete();
+            ModList.SortBy(ModList.HarmonyComparison);
+            Populate();
+        }
+
+        private void EnableAll_Click(object sender, EventArgs e)
+        {
+            foreach (var p in ModList)
+                p.isEnabled = true;
+            Populate();
+
+        }
+
+        private void DisableAll_Click(object sender, EventArgs e)
+        {
+            foreach (var p in ModList)
+                p.isEnabled = false;
+            Populate();
+        }
+
+        private void IncludeAll_Click(object sender, EventArgs e)
+        {
+            foreach (var p in ModList)
+                p.IsIncluded = true;
+            Populate();
+        }
+
+        private void ExcludeAll_Click(object sender, EventArgs e)
+        {
+            foreach (var p in ModList)
+                p.IsIncluded = false;
+            Populate();
+        }
+
+        private void ReverseOrder_Click(object sender, EventArgs e)
+        {
+            ModList.ReverseOrder();
+            Populate();
+        }
+
+        private void RandomizeOrder_Click(object sender, EventArgs e)
+        {
+            ModList.RandomizeOrder();
+            Populate();
         }
     }
 }

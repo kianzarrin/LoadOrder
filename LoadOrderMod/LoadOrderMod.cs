@@ -4,12 +4,12 @@ namespace LoadOrderMod
     using ICities;
     using KianCommons;
     using System.Diagnostics;
-    using UnityEngine;
     using ColossalFramework.IO;
     using ColossalFramework.Plugins;
     using ColossalFramework.PlatformServices;
     using System.Linq;
     using System.IO;
+    using CitiesHarmony.API;
 
     public class LoadOrderMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderMod).Assembly.GetName().Version;
@@ -25,7 +25,6 @@ namespace LoadOrderMod
             Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: false);
             //KianCommons.UI.TextureUtil.EmbededResources = false;
             //HelpersExtensions.VERBOSE = false;
-            //HarmonyUtil.InstallHarmony(HARMONY_ID);
             //foreach(var p in ColossalFramework.Plugins.PluginManager.instance.GetPluginsInfo()) {
             //    string savedKey = p.name + p.modPath.GetHashCode().ToString() + ".enabled";
             //    Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.modPath}");
@@ -39,10 +38,11 @@ namespace LoadOrderMod
             }
 
             data.Serialize(DataLocation.localApplicationData);
+            HarmonyHelper.DoOnHarmonyReady(() => HarmonyUtil.InstallHarmony(HARMONY_ID));
         }
 
         public void OnDisabled() {
-            //HarmonyUtil.UninstallHarmony(HARMONY_ID);
+            HarmonyUtil.UninstallHarmony(HARMONY_ID);
         }
 
         // public void OnSettingsUI(UIHelperBase helper) {

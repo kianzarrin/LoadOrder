@@ -4,7 +4,7 @@
     <TargetFramework>net35</TargetFramework>
     <Copyright>Copyright ©  2020</Copyright>
     <Deterministic>false</Deterministic>
-    <AssemblyVersion>0.1.0.*</AssemblyVersion>
+    <AssemblyVersion>0.1.1.*</AssemblyVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
@@ -65,6 +65,10 @@
     <None Remove="KianCommons\KianCommons\.editorconfig" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KianCommons\KianCommons\Patches\HarmonyUtil.cs" />
+    <Compile Include="KianCommons\KianCommons\Patches\TranspilerUtils.cs" />
+    <Compile Include="KianCommons\KianCommons\Util\Assertion.cs" />
+    <Compile Include="KianCommons\KianCommons\Util\HelpersExtensions.cs" />
     <Compile Include="KianCommons\KianCommons\Util\Log.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +102,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="KianCommons\KianCommons\Math\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <Target Name="DeployToModDirectory" AfterTargets="Build">
