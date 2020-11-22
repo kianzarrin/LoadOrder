@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static ColossalFramework.Plugins.PluginManager;
-using ColossalFramework.PlatformServices;
 using ICities;
-using System.Reflection;
 using HarmonyLib;
 
 namespace LoadOrderMod.Injections.CO {
@@ -22,7 +20,7 @@ namespace LoadOrderMod.Injections.CO {
             AfterUserModCtor(p);
         }
         public static void BeforeUserModCtor(PluginInfo p) {
-            Log.Info($"adding plugin {p} ...", true);
+            Log.Info($"adding plugin {p} loadOrder={p.GetLoadOrder()} ...", true);
         }
         public static void AfterUserModCtor(PluginInfo p) {
             string modName = (p.userModInstance as IUserMod)?.Name;
@@ -32,7 +30,7 @@ namespace LoadOrderMod.Injections.CO {
 
         public static void BeforeEnable(PluginInfo p) {
             string modName = (p.userModInstance as IUserMod)?.Name;
-            Log.Info($"enabling plugin `{modName}` ...", true);
+            Log.Info($"enabling plugin `{modName}` loadOrder={p.GetLoadOrder()} ...", true);
         }
         public static void AfterEnable(PluginInfo p) {
             string modName = (p.userModInstance as IUserMod)?.Name;

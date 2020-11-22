@@ -5,17 +5,15 @@ using CO.PlatformServices;
 using LoadOrderTool;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
-using System.Diagnostics;
 
-namespace CO.Plugins
-{
-    public class PluginManager : SingletonLite<PluginManager>
-    {
+namespace CO.Plugins {
+    public class PluginManager : SingletonLite<PluginManager> {
         public static bool TryGetID(string dir, out ulong id)
         {
             string dir2;
@@ -28,8 +26,7 @@ namespace CO.Plugins
 
         public static IEnumerable<PublishedFileId> GetSubscribedItems()
         {
-            foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath))
-            {
+            foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath)) {
                 var dirName = Path.GetFileName(path);
                 if (!TryGetID(dirName, out ulong id)) continue;
                 //if (!Directory.GetFiles(dir, "*.dll").Any()) continue;
@@ -48,15 +45,13 @@ namespace CO.Plugins
             return null;
         }
 
-        public enum MessageType
-        {
+        public enum MessageType {
             Error,
             Warning,
             Message
         }
 
-        public enum OverrideState
-        {
+        public enum OverrideState {
             None,
             Disabled,
             Enabled
@@ -66,8 +61,7 @@ namespace CO.Plugins
 
         public delegate void PluginsChangedHandler();
 
-        public class PluginInfo
-        {
+        public class PluginInfo {
             private Type m_UserModImplementation;
 
             public List<Assembly> m_Assemblies;
@@ -94,14 +88,11 @@ namespace CO.Plugins
             /// <summary> dir name without prefix. </summary>
             public string name => m_CachedName;
 
-            public string DisplayText
-            {
-                get
-                {
+            public string DisplayText {
+                get {
                     string ret = dllName;
                     var id = publishedFileID;
-                    if (id != PublishedFileId.invalid)
-                    {
+                    if (id != PublishedFileId.invalid) {
                         ret = $"{id.AsUInt64}: " + ret;
                     }
                     return ret;
@@ -125,16 +116,14 @@ namespace CO.Plugins
 
             public int assemblyCount => m_Assemblies.Count;
 
-            public bool IsIncluded
-            {
+            public bool IsIncluded {
                 get => !dirName.StartsWith("_");
-                set
-                {
+                set {
                     Log.Debug($"set_IsIncluded current value = {IsIncluded} | target value = {value}");
                     if (value == IsIncluded)
                         return;
                     string parentPath = Directory.GetParent(m_Path).FullName;
-                    string targetDirname = 
+                    string targetDirname =
                         value
                         ? dirName.Substring(1)  // drop _ prefix
                         : "_" + dirName; // add _ prefix
@@ -156,7 +145,10 @@ namespace CO.Plugins
                     }
                     m_Path = targetPath;
                 } catch (Exception ex) {
-                    Log.Exception(ex);
+                    if (userModType.GetType().Name == "LoadOrderMod")
+                        Log.Error("Cannot move Load Order because LoadOrderTool is in use");
+                    else
+                        Log.Exception(ex);
                 }
             }
 
@@ -170,7 +162,7 @@ namespace CO.Plugins
             {
                 this.m_Path = path;
                 this.m_CachedName = Path.GetFileNameWithoutExtension(path);
-                if (m_CachedName.StartsWith("_")) 
+                if (m_CachedName.StartsWith("_"))
                     m_CachedName = m_CachedName.Substring(1);
                 this.m_Assemblies = new List<Assembly>();
                 this.m_IsBuiltin = builtin;
@@ -179,10 +171,8 @@ namespace CO.Plugins
 
             public bool ContainsAssembly(Assembly asm)
             {
-                for (int i = 0; i < this.m_Assemblies.Count; i++)
-                {
-                    if (this.m_Assemblies[i] == asm)
-                    {
+                for (int i = 0; i < this.m_Assemblies.Count; i++) {
+                    if (this.m_Assemblies[i] == asm) {
                         return true;
                     }
                 }
@@ -191,10 +181,8 @@ namespace CO.Plugins
 
             public bool ContainsAssembly(AssemblyName asmName)
             {
-                foreach (Assembly assembly in this.m_Assemblies)
-                {
-                    if (assembly.GetName().FullName == asmName.FullName)
-                    {
+                foreach (Assembly assembly in this.m_Assemblies) {
+                    if (assembly.GetName().FullName == asmName.FullName) {
                         return true;
                     }
                 }
@@ -204,20 +192,17 @@ namespace CO.Plugins
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
             public unsafe int GetLegacyHashCode(string str)
             {
-                fixed (char* ptr = str + RuntimeHelpers.OffsetToStringData / 2)
-                {
+                fixed (char* ptr = str + RuntimeHelpers.OffsetToStringData / 2) {
                     char* ptr2 = ptr;
                     char* ptr3 = ptr2 + str.Length - 1;
                     int num = 0;
-                    while (ptr2 < ptr3)
-                    {
+                    while (ptr2 < ptr3) {
                         num = (num << 5) - num + (int)(*ptr2);
                         num = (num << 5) - num + (int)ptr2[1];
                         ptr2 += 2;
                     }
                     ptr3++;
-                    if (ptr2 < ptr3)
-                    {
+                    if (ptr2 < ptr3) {
                         num = (num << 5) - num + (int)(*ptr2);
                     }
                     return num;
@@ -229,18 +214,16 @@ namespace CO.Plugins
 
             public string savedEnabledKey_ => name + GetLegacyHashCode(ModPath).ToString() + ".enabled";
             public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, false);
-            public bool isEnabled
-            {
+            public bool isEnabled {
                 get => SavedEnabled.value;
                 set => SavedEnabled.value = value;
             }
 
             private string savedLoadIndexKey_ => name + "." + parentDirName + ".Order";
             public SavedInt SavedLoadOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 1000);
-            public int LoadOrder
-            {
+            public int LoadOrder {
                 get => SavedLoadOrder.value;
-                set => SavedLoadOrder.value = value; 
+                set => SavedLoadOrder.value = value;
             }
 
 
@@ -250,14 +233,11 @@ namespace CO.Plugins
                     $"cachedName={m_CachedName} assemblies=" + assembliesString;
             }
 
-            public string assembliesString
-            {
-                get
-                {
+            public string assembliesString {
+                get {
                     int assemblyCount = this.assemblyCount;
                     string strCount = (assemblyCount > 0) ? string.Empty : "No assemblies";
-                    for (int i = 0; i < assemblyCount; i++)
-                    {
+                    for (int i = 0; i < assemblyCount; i++) {
                         AssemblyName asmName = this.m_Assemblies[i].GetName();
                         strCount = string.Concat(new object[]
                         {
@@ -267,8 +247,7 @@ namespace CO.Plugins
                             asmName.Version,
                             "]"
                         });
-                        if (i < assemblyCount - 1)
-                        {
+                        if (i < assemblyCount - 1) {
                             strCount += ", ";
                         }
                     }
@@ -277,10 +256,8 @@ namespace CO.Plugins
             }
 
 
-            public Type userModImplementation
-            {
-                get
-                {
+            public Type userModImplementation {
+                get {
                     return m_UserModImplementation =
                         m_UserModImplementation ??
                         GetImplementation(PluginManager.userModType);
@@ -291,30 +268,22 @@ namespace CO.Plugins
             /// </summary>
             public Type GetImplementation(Type type)
             {
-                for (int i = 0; i < this.m_Assemblies.Count; i++)
-                {
-                    try
-                    {
+                for (int i = 0; i < this.m_Assemblies.Count; i++) {
+                    try {
                         var asm = m_Assemblies[i];
-                        if (!asm.GetReferencedAssemblies().Any(_asm => _asm?.Name == "ICities"))
-                        {
+                        if (!asm.GetReferencedAssemblies().Any(_asm => _asm?.Name == "ICities")) {
                             // this also filters out non-CS mods.
                             continue;
                         }
-                        foreach (Type type2 in this.m_Assemblies[i].GetExportedTypes())
-                        {
-                            if (type2.IsClass && !type2.IsAbstract)
-                            {
+                        foreach (Type type2 in this.m_Assemblies[i].GetExportedTypes()) {
+                            if (type2.IsClass && !type2.IsAbstract) {
                                 Type[] interfaces = type2.GetInterfaces();
-                                if (interfaces.Contains(type))
-                                {
+                                if (interfaces.Contains(type)) {
                                     return type2;
                                 }
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         Log.Exception(new Exception("this can happen if not all dependencies are laoded", ex));
                     }
                 }
@@ -367,12 +336,10 @@ namespace CO.Plugins
             string addonsModsPath = DataLocation.modsPath;
             m_Plugins = new List<PluginInfo>();
 
-            try
-            {
+            try {
                 this.LoadPluginInfosAtPath(builtinModsPath, true);
                 this.LoadPluginInfosAtPath(addonsModsPath, false);
-                if (!PluginManager.noWorkshop)
-                {
+                if (!PluginManager.noWorkshop) {
                     this.LoadWorkshopPluginInfos();
                 }
                 this.LoadAssemblies();
@@ -380,19 +347,14 @@ namespace CO.Plugins
 
                 // purge plugins without a IUserMod Implementation. this also filters out non-cs mods.
                 // all dependent assemblies must be loaded before doing this.
-                foreach(var p in m_Plugins)
-                {
+                foreach (var p in m_Plugins) {
                     Log.Info($"hasUserMod:{p.HasUserMod} " + p);
                 }
                 m_Plugins = m_Plugins.Where(p => p.HasUserMod).ToList();
                 Log.Debug($"{m_Plugins.Count} pluggins remained after purging non-cs or non-mods.");
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Log.Exception(ex);
-            }
-            finally
-            {
+            } finally {
                 //this.CreateReporters(modsPath);
             }
         }
@@ -400,8 +362,7 @@ namespace CO.Plugins
         private void LoadPluginInfosAtPath(string path, bool builtin)
         {
             string[] directories = Directory.GetDirectories(path);
-            foreach (string dir in directories)
-            {
+            foreach (string dir in directories) {
                 //if (!Path.GetFileName(dir).StartsWith("_"))
                 m_Plugins.Add(new PluginInfo(dir, builtin, PublishedFileId.invalid));
                 //else
@@ -414,18 +375,13 @@ namespace CO.Plugins
         {
             var subscribedItems = GetSubscribedItems();
             Log.Debug($"subscribed items are: " + string.Join(", ", subscribedItems));
-            if (subscribedItems != null)
-            {
-                foreach (var id in subscribedItems)
-                {
+            if (subscribedItems != null) {
+                foreach (var id in subscribedItems) {
                     string subscribedItemPath = GetSubscribedItemPath(id);
-                    if (subscribedItemPath != null && Directory.Exists(subscribedItemPath))
-                    {
+                    if (subscribedItemPath != null && Directory.Exists(subscribedItemPath)) {
                         Log.Debug("scanned: " + subscribedItemPath);
                         m_Plugins.Add(new PluginInfo(subscribedItemPath, false, id));
-                    }
-                    else
-                    {
+                    } else {
                         Log.Debug("direcotry does not exist: " + subscribedItemPath);
                     }
 
@@ -435,21 +391,16 @@ namespace CO.Plugins
 
         private void LoadAssemblies()
         {
-            foreach (PluginInfo pluginInfo in m_Plugins)
-            {
+            foreach (PluginInfo pluginInfo in m_Plugins) {
                 string modPath = pluginInfo.ModPath;
                 string[] files = Directory.GetFiles(modPath, "*.dll", SearchOption.AllDirectories);
-                foreach (string dllpath in files)
-                {
-                    try
-                    {
+                foreach (string dllpath in files) {
+                    try {
                         Assembly asm = Assembly.LoadFrom(dllpath);
                         pluginInfo.m_Assemblies.Add(asm);
                         //this.m_AssemblyLocations[asm] = dllpath;
                         Log.Info("Assembly loaded: " + asm);
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         Log.Info("Assembly at " + dllpath + " failed to load.\n" + ex.Message);
                     }
                 }
@@ -511,22 +462,18 @@ namespace CO.Plugins
 
         private static void LogMessage(PluginManager.MessageType type, string message)
         {
-            if (PluginManager.eventLogMessage != null)
-            {
+            if (PluginManager.eventLogMessage != null) {
                 PluginManager.eventLogMessage(type, message);
             }
-            if (type == PluginManager.MessageType.Error)
-            {
+            if (type == PluginManager.MessageType.Error) {
                 Log.Error(message);
                 return;
             }
-            if (type == PluginManager.MessageType.Warning)
-            {
+            if (type == PluginManager.MessageType.Warning) {
                 Log.Error("WARNING: " + message);
                 return;
             }
-            if (type == PluginManager.MessageType.Message)
-            {
+            if (type == PluginManager.MessageType.Message) {
                 Log.Info(message);
             }
         }
@@ -607,12 +554,10 @@ namespace CO.Plugins
 
         static PluginManager()
         {
-            if (GameSettings.FindSettingsFileByName(assetStateSettingsFile) == null)
-            {
+            if (GameSettings.FindSettingsFileByName(assetStateSettingsFile) == null) {
                 GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = assetStateSettingsFile } });
             }
-            if (GameSettings.FindSettingsFileByName(LoadOrderSettingsFile) == null)
-            {
+            if (GameSettings.FindSettingsFileByName(LoadOrderSettingsFile) == null) {
                 GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = LoadOrderSettingsFile } });
             }
         }

@@ -7,6 +7,9 @@ using static KianCommons.Patches.TranspilerUtils;
 using ICities;
 using System.Reflection;
 using System.Diagnostics;
+using ColossalFramework.Plugins;
+using System.Linq;
+using LoadOrderMod.Util;
 
 namespace LoadOrderMod.Patches {
     [HarmonyPatch(typeof(LoadingWrapper))]
@@ -18,6 +21,12 @@ namespace LoadOrderMod.Patches {
 
         public static ILoadingExtension BeforeOnLevelLoaded(ILoadingExtension loadingExtension) {
             Log.Info($"calling {loadingExtension}.OnLevelLoaded()", copyToGameLog: true);
+#if DEBUG
+            var asm = loadingExtension.GetType().Assembly;
+            var p = PluginManager.instance.GetPluginsInfo().Single(_p => _p.ContainsAssembly(asm));
+            Log.Debug($"loadOrder={p.GetLoadOrder()}", true);
+#endif
+
             sw.Reset();
             sw.Start();
             return loadingExtension;

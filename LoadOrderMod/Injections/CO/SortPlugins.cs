@@ -1,11 +1,9 @@
+using ColossalFramework.PlatformServices;
 using KianCommons;
 using LoadOrderMod.Util;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using static ColossalFramework.Plugins.PluginManager;
-using  ColossalFramework.PlatformServices;
 
 namespace LoadOrderMod.Injections.CO {
     public static class SortPlugins {
@@ -30,7 +28,7 @@ namespace LoadOrderMod.Injections.CO {
                     return order(p1) - order(p2);
                 return p1.name.CompareTo(p2.name);
             }
-                
+
             // use assigned or default values
             return savedOrder1 - savedOrder2;
         }
@@ -38,9 +36,20 @@ namespace LoadOrderMod.Injections.CO {
         public static void Sort(Dictionary<string, PluginInfo> plugins) {
             var list = plugins.ToList();
             list.Sort((p1, p2) => Comparison(p1.Value, p2.Value));
+
+            Log.Debug("plugin list:");
+            foreach (var pair1 in list) {
+                var savedOrder = pair1.Value.SavedLoadOrder();
+                Log.Debug($"loadOrder={savedOrder.value} loadOrderExists={savedOrder.exists} path={pair1.Value.modPath}");
+            }
+
             plugins.Clear();
             foreach (var pair in list)
                 plugins.Add(pair.Key, pair.Value);
+
+            Log.Debug("plugins.Values:");
+            foreach (var p in plugins.Values)
+                Log.Debug($"loadOrder={p.GetLoadOrder()} path={p.modPath}");
         }
     }
 }

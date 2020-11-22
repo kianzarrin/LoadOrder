@@ -20,6 +20,7 @@ namespace CO
 		{
 			get
 			{
+				Sync();
 				return this.m_Exists;
 			}
 		}

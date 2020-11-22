@@ -19,7 +19,9 @@ namespace LoadOrderMod.Util {
         public static SavedInt SavedLoadOrder(this PluginInfo p) {
             string parentDirName = Directory.GetParent(p.modPath).Name;
             var savedLoadIndexKey = p.name + "." + parentDirName + ".Order";
-            return new SavedInt(savedLoadIndexKey, LoadOrderSettingsFile, DEFAULT_ORDER, autoUpdate:true);
+            var ret = new SavedInt(savedLoadIndexKey, LoadOrderSettingsFile, DEFAULT_ORDER, autoUpdate:true);
+            _ = ret.value; //force sync
+            return ret;
         }
         public static int GetLoadOrder(this PluginInfo p) => p.SavedLoadOrder().value;
         public static string DllName(this PluginInfo p) => p.userModInstance?.GetType()?.Assembly?.GetName()?.Name;
