@@ -1,17 +1,20 @@
- using Mono.Cecil;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Patch.API;
 using System;
 using System.IO;
 using System.Linq;
+using UnityEngine;
+using ILogger = Patch.API.ILogger;
 
 namespace LoadOrderIPatch.Patches {
-    public class COPatch : IPatch {
+    public class CMPatch : IPatch {
         public int PatchOrderAsc { get; } = 100;
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("ColossalManaged", new Version(0, 3, 0, 0));
         private ILogger logger_;
         private string workingPath_;
-        public AssemblyDefinition Execute(AssemblyDefinition assemblyDefinition, ILogger logger, string patcherWorkingPath) {
+        public AssemblyDefinition Execute(AssemblyDefinition assemblyDefinition, ILogger logger, string patcherWorkingPath)
+        {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
@@ -24,9 +27,9 @@ namespace LoadOrderIPatch.Patches {
         public AssemblyDefinition GetAssemblyDefinition(string fileName)
             => CecilUtil.GetAssemblyDefinition(workingPath_, fileName);
 
-        public AssemblyDefinition LoadAssembliesPatch(AssemblyDefinition CO)
+        public AssemblyDefinition LoadAssembliesPatch(AssemblyDefinition CM)
         {
-            var tPluginManager = CO.MainModule.Types
+            var tPluginManager = CM.MainModule.Types
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
                 .First(_m => _m.Name == "LoadAssemblies");
@@ -37,7 +40,7 @@ namespace LoadOrderIPatch.Patches {
                 .First(_t => _t.Name == "SortPlugins");
             MethodDefinition mdSort = tSortPlugins.Methods
                 .First(_m => _m.Name == "Sort");
-            
+
             MethodReference mrInjection = tPluginManager.Module.ImportReference(mdSort);
             ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
 
@@ -45,14 +48,14 @@ namespace LoadOrderIPatch.Patches {
             Instruction callInjection = Instruction.Create(OpCodes.Call, mrInjection);
             Instruction first = mTarget.Body.Instructions.First();
             ilProcessor.InsertBefore(first, loadArg1); // load pluggins arg
-            ilProcessor.InsertAfter(loadArg1, callInjection); 
+            ilProcessor.InsertAfter(loadArg1, callInjection);
             logger_.Info("LoadAssembliesPatch applied successfully!");
-            return CO;
+            return CM;
         }
 
-        public AssemblyDefinition LoadPluginsPatch(AssemblyDefinition CO)
+        public AssemblyDefinition LoadPluginsPatch(AssemblyDefinition CM)
         {
-            var tPluginManager = CO.MainModule.Types
+            var tPluginManager = CM.MainModule.Types
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
                 .First(_m => _m.Name == "LoadPlugins");
@@ -72,12 +75,12 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertAfter(loadThis, loadDllPath);
             ilProcessor.InsertAfter(loadDllPath, callInjection);
             logger_.Info("LoadPluginsPatch applied successfully!");
-            return CO;
+            return CM;
         }
 
-        public AssemblyDefinition AddPluginsPatch(AssemblyDefinition CO)
+        public AssemblyDefinition AddPluginsPatch(AssemblyDefinition CM)
         {
-            var tPluginManager = CO.MainModule.Types
+            var tPluginManager = CM.MainModule.Types
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
                 .First(_m => _m.Name == "AddPlugins");
@@ -89,15 +92,14 @@ namespace LoadOrderIPatch.Patches {
             MethodDefinition mdPreCreateUserModInstance = tLogs.Methods
                 .First(_m => _m.Name == "PreCreateUserModInstance");
             MethodReference mrPreCreateUserModInstance = tPluginManager.Module.ImportReference(mdPreCreateUserModInstance);
-            
+
             MethodDefinition mdBeforeEnable = tLogs.Methods
                 .First(_m => _m.Name == "BeforeEnable");
             MethodReference mrBeforeEnable = tPluginManager.Module.ImportReference(mdBeforeEnable);
-            
+
             MethodDefinition mdAfterEnable = tLogs.Methods
                 .First(_m => _m.Name == "AfterEnable");
             MethodReference mrAfterEnable = tPluginManager.Module.ImportReference(mdAfterEnable);
-
 
             // find instructions
             var codes = mTarget.Body.Instructions.ToList();
@@ -122,9 +124,7 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertBefore(callAfterEnable, LoadPluginInfo.Duplicate()); // load argument for the call
 
             logger_.Info("AddPluginsPatch applied successfully!");
-            return CO;
+            return CM;
         }
-
-        //PreCreateUserModInstance
     }
 }

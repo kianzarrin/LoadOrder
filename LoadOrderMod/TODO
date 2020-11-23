@@ -1,0 +1,5 @@
+prefix only SetSceneProgress if it is directly called in LoadLevelCoroutine.
+
+dump profiler resutls to a file and view externally using GUI created by unity editor.
+
+

@@ -57,6 +57,8 @@
 
   <ItemGroup>
     <Compile Remove="Injections\CO\AddPluginsPatch.cs" />
+    <Compile Remove="Patches\LoadingProfiler_NewEventPatch.cs" />
+    <Compile Remove="Patches\SetSceneProgressPatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="KianCommons\.git" />

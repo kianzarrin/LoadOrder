@@ -11,10 +11,10 @@ using ColossalFramework.Plugins;
 using System.Linq;
 using LoadOrderMod.Util;
 
-namespace LoadOrderMod.Patches {
+namespace LoadOrderMod.Patches._LoadingWrapper {
     [HarmonyPatch(typeof(LoadingWrapper))]
     [HarmonyPatch("OnLevelLoaded")]
-    public static class LoadingWrapperOnLevelLoadedpatch {
+    public static class OnLevelLoadedpatch {
         public delegate void Handler();
         static Stopwatch sw = new Stopwatch();
         static Stopwatch sw_total = new Stopwatch();
@@ -37,9 +37,9 @@ namespace LoadOrderMod.Patches {
             Log.Info($"OnLevelLoaded() successful. duration = {secs:f3} seconds", copyToGameLog: true);
         }
 
-        static MethodInfo mBeforeOnLevelLoaded_ = typeof(LoadingWrapperOnLevelLoadedpatch).GetMethod(nameof(BeforeOnLevelLoaded))
+        static MethodInfo mBeforeOnLevelLoaded_ = typeof(OnLevelLoadedpatch).GetMethod(nameof(BeforeOnLevelLoaded))
             ?? throw new Exception("mBeforeOnLevelLoaded_ is null");
-        static MethodInfo mAfterOnLevelLoaded_ = typeof(LoadingWrapperOnLevelLoadedpatch).GetMethod(nameof(AfterOnLevelLoaded))
+        static MethodInfo mAfterOnLevelLoaded_ = typeof(OnLevelLoadedpatch).GetMethod(nameof(AfterOnLevelLoaded))
             ?? throw new Exception("mAfterOnLevelLoaded_ is null");
         static MethodInfo mOnLevelLoaded_ = typeof(ILoadingExtension).GetMethod(nameof(ILoadingExtension.OnLevelLoaded))
             ?? throw new Exception("mAfterOnLevelLoaded_ is null");

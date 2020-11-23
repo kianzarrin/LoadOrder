@@ -8,10 +8,10 @@ using ICities;
 using System.Reflection;
 using System.Diagnostics;
 
-namespace LoadOrderMod.Patches {
+namespace LoadOrderMod.Patches._LoadingWrapper {
     [HarmonyPatch(typeof(LoadingWrapper))]
     [HarmonyPatch("OnLoadingExtensionsCreated")]
-    public static class LoadingWrapperOnCreatedPatch {
+    public static class OnCreatedPatch {
         public delegate void Handler();
         static Stopwatch sw = new Stopwatch();
         static Stopwatch sw_total = new Stopwatch();
@@ -28,9 +28,9 @@ namespace LoadOrderMod.Patches {
             Log.Info($"OnCreated() successful. duration = {secs:f3} seconds", copyToGameLog: true);
         }
 
-        static MethodInfo mBeforeOnCreated_ = typeof(LoadingWrapperOnCreatedPatch).GetMethod(nameof(BeforeOnCreated))
+        static MethodInfo mBeforeOnCreated_ = typeof(OnCreatedPatch).GetMethod(nameof(BeforeOnCreated))
             ?? throw new Exception("mBeforeOnCreated_ is null");
-        static MethodInfo mAfterOnCreated_ = typeof(LoadingWrapperOnCreatedPatch).GetMethod(nameof(AfterOnCreated))
+        static MethodInfo mAfterOnCreated_ = typeof(OnCreatedPatch).GetMethod(nameof(AfterOnCreated))
             ?? throw new Exception("mAfterOnCreated_ is null");
         static MethodInfo mOnCreated_ = typeof(ILoadingExtension).GetMethod(nameof(ILoadingExtension.OnCreated))
             ?? throw new Exception("mAfterOnCreated_ is null");
