@@ -12,7 +12,6 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
     [HarmonyPatch(typeof(LoadingWrapper))]
     [HarmonyPatch("OnLoadingExtensionsCreated")]
     public static class OnCreatedPatch {
-        public delegate void Handler();
         static Stopwatch sw = new Stopwatch();
         static Stopwatch sw_total = new Stopwatch();
 
@@ -34,6 +33,7 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
             ?? throw new Exception("mAfterOnCreated_ is null");
         static MethodInfo mOnCreated_ = typeof(ILoadingExtension).GetMethod(nameof(ILoadingExtension.OnCreated))
             ?? throw new Exception("mAfterOnCreated_ is null");
+        static MethodInfo mGetItem_ = GetMethod(typeof(List<ILoadingExtension>), "get_Item");
 
         public static void Prefix(){
             Log.Info("LoadingWrapper.OnLoadingExtensionsCreated() started", true);
@@ -44,16 +44,14 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
         public static IEnumerable<CodeInstruction> Transpiler(ILGenerator il, IEnumerable<CodeInstruction> instructions) {
             try {
                 List<CodeInstruction> codes = instructions.ToCodeList();
-                var LDArg_this = new CodeInstruction(OpCodes.Ldarg_0);
-                var CallVirt_OnCreated = new CodeInstruction(OpCodes.Callvirt, mOnCreated_); //callvirt instance void [ICities]ICities.ILoadingExtension::OnCreated(valuetype [ICities]ICities.LoadMode)
                 var Call_BeforeOnCreated = new CodeInstruction(OpCodes.Call, mBeforeOnCreated_);
                 var Call_AfterOnCreated = new CodeInstruction(OpCodes.Call, mAfterOnCreated_);
 
-                int index = SearchInstruction(codes, CallVirt_OnCreated, 0);
+                int index = codes.Search(c => c.Calls(mOnCreated_));
                 InsertInstructions(codes, new[] { Call_AfterOnCreated }, index + 1, moveLabels:false); // insert after.
 
-                index = SearchInstruction(codes, CallVirt_OnCreated, index, dir:-1); // move before LDArg.0
-                InsertInstructions(codes, new[] { Call_BeforeOnCreated }, index); // insert at (before).
+                index = codes.Search(c => c.Calls(mGetItem_)); 
+                InsertInstructions(codes, new[] { Call_BeforeOnCreated }, index + 1, moveLabels: false); // insert after.
 
                 return codes;
             }

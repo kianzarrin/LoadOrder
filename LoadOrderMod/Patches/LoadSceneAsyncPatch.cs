@@ -15,11 +15,5 @@ namespace LoadOrderMod.Patches {
             sw_total.Reset();
             sw_total.Start();
         }
-
-        //public static void Postfix() {
-        //    sw_total.Stop();
-        //    float ms = sw_total.ElapsedMilliseconds;
-        //    Log.Info($"SceneManager.LoadSceneAsync() finished. total duration = {ms:#,0}ms ", true);
-        //}
     }
 }
