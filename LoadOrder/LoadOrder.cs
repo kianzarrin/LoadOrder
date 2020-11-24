@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CO;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
@@ -141,6 +142,11 @@ namespace LoadOrderTool {
         {
             ModList.RandomizeOrder();
             Populate();
+        }
+
+        private void LoadOrder_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            GameSettings.SaveAll();
         }
     }
 }

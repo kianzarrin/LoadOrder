@@ -4,7 +4,7 @@ using System.Diagnostics;
 using UnityEngine.SceneManagement;
 
 namespace LoadOrderMod.Patches {
-    [HarmonyPatch(typeof(LoadingManager))]
+    [HarmonyPatch(typeof(SceneManager))]
     [HarmonyPatch("LoadSceneAsync")]
     [HarmonyPatch(new[] { typeof(string), typeof(LoadSceneMode) })]
     public static class LoadSceneAsyncPatch {

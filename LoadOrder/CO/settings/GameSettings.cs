@@ -125,7 +125,7 @@ namespace CO
 					GameSettings.SaveAll();
 					lock (GameSettings.m_LockObject)
 					{
-						Monitor.Wait(GameSettings.m_LockObject, 1000);
+						Monitor.Wait(GameSettings.m_LockObject, 100);
 					}
 				}
 				GameSettings.SaveAll();

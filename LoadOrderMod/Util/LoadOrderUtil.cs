@@ -1,15 +1,17 @@
 using ColossalFramework;
-using static ColossalFramework.Plugins.PluginManager;
 using KianCommons;
-using ICities;
+using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using static ColossalFramework.Plugins.PluginManager;
 
 namespace LoadOrderMod.Util {
     public static class LoadOrderUtil {
         static LoadOrderUtil() {
             if (GameSettings.FindSettingsFileByName(LoadOrderSettingsFile) == null) {
                 GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = LoadOrderSettingsFile } });
-                Log.Info("Added Settings file: "+ LoadOrderSettingsFile);
+                Log.Info("Added Settings file: " + LoadOrderSettingsFile);
             }
         }
 
@@ -19,13 +21,17 @@ namespace LoadOrderMod.Util {
         public static SavedInt SavedLoadOrder(this PluginInfo p) {
             string parentDirName = Directory.GetParent(p.modPath).Name;
             var savedLoadIndexKey = p.name + "." + parentDirName + ".Order";
-            var ret = new SavedInt(savedLoadIndexKey, LoadOrderSettingsFile, DEFAULT_ORDER, autoUpdate:true);
+            var ret = new SavedInt(savedLoadIndexKey, LoadOrderSettingsFile, DEFAULT_ORDER, autoUpdate: true);
             _ = ret.value; //force sync
             return ret;
         }
         public static int GetLoadOrder(this PluginInfo p) => p.SavedLoadOrder().value;
         public static string DllName(this PluginInfo p) => p.userModInstance?.GetType()?.Assembly?.GetName()?.Name;
-        public static bool IsHarmonyMod(this PluginInfo p) => p.name == "2040656402" || p.name =="CitiesHarmony";
+        public static bool IsHarmonyMod(this PluginInfo p) => p.name == "2040656402" || p.name == "CitiesHarmony";
         public static bool IsLSM(this PluginInfo p) => p.name == "667342976" || p.name == "LoadingScreenMod";
+
+        public static Assembly GetLSMAssembly() =>
+            AppDomain.CurrentDomain.GetAssemblies()
+            .First(_asm => _asm.GetName().Name == "LoadingScreenMod");
     }
 }

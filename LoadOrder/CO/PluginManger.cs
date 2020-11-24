@@ -213,17 +213,17 @@ namespace CO.Plugins {
 
 
             public string savedEnabledKey_ => name + GetLegacyHashCode(ModPath).ToString() + ".enabled";
-            public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, false);
+            public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, def:false, autoUpdate:true);
             public bool isEnabled {
                 get => SavedEnabled.value;
                 set => SavedEnabled.value = value;
             }
 
             private string savedLoadIndexKey_ => name + "." + parentDirName + ".Order";
-            public SavedInt SavedLoadOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 1000);
+            public SavedInt SavedLoadOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 1000, autoUpdate:true);
             public int LoadOrder {
                 get => SavedLoadOrder.value;
-                set => SavedLoadOrder.value = value;
+                set => SavedLoadOrder.value = value; 
             }
 
 

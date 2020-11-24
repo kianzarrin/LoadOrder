@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Reflection.Emit;
 using static KianCommons.Patches.TranspilerUtils;
+using System;
+
 namespace LoadOrderMod.Patches._AssetDataWrapper {
     [HarmonyPatch(typeof(AssetDataWrapper))]
     [HarmonyPatch(nameof(AssetDataWrapper.OnAssetLoaded))]
@@ -14,7 +16,8 @@ namespace LoadOrderMod.Patches._AssetDataWrapper {
         static Stopwatch sw_total = new Stopwatch();
 
         public static IAssetDataExtension BeforeOnAssetLoaded(IAssetDataExtension extension) {
-            Log.Info($"calling {extension}.OnAssetLoaded()", copyToGameLog: true);
+            Assertion.Assert(extension is IAssetDataExtension);
+            Log.Info($"calling {extension}.OnAssetLoaded()", copyToGameLog: false);
             sw.Reset();
             sw.Start();
             return extension;
@@ -22,7 +25,7 @@ namespace LoadOrderMod.Patches._AssetDataWrapper {
         public static void AfterOnAssetLoaded() {
             sw.Stop();
             var ms = sw.ElapsedMilliseconds;
-            Log.Info($"OnAssetLoaded() successful! duration = {ms:#,0}ms", copyToGameLog: true);
+            Log.Info($"OnAssetLoaded() successful! duration = {ms:#,0}ms", copyToGameLog: false);
         }
 
         static MethodInfo mBeforeOnAssetLoaded_ =
@@ -31,21 +34,31 @@ namespace LoadOrderMod.Patches._AssetDataWrapper {
             GetMethod(typeof(OnAssetLoadedPatch), nameof(AfterOnAssetLoaded));
         static MethodInfo mOnAssetLoaded_ =
             GetMethod(typeof(IAssetDataExtension), nameof(IAssetDataExtension.OnAssetLoaded));
-
+        static MethodInfo mGetItem =
+            GetMethod(typeof(List<IAssetDataExtension>), "get_Item");
 
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-            foreach (var code in instructions) {
-                if (code.Calls(mOnAssetLoaded_)) {
-                    yield return new CodeInstruction(OpCodes.Call, mBeforeOnAssetLoaded_);
-                    yield return code;
-                    yield return new CodeInstruction(OpCodes.Call, mAfterOnAssetLoaded_);
-                } else {
-                    yield return code;
-                }
+            try {
+                List<CodeInstruction> codes = instructions.ToCodeList();
+                var CallVirt_OnAssetLoaded = new CodeInstruction(OpCodes.Callvirt, mOnAssetLoaded_); //callvirt instance void [ICities]ICities.ILoadingExtension::OnAssetLoaded(valuetype [ICities]ICities.LoadMode)
+                var Call_BeforeOnAssetLoaded = new CodeInstruction(OpCodes.Call, mBeforeOnAssetLoaded_);
+                var Call_AfterOnAssetLoaded = new CodeInstruction(OpCodes.Call, mAfterOnAssetLoaded_);
+
+                // insert call after IAssetDataExtension is loaded into the stack.
+                int index = codes.Search(_c => _c.Calls(mGetItem));
+                InsertInstructions(codes, new[] { Call_BeforeOnAssetLoaded }, index + 1);
+
+                int index2 = SearchInstruction(codes, CallVirt_OnAssetLoaded, index);
+                InsertInstructions(codes, new[] { Call_AfterOnAssetLoaded }, index2 + 1, moveLabels: false); // insert after.
+
+                return codes;
+            } catch (Exception ex) {
+                Log.Exception(ex);
+                throw ex;
             }
         }
-        public static void Prefix() {
-            Log.Info("AssetDataWrapper.OnAssetLoaded() started", true);
+        public static void Prefix(string name) {
+            Log.Info("AssetDataWrapper.OnAssetLoaded() started for " + name, true);
             sw_total.Reset();
             sw_total.Start();
         }
