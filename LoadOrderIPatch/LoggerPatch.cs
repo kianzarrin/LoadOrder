@@ -52,7 +52,7 @@ namespace LoadOrderIPatch.Patches {
                 //Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
                 //Application.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
             }
-            return m_Timer.ElapsedMilliseconds.ToString("0,0") + "ms | " + message;
+            return m_Timer.ElapsedMilliseconds.ToString("#,0") + "ms | " + message;
         }
     }
 }

@@ -3,7 +3,6 @@ using KianCommons;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using static KianCommons.Patches.TranspilerUtils;
@@ -12,11 +11,12 @@ using static LoadingManager;
 namespace LoadOrderMod.Patches {
     [HarmonyPatch]
     public static class SimulationDataReadyPatch {
-        static MethodBase TargetMethod() {
-            var t = typeof(LoadingManager)
-                .GetNestedTypes(ALL)
-                .Single(_t => _t.Name.Contains("<LoadLevelCoroutine>"));
-            return GetMethod(t, "MoveNext");
+        static IEnumerable<MethodBase> TargetMethods() {
+            yield return GetCoroutineMoveNext(typeof(LoadingManager), "LoadLevelCoroutine");
+            var tLevelLoader = Type.GetType("LoadingScreenMod.LevelLoader, LoadingScreenMod", throwOnError: false);
+            if(tLevelLoader != null) {
+                yield return GetCoroutineMoveNext(tLevelLoader, "LoadLevelCoroutine");
+            }
         }
 
         public delegate void Handler();
@@ -43,14 +43,14 @@ namespace LoadOrderMod.Patches {
                     @delegate();
                     sw.Stop();
                     Log.Info($"{name} successful! " +
-                        $"duration = {sw.ElapsedMilliseconds:0,0}ms", copyToGameLog: false);
+                        $"duration = {sw.ElapsedMilliseconds:#,0}ms", copyToGameLog: false);
                 } catch (Exception ex) {
                     Log.Exception(ex);
                 }
-                sw_total.Stop();
-                Log.Info($"LoadingManager.m_SimulationDataReady() successful! " +
-                    $"total duration = {sw_total.ElapsedMilliseconds:0,0}ms", copyToGameLog: true);
             }
+            sw_total.Stop();
+            Log.Info($"LoadingManager.m_SimulationDataReady() successful! " +
+                $"total duration = {sw_total.ElapsedMilliseconds:#,0}ms", copyToGameLog: true);
         }
 
         static MethodInfo mSpecialInvoke = GetMethod(
@@ -60,12 +60,21 @@ namespace LoadOrderMod.Patches {
             typeof(SimulationDataReadyHandler),
             nameof(SimulationDataReadyHandler.Invoke));
 
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator il, IEnumerable<CodeInstruction> instructions) {
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original) {
             foreach (var code in instructions) {
-                if (code.Calls(m_Invoke))
-                    yield return new CodeInstruction(OpCodes.Call, mSpecialInvoke);
-                else
+                if (code.Calls(m_Invoke)) {
+                    var m = code.operand as MethodInfo;
+                    string name = m.DeclaringType.FullName + "::" + m.Name;
+                    var name2 = original.DeclaringType.FullName + "::" + original.Name;
+                    Log.Info(
+                        $"replacing call to {name} with SpecialInvoke() in {name2}");
+                    var ret = new CodeInstruction(OpCodes.Call, mSpecialInvoke);
+                    MoveLabels(code, ret);
+                    yield return ret;
+
+                } else {
                     yield return code;
+                }
             }
         }
     }

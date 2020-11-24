@@ -5,6 +5,7 @@ files:
 Mod:
 	Load only the latest version of shared dlls. (*.API *.Integration)
 	loading times *
+	dump profiler resutls to a file and view externally using GUI created by unity editor.
 
 Tool:
 	do not sort mod automatically but rather provide auto sort buttons.

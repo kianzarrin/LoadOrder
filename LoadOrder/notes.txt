@@ -1,1 +1,0 @@
-﻿ColossalFramework.Plugins.PluginManager.LoadAssemblies(Dictionary<string, PluginManager.PluginInfo>) 

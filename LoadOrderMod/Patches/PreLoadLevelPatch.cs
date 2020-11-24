@@ -16,8 +16,8 @@ namespace LoadOrderMod.Patches {
 
         public static void Postfix() {
             sw_total.Stop();
-            float secs = sw_total.ElapsedMilliseconds * 0.001f;
-            Log.Info($"LoadingManager.PreLoadLevel() finished. total duration = {secs:f3} seconds ", true);
+            var ms = sw_total.ElapsedMilliseconds;
+            Log.Info($"LoadingManager.PreLoadLevel() finished. total duration = {ms:#,0}ms ", true);
         }
     }
 }

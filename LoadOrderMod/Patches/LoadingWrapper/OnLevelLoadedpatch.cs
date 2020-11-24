@@ -33,8 +33,8 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
         }
         public static void AfterOnLevelLoaded() {
             sw.Stop();
-            float secs = sw.ElapsedMilliseconds * 0.001f;
-            Log.Info($"OnLevelLoaded() successful. duration = {secs:f3} seconds", copyToGameLog: true);
+            var ms = sw.ElapsedMilliseconds;
+            Log.Info($"OnLevelLoaded() successful. duration = {ms:#,0}ms", copyToGameLog: true);
         }
 
         static MethodInfo mBeforeOnLevelLoaded_ = typeof(OnLevelLoadedpatch).GetMethod(nameof(BeforeOnLevelLoaded))
@@ -73,8 +73,8 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
 
         public static void Postfix() {
             sw_total.Stop();
-            float secs = sw_total.ElapsedMilliseconds * 0.001f;
-            Log.Info($"LoadingWrapper.OnLevelLoaded() finished. total duration = {secs:f3} seconds ", true);
+            var ms = sw_total.ElapsedMilliseconds;
+            Log.Info($"LoadingWrapper.OnLevelLoaded() finished. total duration = {ms:#,0}ms ", true);
         }
     }
 }

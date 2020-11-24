@@ -4,6 +4,10 @@ using LoadOrderMod.Util;
 using System.Collections.Generic;
 using System.Linq;
 using static ColossalFramework.Plugins.PluginManager;
+using ColossalFramework.Plugins;
+using System.IO;
+using System.Reflection;
+using static KianCommons.Patches.TranspilerUtils;
 
 namespace LoadOrderMod.Injections.CO {
     public static class SortPlugins {
@@ -37,19 +41,40 @@ namespace LoadOrderMod.Injections.CO {
             var list = plugins.ToList();
             list.Sort((p1, p2) => Comparison(p1.Value, p2.Value));
 
-            Log.Debug("plugin list:");
-            foreach (var pair1 in list) {
-                var savedOrder = pair1.Value.SavedLoadOrder();
-                Log.Debug($"loadOrder={savedOrder.value} loadOrderExists={savedOrder.exists} path={pair1.Value.modPath}");
+            {
+                Log.Debug("plugin list:");
+                foreach (var pair1 in list) {
+                    var savedOrder = pair1.Value.SavedLoadOrder();
+                    Log.Debug($"loadOrder={savedOrder.value} loadOrderExists={savedOrder.exists} path={pair1.Value.modPath}");
+                }
             }
 
             plugins.Clear();
             foreach (var pair in list)
                 plugins.Add(pair.Key, pair.Value);
 
-            Log.Debug("plugins.Values:");
-            foreach (var p in plugins.Values)
-                Log.Debug($"loadOrder={p.GetLoadOrder()} path={p.modPath}");
+            {
+                Log.Debug("plugins.Values:");
+                foreach (var p in plugins.Values)
+                    Log.Debug($"loadOrder={p.GetLoadOrder()} path={p.modPath}");
+            }
+
+            {
+                // early load LSM if any
+                foreach (var p in plugins.Values) {
+                    if (p.IsLSM()) {
+                        var mLoadPlugin =
+                            typeof(PluginManager).GetMethod("LoadPlugin", ALL);
+                        string dllPath = Path.Combine(p.modPath, "LoadingScreenMod.dll");
+                        var asm = (Assembly)mLoadPlugin.Invoke(
+                            PluginManager.instance, new object[] { dllPath });
+                        asm.GetExportedTypes(); // activate
+                        break;
+                    }
+                }
+                    
+            }
+
         }
     }
 }

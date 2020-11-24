@@ -24,8 +24,8 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
         }
         public static void AfterOnCreated() {
             sw.Stop();
-            float secs = sw.ElapsedMilliseconds * 0.001f;
-            Log.Info($"OnCreated() successful. duration = {secs:f3} seconds", copyToGameLog: true);
+            var ms = sw.ElapsedMilliseconds;
+            Log.Info($"OnCreated() successful. duration = {ms:#,0}ms", copyToGameLog: true);
         }
 
         static MethodInfo mBeforeOnCreated_ = typeof(OnCreatedPatch).GetMethod(nameof(BeforeOnCreated))
@@ -65,8 +65,8 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
 
         public static void Postfix() {
             sw_total.Stop();
-            float secs = sw_total.ElapsedMilliseconds * 0.001f;
-            Log.Info($"LoadingWrapper.OnLoadingExtensionsCreated() finished. total duration = {secs:f3} seconds ", true);
+            var ms = sw_total.ElapsedMilliseconds;
+            Log.Info($"LoadingWrapper.OnLoadingExtensionsCreated() finished. total duration = {ms:#,0}ms ", true);
         }
     }
 }

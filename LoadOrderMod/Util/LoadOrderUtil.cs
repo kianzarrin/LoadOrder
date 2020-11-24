@@ -25,6 +25,7 @@ namespace LoadOrderMod.Util {
         }
         public static int GetLoadOrder(this PluginInfo p) => p.SavedLoadOrder().value;
         public static string DllName(this PluginInfo p) => p.userModInstance?.GetType()?.Assembly?.GetName()?.Name;
-        public static bool IsHarmonyMod(this PluginInfo p) => p.name == "2040656402";
+        public static bool IsHarmonyMod(this PluginInfo p) => p.name == "2040656402" || p.name =="CitiesHarmony";
+        public static bool IsLSM(this PluginInfo p) => p.name == "667342976" || p.name == "LoadingScreenMod";
     }
 }
