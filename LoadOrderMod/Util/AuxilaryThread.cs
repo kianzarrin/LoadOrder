@@ -2,9 +2,15 @@ namespace LoadOrderMod.Util {
     using System.Collections.Generic;
     using System.Threading;
     using System;
+    using KianCommons;
     public static class AuxiluryThread {
+        static AuxiluryThread() {
+            Start();
+        }
+
         static Thread thread_;
-        private static Queue<Action> tasks_;
+        private static Queue<Action> tasks_ = new Queue<Action>(1023);
+
         public static void EnqueueAction(Action act) {
             lock (tasks_)
                 tasks_.Enqueue(act);
@@ -27,14 +33,17 @@ namespace LoadOrderMod.Util {
             thread_.Abort();
         }
 
-
         static void ThreadTask() {
             while (true) {
-                Action act = DequeueAction();
-                if (act != null) {
-                    act();
-                } else {
-                    Thread.Sleep(100);
+                try {
+                    Action act = DequeueAction();
+                    if (act != null) {
+                        act();
+                    } else {
+                        Thread.Sleep(100);
+                    }
+                } catch (Exception ex) {
+                    Log.Exception(ex);
                 }
             }
         }
