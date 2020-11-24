@@ -1,8 +1,6 @@
 using HarmonyLib;
 using KianCommons;
-using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
 using static KianCommons.Patches.TranspilerUtils;
@@ -24,15 +22,16 @@ namespace LoadOrderMod.Patches {
 
         public static void Prefix() {
             if (counter == 0) {
-                sw_total.Reset();
-                sw_total.Start();
                 Log.Info($"LoadCustomContent() started ...", true);
                 Log.Info($"LoadCustomContent.MoveNext() first loop. counter={counter}", false);
+                sw_total.Reset();
+                sw_total.Start();
             } else {
                 Log.Info($"LoadCustomContent.MoveNext() continues. counter={counter}", false);
             }
             sw.Reset();
             sw.Start();
+            counter++;
         }
 
         public static void Postfix(IEnumerator<object> __instance, bool __result) {

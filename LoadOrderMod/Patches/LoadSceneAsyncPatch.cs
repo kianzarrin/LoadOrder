@@ -11,15 +11,15 @@ namespace LoadOrderMod.Patches {
         static Stopwatch sw_total = new Stopwatch();
 
         public static void Prefix(string sceneName) {
-            Log.Info($"SceneManager.LoadSceneAsync({sceneName}) started", true);
+            Log.Info($"SceneManager.LoadSceneAsync({sceneName})", true);
             sw_total.Reset();
             sw_total.Start();
         }
 
-        public static void Postfix() {
-            sw_total.Stop();
-            float ms = sw_total.ElapsedMilliseconds;
-            Log.Info($"SceneManager.LoadSceneAsync() finished. total duration = {ms:#,0}ms ", true);
-        }
+        //public static void Postfix() {
+        //    sw_total.Stop();
+        //    float ms = sw_total.ElapsedMilliseconds;
+        //    Log.Info($"SceneManager.LoadSceneAsync() finished. total duration = {ms:#,0}ms ", true);
+        //}
     }
 }

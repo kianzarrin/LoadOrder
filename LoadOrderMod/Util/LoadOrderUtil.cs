@@ -32,6 +32,6 @@ namespace LoadOrderMod.Util {
 
         public static Assembly GetLSMAssembly() =>
             AppDomain.CurrentDomain.GetAssemblies()
-            .First(_asm => _asm.GetName().Name == "LoadingScreenMod");
+            .FirstOrDefault(_asm => _asm.GetName().Name == "LoadingScreenMod");
     }
 }
