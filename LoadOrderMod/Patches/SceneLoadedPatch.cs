@@ -19,6 +19,7 @@ namespace LoadOrderMod.Patches {
 
         public static void LogSceneEnded(string uiScene) {
             Log.Info($"Loading Scene `{uiScene}` completed");
+            Log.Flush();
         }
 
         static MethodInfo mLogSceneEnded = GetMethod(

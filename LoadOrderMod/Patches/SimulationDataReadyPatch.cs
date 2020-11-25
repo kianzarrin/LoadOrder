@@ -31,6 +31,7 @@ namespace LoadOrderMod.Patches {
 
             Assertion.AssertNotNull(e);
             Log.Info($"invoking LoadingManager.m_SimulationDataReady()", copyToGameLog: true);
+            Log.Flush();
             sw_total.Reset();
             sw_total.Start();
 
@@ -51,6 +52,7 @@ namespace LoadOrderMod.Patches {
             sw_total.Stop();
             Log.Info($"LoadingManager.m_SimulationDataReady() successful! " +
                 $"total duration = {sw_total.ElapsedMilliseconds:#,0}ms", copyToGameLog: true);
+            Log.Flush();
         }
 
         static MethodInfo mSpecialInvoke = GetMethod(

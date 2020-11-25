@@ -46,6 +46,7 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
 
         public static void Prefix() {
             Log.Info("LoadingWrapper.OnLevelLoaded() started", true);
+            Log.Flush();
             sw_total.Reset();
             sw_total.Start();
         }
@@ -75,6 +76,7 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
             sw_total.Stop();
             var ms = sw_total.ElapsedMilliseconds;
             Log.Info($"LoadingWrapper.OnLevelLoaded() finished. total duration = {ms:#,0}ms ", true);
+            Log.Flush();
         }
     }
 }

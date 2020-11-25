@@ -12,6 +12,7 @@ namespace LoadOrderMod.Patches {
 
         public static void Prefix(string sceneName) {
             Log.Info($"SceneManager.LoadSceneAsync({sceneName})", true);
+            Log.Flush();
             sw_total.Reset();
             sw_total.Start();
         }

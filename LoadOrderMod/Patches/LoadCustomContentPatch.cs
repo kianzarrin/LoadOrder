@@ -24,6 +24,7 @@ namespace LoadOrderMod.Patches {
             if (counter == 0) {
                 Log.Info($"LoadCustomContent() started ...", true);
                 Log.Info($"LoadCustomContent.MoveNext() first loop. counter={counter}", false);
+                Log.Flush();
                 sw_total.Reset();
                 sw_total.Start();
             } else {
@@ -40,6 +41,7 @@ namespace LoadOrderMod.Patches {
                 float ms_total = sw_total.ElapsedMilliseconds;
                 Log.Info($"LoadCustomContent.MoveNext() breaked. duration = {ms:#,0}ms ", false);
                 Log.Info($"LoadCustomContent() finished! total duration = {ms_total:#,0}ms", true);
+                Log.Flush();
             } else {
                 object current = __instance.Current;
                 Log.Info($"LoadCustomContent.MoveNext() yielded {current ?? "<null>"}. duration = {ms:#,0}ms ", false);

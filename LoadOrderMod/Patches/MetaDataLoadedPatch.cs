@@ -10,6 +10,7 @@ namespace LoadOrderMod.Patches {
 
         public static void Prefix() {
             Log.Info("LoadingManager.MetaDataLoaded() started", true);
+            Log.Flush();
             sw_total.Reset();
             sw_total.Start();
         }
@@ -18,6 +19,7 @@ namespace LoadOrderMod.Patches {
             sw_total.Stop();
             float ms = sw_total.ElapsedMilliseconds;
             Log.Info($"LoadingManager.MetaDataLoaded() finished. total duration = {ms:#,0}ms ", true);
+            Log.Flush();
         }
     }
 }

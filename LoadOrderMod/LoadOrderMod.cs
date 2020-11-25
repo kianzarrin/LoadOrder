@@ -22,6 +22,7 @@ namespace LoadOrderMod
         //public LoadOrderMod() => Log.Debug("Instance Ctor " + Environment.StackTrace);
 
         public void OnEnabled() {
+            Log.Buffered = true;
             Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: false);
             //KianCommons.UI.TextureUtil.EmbededResources = false;
             //HelpersExtensions.VERBOSE = false;
@@ -39,9 +40,11 @@ namespace LoadOrderMod
 
             data.Serialize(DataLocation.localApplicationData);
             HarmonyHelper.DoOnHarmonyReady(() => HarmonyUtil.InstallHarmony(HARMONY_ID));
+            Log.Flush();
         }
 
         public void OnDisabled() {
+            Log.Buffered = false;
             HarmonyUtil.UninstallHarmony(HARMONY_ID);
         }
 

@@ -1,11 +1,8 @@
+using HarmonyLib;
+using ICities;
 using KianCommons;
 using LoadOrderMod.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using static ColossalFramework.Plugins.PluginManager;
-using ICities;
-using HarmonyLib;
 
 namespace LoadOrderMod.Injections.CO {
     public static class Logs {
