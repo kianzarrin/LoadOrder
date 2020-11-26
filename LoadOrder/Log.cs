@@ -158,7 +158,7 @@ namespace LoadOrderTool {
                     Top = 20,
                     Width = prompt.Width - 60,
                     Height = prompt.Height - 115,
-                    Text = e.ToString(),
+                    Text = message,
                     ReadOnly = true,
                     ScrollBars = ScrollBars.Both,
                     Multiline = true,

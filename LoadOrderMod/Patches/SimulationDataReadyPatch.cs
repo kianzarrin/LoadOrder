@@ -44,7 +44,7 @@ namespace LoadOrderMod.Patches {
                     @delegate();
                     sw.Stop();
                     Log.Info($"{name} successful! " +
-                        $"duration = {sw.ElapsedMilliseconds:#,0}ms", copyToGameLog: false);
+                        $"duration = {sw.ElapsedMilliseconds:#,0}ms", copyToGameLog: true);
                 } catch (Exception ex) {
                     Log.Exception(ex);
                 }

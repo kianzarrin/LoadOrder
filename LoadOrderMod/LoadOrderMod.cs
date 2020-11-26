@@ -10,6 +10,7 @@ namespace LoadOrderMod
     using System.Linq;
     using System.IO;
     using CitiesHarmony.API;
+    using UnityEngine.SceneManagement;
 
     public class LoadOrderMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderMod).Assembly.GetName().Version;
@@ -22,6 +23,7 @@ namespace LoadOrderMod
         //public LoadOrderMod() => Log.Debug("Instance Ctor " + Environment.StackTrace);
 
         public void OnEnabled() {
+            Log.ShowGap = true;
             Log.Buffered = true;
             Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: false);
             //KianCommons.UI.TextureUtil.EmbededResources = false;
@@ -40,6 +42,9 @@ namespace LoadOrderMod
 
             data.Serialize(DataLocation.localApplicationData);
             HarmonyHelper.DoOnHarmonyReady(() => HarmonyUtil.InstallHarmony(HARMONY_ID));
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+
             Log.Flush();
         }
 
@@ -51,5 +56,14 @@ namespace LoadOrderMod
         // public void OnSettingsUI(UIHelperBase helper) {
         //    GUI.Settings.OnSettingsUI(helper);
         // }
+
+        public static void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+            Log.Info($"SceneManager.sceneLoaded({scene.name}, {mode})", true);
+            Log.Flush();
+        }
+        public static void OnActiveSceneChanged(Scene from, Scene to) {
+            Log.Info($"SceneManager.activeSceneChanged({from.name}, {to.name})", true);
+            Log.Flush();
+        }
     }
 }

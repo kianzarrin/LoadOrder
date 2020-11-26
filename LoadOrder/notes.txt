@@ -1,0 +1,37 @@
+﻿Auto luncher:
+	LoadLevelComplete().PostFix() => QueuLoadingAction():
+		log: "LoadOrderMod:GAME LOADING HAS FINISHED"
+		LoadingManager.instance.autoSaveTimer.Stop();
+        Process.GetCurrentProcess().Kill();
+
+@ECHO OFF
+
+notepad.exe
+REM For the OP's original problem, put drvinst.exe instead of notepad.exe (here and below)
+
+
+example batch files:
+=======================================
+:waitloop
+TASKLIST |find /I "notepad.exe" >NUL
+IF ERRORLEVEL 1 GOTO endloop
+REM echo Notepad running. Waiting 1 second...
+timeout /t 1 /nobreak>NUL
+goto waitloop
+:endloop
+echo Done!
+=======================================
+taskkill /IM Cities.exe /F
+=======================================
+@echo off
+echo hello world > test.txt
+findstr /c:"kian" test.txt	>null	
+echo expecting fail ...
+IF NOT ERRORLEVEL 1 echo passed
+IF ERRORLEVEL 1 echo failed
+
+echo hello world > test.txt
+findstr /c:"hello" test.txt	>null
+echo expecting pass ...
+IF NOT ERRORLEVEL 1 echo passed
+IF ERRORLEVEL 1 echo failed

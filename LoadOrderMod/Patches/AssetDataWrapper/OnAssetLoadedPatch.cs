@@ -58,14 +58,14 @@ namespace LoadOrderMod.Patches._AssetDataWrapper {
             }
         }
         public static void Prefix(string name) {
-            Log.Info("AssetDataWrapper.OnAssetLoaded() started for " + name, true);
+            Log.Info("AssetDataWrapper.OnAssetLoaded() started for " + name, false);
             sw_total.Reset();
             sw_total.Start();
         }
         public static void Postfix() {
             sw_total.Stop();
             var ms = sw_total.ElapsedMilliseconds;
-            Log.Info($"AssetDataWrapper.OnAssetLoaded() finished. total duration = {ms:#,0}ms", true);
+            Log.Info($"AssetDataWrapper.OnAssetLoaded() finished. total duration = {ms:#,0}ms", false);
         }
     }
 }

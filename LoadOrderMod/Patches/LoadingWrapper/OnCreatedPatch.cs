@@ -16,7 +16,7 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
         static Stopwatch sw_total = new Stopwatch();
 
         public static ILoadingExtension BeforeOnCreated(ILoadingExtension loadingExtension) {
-            Log.Info($"calling {loadingExtension}.OnCreated()", copyToGameLog: true);
+            Log.Info($"calling {loadingExtension}.OnCreated()", copyToGameLog: false);
             sw.Reset();
             sw.Start();
             return loadingExtension;
@@ -24,7 +24,7 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
         public static void AfterOnCreated() {
             sw.Stop();
             var ms = sw.ElapsedMilliseconds;
-            Log.Info($"OnCreated() successful. duration = {ms:#,0}ms", copyToGameLog: true);
+            Log.Info($"OnCreated() successful. duration = {ms:#,0}ms", copyToGameLog: false);
         }
 
         static MethodInfo mBeforeOnCreated_ = typeof(OnCreatedPatch).GetMethod(nameof(BeforeOnCreated))

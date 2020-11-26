@@ -1,5 +1,9 @@
+log gaps Done not tested
+sub to scene event to be notified when scene is loaded : DONE untested
+print when loading is finished : DONE untested
+
 Load only the latest version of shared dlls. (*.API *.Integration)
-? prefix only SetSceneProgress if it is directly called in LoadLevelCoroutine.
+
 
 
 

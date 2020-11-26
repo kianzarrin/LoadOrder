@@ -22,7 +22,7 @@ namespace LoadOrderMod.Injections.CO {
         public static void AfterUserModCtor(PluginInfo p) {
             string modName = (p.userModInstance as IUserMod)?.Name;
             string dirName = p.name;
-            Log.Info($"plugin `{dirName}:{modName}` added sucessfully!", false);
+            Log.Info($"plugin `{dirName}:{modName}` added sucessfully!", true);
         }
 
         public static void BeforeEnable(PluginInfo p) {
