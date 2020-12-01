@@ -1,6 +1,9 @@
 using Mono.Cecil;
+using Mono.Cecil.Cil;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace LoadOrderIPatch {
     internal static class TypeDefinitionExtensions {
@@ -73,6 +76,16 @@ namespace LoadOrderIPatch {
         }
 
         #endregion
+    }
 
+    public static class InstructionExtensions {
+        public static bool Calls(this Instruction code, string method)
+        {
+            if (method is null) throw new ArgumentNullException(nameof(method));
+            if (code.OpCode != OpCodes.Call && code.OpCode != OpCodes.Callvirt) return false;
+            string name = (code.Operand as MethodReference)?.Name
+                ?? (code.Operand as MethodInfo)?.Name;
+            return name == method;
+        }
     }
 }

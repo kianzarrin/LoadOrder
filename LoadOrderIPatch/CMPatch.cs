@@ -19,7 +19,7 @@ namespace LoadOrderIPatch.Patches {
             workingPath_ = patcherWorkingPath;
 
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
-            assemblyDefinition = LoadPluginsPatch(assemblyDefinition);
+            //assemblyDefinition = LoadPluginsPatch(assemblyDefinition);
             assemblyDefinition = AddPluginsPatch(assemblyDefinition);
             return assemblyDefinition;
         }
@@ -75,8 +75,6 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertAfter(loadThis, loadDllPath);
             ilProcessor.InsertAfter(loadDllPath, callInjection);
             logger_.Info("LoadPluginsPatch applied successfully!");
-
-            Instruction last = mTarget.Body.Instructions.Last();
             return CM;
         }
 
