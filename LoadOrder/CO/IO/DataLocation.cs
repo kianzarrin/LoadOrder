@@ -19,19 +19,22 @@ namespace CO.IO {
 
         public static string RealPath(string path)
         {
+            if (!Directory.Exists(path)) {
+                Log.Exception(new DirectoryNotFoundException("path"));
+                return null;
+            }
             try {
                 path = Path.GetFullPath(path);
-                var root = Path.GetPathRoot(path).ToUpper();
-                foreach (var name in path.Substring(root.Length).Split(Path.DirectorySeparatorChar)) {
-                    var entries = Directory.GetFileSystemEntries(root);
-                    //Log.Debug($"{root} entries -> " + string.Join(", ", entries));
-                    root = entries.First(
+                var ret = Path.GetPathRoot(path).ToUpper();
+                foreach (var name in path.Substring(ret.Length).Split(Path.DirectorySeparatorChar)) {
+                    var entries = Directory.GetFileSystemEntries(ret);
+                    ret = entries.First(
                         p => string.Equals(Path.GetFileName(p), name, StringComparison.OrdinalIgnoreCase));
                 }
                 //Log.Debug("returning " + root);
-                return root;
+                return ret;
             } catch (Exception ex) {
-                Log.Exception(ex, "Path not found: " + path);
+                Log.Exception(ex, "failed to get real path for: " + path);
                 return null;
             }
         }

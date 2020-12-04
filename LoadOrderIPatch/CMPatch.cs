@@ -19,7 +19,7 @@ namespace LoadOrderIPatch.Patches {
             workingPath_ = patcherWorkingPath;
 
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
-            //assemblyDefinition = LoadPluginsPatch(assemblyDefinition);
+            assemblyDefinition = LoadPluginsPatch(assemblyDefinition);
             assemblyDefinition = AddPluginsPatch(assemblyDefinition);
             return assemblyDefinition;
         }

@@ -21,10 +21,10 @@ namespace LoadOrderIPatch.Patches {
             workingPath_ = patcherWorkingPath;
 
             assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
-            assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
+            //assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
             
             var dllPath = Path.Combine(workingPath_, "LoadOrderMod.dll");
-            LoadDLL(dllPath);
+            //LoadDLL(dllPath);
 
             return assemblyDefinition;
         }
@@ -128,12 +128,7 @@ namespace LoadOrderIPatch.Patches {
         }
 
         private MethodDefinition GetEntryPoint(ModuleDefinition module)
-        {
-            TypeDefinition type = module.Types.FirstOrDefault(t => t.Name == "Starter")
-                ?? throw new Exception("Starter not found");
-            return type.Methods.FirstOrDefault(method => method.Name.Equals("Awake"))
-                ?? throw new Exception("Starter.Awake() not found");
-        }
+            => module.GetMethod("Starter.Awake");
 
         /// <summary>
         /// Reconfigure Unity logger to remove empty lines of call stack.
