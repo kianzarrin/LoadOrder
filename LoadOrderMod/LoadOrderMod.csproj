@@ -128,7 +128,7 @@
     <Exec Command="&quot;$(MonoDir)bin\mono.exe&quot; &quot;$(MonoDir)lib\mono\4.5\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" />
     <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
 
-    <!-- <Copy SourceFiles="@(AuxilaryFiles)" DestinationFolder="$(DeployDir)" /> -->
+    <Copy SourceFiles="@(AuxilaryFiles)" DestinationFolder="$(DeployDir)" /> 
     <Delete Files="$(DeployDir)$(TargetFileName)" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
