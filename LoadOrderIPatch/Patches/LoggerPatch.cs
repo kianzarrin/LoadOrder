@@ -7,6 +7,10 @@ using System.Diagnostics;
 using ILogger = Patch.API.ILogger;
 
 namespace LoadOrderIPatch.Patches {
+
+    /// <summary>
+    /// modifies Unity Logger to insert time stamps
+    /// </summary>
     public class LoggerPatch : IPatch {
         public int PatchOrderAsc { get; } = 100;
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("UnityEngine", new Version());

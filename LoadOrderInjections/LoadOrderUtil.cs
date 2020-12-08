@@ -18,7 +18,7 @@ namespace LoadOrderInjections.Util {
         internal const string LoadOrderSettingsFile = "LoadOrder";
         const int DEFAULT_ORDER = 1000; // unordered plugins come last.
 
-        public static SavedInt SavedLoadOrder(this PluginInfo p) {
+        internal static SavedInt SavedLoadOrder(this PluginInfo p) {
             string parentDirName = Directory.GetParent(p.modPath).Name;
             var savedLoadIndexKey = p.name + "." + parentDirName + ".Order";
             var ret = new SavedInt(savedLoadIndexKey, LoadOrderSettingsFile, DEFAULT_ORDER, autoUpdate: true);

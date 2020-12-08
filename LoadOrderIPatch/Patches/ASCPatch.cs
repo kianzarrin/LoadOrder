@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using ILogger = Patch.API.ILogger;
+using static LoadOrderIPatch.Commons;
 
 namespace LoadOrderIPatch.Patches {
     public class ASCPatch : IPatch {
@@ -21,41 +22,45 @@ namespace LoadOrderIPatch.Patches {
             workingPath_ = patcherWorkingPath;
 
             assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
-            //assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
-            
-            var dllPath = Path.Combine(workingPath_, "LoadOrderMod.dll");
-            //LoadDLL(dllPath);
+
+            LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
+
+            bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
+            if (sman) {
+                assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
+            }
 
             return assemblyDefinition;
         }
 
-        private Assembly LoadDLL(string dllPath)
+        public Assembly LoadDLL(string dllPath)
         {
+            void Log(string _m) => logger_.Info(_m);
             try {
                 Assembly assembly;
                 string symPath = dllPath + ".mdb";
                 if (File.Exists(symPath)) {
-                    logger_.Info("\nLoading " + dllPath + "\nSymbols " + symPath);
+                    Log("\nLoading " + dllPath + "\nSymbols " + symPath);
                     assembly = Assembly.Load(File.ReadAllBytes(dllPath), File.ReadAllBytes(symPath));
                 } else {
-                    logger_.Info("Loading " + dllPath);
+                    Log("Loading " + dllPath);
                     assembly = Assembly.Load(File.ReadAllBytes(dllPath));
                 }
                 if (assembly != null) {
-                    logger_.Info("Assembly " + assembly.FullName + " loaded.\n");
+                    Log("Assembly " + assembly.FullName + " loaded.\n");
                 } else {
-                    logger_.Info("Assembly at " + dllPath + " failed to load.\n");
+                    Log("Assembly at " + dllPath + " failed to load.\n");
                 }
                 return assembly;
             } catch (Exception ex) {
-                logger_.Info("Assembly at " + dllPath + " failed to load.\n" + ex.ToString());
+                logger_.Error("Assembly at " + dllPath + " failed to load.\n" + ex.ToString());
                 return null;
             }
         }
 
-        public AssemblyDefinition GetAssemblyDefinition(string fileName)
-            => CecilUtil.GetAssemblyDefinition(workingPath_, fileName);
-
+        /// <summary>
+        /// replaces the normal loading process with subscription manger tool
+        /// </summary>
         public AssemblyDefinition SubscriptionManagerPatch(AssemblyDefinition ASC)
         {
             logger_.Info("SubManagerPatch.Execute() called ...");
@@ -67,7 +72,7 @@ namespace LoadOrderIPatch.Patches {
             var instructions = mTarget.Body.Instructions;
             ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
 
-            AssemblyDefinition asmMod = GetAssemblyDefinition("LoadOrderMod.dll");
+            AssemblyDefinition asmMod = GetInjectionsAssemblyDefinition(workingPath_);
             var tSortPlugins = asmMod.MainModule.Types
                 .First(_t => _t.Name == "SubscriptionManager");
             MethodDefinition mdPostBootAction = tSortPlugins.Methods
@@ -79,7 +84,7 @@ namespace LoadOrderIPatch.Patches {
             Instruction BranchTarget = instructions.Last();// return
             Instruction BrTrueEnd = Instruction.Create(OpCodes.Brtrue, BranchTarget);
 
-            ilProcessor.InsertAfter(CallBoot, callInjection); // load pluggins arg
+            ilProcessor.InsertAfter(CallBoot, callInjection); 
             ilProcessor.InsertAfter(callInjection, BrTrueEnd);
             logger_.Info("SubscriptionManagerPatch applied successfully!");
             return ASC;
@@ -95,7 +100,7 @@ namespace LoadOrderIPatch.Patches {
             MethodDefinition mInjection = tPluginManager.Methods
                 .First(_m => _m.Name == "LoadPlugin");
 
-            var dllPath = Path.Combine(workingPath_, "LoadOrderMod.dll");
+            var dllPath = Path.Combine(workingPath_, "LoadOrderInjections.dll");
 
             Instruction loadThis = Instruction.Create(OpCodes.Ldarg_0);
             Instruction loadDllPath = Instruction.Create(OpCodes.Ldstr, dllPath);

@@ -3,7 +3,7 @@ using KianCommons;
 using System.Diagnostics;
 using UnityEngine.SceneManagement;
 
-namespace LoadOrderMod.Patches {
+namespace LoadOrderInjections.Patches {
     [HarmonyPatch(typeof(SceneManager))]
     [HarmonyPatch("LoadSceneAsync")]
     [HarmonyPatch(new[] { typeof(string), typeof(LoadSceneMode) })]

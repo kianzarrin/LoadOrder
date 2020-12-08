@@ -1,16 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectGuid>{F75E7E61-C575-44A8-AA22-690CD89E9BA2}</ProjectGuid>
+    <ProjectGuid>{16FA65D4-EB2B-4863-B95E-8629F97BC9B9}</ProjectGuid>
     <TargetFramework>net35</TargetFramework>
     <Copyright>Copyright ©  2020</Copyright>
     <Deterministic>false</Deterministic>
-    <AssemblyVersion>0.1.6.*</AssemblyVersion>
+    <AssemblyVersion>0.1.6.0</AssemblyVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
@@ -29,53 +29,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="KianCommons\KianCommons\Math\**" />
-    <Compile Remove="KianCommons\KianCommons\ObjUnity3D\**" />
-    <Compile Remove="KianCommons\KianCommons\obj\**" />
-    <Compile Remove="KianCommons\KianCommons\Patches\**" />
-    <Compile Remove="KianCommons\KianCommons\Properties\**" />
-    <Compile Remove="KianCommons\KianCommons\UI\**" />
-    <Compile Remove="KianCommons\KianCommons\Util\**" />
-    <Compile Remove="KianCommons\libs\**" />
-    <EmbeddedResource Remove="KianCommons\KianCommons\Math\**" />
-    <EmbeddedResource Remove="KianCommons\KianCommons\ObjUnity3D\**" />
-    <EmbeddedResource Remove="KianCommons\KianCommons\obj\**" />
-    <EmbeddedResource Remove="KianCommons\KianCommons\Patches\**" />
-    <EmbeddedResource Remove="KianCommons\KianCommons\Properties\**" />
-    <EmbeddedResource Remove="KianCommons\KianCommons\UI\**" />
-    <EmbeddedResource Remove="KianCommons\KianCommons\Util\**" />
-    <EmbeddedResource Remove="KianCommons\libs\**" />
-    <None Remove="KianCommons\KianCommons\Math\**" />
-    <None Remove="KianCommons\KianCommons\ObjUnity3D\**" />
-    <None Remove="KianCommons\KianCommons\obj\**" />
-    <None Remove="KianCommons\KianCommons\Patches\**" />
-    <None Remove="KianCommons\KianCommons\Properties\**" />
-    <None Remove="KianCommons\KianCommons\UI\**" />
-    <None Remove="KianCommons\KianCommons\Util\**" />
-    <None Remove="KianCommons\libs\**" />
+    <Compile Remove="KianCommons\**" />
+    <EmbeddedResource Remove="KianCommons\**" />
+    <None Remove="KianCommons\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Patches\LoadingProfiler_NewEventPatch.cs" />
-    <Compile Remove="Patches\SetSceneProgressPatch.cs" />
-    <Compile Remove="Util\Log.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="KianCommons\.git" />
-    <None Remove="KianCommons\.gitattributes" />
-    <None Remove="KianCommons\.gitignore" />
-    <None Remove="KianCommons\KianCommons\.editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="KianCommons\KianCommons\Patches\HarmonyUtil.cs" />
-    <Compile Include="KianCommons\KianCommons\Patches\TranspilerUtils.cs" />
-    <Compile Include="KianCommons\KianCommons\Util\AssemblyTypeExtensions.cs" />
+    <Compile Include="KianCommons\KianCommons\Util\ReflectionHelpers.cs" />
     <Compile Include="KianCommons\KianCommons\Util\Assertion.cs" />
-    <Compile Include="KianCommons\KianCommons\Util\HelpersExtensions.cs" />
     <Compile Include="KianCommons\KianCommons\Util\Log.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="CitiesHarmony.API" Version="1.0.5" />
+    <Compile Include="KianCommons\KianCommons\Util\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
@@ -104,10 +67,6 @@
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="KianCommons\KianCommons\Math\" />
-    <Folder Include="Resources\" />
-  </ItemGroup>
   <Target Name="DeployToModDirectory" AfterTargets="Build">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />
@@ -120,25 +79,15 @@
       <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
     </PropertyGroup>
     <ItemGroup>
-      <AuxilaryFiles Include="$(TargetDir)Resources\*.png;$(TargetDir)CitiesHarmony.API.dll" />
+      <AuxilaryFiles Include="$(TargetDir)Resources\*.png" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
     <Delete Files="$(TargetPath).mdb" />
     <Exec Command="&quot;$(MonoDir)bin\mono.exe&quot; &quot;$(MonoDir)lib\mono\4.5\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" />
     <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
 
-    <Copy SourceFiles="@(AuxilaryFiles)" DestinationFolder="$(DeployDir)" /> 
-    <Delete Files="$(DeployDir)$(TargetFileName)" />
+    <!--<Copy SourceFiles="@(AuxilaryFiles)" DestinationFolder="$(DeployDir)" />-->
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
   </Target>
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\dell\source\repos\LoadOrder\LoadOrderMod\KianCommons\KianCommons\.editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\dell\source\repos\LoadOrder\LoadOrderMod\KianCommons\KianCommons\.editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\dell\source\repos\LoadOrder\LoadOrderMod\KianCommons\KianCommons\.editorconfig" />
-  </ItemGroup>
 </Project>

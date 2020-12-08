@@ -8,7 +8,7 @@ using ICities;
 using System.Reflection;
 using System.Diagnostics;
 
-namespace LoadOrderMod.Patches._LoadingWrapper {
+namespace LoadOrderInjections.Patches._LoadingWrapper {
     [HarmonyPatch(typeof(LoadingWrapper))]
     [HarmonyPatch("OnLoadingExtensionsCreated")]
     public static class OnCreatedPatch {

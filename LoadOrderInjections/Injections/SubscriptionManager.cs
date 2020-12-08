@@ -1,18 +1,17 @@
-using ColossalFramework;
+using KianCommons;
 using System;
+using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using KianCommons;
-using System.IO;
 
-namespace LoadOrderMod {
+namespace LoadOrderInjections {
     public class TestComponent : MonoBehaviour {
         void Awake() => Log.Debug("TestComponent.Awake() was called");
         void Start() => Log.Debug("TestComponent.Start() was called");
 
-        void OnGUI() {
+        void OnGUI()
+        {
             GUILayout.Label("OnGUI called");
         }
     }
@@ -22,9 +21,9 @@ namespace LoadOrderMod {
         private Text text;
         private UpDown textChanged = UpDown.Start;
 
-        void Awake() {
+        void Awake()
+        {
             Log.Debug("Example.Awake() was called");
-
 
             // Load the Arial font from the Unity Resources folder.
             Font arial;
@@ -61,7 +60,8 @@ namespace LoadOrderMod {
             rectTransform.sizeDelta = new Vector2(600, 200);
         }
 
-        void Update() {
+        void Update()
+        {
             // Press the space key to change the Text message.
             if (Input.GetKeyDown(KeyCode.Space)) {
                 if (textChanged != UpDown.Down) {
@@ -77,14 +77,9 @@ namespace LoadOrderMod {
 
     public static class SubscriptionManager {
         /// <returns>true, to avoid loading intro</returns>
-        public static bool PostBootAction() {
-            // parse command line args:
-            bool sman = false;
-            OptionSet optionSet = new OptionSet();
-            optionSet.Add("sman", "Subscription Manager", v => sman = v != null);
-            optionSet.Parse(Environment.GetCommandLineArgs());
-
-            // GUI:
+        public static bool PostBootAction()
+        {
+            bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
             if (sman) {
                 new GameObject().AddComponent<Camera>();
                 new GameObject("base").AddComponent<Example>();
@@ -92,8 +87,9 @@ namespace LoadOrderMod {
             return sman;
         }
 
-        public static void EnsureSubs() {
+        public static void EnsureSubs()
+        {
             DirectoryInfo d = new DirectoryInfo("");
-            }
+        }
     }
 }

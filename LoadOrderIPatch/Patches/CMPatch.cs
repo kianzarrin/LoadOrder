@@ -4,7 +4,7 @@ using Patch.API;
 using System;
 using System.IO;
 using System.Linq;
-using UnityEngine;
+using static LoadOrderIPatch.Commons;
 using ILogger = Patch.API.ILogger;
 
 namespace LoadOrderIPatch.Patches {
@@ -19,14 +19,14 @@ namespace LoadOrderIPatch.Patches {
             workingPath_ = patcherWorkingPath;
 
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
-            assemblyDefinition = LoadPluginsPatch(assemblyDefinition);
+            ////assemblyDefinition = LoadPluginsPatch(assemblyDefinition);
             assemblyDefinition = AddPluginsPatch(assemblyDefinition);
             return assemblyDefinition;
         }
 
-        public AssemblyDefinition GetAssemblyDefinition(string fileName)
-            => CecilUtil.GetAssemblyDefinition(workingPath_, fileName);
-
+        /// <summary>
+        /// Sorts Assembly dictionary (hackish) at the begining of PluginManager.LoadAssemblies()
+        /// </summary>
         public AssemblyDefinition LoadAssembliesPatch(AssemblyDefinition CM)
         {
             var tPluginManager = CM.MainModule.Types
@@ -35,8 +35,8 @@ namespace LoadOrderIPatch.Patches {
                 .First(_m => _m.Name == "LoadAssemblies");
 
 
-            AssemblyDefinition LoadOrderMod = GetAssemblyDefinition("LoadOrderMod.dll");
-            var tSortPlugins = LoadOrderMod.MainModule.Types
+            AssemblyDefinition asm = GetInjectionsAssemblyDefinition(workingPath_);
+            var tSortPlugins = asm.MainModule.Types
                 .First(_t => _t.Name == "SortPlugins");
             MethodDefinition mdSort = tSortPlugins.Methods
                 .First(_m => _m.Name == "Sort");
@@ -53,6 +53,9 @@ namespace LoadOrderIPatch.Patches {
             return CM;
         }
 
+        /// <summary>
+        /// loads LoadOrderInjections.dll at the beggning of PluginManger.LoadPlugins()
+        /// </summary>
         public AssemblyDefinition LoadPluginsPatch(AssemblyDefinition CM)
         {
             var tPluginManager = CM.MainModule.Types
@@ -63,7 +66,7 @@ namespace LoadOrderIPatch.Patches {
             MethodDefinition mInjection = tPluginManager.Methods
                 .First(_m => _m.Name == "LoadPlugin");
 
-            var dllPath = Path.Combine(workingPath_, "LoadOrderMod.dll");
+            var dllPath = Path.Combine(workingPath_, "LoadOrderInjections.dll");
 
             Instruction loadThis = Instruction.Create(OpCodes.Ldarg_0);
             Instruction loadDllPath = Instruction.Create(OpCodes.Ldstr, dllPath);
@@ -78,6 +81,9 @@ namespace LoadOrderIPatch.Patches {
             return CM;
         }
 
+        /// <summary>
+        /// inserts time stamps about adding/enabling plugins.
+        /// </summary>
         public AssemblyDefinition AddPluginsPatch(AssemblyDefinition CM)
         {
             var tPluginManager = CM.MainModule.Types
@@ -85,8 +91,8 @@ namespace LoadOrderIPatch.Patches {
             MethodDefinition mTarget = tPluginManager.Methods
                 .First(_m => _m.Name == "AddPlugins");
 
-            AssemblyDefinition LoadOrderMod = GetAssemblyDefinition("LoadOrderMod.dll");
-            var tLogs = LoadOrderMod.MainModule.Types
+            AssemblyDefinition asm = GetInjectionsAssemblyDefinition(workingPath_);
+            var tLogs = asm.MainModule.Types
                 .First(_t => _t.Name == "Logs");
 
             MethodDefinition mdPreCreateUserModInstance = tLogs.Methods

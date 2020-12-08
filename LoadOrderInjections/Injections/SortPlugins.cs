@@ -1,12 +1,12 @@
 using ColossalFramework.PlatformServices;
 using KianCommons;
-using LoadOrderMod.Util;
+using LoadOrderInjections.Util;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using PluginInfo = ColossalFramework.Plugins.PluginManager.PluginInfo;
 
-namespace LoadOrderMod.Injections.CO {
+namespace LoadOrderInjections.Injections {
     public static class SortPlugins {
         public static int Comparison(PluginInfo p1, PluginInfo p2) {
             var savedOrder1 = p1.SavedLoadOrder();

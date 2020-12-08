@@ -9,8 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadOrderMod", "LoadOrderMo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadOrderIPatch", "LoadOrderIPatch\LoadOrderIPatch.csproj", "{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}"
 	ProjectSection(ProjectDependencies) = postProject
-		{F75E7E61-C575-44A8-AA22-690CD89E9BA2} = {F75E7E61-C575-44A8-AA22-690CD89E9BA2}
+		{16FA65D4-EB2B-4863-B95E-8629F97BC9B9} = {16FA65D4-EB2B-4863-B95E-8629F97BC9B9}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadOrderInjections", "LoadOrderInjections\LoadOrderInjections.csproj", "{16FA65D4-EB2B-4863-B95E-8629F97BC9B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +32,10 @@ Global
 		{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16FA65D4-EB2B-4863-B95E-8629F97BC9B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16FA65D4-EB2B-4863-B95E-8629F97BC9B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16FA65D4-EB2B-4863-B95E-8629F97BC9B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16FA65D4-EB2B-4863-B95E-8629F97BC9B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

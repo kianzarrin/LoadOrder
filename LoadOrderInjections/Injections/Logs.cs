@@ -1,13 +1,13 @@
-using HarmonyLib;
 using ICities;
 using KianCommons;
-using LoadOrderMod.Util;
+using LoadOrderInjections.Util;
 using static ColossalFramework.Plugins.PluginManager;
+using static KianCommons.ReflectionHelpers;
 
-namespace LoadOrderMod.Injections.CO {
+namespace LoadOrderInjections.Injections {
     public static class Logs {
         public static void PreCreateUserModInstance(PluginInfo p) {
-            var m_UserModInstance = AccessTools.DeclaredField(typeof(PluginInfo), "m_UserModInstance")?.GetValue(p);
+            var m_UserModInstance = GetFieldValue("m_UserModInstance", p);
             if (m_UserModInstance != null)
                 return; // too late. already instanciated.
 

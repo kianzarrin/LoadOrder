@@ -1,4 +1,4 @@
-namespace LoadOrderMod
+namespace LoadOrderInjections
 {
     using System;
     using ICities;

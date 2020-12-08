@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 using static KianCommons.Patches.TranspilerUtils;
 using System;
 
-namespace LoadOrderMod.Patches._AssetDataWrapper {
+namespace LoadOrderInjections.Patches._AssetDataWrapper {
     [HarmonyPatch(typeof(AssetDataWrapper))]
     [HarmonyPatch(nameof(AssetDataWrapper.OnAssetLoaded))]
     public static class OnAssetLoadedPatch {
