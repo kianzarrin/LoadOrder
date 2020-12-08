@@ -1,3 +1,6 @@
 [submodule "LoadOrderMod/KianCommons"]
 	path = LoadOrderMod/KianCommons
 	url = https://github.com/kianzarrin/KianCommons
+[submodule "LoadOrderInjections/KianCommons"]
+	path = LoadOrderInjections/KianCommons
+	url = https://github.com/kianzarrin/KianCommons
