@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 using static KianCommons.Patches.TranspilerUtils;
 using static LoadingManager;
 
-namespace LoadOrderInjections.Patches {
+namespace LoadOrderMod.Patches {
     [HarmonyPatch]
     public static class SimulationDataReadyPatch {
         static IEnumerable<MethodBase> TargetMethods() {

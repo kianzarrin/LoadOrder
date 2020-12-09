@@ -2,7 +2,7 @@ using HarmonyLib;
 using KianCommons;
 using System.Diagnostics;
 
-namespace LoadOrderInjections.Patches {
+namespace LoadOrderMod.Patches {
     [HarmonyPatch(typeof(LoadingManager))]
     [HarmonyPatch("PreLoadLevel")]
     public static class PreLoadLevelPatch {

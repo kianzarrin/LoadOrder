@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using static ColossalFramework.Plugins.PluginManager;
 
-namespace LoadOrderInjections.Util {
+namespace LoadOrderMod.Util {
     internal static class LoadOrderUtil {
         static LoadOrderUtil() {
             if (GameSettings.FindSettingsFileByName(LoadOrderSettingsFile) == null) {

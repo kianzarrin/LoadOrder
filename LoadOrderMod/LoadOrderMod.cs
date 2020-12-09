@@ -1,4 +1,4 @@
-namespace LoadOrderInjections
+namespace LoadOrderMod
 {
     using System;
     using ICities;
@@ -7,10 +7,12 @@ namespace LoadOrderInjections
     using ColossalFramework.IO;
     using ColossalFramework.Plugins;
     using ColossalFramework.PlatformServices;
+    using ColossalFramework.UI;
     using System.Linq;
     using System.IO;
     using CitiesHarmony.API;
     using UnityEngine.SceneManagement;
+    using Util;
 
     public class LoadOrderMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderMod).Assembly.GetName().Version;
@@ -46,16 +48,16 @@ namespace LoadOrderInjections
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
             Log.Flush();
+            PlatformService.workshop.eventUGCQueryCompleted += OnUGCQueryCompleted;
+            PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnUGCRequestUGCDetailsCompleted;
         }
 
         public void OnDisabled() {
             Log.Buffered = false;
             HarmonyUtil.UninstallHarmony(HARMONY_ID);
+            PlatformService.workshop.eventUGCQueryCompleted -= OnUGCQueryCompleted;
+            PlatformService.workshop.eventUGCRequestUGCDetailsCompleted -= OnUGCRequestUGCDetailsCompleted;
         }
-
-        // public void OnSettingsUI(UIHelperBase helper) {
-        //    GUI.Settings.OnSettingsUI(helper);
-        // }
 
         public static void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
             Log.Info($"SceneManager.sceneLoaded({scene.name}, {mode})", true);
@@ -65,5 +67,32 @@ namespace LoadOrderInjections
             Log.Info($"SceneManager.activeSceneChanged({from.name}, {to.name})", true);
             Log.Flush();
         }
+
+
+        public void OnSettingsUI(UIHelperBase helper) {
+            //GUI.Settings.OnSettingsUI(helper);
+            helper.AddButton("RequestItemDetails", OnRequestItemDetailsClicked);
+            helper.AddButton("QueryItems", OnQueryItemsClicked);
+        }
+
+        static void OnRequestItemDetailsClicked() {
+            Log.Debug("RequestItemDetails pressed");
+            foreach(var item in PlatformService.workshop.GetSubscribedItems()) {
+                PlatformService.workshop.RequestItemDetails(item);
+            }
+        }
+        static void OnQueryItemsClicked() {
+            Log.Debug("QueryItems pressed");
+            PlatformService.workshop.QueryItems();
+        }
+
+
+        static void OnUGCQueryCompleted(UGCDetails result, bool ioError) {
+            Log.Debug($"OnUGCQueryCompleted(result:{result.result} {result.publishedFileId}, ioError:{ioError})");
+        }
+        static void OnUGCRequestUGCDetailsCompleted(UGCDetails result, bool ioError) {
+            Log.Debug($"OnUGCRequestUGCDetailsCompleted(result:{result.result} {result.publishedFileId}, ioError:{ioError})");
+        }
+
     }
 }

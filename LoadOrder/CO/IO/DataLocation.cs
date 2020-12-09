@@ -1,5 +1,5 @@
 ﻿#pragma warning disable
-using LoadOrderInjections;
+using LoadOrderMod;
 using LoadOrderTool;
 using Microsoft.Win32;
 using System;
@@ -43,7 +43,7 @@ namespace CO.IO {
         {
             try {
 
-                var data = LoadOrderInjections.LoadOrderCache.Deserialize(localApplicationData);
+                var data = LoadOrderMod.LoadOrderCache.Deserialize(localApplicationData);
                 if (Directory.Exists(data?.GamePath)) { 
                     GamePath = data.GamePath;
                 } else { 

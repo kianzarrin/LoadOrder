@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using static KianCommons.Patches.TranspilerUtils;
-using static LoadOrderInjections.Util.LoadOrderUtil;
+using static LoadOrderMod.Util.LoadOrderUtil;
 using KianCommons;
 
-namespace LoadOrderInjections.Patches {
+namespace LoadOrderMod.Patches {
     [HarmonyPatch]
     public static class LoadLevelCompletePatch {
         static MethodBase TargetMethod() {

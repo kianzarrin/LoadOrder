@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using static KianCommons.Patches.TranspilerUtils;
 
-namespace LoadOrderInjections.Patches {
+namespace LoadOrderMod.Patches {
     [HarmonyPatch]
     public static class SceneLoadedPatch {
         static IEnumerable<MethodBase> TargetMethods() {

@@ -1,7 +1,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace LoadOrderInjections {
+namespace LoadOrderMod {
     public class LoadOrderCache {
         public const string FILE_NAME = "LoadOrderCache.xml";
         public string WorkShopContentPath;

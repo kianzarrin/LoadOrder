@@ -9,9 +9,9 @@ using System.Reflection;
 using System.Diagnostics;
 using ColossalFramework.Plugins;
 using System.Linq;
-using LoadOrderInjections.Util;
+using LoadOrderMod.Util;
 
-namespace LoadOrderInjections.Patches._LoadingWrapper {
+namespace LoadOrderMod.Patches._LoadingWrapper {
     [HarmonyPatch(typeof(LoadingWrapper))]
     [HarmonyPatch("OnLevelLoaded")]
     public static class OnLevelLoadedpatch {

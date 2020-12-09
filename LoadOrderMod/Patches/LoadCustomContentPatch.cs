@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using static KianCommons.Patches.TranspilerUtils;
-using static LoadOrderInjections.Util.LoadOrderUtil;
-namespace LoadOrderInjections.Patches {
+using static LoadOrderMod.Util.LoadOrderUtil;
+namespace LoadOrderMod.Patches {
     [HarmonyPatch]
     public static class LoadCustomContentPatch {
         static IEnumerable<MethodBase> TargetMethods() {
