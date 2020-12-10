@@ -1,7 +1,7 @@
 namespace LoadOrderIPatch {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
+    using System.Linq;
     using Mono.Cecil;
     using Mono.Cecil.Cil;
     using System.IO;

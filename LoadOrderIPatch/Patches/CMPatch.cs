@@ -21,8 +21,36 @@ namespace LoadOrderIPatch.Patches {
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
             ////assemblyDefinition = LoadPluginsPatch(assemblyDefinition);
             assemblyDefinition = AddPluginsPatch(assemblyDefinition);
+#if DEBUG
+            assemblyDefinition = InsertPrintStackTrace(assemblyDefinition);
+#endif
             return assemblyDefinition;
         }
+
+        public AssemblyDefinition InsertPrintStackTrace(AssemblyDefinition CM)
+        {
+            var module = CM.MainModule;
+            var type = module.GetType("ColossalFramework.PlatformServices.PlatformServiceBehaviour");
+            var mTarget = type.Methods.Single(_m=>_m.Name== "Awake");
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            var instructions = mTarget.Body.Instructions;
+            var first = instructions.First();
+
+            var mInjection = GetType().GetMethod(nameof(LogStackTrace));
+            var mrInjection = module.ImportReference(mInjection);
+            var callInjection = Instruction.Create(OpCodes.Call, mrInjection);
+            
+            ilProcessor.InsertBefore(first, callInjection);
+
+            logger_.Info("PlatformServiceBehaviour_Awake_Patch applied successfully!");
+            return CM;
+        }
+
+        public static void LogStackTrace()
+        {
+            UnityEngine.Debug.Log("[LoadOrderIPatch] stack trace is: " + Environment.StackTrace);
+        }
+
 
         /// <summary>
         /// Sorts Assembly dictionary (hackish) at the begining of PluginManager.LoadAssemblies()

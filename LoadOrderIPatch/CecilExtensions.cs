@@ -15,13 +15,13 @@ namespace LoadOrderIPatch {
             TypeDefinition type = module.Types.FirstOrDefault(t => t.FullName == fullTypeName);
             if (type is null) {
                 if (throwOnError)
-                    throw new Exception(fullTypeName + "not found");
+                    throw new Exception(fullTypeName + " not found");
                 return null;
             }
 
-            var ret = type.Methods.FirstOrDefault(method => method.Name.Equals("Awake"));
+            var ret = type.Methods.FirstOrDefault(method => method.Name.Equals(methodName));
             if (ret is null && throwOnError)
-                throw new Exception(methodName + "not found");
+                throw new Exception(methodName + " not found");
             return ret;
         }
 

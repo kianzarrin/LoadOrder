@@ -1,0 +1,29 @@
+﻿Load only the latest version of shared dlls. (*.API *.Integration)
+
+Content manager tool:
+	Ensure:
+		- all unsubbed items are non-existant.
+		- all subbed items are existant.
+		- all subbed items are uptodate
+	
+	unsub/sub to items asynchronously.
+	create lists.
+
+	extract referenced assets/mods from saved city crp
+	extract used assets from saved city crp
+
+	do this with control over refrenced or used, asset or mod:
+		- sub/enable all
+		- unsub/disable unused
+		- list/activate required DLC.
+		- deactivate unused DLCs.
+
+	sub to all items referenced by saved city.
+	enable all items referenced by saved city.
+	sub to all referenced mods and used assets by saved city.
+	enable to all referenced mods and used assets by saved city.
+	disable unreferenced/unsued items by a saved city.
+	detect all DLCs referenced by assets used/referenced by a saved city.
+
+	filters:
+		asset\mod included\excluded enabled\disabled workshop\local

@@ -1,18 +1,15 @@
-namespace LoadOrderMod
-{
-    using System;
+namespace LoadOrderMod {
+    using CitiesHarmony.API;
+    using ColossalFramework.IO;
+    using ColossalFramework.PlatformServices;
+    using ColossalFramework.Plugins;
     using ICities;
     using KianCommons;
+    using System;
     using System.Diagnostics;
-    using ColossalFramework.IO;
-    using ColossalFramework.Plugins;
-    using ColossalFramework.PlatformServices;
-    using ColossalFramework.UI;
-    using System.Linq;
     using System.IO;
-    using CitiesHarmony.API;
+    using System.Linq;
     using UnityEngine.SceneManagement;
-    using Util;
 
     public class LoadOrderMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderMod).Assembly.GetName().Version;
@@ -73,19 +70,27 @@ namespace LoadOrderMod
             //GUI.Settings.OnSettingsUI(helper);
             helper.AddButton("RequestItemDetails", OnRequestItemDetailsClicked);
             helper.AddButton("QueryItems", OnQueryItemsClicked);
+            helper.AddButton("RunCallbacks", OnRunCallbacksClicked);
+        }
+        static void OnRunCallbacksClicked() {
+            Log.Debug("RunCallbacks pressed");
+            try {
+                PlatformService.RunCallbacks();
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
         }
 
         static void OnRequestItemDetailsClicked() {
             Log.Debug("RequestItemDetails pressed");
-            foreach(var item in PlatformService.workshop.GetSubscribedItems()) {
-                PlatformService.workshop.RequestItemDetails(item);
+            foreach (var item in PlatformService.workshop.GetSubscribedItems()) {
+                PlatformService.workshop.RequestItemDetails(item).LogRet($"RequestItemDetails({item})");
             }
         }
         static void OnQueryItemsClicked() {
             Log.Debug("QueryItems pressed");
-            PlatformService.workshop.QueryItems();
+            PlatformService.workshop.QueryItems().LogRet($"QueryItems()"); ;
         }
-
 
         static void OnUGCQueryCompleted(UGCDetails result, bool ioError) {
             Log.Debug($"OnUGCQueryCompleted(result:{result.result} {result.publishedFileId}, ioError:{ioError})");
@@ -93,6 +98,5 @@ namespace LoadOrderMod
         static void OnUGCRequestUGCDetailsCompleted(UGCDetails result, bool ioError) {
             Log.Debug($"OnUGCRequestUGCDetailsCompleted(result:{result.result} {result.publishedFileId}, ioError:{ioError})");
         }
-
     }
 }

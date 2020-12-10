@@ -30,6 +30,8 @@ namespace LoadOrderIPatch.Patches {
                 assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
             }
 
+            assemblyDefinition = NoQueryPatch(assemblyDefinition);
+
             return assemblyDefinition;
         }
 
@@ -63,7 +65,7 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         public AssemblyDefinition SubscriptionManagerPatch(AssemblyDefinition ASC)
         {
-            logger_.Info("SubManagerPatch.Execute() called ...");
+            logger_.Info("SubscriptionManagerPatch() called ...");
             var module = ASC.Modules.First();
             var tPluginManager = module.Types
                 .First(_t => _t.FullName == "Starter");
@@ -71,22 +73,48 @@ namespace LoadOrderIPatch.Patches {
                 .First(_m => _m.Name == "Awake");
             var instructions = mTarget.Body.Instructions;
             ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            AssemblyDefinition asm = GetInjectionsAssemblyDefinition(workingPath_);
 
-            AssemblyDefinition asmMod = GetInjectionsAssemblyDefinition(workingPath_);
-            var tSortPlugins = asmMod.MainModule.Types
-                .First(_t => _t.Name == "SubscriptionManager");
-            MethodDefinition mdPostBootAction = tSortPlugins.Methods
-                .First(_m => _m.Name == "PostBootAction");
-            var mrInjection = module.ImportReference(mdPostBootAction);
-
+            /**********************************/
+            var method = asm.MainModule.GetMethod(
+                "LoadOrderInjections.SubscriptionManager.PostBootAction");
+            var call1 = Instruction.Create(OpCodes.Call, module.ImportReference(method));
             Instruction CallBoot = instructions.First(_c => _c.Calls("Boot"));
-            Instruction callInjection = Instruction.Create(OpCodes.Call, mrInjection);
             Instruction BranchTarget = instructions.Last();// return
             Instruction BrTrueEnd = Instruction.Create(OpCodes.Brtrue, BranchTarget);
 
-            ilProcessor.InsertAfter(CallBoot, callInjection); 
-            ilProcessor.InsertAfter(callInjection, BrTrueEnd);
+            ilProcessor.InsertAfter(CallBoot, call1); 
+            ilProcessor.InsertAfter(call1, BrTrueEnd);
+
+            /**********************************/
+            method = asm.MainModule.GetMethod(
+                "LoadOrderInjections.SteamUtilities.RegisterEvents");
+            var call2 = Instruction.Create(OpCodes.Call, module.ImportReference(method));
+            ilProcessor.InsertBefore(instructions.First(), call2);
+            /**********************************/
+
             logger_.Info("SubscriptionManagerPatch applied successfully!");
+            return ASC;
+        }
+
+        public AssemblyDefinition NoQueryPatch(AssemblyDefinition ASC)
+        {
+            logger_.Info("NoQueryPatch() called ...");
+            var module = ASC.Modules.First();
+            var targetMethod = module.GetMethod("WorkshopAdPanel.Awake");
+            var instructions = targetMethod.Body.Instructions;
+            ILProcessor ilProcessor = targetMethod.Body.GetILProcessor();
+
+            /**********************************/
+            Instruction callQuery = instructions.First(_c => _c.Calls("QueryItems"));
+            var prev = callQuery.Previous;
+            var next = callQuery.Next;
+
+            ilProcessor.Remove(prev);
+            ilProcessor.Remove(callQuery);
+            ilProcessor.Remove(next);
+
+            logger_.Info("NoQueryPatch applied successfully!");
             return ASC;
         }
 
@@ -147,6 +175,7 @@ namespace LoadOrderIPatch.Patches {
             Application.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
             Debug.Log("************************** Removed logging stacktrace bloat **************************");
         }
+
         //PreCreateUserModInstance
     }
 }
