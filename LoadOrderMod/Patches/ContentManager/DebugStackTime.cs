@@ -32,18 +32,17 @@ namespace LoadOrderMod.Patches {
         }
     }
 
-
     //[HarmonyPatch(typeof(CategoryContentPanel), "RefreshEntries")]
     //public static class RefreshEntries {
     //    public static void Prefix() => Log.Debug(STCulled);
     //    public static void Postfix() => Log.Debug(STCulled);
     //}
 
-    [HarmonyPatch(typeof(ContentManagerPanel), "OnEnableAll")]
-    public static class OnEnableAll {
-        public static void Prefix() => Log.Debug(STCulled);
-        public static void Postfix() => Log.Debug(STCulled);
-    }
+    //[HarmonyPatch(typeof(ContentManagerPanel), "OnEnableAll")]
+    //public static class OnEnableAll {
+    //    public static void Prefix() => Log.Debug(STCulled);
+    //    public static void Postfix() => Log.Debug(STCulled);
+    //}
 
     //[HarmonyPatch(typeof(ContentManagerPanel), "BindEnableDisableAll")]
     //public static class BindEnableDisableAll {

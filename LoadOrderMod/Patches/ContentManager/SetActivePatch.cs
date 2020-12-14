@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Reflection.Emit;
 using static KianCommons.ReflectionHelpers;
 using System.Linq;
 
@@ -21,7 +22,7 @@ namespace LoadOrderMod.Patches.ContentManager {
             foreach (var code in instructions) {
                 if (code.Calls(mForcedAssetStateChanged)) {
                     count++;
-                    yield return new CodeInstruction(code) { operand = mTriger }
+                    yield return new CodeInstruction(code) { operand = mTriger } // inherits labels
                         .LogRet($"replaced {code} with ");
                 } else {
                     yield return code;
