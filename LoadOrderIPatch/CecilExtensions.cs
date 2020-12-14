@@ -36,6 +36,20 @@ namespace LoadOrderIPatch {
             return module.GetMethod(typeName, methodName, throwOnError);
         }
 
+        internal static MethodDefinition GetMethod(
+            this TypeDefinition type,
+            string methodName,
+            bool throwOnError = true)
+        {
+            if (type == null) throw new ArgumentNullException("type");
+            try {
+                return type.Methods.Single(_m => _m.Name == methodName);
+            } catch {
+                if (throwOnError)
+                    throw new Exception($"could not find method:`{methodName}` in type:`{type.FullName}`");
+                return null;
+            }
+        }
         /// <summary>
         /// Test if type is subclass. Only first base type 
         /// </summary>

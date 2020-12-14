@@ -23,7 +23,7 @@ namespace LoadOrderMod {
 
         public void OnEnabled() {
             Log.ShowGap = true;
-            Log.Buffered = true;
+            //Log.Buffered = true;
             Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: false);
             //KianCommons.UI.TextureUtil.EmbededResources = false;
             //HelpersExtensions.VERBOSE = false;
@@ -45,15 +45,11 @@ namespace LoadOrderMod {
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
             Log.Flush();
-            PlatformService.workshop.eventUGCQueryCompleted += OnUGCQueryCompleted;
-            PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnUGCRequestUGCDetailsCompleted;
         }
 
         public void OnDisabled() {
             Log.Buffered = false;
             HarmonyUtil.UninstallHarmony(HARMONY_ID);
-            PlatformService.workshop.eventUGCQueryCompleted -= OnUGCQueryCompleted;
-            PlatformService.workshop.eventUGCRequestUGCDetailsCompleted -= OnUGCRequestUGCDetailsCompleted;
         }
 
         public static void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
@@ -65,38 +61,6 @@ namespace LoadOrderMod {
             Log.Flush();
         }
 
-
-        public void OnSettingsUI(UIHelperBase helper) {
-            //GUI.Settings.OnSettingsUI(helper);
-            helper.AddButton("RequestItemDetails", OnRequestItemDetailsClicked);
-            helper.AddButton("QueryItems", OnQueryItemsClicked);
-            helper.AddButton("RunCallbacks", OnRunCallbacksClicked);
-        }
-        static void OnRunCallbacksClicked() {
-            Log.Debug("RunCallbacks pressed");
-            try {
-                PlatformService.RunCallbacks();
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
-        static void OnRequestItemDetailsClicked() {
-            Log.Debug("RequestItemDetails pressed");
-            foreach (var item in PlatformService.workshop.GetSubscribedItems()) {
-                PlatformService.workshop.RequestItemDetails(item).LogRet($"RequestItemDetails({item})");
-            }
-        }
-        static void OnQueryItemsClicked() {
-            Log.Debug("QueryItems pressed");
-            PlatformService.workshop.QueryItems().LogRet($"QueryItems()"); ;
-        }
-
-        static void OnUGCQueryCompleted(UGCDetails result, bool ioError) {
-            Log.Debug($"OnUGCQueryCompleted(result:{result.result} {result.publishedFileId}, ioError:{ioError})");
-        }
-        static void OnUGCRequestUGCDetailsCompleted(UGCDetails result, bool ioError) {
-            Log.Debug($"OnUGCRequestUGCDetailsCompleted(result:{result.result} {result.publishedFileId}, ioError:{ioError})");
-        }
+        public void OnSettingsUI(UIHelperBase helper) => Settings.Settings.OnSettingsUI(helper as UIHelper);
     }
 }

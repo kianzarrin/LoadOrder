@@ -14,9 +14,9 @@ namespace LoadOrderInjections {
 
         void OnGUI()
         {
-            if (GUILayout.Button("CheckAll"))
+            if (GUILayout.Button("Check Installed"))
                 SteamUtilities.EnsureAll();
-            if (GUILayout.Button("DeleteUnsubscribed"))
+            if (GUILayout.Button("Delete UnInstalled"))
                 SteamUtilities.DeleteExtra();
         }
     }
@@ -155,7 +155,11 @@ namespace LoadOrderInjections {
         public static void OnInitSteamController()
         {
             Log.Debug(Environment.StackTrace);
-            EnsureAll();
+            bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
+            if (sman)
+                EnsureAll();
+            else foreach (var id in PlatformService.workshop.GetSubscribedItems())
+                EnsureIncludedOrExcluded(id);
         }
 
         public static void OnRequestItemDetailsClicked()
@@ -212,7 +216,7 @@ namespace LoadOrderInjections {
                 Log.Info($"[WARNING!] subscribed item not installed properly:{result.publishedFileId} {result.title} " +
                     $"reason={reason}. " +
                     $"try resintalling the item.");
-            }else {
+            } else {
                 Log.Debug($"subscribed item is good:{result.publishedFileId} {result.title}");
             }
         }
@@ -239,11 +243,14 @@ namespace LoadOrderInjections {
         }
 
         //code copied from package entry
-        public static DateTime GetLocalModTimeCreated(string modPath)
+        public static DateTime GetLocalTimeCreated(string modPath)
         {
             DateTime dateTime = DateTime.MinValue;
+
             foreach (string path in Directory.GetFiles(modPath)) {
-                if (Path.GetExtension(path) == PluginManager.kModExtension) {
+                string ext = Path.GetExtension(path);
+                //if (ext == ".dll" || ext == ".crp" || ext == ".png")
+                { 
                     DateTime creationTimeUtc = File.GetCreationTimeUtc(path);
                     if (creationTimeUtc > dateTime) {
                         dateTime = creationTimeUtc;
@@ -254,12 +261,14 @@ namespace LoadOrderInjections {
         }
 
         //code copied from package entry
-        public static DateTime GetLocalModTimeUpdated(string modPath)
+        public static DateTime GetLocalTimeUpdated(string modPath)
         {
             DateTime dateTime = DateTime.MinValue;
             if (Directory.Exists(modPath)) {
                 foreach (string path in Directory.GetFiles(modPath)) {
-                    if (Path.GetExtension(path) == PluginManager.kModExtension) {
+                    string ext = Path.GetExtension(path);
+                    //if (ext == ".dll" || ext == ".crp" || ext == ".png")
+                    {
                         DateTime lastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
                         if (lastWriteTimeUtc > dateTime) {
                             dateTime = lastWriteTimeUtc;
@@ -275,7 +284,7 @@ namespace LoadOrderInjections {
 
         public static string ToAuthorName(this UserID userID) => new Friend(userID).personaName;
 
-        public enum IsUGCUpToDateResult { 
+        public enum IsUGCUpToDateResult {
             OK,
             OutOfDate,
             NotDownloaded,
@@ -291,7 +300,7 @@ namespace LoadOrderInjections {
             }
 
             var updatedServer = data.timeUpdated.ToLocalTime();
-            var updatedLocal = GetLocalModTimeUpdated(localPath);
+            var updatedLocal = GetLocalTimeUpdated(localPath);
             if (updatedLocal < updatedServer) {
                 reason = $"subscribed item is out of date. server-time={updatedServer}  local-time={updatedLocal}";
                 return false;
@@ -311,7 +320,7 @@ namespace LoadOrderInjections {
 
         public static long GetTotalSize(string path)
         {
-            var files = Directory.GetFiles(path,"*", SearchOption.AllDirectories);
+            var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
             return files.Sum(_f => new FileInfo(_f).Length);
         }
 
@@ -346,7 +355,7 @@ namespace LoadOrderInjections {
                     Directory.Delete(path2, true);
                     Directory.Move(path1, path2);
                 }
-            }catch(Exception ex) {
+            } catch (Exception ex) {
                 Log.Exception(ex, showInPanel: false);
             }
         }
@@ -360,7 +369,7 @@ namespace LoadOrderInjections {
 
             var path = PlatformService.workshop.GetSubscribedItemPath(items[0]);
             path = Path.GetDirectoryName(path);
-            
+
             foreach (var dir in Directory.GetDirectories(path)) {
                 ulong id;
                 string strID = Path.GetFileName(dir);

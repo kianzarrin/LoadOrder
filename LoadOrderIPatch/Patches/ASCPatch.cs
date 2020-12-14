@@ -22,15 +22,17 @@ namespace LoadOrderIPatch.Patches {
             workingPath_ = patcherWorkingPath;
 
             assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
+            assemblyDefinition = BindEnableDisableAllPatch(assemblyDefinition);
 
             LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
 
             bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
-            if (sman) {
+            //if (sman) 
+            {
                 assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
             }
 
-            assemblyDefinition = NoQueryPatch(assemblyDefinition);
+            //assemblyDefinition = NoQueryPatch(assemblyDefinition);
 
             return assemblyDefinition;
         }
@@ -176,6 +178,25 @@ namespace LoadOrderIPatch.Patches {
             Debug.Log("************************** Removed logging stacktrace bloat **************************");
         }
 
-        //PreCreateUserModInstance
+
+        public AssemblyDefinition BindEnableDisableAllPatch(AssemblyDefinition ASC)
+        {
+            var module = ASC.MainModule;
+            var mTarget = module.GetMethod("ContentManagerPanel.BindEnableDisableAll");
+
+            // set disclaimer ID to null. this avoids OnSettingsUI getting called all the time.
+            Instruction first = mTarget.Body.Instructions.First();
+            Instruction loadNull = Instruction.Create(OpCodes.Ldnull);
+            ParameterDefinition pDisclaimerID = mTarget.Parameters.Single(_p => _p.Name == "disclaimerID");
+            Instruction storeDisclaimerID = Instruction.Create(OpCodes.Starg, pDisclaimerID);
+            
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            ilProcessor.InsertBefore(first, loadNull);
+            ilProcessor.InsertAfter(loadNull, storeDisclaimerID);
+            logger_.Info("BindEnableDisableAllPatch applied successfully!");
+
+            return ASC;
+        }
+        
     }
 }
