@@ -1,3 +1,4 @@
+using ColossalFramework.IO;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Patch.API;
@@ -36,28 +37,50 @@ namespace LoadOrderIPatch.Patches {
         {
             var module = CM.MainModule;
             var type = module.GetType("ColossalFramework.Packaging.PackageManager");
-            var mTargets = type.Methods.Where(_m => 
+            var mTargets = type.Methods.Where(_m =>
                 _m.Name.StartsWith("Load") && _m.Name.EndsWith("Packages")); //Load*Packages
-            foreach(var mTarget in mTargets) {
+            foreach (var mTarget in mTargets) {
+                bool top = mTarget.Name == "LoadPackages" && mTarget.Parameters.Count == 0;
+                if (top) continue;
+                bool loadPath = mTarget.HasParameter("path");
                 ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
                 var instructions = mTarget.Body.Instructions;
+
                 var first = instructions.First();
-                var ret = Instruction.Create(OpCodes.Ret);
-                ilProcessor.InsertBefore(first, ret); // return to skip method.
+                var last = instructions.Last();
+                // return to skip method.
+                if (loadPath) {
+                    logger_.Info("patching LoadPackages(string path,bool)");
+                    // skip method only if path is asset path
+                    var LdArgPath = mTarget.GetLDArg("path");
+                    var mIsAssetPath = GetType().GetMethod(nameof(IsAssetPath));
+                    var callIsAssetPath = Instruction.Create(OpCodes.Call, module.ImportReference(mIsAssetPath));
+                    var skipIfAsset = Instruction.Create(OpCodes.Brtrue, last); 
+                    ilProcessor.InsertBefore(first, LdArgPath);
+                    ilProcessor.InsertAfter(LdArgPath, callIsAssetPath);
+                    ilProcessor.InsertAfter(callIsAssetPath, skipIfAsset);
+                } else {
+                    var ret = Instruction.Create(OpCodes.Ret);
+                    ilProcessor.InsertBefore(first, ret);
+                }
             }
 
             logger_.Info("NoCustomAssetsPatch applied successfully!");
             return CM;
         }
 
+        public static bool IsAssetPath(string path)
+        {
+            return path == DataLocation.assetsPath;
+        }
 
         // get the stack trace for debugging purposes.
-        // modify this mehtod to print the desired stacktrace.
+        // modify this mehtod to print the desired stacktrace. 
         public AssemblyDefinition InsertPrintStackTrace(AssemblyDefinition CM)
         {
             var module = CM.MainModule;
             var type = module.GetType("ColossalFramework.PlatformServices.PlatformServiceBehaviour");
-            var mTarget = type.Methods.Single(_m=>_m.Name== "Awake");
+            var mTarget = type.Methods.Single(_m => _m.Name == "Awake");
             ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
             var instructions = mTarget.Body.Instructions;
             var first = instructions.First();
@@ -65,7 +88,7 @@ namespace LoadOrderIPatch.Patches {
             var mInjection = GetType().GetMethod(nameof(LogStackTrace));
             var mrInjection = module.ImportReference(mInjection);
             var callInjection = Instruction.Create(OpCodes.Call, mrInjection);
-            
+
             ilProcessor.InsertBefore(first, callInjection);
 
             logger_.Info("PlatformServiceBehaviour_Awake_Patch applied successfully!");
