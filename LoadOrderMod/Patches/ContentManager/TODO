@@ -16,6 +16,16 @@ SubscribePresetStatusPanel
 
 no assets mode
 
+Quick enable disable:
+    only call OnSettings UI for the mod that has been enabled
+    some other mods need to be patched to respond to change in assemblies/pluging state like
+        DAS/AutoRepair
+        MoveIT also checks for other mods.
+
+Quick hot reload:
+    invesitage why hot reload is slow? is it only because of OnSettingsUI?
+    
+    
 
 
 

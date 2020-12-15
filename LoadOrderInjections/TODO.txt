@@ -27,3 +27,16 @@ Content manager tool:
 
 	filters:
 		asset\mod included\excluded enabled\disabled workshop\local
+
+
+--------------------------------------------
+	city:
+		C mods   
+		C assets 
+			C all 
+			C ?used only 
+		What to do with your old subscriptions?
+			C Disable  C Exclude  C UnSub
+
+		B (Subscribe and Enable)
+
