@@ -215,7 +215,8 @@ namespace LoadOrderInjections {
             if (!good) {
                 Log.Info($"[WARNING!] subscribed item not installed properly:{result.publishedFileId} {result.title} " +
                     $"reason={reason}. " +
-                    $"try resintalling the item.");
+                    $"try resintalling the item.",
+                    true);
             } else {
                 Log.Debug($"subscribed item is good:{result.publishedFileId} {result.title}");
             }

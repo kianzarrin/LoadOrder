@@ -22,11 +22,37 @@ namespace LoadOrderIPatch.Patches {
             ////assemblyDefinition = LoadPluginsPatch(assemblyDefinition);
             assemblyDefinition = AddPluginsPatch(assemblyDefinition);
 #if DEBUG
-            assemblyDefinition = InsertPrintStackTrace(assemblyDefinition);
+            //assemblyDefinition = InsertPrintStackTrace(assemblyDefinition);
 #endif
+            bool noAssets = Environment.GetCommandLineArgs().Any(_arg => _arg == "-noAssets");
+            if (noAssets) {
+                assemblyDefinition = NoCustomAssetsPatch(assemblyDefinition);
+            }
+
             return assemblyDefinition;
         }
 
+        public AssemblyDefinition NoCustomAssetsPatch(AssemblyDefinition CM)
+        {
+            var module = CM.MainModule;
+            var type = module.GetType("ColossalFramework.Packaging.PackageManager");
+            var mTargets = type.Methods.Where(_m => 
+                _m.Name.StartsWith("Load") && _m.Name.EndsWith("Packages")); //Load*Packages
+            foreach(var mTarget in mTargets) {
+                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                var instructions = mTarget.Body.Instructions;
+                var first = instructions.First();
+                var ret = Instruction.Create(OpCodes.Ret);
+                ilProcessor.InsertBefore(first, ret); // return to skip method.
+            }
+
+            logger_.Info("NoCustomAssetsPatch applied successfully!");
+            return CM;
+        }
+
+
+        // get the stack trace for debugging purposes.
+        // modify this mehtod to print the desired stacktrace.
         public AssemblyDefinition InsertPrintStackTrace(AssemblyDefinition CM)
         {
             var module = CM.MainModule;
@@ -61,7 +87,6 @@ namespace LoadOrderIPatch.Patches {
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
                 .First(_m => _m.Name == "LoadAssemblies");
-
 
             AssemblyDefinition asm = GetInjectionsAssemblyDefinition(workingPath_);
             var tSortPlugins = asm.MainModule.Types

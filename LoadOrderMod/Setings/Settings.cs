@@ -12,6 +12,7 @@ namespace LoadOrderMod.Settings {
                 GetFieldValue<PluginManager>("m_EventsEnabled"));
             Log.Debug(Environment.StackTrace);
             //GUI.Settings.OnSettingsUI(helper);
+            helper.AddButton("Ensure All", CheckSubsUtil.EnsureAll); ;
             helper.AddButton("RequestItemDetails", OnRequestItemDetailsClicked);
             //helper.AddButton("QueryItems", OnQueryItemsClicked);
             helper.AddButton("RunCallbacks", OnRunCallbacksClicked);

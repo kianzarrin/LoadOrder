@@ -10,16 +10,18 @@ using System.Linq;
 
 
 namespace LoadOrderMod.Patches.ContentManager {
-    [HarmonyPatch(typeof(ContentManagerPanel))]
     public static class OnEnableDisableAllPatch {
         static MethodInfo mEnabledPackageEvents =
             GetMethod(typeof(ContentManagerPanel), "EnablePackageEvents");
         static MethodInfo mFlush =
             new Action(DelayedEventInvoker.Flush).Method;
 
-        [HarmonyPatch("OnEnableAll")]
-        [HarmonyPatch("OnDisableAll")]
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+        static IEnumerable<MethodBase> TargetMethods() {
+            yield return GetMethod(typeof(ContentManagerPanel), "OnEnableAll");
+            yield return GetMethod(typeof(ContentManagerPanel), "OnDisableAll");
+        }
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
             var codes = instructions.ToCodeList();
             //Log.Debug("before:\n" + codes.IL2STR());
 
