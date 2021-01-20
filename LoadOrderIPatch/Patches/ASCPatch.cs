@@ -23,7 +23,7 @@ namespace LoadOrderIPatch.Patches {
 
             assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
             assemblyDefinition = BindEnableDisableAllPatch(assemblyDefinition);
-
+            assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition);
             LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
 
             bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
@@ -95,7 +95,7 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertBefore(instructions.First(), call2);
             /**********************************/
 
-            logger_.Info("SubscriptionManagerPatch applied successfully!");
+            logger_.ReportSucessFull();
             return ASC;
         }
 
@@ -197,6 +197,28 @@ namespace LoadOrderIPatch.Patches {
 
             return ASC;
         }
-        
+
+        public AssemblyDefinition NewsFeedPanelPatch(AssemblyDefinition ASC)
+        {
+            var module = ASC.MainModule;
+            Instruction ret = Instruction.Create(OpCodes.Ret);
+            {
+                var mTarget = module.GetMethod("NewsFeedPanel.RefreshFeed");
+                Instruction first = mTarget.Body.Instructions.First();
+                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                ilProcessor.InsertBefore(first, ret);
+            }
+            {
+                var mTarget = module.GetMethod("NewsFeedPanel.OnFeedNext");
+                Instruction first = mTarget.Body.Instructions.First();
+                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                ilProcessor.InsertBefore(first, ret);
+            }
+
+            logger_.Info("[LoadOrderIPatch] NewsFeedPanelPatch applied successfully!");
+
+            return ASC;
+        }
+
     }
 }
