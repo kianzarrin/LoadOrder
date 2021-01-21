@@ -19,8 +19,8 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
-            assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
-            ////assemblyDefinition = LoadPluginsPatch(assemblyDefinition);
+            assemblyDefinition = LoadAssembliesPatch(assemblyDefinition); 
+            //assemblyDefinition = LoadPluginsPatch(assemblyDefinition); // its loaded in ASCPatch.LoadDLL() instead
             assemblyDefinition = AddPluginsPatch(assemblyDefinition);
 #if DEBUG
             //assemblyDefinition = InsertPrintStackTrace(assemblyDefinition);
@@ -35,6 +35,7 @@ namespace LoadOrderIPatch.Patches {
 
         public AssemblyDefinition NoCustomAssetsPatch(AssemblyDefinition CM)
         {
+            logger_.LogStartPatching();
             var module = CM.MainModule;
             var type = module.GetType("ColossalFramework.Packaging.PackageManager");
             var mTargets = type.Methods.Where(_m =>
@@ -65,7 +66,7 @@ namespace LoadOrderIPatch.Patches {
                 }
             }
 
-            logger_.Info("NoCustomAssetsPatch applied successfully!");
+            logger_.LogSucessfull();
             return CM;
         }
 
@@ -78,6 +79,7 @@ namespace LoadOrderIPatch.Patches {
         // modify this mehtod to print the desired stacktrace. 
         public AssemblyDefinition InsertPrintStackTrace(AssemblyDefinition CM)
         {
+            logger_.LogStartPatching();
             var module = CM.MainModule;
             var type = module.GetType("ColossalFramework.PlatformServices.PlatformServiceBehaviour");
             var mTarget = type.Methods.Single(_m => _m.Name == "Awake");
@@ -106,6 +108,7 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         public AssemblyDefinition LoadAssembliesPatch(AssemblyDefinition CM)
         {
+            logger_.LogStartPatching();
             var tPluginManager = CM.MainModule.Types
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
@@ -125,7 +128,7 @@ namespace LoadOrderIPatch.Patches {
             Instruction first = mTarget.Body.Instructions.First();
             ilProcessor.InsertBefore(first, loadArg1); // load pluggins arg
             ilProcessor.InsertAfter(loadArg1, callInjection);
-            logger_.Info("LoadAssembliesPatch applied successfully!");
+            logger_.LogSucessfull();
             return CM;
         }
 
@@ -134,6 +137,7 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         public AssemblyDefinition LoadPluginsPatch(AssemblyDefinition CM)
         {
+            logger_.LogStartPatching();
             var tPluginManager = CM.MainModule.Types
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
@@ -153,7 +157,7 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertBefore(first, loadThis); // load pluggins arg
             ilProcessor.InsertAfter(loadThis, loadDllPath);
             ilProcessor.InsertAfter(loadDllPath, callInjection);
-            logger_.Info("LoadPluginsPatch applied successfully!");
+            logger_.LogSucessfull();
             return CM;
         }
 
@@ -162,7 +166,8 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         public AssemblyDefinition AddPluginsPatch(AssemblyDefinition CM)
         {
-            var tPluginManager = CM.MainModule.Types
+            logger_.LogStartPatching();
+               var tPluginManager = CM.MainModule.Types
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
                 .First(_m => _m.Name == "AddPlugins");
@@ -205,7 +210,7 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertAfter(InvokeOnEnabled, callAfterEnable); // insert call
             ilProcessor.InsertBefore(callAfterEnable, LoadPluginInfo.Duplicate()); // load argument for the call
 
-            logger_.Info("AddPluginsPatch applied successfully!");
+            logger_.LogSucessfull();
             return CM;
         }
     }

@@ -12,11 +12,18 @@ namespace LoadOrderIPatch {
             => CecilUtil.GetAssemblyDefinition(dir, InjectionsDLL);
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        internal static void ReportSucessFull(this ILogger logger)
+        internal static void LogSucessfull(this ILogger logger)
         {
             string caller = new StackFrame(1).GetMethod().Name;
-            logger.Info($"[LoadOrderIPatch] Sucessfully patched {caller}() !" +
-                "\n------------------------------------------------------------------------");
+            logger.Info($"[LoadOrderIPatch] Sucessfully patched {caller}!");
+                //+ "\n------------------------------------------------------------------------");
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void LogStartPatching(this ILogger logger)
+        {
+            string caller = new StackFrame(1).GetMethod().Name;
+            logger.Info($"[LoadOrderIPatch] {caller} started ...");
         }
     }
 }

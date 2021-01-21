@@ -32,7 +32,7 @@ namespace LoadOrderIPatch.Patches {
                 assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
             }
 
-            //assemblyDefinition = NoQueryPatch(assemblyDefinition);
+             assemblyDefinition = NoQueryPatch(assemblyDefinition);
 
             return assemblyDefinition;
         }
@@ -67,7 +67,7 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         public AssemblyDefinition SubscriptionManagerPatch(AssemblyDefinition ASC)
         {
-            logger_.Info("SubscriptionManagerPatch() called ...");
+            logger_.LogStartPatching();
             var module = ASC.Modules.First();
             var tPluginManager = module.Types
                 .First(_t => _t.FullName == "Starter");
@@ -95,13 +95,13 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertBefore(instructions.First(), call2);
             /**********************************/
 
-            logger_.ReportSucessFull();
+            logger_.LogSucessfull();
             return ASC;
         }
 
         public AssemblyDefinition NoQueryPatch(AssemblyDefinition ASC)
         {
-            logger_.Info("NoQueryPatch() called ...");
+            logger_.LogStartPatching();
             var module = ASC.Modules.First();
             var targetMethod = module.GetMethod("WorkshopAdPanel.Awake");
             var instructions = targetMethod.Body.Instructions;
@@ -116,12 +116,13 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.Remove(callQuery);
             ilProcessor.Remove(next);
 
-            logger_.Info("NoQueryPatch applied successfully!");
+            logger_.LogSucessfull();
             return ASC;
         }
 
         public AssemblyDefinition LoadPluginsPatch(AssemblyDefinition ASC)
         {
+            logger_.LogStartPatching();
             var tPluginManager = ASC.MainModule.Types
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
@@ -141,12 +142,13 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertBefore(first, loadThis); // load pluggins arg
             ilProcessor.InsertAfter(loadThis, loadDllPath);
             ilProcessor.InsertAfter(loadDllPath, callInjection);
-            logger_.Info("LoadPluginsPatch applied successfully!");
+            logger_.LogSucessfull();
             return ASC;
         }
 
         public AssemblyDefinition ImproveLoggingPatch(AssemblyDefinition ASC)
         {
+            logger_.LogStartPatching();
             ModuleDefinition module = ASC.Modules.First();
             var entryPoint = GetEntryPoint(module);
             var mInjection = GetType().GetMethod(nameof(ApplyGameLoggingImprovements));
@@ -158,7 +160,7 @@ namespace LoadOrderIPatch.Patches {
             ILProcessor ilProcessor = entryPoint.Body.GetILProcessor();
             ilProcessor.InsertBefore(first, callInjection);
 
-            logger_.Info("ImproveLoggingPatch applied successfully!");
+            logger_.LogSucessfull();
             return ASC;
         }
 
@@ -181,6 +183,7 @@ namespace LoadOrderIPatch.Patches {
 
         public AssemblyDefinition BindEnableDisableAllPatch(AssemblyDefinition ASC)
         {
+            logger_.LogStartPatching();
             var module = ASC.MainModule;
             var mTarget = module.GetMethod("ContentManagerPanel.BindEnableDisableAll");
 
@@ -193,13 +196,14 @@ namespace LoadOrderIPatch.Patches {
             ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
             ilProcessor.InsertBefore(first, loadNull);
             ilProcessor.InsertAfter(loadNull, storeDisclaimerID);
-            logger_.Info("BindEnableDisableAllPatch applied successfully!");
+            logger_.LogSucessfull();
 
             return ASC;
         }
 
         public AssemblyDefinition NewsFeedPanelPatch(AssemblyDefinition ASC)
         {
+            logger_.LogStartPatching();
             var module = ASC.MainModule;
             Instruction ret = Instruction.Create(OpCodes.Ret);
             {
@@ -215,8 +219,7 @@ namespace LoadOrderIPatch.Patches {
                 ilProcessor.InsertBefore(first, ret);
             }
 
-            logger_.Info("[LoadOrderIPatch] NewsFeedPanelPatch applied successfully!");
-
+            logger_.LogSucessfull();
             return ASC;
         }
 
