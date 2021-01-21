@@ -10,6 +10,9 @@ namespace LoadOrderMod {
     using System.IO;
     using System.Linq;
     using UnityEngine.SceneManagement;
+    using UnityEngine;
+    using ColossalFramework.UI;
+    using static KianCommons.ReflectionHelpers;
 
     public class LoadOrderMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderMod).Assembly.GetName().Version;
@@ -44,10 +47,27 @@ namespace LoadOrderMod {
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
+            LoadingManager.instance.m_introLoaded += TurnOffSteamPanels;
+            TurnOffSteamPanels();
+
             Log.Flush();
         }
 
+        public void TurnOffSteamPanels() {
+            SetFieldValue<WorkshopAdPanel>("dontInitialize", true);
+            Log.Info("Turning off steam panels", true);
+            var news = GameObject.FindObjectOfType<NewsFeedPanel>();
+            var ad = GameObject.FindObjectOfType<WorkshopAdPanel>();
+            var dlc = GameObject.FindObjectOfType<DLCPanelNew>();
+            var paradox = GameObject.FindObjectOfType<ParadoxAccountPanel>();
+            GameObject.Destroy(news?.gameObject);
+            GameObject.Destroy(ad?.gameObject);
+            GameObject.Destroy(dlc?.gameObject);
+            GameObject.Destroy(paradox?.gameObject);
+        }
+
         public void OnDisabled() {
+            LoadingManager.instance.m_introLoaded -= TurnOffSteamPanels;
             Log.Buffered = false;
             HarmonyUtil.UninstallHarmony(HARMONY_ID);
         }

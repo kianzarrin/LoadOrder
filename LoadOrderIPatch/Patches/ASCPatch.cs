@@ -23,7 +23,7 @@ namespace LoadOrderIPatch.Patches {
 
             assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
             assemblyDefinition = BindEnableDisableAllPatch(assemblyDefinition);
-            assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition);
+            //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition);
             LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
 
             bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
@@ -32,7 +32,7 @@ namespace LoadOrderIPatch.Patches {
                 assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
             }
 
-             assemblyDefinition = NoQueryPatch(assemblyDefinition);
+             // assemblyDefinition = NoQueryPatch(assemblyDefinition); // handled by harmony patch
 
             return assemblyDefinition;
         }
@@ -99,23 +99,17 @@ namespace LoadOrderIPatch.Patches {
             return ASC;
         }
 
-        public AssemblyDefinition NoQueryPatch(AssemblyDefinition ASC)
-        {
+        /// <summary>
+        /// removes call to query which causes steam related errors and puts CollossalManged in an unstable state.
+        /// </summary>
+        public AssemblyDefinition NoQueryPatch(AssemblyDefinition ASC) {
             logger_.LogStartPatching();
             var module = ASC.Modules.First();
             var targetMethod = module.GetMethod("WorkshopAdPanel.Awake");
             var instructions = targetMethod.Body.Instructions;
             ILProcessor ilProcessor = targetMethod.Body.GetILProcessor();
-
-            /**********************************/
             Instruction callQuery = instructions.First(_c => _c.Calls("QueryItems"));
-            var prev = callQuery.Previous;
-            var next = callQuery.Next;
-
-            ilProcessor.Remove(prev);
-            ilProcessor.Remove(callQuery);
-            ilProcessor.Remove(next);
-
+            ilProcessor.Remove(callQuery); // the pop instruction after cancels out the load instruction before.
             logger_.LogSucessfull();
             return ASC;
         }
