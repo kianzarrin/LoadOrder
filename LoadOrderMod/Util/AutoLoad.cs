@@ -15,13 +15,13 @@ namespace LoadOrderMod.Util {
     public class AutoLoad : MonoBehaviour {
         void Start() {
             LogCalled();
-            Invoke("Do", 2.5f);
+            base.Invoke(nameof(Do), 2.5f);
         }
         void Do() {
             LogCalled();
             bool ready = !SavePanel.isSaving && Singleton<LoadingManager>.exists && !Singleton<LoadingManager>.instance.m_currentlyLoading;
             if (!ready) {
-                //Invoke("Do", 3f);
+                Invoke("Do", 3f);
                 return;
             }
 
@@ -39,7 +39,7 @@ namespace LoadOrderMod.Util {
                     if (loadSave == "")
                         InvokeMethod(mainMenu, "AutoContinue");
                     else
-                        LoadSave(loadSave);
+                        LoadSavedGame(loadSave);
                 } else if (newGame != null) {
                     LoadMap(newGame);
                 } else if (editor) {
@@ -89,29 +89,36 @@ namespace LoadOrderMod.Util {
 
         static bool IsCrp(string str) => str.ToLower().EndsWith(".crp");
 
-        public void LoadSave(string fileName) {
+        public void LoadSavedGame(string fileName) {
             LogCalled();
             var savedGame = IsCrp(fileName)
                 ? GetAssetByPath(fileName)
                 : GetSaveByName(fileName);
+            LoadSavedGame2(savedGame);
+        }
+        public void LoadSavedGame2(Package.Asset savedGame) {
+            LogCalled();
             AssertNotNull(savedGame, "could not find save");
-            AssertNotNull(savedGame.package, "package");
             var metaData = savedGame?.Instantiate<SaveGameMetaData>();
             AssertNotNull(metaData, "metadata");
+            AssertNotNull(metaData.assetRef, "assetRef");
+            var package = savedGame.package ?? metaData.assetRef.package;
+            AssertNotNull(package, "package");
+
             PrintModsInfo(metaData.mods);
 
             SimulationMetaData ngs = new SimulationMetaData {
                 m_CityName = metaData.cityName,
                 m_updateMode = SimulationManager.UpdateMode.LoadGame,
             };
-            if (savedGame.package.GetPublishedFileID() != PublishedFileId.invalid)
+            if (package.GetPublishedFileID() != PublishedFileId.invalid)
                 ngs.m_disableAchievements = MetaBool.True;
             UpdateTheme(metaData.mapThemeRef, ngs);
 
             Log.Info($"Loading new game from " +
                 $"map:{ngs.m_CityName} " +
                 $"assetName:{savedGame.name} " +
-                $"filePath:{savedGame.package.packagePath}) " +
+                $"filePath:{package.packagePath}) " +
                 $"theme={(ngs.m_MapThemeMetaData?.name).ToSTR()} " +
                 $"LHT:{ngs.m_invertTraffic}", true);
 
@@ -128,10 +135,18 @@ namespace LoadOrderMod.Util {
                 map = GetAssetByPath(str);
             else
                 map = GetMapByName(str);
+            LoadMap2(map, lht);
+        }
+
+        public void LoadMap2(Package.Asset map, bool lht = false) {
+            LogCalled();
             AssertNotNull(map, "map not found");
-            AssertNotNull(map.package, "package");
             var metaData = map?.Instantiate<MapMetaData>();
             AssertNotNull(metaData, "metadata");
+            AssertNotNull(metaData.assetRef, "assetRef");
+            var package = map.package ?? metaData.assetRef.package;
+            AssertNotNull(package, "package");
+
             PrintModsInfo(metaData.mods);
 
             SimulationMetaData ngs = new SimulationMetaData {
@@ -149,7 +164,7 @@ namespace LoadOrderMod.Util {
             Log.Info($"Loading new game from " +
                 $"map:{ngs.m_CityName} " +
                 $"fileName:{map.name} " +
-                $"filePath:{map.package.packagePath}) " +
+                $"filePath:{package.packagePath}) " +
                 $"theme={(ngs.m_MapThemeMetaData?.name).ToSTR()}" +
                 $"LHT:{ngs.m_invertTraffic}", true);
 
@@ -179,7 +194,6 @@ namespace LoadOrderMod.Util {
 
         }
 
-
         static LoadingManager loadingMan_ => Singleton<LoadingManager>.instance;
         static void LoadGame(MetaData metadata, SimulationMetaData ngs) =>
             loadingMan_.LoadLevel(metadata.assetRef, "Game", "InGame", ngs);
@@ -195,8 +209,11 @@ namespace LoadOrderMod.Util {
             }
         }
 
-        static Package.Asset GetAssetByPath(string path) =>
-            new Package.Asset(string.Empty, path, Package.AssetType.Data, false);
+        static Package.Asset GetAssetByPath(string path) {
+            var package = new Package(null, path);
+            //PackageManager.Add(package);
+            return package.Find(package.packageMainAsset);
+        }
 
         static Package.Asset GetSaveByName(string name) =>
             FindAssetByShortName(name, UserAssetType.SaveGameMetaData);
