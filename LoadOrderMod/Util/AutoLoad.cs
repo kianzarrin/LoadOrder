@@ -3,12 +3,12 @@ namespace LoadOrderMod.Util {
     using ColossalFramework.IO;
     using ColossalFramework.Packaging;
     using ColossalFramework.PlatformServices;
-    using ColossalFramework.UI;
     using KianCommons;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using UnityEngine;
+    using static KianCommons.Assertion;
     using static KianCommons.ReflectionHelpers;
     using static SimulationMetaData;
 
@@ -24,55 +24,103 @@ namespace LoadOrderMod.Util {
                 //Invoke("Do", 3f);
                 return;
             }
-            OptionSet optionSet = new OptionSet();
-            string loadSave = null; // null=>nothing empty=>continueLastSave else=>Load input save
-            string newGame = null;// null=>nothing empty=>Net Game From a Map else=>Load Game from input Map
-            bool asset = false;
 
-            optionSet.Add("game|newGame", "Load New Game", v => newGame = v ?? "");
-            optionSet.Add("save|loadSave", "Load Save", v => loadSave = v ?? "");
-            optionSet.Add("asset|loadAsset", "Load Asset", v => asset = true);
+            Log.Debug("parsing options ...");
             try {
-                optionSet.Parse(Environment.GetCommandLineArgs());
+                ParseCommandLine("game|newGame", out string newGame);
+                ParseCommandLine("save|loadSave", out string loadSave);
+                bool editor = ParseCommandLine("editor", out _);
+                bool lht = ParseCommandLine("LHT", out _);
+                Log.Debug($"options: newGame={newGame.ToSTR()} loadSave={loadSave.ToSTR()} editor={editor} lht={lht}");
+
+                var mainMenu = GameObject.FindObjectOfType<MainMenu>();
+
+                if (loadSave != null) {
+                    if (loadSave == "")
+                        InvokeMethod(mainMenu, "AutoContinue");
+                    else
+                        LoadSave(loadSave);
+                } else if (newGame != null) {
+                    LoadMap(newGame);
+                } else if (editor) {
+                    LoadAssetEditor(lht: lht);
+                }
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
-            bool lht = Environment.GetCommandLineArgs().Contains("-LHT");
+        }
 
-            var mainMenu = GameObject.FindObjectOfType<MainMenu>();
+        /// <summary>
+        /// if no match was found, value=null and returns false.
+        /// if a match is found, value="" or string after --prototype= and returns true.
+        /// </summary>
+        static bool ParseCommandLine(string prototypes, out string value) {
+            foreach (string arg in Environment.GetCommandLineArgs()) {
+                foreach (string prototype in prototypes.Split("|")) {
+                    if (MatchCommandLineArg(arg, prototype, out string val)) {
+                        value = val;
+                        return true;
+                    }
+                }
+            }
+            value = null;
+            return false;
+        }
 
-            if (loadSave != null) {
-                if (loadSave == "")
-                    InvokeMethod<MainMenu>("AutoContinue");
+        /// <summary>
+        /// matches one arg with one prototype
+        /// </summary>
+        public static bool MatchCommandLineArg(string arg, string prototype, out string value) {
+            if (arg == "-" + prototype) {
+                value = "";
+                return true;
+            } else if (arg.StartsWith($"--{prototype}=")) {
+                int i = prototype.Length + 3;
+                if (arg.Length > i)
+                    value = arg.Substring(i);
                 else
-                    LoadSave(loadSave);
-            } else if (newGame != null) {
-                LoadMap(newGame);
-            } else if (asset) {
-                Asset(lht: lht);
+                    value = "";
+                return true;
+            } else {
+                value = null;
+                return false;
             }
         }
 
         static bool IsCrp(string str) => str.ToLower().EndsWith(".crp");
 
         public void LoadSave(string fileName) {
+            LogCalled();
             var savedGame = IsCrp(fileName)
                 ? GetAssetByPath(fileName)
                 : GetSaveByName(fileName);
+            AssertNotNull(savedGame, "could not find save");
+            AssertNotNull(savedGame.package, "package");
             var metaData = savedGame?.Instantiate<SaveGameMetaData>();
+            AssertNotNull(metaData, "metadata");
             PrintModsInfo(metaData.mods);
 
             SimulationMetaData ngs = new SimulationMetaData {
                 m_CityName = metaData.cityName,
                 m_updateMode = SimulationManager.UpdateMode.LoadGame,
-                m_disableAchievements = MetaBool.True,
             };
-
+            if (savedGame.package.GetPublishedFileID() != PublishedFileId.invalid)
+                ngs.m_disableAchievements = MetaBool.True;
             UpdateTheme(metaData.mapThemeRef, ngs);
-            LoadGame(savedGame, ngs);
+
+            Log.Info($"Loading new game from " +
+                $"map:{ngs.m_CityName} " +
+                $"assetName:{savedGame.name} " +
+                $"filePath:{savedGame.package.packagePath}) " +
+                $"theme={(ngs.m_MapThemeMetaData?.name).ToSTR()} " +
+                $"LHT:{ngs.m_invertTraffic}", true);
+
+
+            LoadGame(metaData, ngs);
         }
 
         public void LoadMap(string str, bool lht = false) {
+            LogCalled();
             Package.Asset map;
             if (str == "")
                 map = GetAMap();
@@ -80,7 +128,10 @@ namespace LoadOrderMod.Util {
                 map = GetAssetByPath(str);
             else
                 map = GetMapByName(str);
+            AssertNotNull(map, "map not found");
+            AssertNotNull(map.package, "package");
             var metaData = map?.Instantiate<MapMetaData>();
+            AssertNotNull(metaData, "metadata");
             PrintModsInfo(metaData.mods);
 
             SimulationMetaData ngs = new SimulationMetaData {
@@ -93,36 +144,50 @@ namespace LoadOrderMod.Util {
                 m_newGameAppVersion = DataLocation.productVersion,
                 m_updateMode = SimulationManager.UpdateMode.NewGameFromMap,
             };
-
             UpdateTheme(metaData.mapThemeRef, ngs);
-            LoadGame(map, ngs);
+
+            Log.Info($"Loading new game from " +
+                $"map:{ngs.m_CityName} " +
+                $"fileName:{map.name} " +
+                $"filePath:{map.package.packagePath}) " +
+                $"theme={(ngs.m_MapThemeMetaData?.name).ToSTR()}" +
+                $"LHT:{ngs.m_invertTraffic}", true);
+
+            LoadGame(metaData, ngs);
         }
 
-        public void Asset(bool load = true, bool lht = false) {
+        public void LoadAssetEditor(bool load = true, bool lht = false) {
+            LogCalled();
             var mode = load ?
                 SimulationManager.UpdateMode.LoadAsset :
                 SimulationManager.UpdateMode.NewAsset;
+
+            Package.Asset theme = GetDefaultTheme();
+            AssertNotNull(theme, "theme not found");
+            var themeMetaData = theme.Instantiate<SystemMapMetaData>();
+            AssertNotNull(themeMetaData, "themeMetaData");
+
             SimulationMetaData ngs = new SimulationMetaData {
                 m_gameInstanceIdentifier = Guid.NewGuid().ToString(),
                 m_WorkshopPublishedFileId = PublishedFileId.invalid,
                 m_updateMode = mode,
-                m_MapThemeMetaData = GetATheme(),
+                //m_MapThemeMetaData = themeMetaData,
                 m_invertTraffic = lht ? MetaBool.True : MetaBool.False,
             };
-            Package.Asset asset = PackageManager.FindAssetByName("System.BuiltinTerrainMap-" + ngs.m_MapThemeMetaData.environment);
-            SystemMapMetaData systemMapMetaData = asset.Instantiate<SystemMapMetaData>();
-            Singleton<LoadingManager>.instance.LoadLevel(systemMapMetaData.assetRef, "AssetEditor", "InAssetEditor", ngs, false);
+
+            Singleton<LoadingManager>.instance.LoadLevel(themeMetaData.assetRef, "AssetEditor", "InAssetEditor", ngs, false);
+
         }
 
 
         static LoadingManager loadingMan_ => Singleton<LoadingManager>.instance;
-        static void LoadGame(Package.Asset asset, SimulationMetaData ngs) =>
-            loadingMan_.LoadLevel(asset, "Game", "InGame", ngs);
+        static void LoadGame(MetaData metadata, SimulationMetaData ngs) =>
+            loadingMan_.LoadLevel(metadata.assetRef, "Game", "InGame", ngs);
 
 
         static void UpdateTheme(string mapThemeRef, SimulationMetaData ngs) {
-            if (mapThemeRef != null) {
-                Package.Asset asset = PackageManager.FindAssetByName(mapThemeRef, UserAssetType.MapThemeMetaData);
+            if (!string.IsNullOrEmpty(mapThemeRef)) {
+                Package.Asset asset = PackageManager.FindAssetByName(mapThemeRef, UserAssetType.MapThemeMapMetaData);
                 if (asset != null) {
                     ngs.m_MapThemeMetaData = asset.Instantiate<MapThemeMetaData>();
                     ngs.m_MapThemeMetaData.SetSelfRef(asset);
@@ -134,16 +199,40 @@ namespace LoadOrderMod.Util {
             new Package.Asset(string.Empty, path, Package.AssetType.Data, false);
 
         static Package.Asset GetSaveByName(string name) =>
-            PackageManager.FindAssetByName(name, UserAssetType.SaveGameMetaData);
+            FindAssetByShortName(name, UserAssetType.SaveGameMetaData);
 
         static Package.Asset GetMapByName(string name) =>
-            PackageManager.FindAssetByName(name, UserAssetType.MapMetaData);
+            FindAssetByShortName(name, UserAssetType.MapMetaData);
 
-        static Package.Asset GetAMap() => Maps.FirstOrDefault();
+        static Package.Asset FindAssetByShortName(string name, Package.AssetType assetType) =>
+            FilterAssets(assetType).FirstOrDefault(a => a.name == name);
+
+
+        static Package.Asset GetAMap() => Maps.MinBy(m => m.Instantiate<MapMetaData>()?.mapName);
+        //{
+        //    Log.Debug("maps=\n"+Maps.Select(m => m.name).JoinLines());
+        //    return Maps.OrderBy(m => m.name).First();
+        //}
+
         static IEnumerable<Package.Asset> Maps => FilterAssets(UserAssetType.MapMetaData);
 
-        static MapThemeMetaData GetATheme() =>
-            FilterAssets(UserAssetType.MapThemeMetaData).FirstOrDefault()?.Instantiate<MapThemeMetaData>();
+        internal static Package.Asset GetDefaultTheme() {
+            try {
+                string name = "BuiltinTerrainMap-Sunny";
+                foreach (var p in PackageManager.allPackages) {
+                    var asset = p.Find(name);
+                    if (asset != null) {
+                        var metadata = asset.Instantiate();
+                        Log.Debug($"{asset.name}->{metadata}");
+                        return asset;
+                    }
+                }
+                throw new Exception(name + " theme not found");
+            } catch (Exception ex) {
+                Log.Exception(ex);
+                throw ex;
+            }
+        }
 
         static IEnumerable<Package.Asset> FilterAssets(Package.AssetType type) =>
             PackageManager.FilterAssets(new[] { type })
@@ -161,7 +250,6 @@ namespace LoadOrderMod.Util {
                     mods.Select(_m => "\t" + _m.modName).JoinLines()
                     , true);
             }
-
         }
 
     }

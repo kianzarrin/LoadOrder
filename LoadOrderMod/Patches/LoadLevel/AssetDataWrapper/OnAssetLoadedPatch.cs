@@ -40,7 +40,6 @@ namespace LoadOrderMod.Patches._AssetDataWrapper {
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
             try {
                 List<CodeInstruction> codes = instructions.ToCodeList();
-                var CallVirt_OnAssetLoaded = new CodeInstruction(OpCodes.Callvirt, mOnAssetLoaded_); //callvirt instance void [ICities]ICities.ILoadingExtension::OnAssetLoaded(valuetype [ICities]ICities.LoadMode)
                 var Call_BeforeOnAssetLoaded = new CodeInstruction(OpCodes.Call, mBeforeOnAssetLoaded_);
                 var Call_AfterOnAssetLoaded = new CodeInstruction(OpCodes.Call, mAfterOnAssetLoaded_);
 
@@ -48,7 +47,7 @@ namespace LoadOrderMod.Patches._AssetDataWrapper {
                 int index = codes.Search(_c => _c.Calls(mGetItem));
                 InsertInstructions(codes, new[] { Call_BeforeOnAssetLoaded }, index + 1);
 
-                int index2 = SearchInstruction(codes, CallVirt_OnAssetLoaded, index);
+                int index2 = codes.Search(c=> c.Calls(mOnAssetLoaded_), startIndex:index);
                 InsertInstructions(codes, new[] { Call_AfterOnAssetLoaded }, index2 + 1, moveLabels: false); // insert after.
 
                 return codes;

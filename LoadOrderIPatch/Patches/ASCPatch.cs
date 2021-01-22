@@ -23,7 +23,7 @@ namespace LoadOrderIPatch.Patches {
 
             assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
             assemblyDefinition = BindEnableDisableAllPatch(assemblyDefinition);
-            //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition);
+            //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition); // handled by harmony patch
             LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
 
             bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");

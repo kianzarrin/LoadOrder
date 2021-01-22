@@ -50,6 +50,8 @@ namespace LoadOrderMod {
             LoadingManager.instance.m_introLoaded += TurnOffSteamPanels;
             TurnOffSteamPanels();
 
+            Log.Debug(Util.AutoLoad.GetDefaultTheme().name);
+
             Log.Flush();
         }
 

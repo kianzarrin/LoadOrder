@@ -53,15 +53,13 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
         public static IEnumerable<CodeInstruction> Transpiler(ILGenerator il, IEnumerable<CodeInstruction> instructions) {
             try {
                 List<CodeInstruction> codes = instructions.ToCodeList();
-                var LDArg_Mode = new CodeInstruction(OpCodes.Ldarg_1);
-                var CallVirt_OnLevelLoaded = new CodeInstruction(OpCodes.Callvirt, mOnLevelLoaded_); //callvirt instance void [ICities]ICities.ILoadingExtension::OnLevelLoaded(valuetype [ICities]ICities.LoadMode)
                 var Call_BeforeOnLevelLoaded = new CodeInstruction(OpCodes.Call, mBeforeOnLevelLoaded_);
                 var Call_AfterOnLevelLoaded = new CodeInstruction(OpCodes.Call, mAfterOnLevelLoaded_);
 
-                int index = SearchInstruction(codes, LDArg_Mode, 0);
+                int index = codes.Search(c => c.opcode == OpCodes.Ldarg_1); //ldarg mode
                 InsertInstructions(codes, new[] { Call_BeforeOnLevelLoaded }, index);
 
-                int index2 = SearchInstruction(codes, CallVirt_OnLevelLoaded, index);
+                int index2 = codes.Search(c => c.Calls(mOnLevelLoaded_), startIndex: index);
                 InsertInstructions(codes, new[] { Call_AfterOnLevelLoaded }, index2+1, moveLabels:false); // insert after.
 
                 return codes;
