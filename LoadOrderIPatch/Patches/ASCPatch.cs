@@ -113,32 +113,6 @@ namespace LoadOrderIPatch.Patches {
             return ASC;
         }
 
-        public AssemblyDefinition LoadPluginsPatch(AssemblyDefinition ASC)
-        {
-            logger_.LogStartPatching();
-            var tPluginManager = ASC.MainModule.Types
-                .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
-            MethodDefinition mTarget = tPluginManager.Methods
-                .First(_m => _m.Name == "LoadPlugins");
-
-            MethodDefinition mInjection = tPluginManager.Methods
-                .First(_m => _m.Name == "LoadPlugin");
-
-            var dllPath = Path.Combine(workingPath_, "LoadOrderInjections.dll");
-
-            Instruction loadThis = Instruction.Create(OpCodes.Ldarg_0);
-            Instruction loadDllPath = Instruction.Create(OpCodes.Ldstr, dllPath);
-            Instruction callInjection = Instruction.Create(OpCodes.Call, mInjection);
-
-            Instruction first = mTarget.Body.Instructions.First();
-            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
-            ilProcessor.InsertBefore(first, loadThis); // load pluggins arg
-            ilProcessor.InsertAfter(loadThis, loadDllPath);
-            ilProcessor.InsertAfter(loadDllPath, callInjection);
-            logger_.LogSucessfull();
-            return ASC;
-        }
-
         public AssemblyDefinition ImproveLoggingPatch(AssemblyDefinition ASC)
         {
             logger_.LogStartPatching();
@@ -169,7 +143,6 @@ namespace LoadOrderIPatch.Patches {
             Application.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
             Debug.Log("************************** Removed logging stacktrace bloat **************************");
         }
-
 
         public AssemblyDefinition BindEnableDisableAllPatch(AssemblyDefinition ASC)
         {

@@ -25,9 +25,10 @@ namespace LoadOrderMod {
         //public LoadOrderMod() => Log.Debug("Instance Ctor " + Environment.StackTrace);
 
         public void OnEnabled() {
+            Util.LoadOrderUtil.ApplyGameLoggingImprovements();
             Log.ShowGap = true;
             //Log.Buffered = true;
-            Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: false);
+            Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: true);
             //KianCommons.UI.TextureUtil.EmbededResources = false;
             //HelpersExtensions.VERBOSE = false;
             //foreach(var p in ColossalFramework.Plugins.PluginManager.instance.GetPluginsInfo()) {

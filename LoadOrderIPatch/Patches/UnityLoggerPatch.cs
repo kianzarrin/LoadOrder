@@ -1,4 +1,4 @@
-    using Mono.Cecil;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Patch.API;
 using System;
@@ -57,6 +57,7 @@ namespace LoadOrderIPatch.Patches {
                 //Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
                 //Application.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
             }
+            message = message.Replace("\r\n", "\n"); // work around new line issue.
             return m_Timer.ElapsedMilliseconds.ToString("#,0") + "ms | " + message;
         }
     }

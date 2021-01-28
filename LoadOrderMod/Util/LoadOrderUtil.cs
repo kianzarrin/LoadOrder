@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
 using static ColossalFramework.Plugins.PluginManager;
 
 namespace LoadOrderMod.Util {
@@ -33,5 +34,16 @@ namespace LoadOrderMod.Util {
         internal static Assembly GetLSMAssembly() =>
             AppDomain.CurrentDomain.GetAssemblies()
             .FirstOrDefault(_asm => _asm.GetName().Name == "LoadingScreenMod");
+
+        
+        public static void ApplyGameLoggingImprovements()
+        {
+            Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
+            Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
+            Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
+            Application.SetStackTraceLogType(LogType.Exception, StackTraceLogType.ScriptOnly);
+            Debug.Log("************************** Removed logging stacktrace bloat **************************");
+            Debug.Log(Environment.StackTrace);
+        }
     }
 }
