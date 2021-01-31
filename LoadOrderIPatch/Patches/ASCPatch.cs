@@ -33,7 +33,7 @@ namespace LoadOrderIPatch.Patches {
             }
 
             // assemblyDefinition = NoQueryPatch(assemblyDefinition); // handled by harmony patch
-            InstallHarmonyResolver();
+            //InstallHarmonyResolver();
 
             return assemblyDefinition;
         }

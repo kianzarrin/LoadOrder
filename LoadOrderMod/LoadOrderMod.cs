@@ -28,7 +28,7 @@ namespace LoadOrderMod {
             Util.LoadOrderUtil.ApplyGameLoggingImprovements();
             Log.ShowGap = true;
             //Log.Buffered = true;
-            Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: true);
+            //Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: true);
             //KianCommons.UI.TextureUtil.EmbededResources = false;
             //HelpersExtensions.VERBOSE = false;
             //foreach(var p in ColossalFramework.Plugins.PluginManager.instance.GetPluginsInfo()) {
@@ -44,7 +44,10 @@ namespace LoadOrderMod {
             }
 
             data.Serialize(DataLocation.localApplicationData);
-            HarmonyHelper.DoOnHarmonyReady(() => HarmonyUtil.InstallHarmony(HARMONY_ID));
+            HarmonyHelper.DoOnHarmonyReady(() => {
+                //HarmonyLib.Harmony.DEBUG = true;
+                HarmonyUtil.InstallHarmony(HARMONY_ID);
+                });
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
 

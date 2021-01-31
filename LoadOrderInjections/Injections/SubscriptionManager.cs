@@ -340,6 +340,12 @@ namespace LoadOrderInjections {
         {
             string p1 = Path.GetDirectoryName(includedPath);
             string p2 = Path.GetFileName(includedPath);
+            if(string.IsNullOrEmpty(p1) || string.IsNullOrEmpty(p2)) {
+                Log.Error("LoadOrderInjections.ToExcludedPath()\n" +
+                    $"includedPath={includedPath}" +
+                    $"p1={p1}\n" +
+                    $"p2={p2}\n");
+            }
             if (p2.StartsWith("_")) {
                 Log.Error($"includedPath={includedPath} should not start with _");
                 return includedPath;
@@ -358,7 +364,7 @@ namespace LoadOrderInjections {
                     Directory.Move(path1, path2);
                 }
             } catch (Exception ex) {
-                Log.Exception(ex, showInPanel: false);
+                Log.Exception(ex, $"EnsureIncludedOrExcluded({id})" ,showInPanel: false);
             }
         }
 
