@@ -17,7 +17,11 @@ namespace LoadOrderIPatch.Patches {
         private ILogger logger_;
         private string workingPath_;
 
-        public AssemblyDefinition Execute(AssemblyDefinition assemblyDefinition, ILogger logger, string patcherWorkingPath) {
+        public AssemblyDefinition Execute(
+            AssemblyDefinition assemblyDefinition, 
+            ILogger logger, 
+            string patcherWorkingPath, 
+            string managedDirectoryPath) {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
             assemblyDefinition = LogFormatPatch(assemblyDefinition);

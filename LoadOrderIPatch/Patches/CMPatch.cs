@@ -14,8 +14,11 @@ namespace LoadOrderIPatch.Patches {
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("ColossalManaged", new Version(0, 3, 0, 0));
         private ILogger logger_;
         private string workingPath_;
-        public AssemblyDefinition Execute(AssemblyDefinition assemblyDefinition, ILogger logger, string patcherWorkingPath)
-        {
+        public AssemblyDefinition Execute(
+            AssemblyDefinition assemblyDefinition, 
+            ILogger logger, 
+            string patcherWorkingPath, 
+            string managedDirectoryPath) {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
