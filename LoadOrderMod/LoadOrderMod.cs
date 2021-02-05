@@ -27,7 +27,7 @@ namespace LoadOrderMod {
         public void OnEnabled() {
             Util.LoadOrderUtil.ApplyGameLoggingImprovements();
             Log.ShowGap = true;
-            //Log.Buffered = true;
+            Log.Buffered = true;
             //Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: true);
             //KianCommons.UI.TextureUtil.EmbededResources = false;
             //HelpersExtensions.VERBOSE = false;
