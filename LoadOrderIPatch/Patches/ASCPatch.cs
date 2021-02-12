@@ -19,8 +19,8 @@ namespace LoadOrderIPatch.Patches {
         public AssemblyDefinition Execute(
             AssemblyDefinition assemblyDefinition, 
             ILogger logger, 
-            string patcherWorkingPath, 
-            string managedDirectoryPath) {
+            string patcherWorkingPath,
+            IPaths gamePaths) {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
@@ -249,6 +249,5 @@ namespace LoadOrderIPatch.Patches {
             return AppDomain.CurrentDomain.GetAssemblies()
                 .FirstOrDefault(a => IsHarmony2(a.GetName()));
         }
-
     }
 }
