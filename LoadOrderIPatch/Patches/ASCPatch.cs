@@ -202,13 +202,13 @@ namespace LoadOrderIPatch.Patches {
         //            return ASC;
         //        }
 
-
-
         public void InstallResolverLog() {
             logger_.LogStartPatching();
             ResolveEventHandler resolver = LoadOrderInjections.Injections.Logs.ResolverLog;
             AppDomain.CurrentDomain.AssemblyResolve += resolver;
             AppDomain.CurrentDomain.TypeResolve += resolver;
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
             logger_.LogSucessfull();
         }
 
@@ -221,6 +221,9 @@ namespace LoadOrderIPatch.Patches {
             ResolveEventHandler resolver = LoadOrderHarmonyResolver;
             AppDomain.CurrentDomain.AssemblyResolve += resolver;
             AppDomain.CurrentDomain.TypeResolve += resolver;
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
+
             logger_.LogSucessfull();
         }
 
