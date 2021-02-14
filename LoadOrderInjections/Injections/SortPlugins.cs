@@ -42,7 +42,8 @@ namespace LoadOrderInjections.Injections {
             foreach (var pair in list)
                 plugins.Add(pair.Key, pair.Value);
 
-            Log.Debug("\n=========================== plugins.Values: =======================");
+            Log.Info("Sorting assemblies ...", true);
+            Log.Info("\n=========================== plugins.Values: =======================",false);
             foreach (var p in plugins.Values) {
                 string dlls = string.Join( ", ",
                     Directory.GetFiles(p.modPath, "*.dll", SearchOption.AllDirectories));
@@ -50,7 +51,7 @@ namespace LoadOrderInjections.Injections {
                     $"loadOrder={p.GetLoadOrder()} path={p.modPath} dlls={{{dlls}}}"
                     , false);
             }
-            Log.Debug("\n=========================== END plugins.Values =====================\n");
+            Log.Info("\n=========================== END plugins.Values =====================\n",false);
 
         }
     }
