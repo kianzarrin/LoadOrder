@@ -33,7 +33,37 @@ namespace LoadOrderIPatch.Patches {
                 assemblyDefinition = NoCustomAssetsPatch(assemblyDefinition);
             }
 
+
+            bool poke = Environment.GetCommandLineArgs().Any(_arg => _arg == "-poke");
+            if(poke)
+                PokeAssemlyPatch(assemblyDefinition);
+
             return assemblyDefinition;
+        }
+
+        public void PokeAssemlyPatch(AssemblyDefinition CM) {
+            logger_.LogStartPatching();
+            var module = CM.MainModule;
+            logger_.Info("PluginInfo is :" +  module.Types.FirstOrDefault(t => t.Name.EndsWith("PluginManager")).FullName);
+
+            var type1 = module.GetType("ColossalFramework.Plugins.PluginManager");
+            var type2 = type1.NestedTypes.Single(_t => _t.Name == "PluginInfo");
+            var mTarget = type2.GetMethod("AddAssembly");
+
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            var instructions = mTarget.Body.Instructions;
+            var first = instructions.First();
+
+            var loi = GetInjectionsAssemblyDefinition(workingPath_);
+            var mInjection = loi.MainModule.GetMethod("LoadOrderInjections.Injections.AddAssembly.Prefix");
+            var mrInjection = module.ImportReference(mInjection);
+
+            var callInjection = Instruction.Create(OpCodes.Call, mrInjection);
+            var ldAsm = Instruction.Create(OpCodes.Ldarg_1);
+            ilProcessor.InsertBefore(first, callInjection);
+            ilProcessor.InsertBefore(callInjection, ldAsm);
+
+            logger_.LogSucessfull();
         }
 
         public AssemblyDefinition NoCustomAssetsPatch(AssemblyDefinition CM)
@@ -78,6 +108,7 @@ namespace LoadOrderIPatch.Patches {
             return path == DataLocation.assetsPath;
         }
 
+#if DEBUG
         // get the stack trace for debugging purposes.
         // modify this mehtod to print the desired stacktrace. 
         public AssemblyDefinition InsertPrintStackTrace(AssemblyDefinition CM)
@@ -99,6 +130,7 @@ namespace LoadOrderIPatch.Patches {
             logger_.Info("PlatformServiceBehaviour_Awake_Patch applied successfully!");
             return CM;
         }
+#endif
 
         public static void LogStackTrace()
         {

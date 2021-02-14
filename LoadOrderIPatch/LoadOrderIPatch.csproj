@@ -41,6 +41,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LoadOrderInjections\LoadOrderInjections.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>$(ManagedDLLPath)\UnityEngine.dll</HintPath>
       <Private>false</Private>

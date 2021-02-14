@@ -28,6 +28,8 @@ namespace LoadOrderIPatch.Patches {
             assemblyDefinition = BindEnableDisableAllPatch(assemblyDefinition);
             //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition); // handled by harmony patch
             LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
+            InstallResolverLog();
+            InstallHarmonyResolver();
 
             bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
             //if (sman) 
@@ -35,8 +37,7 @@ namespace LoadOrderIPatch.Patches {
                 assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
             }
 
-            // assemblyDefinition = NoQueryPatch(assemblyDefinition); // handled by harmony patch
-            //InstallHarmonyResolver();
+            assemblyDefinition = NoQueryPatch(assemblyDefinition); // handled by harmony patch
 
             return assemblyDefinition;
         }
@@ -201,16 +202,28 @@ namespace LoadOrderIPatch.Patches {
         //            return ASC;
         //        }
 
-        public void InstallHarmonyResolver()
-        {
-            logger_.Info("InstallHarmonyResolver() called ...");
-            AppDomain.CurrentDomain.AssemblyResolve += LoadOrderHarmonyResolver;
-            AppDomain.CurrentDomain.TypeResolve += LoadOrderHarmonyResolver;
-            logger_.Info("InstallHarmonyResolver() successfull!");
+
+
+        public void InstallResolverLog() {
+            logger_.LogStartPatching();
+            ResolveEventHandler resolver = LoadOrderInjections.Injections.Logs.ResolverLog;
+            AppDomain.CurrentDomain.AssemblyResolve += resolver;
+            AppDomain.CurrentDomain.TypeResolve += resolver;
+            logger_.LogSucessfull();
         }
 
         private static readonly Version MinHarmonyVersionToHandle = new Version(2, 0, 0, 8);
         const string HarmonyName = "0Harmony";
+        const string HarmonyName2 = "CitiesHarmony.Harmony";
+
+        public void InstallHarmonyResolver() {
+            logger_.LogStartPatching();
+            ResolveEventHandler resolver = LoadOrderHarmonyResolver;
+            AppDomain.CurrentDomain.AssemblyResolve += resolver;
+            AppDomain.CurrentDomain.TypeResolve += resolver;
+            logger_.LogSucessfull();
+        }
+
         public static Assembly LoadOrderHarmonyResolver(object sender, ResolveEventArgs args)
         {
             try {
@@ -240,7 +253,7 @@ namespace LoadOrderIPatch.Patches {
 
         public static bool IsHarmony2(AssemblyName assemblyName)
         {
-            return assemblyName.Name == HarmonyName &&
+            return (assemblyName.Name == HarmonyName2  || assemblyName.Name == HarmonyName) &&
                    assemblyName.Version >= MinHarmonyVersionToHandle;
         }
 

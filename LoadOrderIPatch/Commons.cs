@@ -15,7 +15,7 @@ namespace LoadOrderIPatch {
         internal static void LogSucessfull(this ILogger logger)
         {
             string caller = new StackFrame(1).GetMethod().Name;
-            logger.Info($"[LoadOrderIPatch] Sucessfully patched {caller}!");
+            logger.Info($"[LoadOrderIPatch] Sucessfully applied {caller}!");
                 //+ "\n------------------------------------------------------------------------");
         }
 

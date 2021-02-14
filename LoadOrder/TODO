@@ -1,3 +1,8 @@
+IPatch:
+	-poke option
+	-breadth option
+	- print assembly/type resolve stack trace for debugging.
+
 files:
 	readable Load Order file. 
 	Cache Mod names once the game is loaded.

@@ -12,6 +12,8 @@ namespace LoadOrderIPatch {
             string fullTypeName, string methodName,
             bool throwOnError = true)
         {
+            
+            
             TypeDefinition type = module.Types.FirstOrDefault(t => t.FullName == fullTypeName);
             if (type is null) {
                 if (throwOnError)
