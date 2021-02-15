@@ -3,7 +3,7 @@
     <ProjectGuid>{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}</ProjectGuid>
     <TargetFramework>net35</TargetFramework>
     <Copyright>Copyright ©  2020</Copyright>
-    <Deterministic>true</Deterministic>
+    <Deterministic>false</Deterministic>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyVersion>0.2.2.*</AssemblyVersion>
     <FileAlignment>512</FileAlignment>
