@@ -68,6 +68,16 @@ namespace LoadOrderIPatch.Patches {
                 var ret = Instruction.Create(OpCodes.Ret);
             }
 
+            var tLogs = loi.MainModule.GetType("LoadOrderInjections.Injections.Logs");
+            {
+                var mBeforeAddAssembliesGetExportedTypes = tLogs.GetMethod("BeforeAddAssembliesGetExportedTypes");
+                var callBeforeAddAssembliesGetExportedTypes = Instruction.Create(
+                    OpCodes.Call, module.ImportReference(mBeforeAddAssembliesGetExportedTypes));
+                var callGetExportedTypes = instructions.First(_c => _c.Calls("GetExportedTypes"));
+                var loadAsm = callGetExportedTypes.Previous.Duplicate();
+                ilProcessor.InsertBefore(callGetExportedTypes, callBeforeAddAssembliesGetExportedTypes);
+                ilProcessor.InsertBefore(callBeforeAddAssembliesGetExportedTypes, loadAsm);
+            }
 
             logger_.LogSucessfull();
         }

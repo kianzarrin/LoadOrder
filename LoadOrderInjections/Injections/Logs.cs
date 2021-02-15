@@ -36,6 +36,10 @@ namespace LoadOrderInjections.Injections {
             Log.Info($"plugin `{modName}` enabled sucessfully", true);
         }
 
+        public static void BeforeAddAssembliesGetExportedTypes(Assembly assembly) {
+            Log.Debug(ThisMethod + " called for " + assembly);
+        }
+
         public static Assembly ResolverLog(object sender, ResolveEventArgs args) {
             Log.Info($"Resolver called: sender={sender} name={args.Name}" + Environment.StackTrace);
             return null;
