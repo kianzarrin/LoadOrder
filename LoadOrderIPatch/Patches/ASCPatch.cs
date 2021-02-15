@@ -11,7 +11,7 @@ using ILogger = Patch.API.ILogger;
 
 namespace LoadOrderIPatch.Patches {
     public class ASCPatch : IPatch {
-        public int PatchOrderAsc { get; } = 100;
+        public int PatchOrderAsc { get; } = 99;
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("Assembly-CSharp", new Version());
         private ILogger logger_;
         private string workingPath_;

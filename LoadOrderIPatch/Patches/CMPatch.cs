@@ -14,6 +14,7 @@ namespace LoadOrderIPatch.Patches {
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("ColossalManaged", new Version(0, 3, 0, 0));
         private ILogger logger_;
         private string workingPath_;
+
         public AssemblyDefinition Execute(
             AssemblyDefinition assemblyDefinition, 
             ILogger logger, 
@@ -22,8 +23,9 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
-            assemblyDefinition = LoadAssembliesPatch(assemblyDefinition); 
+            assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
             //assemblyDefinition = LoadPluginsPatch(assemblyDefinition); // its loaded in ASCPatch.LoadDLL() instead
+            AddAssemlyPatch(assemblyDefinition);
             assemblyDefinition = AddPluginsPatch(assemblyDefinition);
 #if DEBUG
             //assemblyDefinition = InsertPrintStackTrace(assemblyDefinition);
@@ -33,15 +35,10 @@ namespace LoadOrderIPatch.Patches {
                 assemblyDefinition = NoCustomAssetsPatch(assemblyDefinition);
             }
 
-
-            bool poke = Environment.GetCommandLineArgs().Any(_arg => _arg == "-poke");
-            if(poke)
-                PokeAssemlyPatch(assemblyDefinition);
-
             return assemblyDefinition;
         }
 
-        public void PokeAssemlyPatch(AssemblyDefinition CM) {
+        public void AddAssemlyPatch(AssemblyDefinition CM) {
             logger_.LogStartPatching();
             var module = CM.MainModule;
             logger_.Info("PluginInfo is :" +  module.Types.FirstOrDefault(t => t.Name.EndsWith("PluginManager")).FullName);
@@ -55,13 +52,22 @@ namespace LoadOrderIPatch.Patches {
             var first = instructions.First();
 
             var loi = GetInjectionsAssemblyDefinition(workingPath_);
-            var mInjection = loi.MainModule.GetMethod("LoadOrderInjections.Injections.AddAssembly.Prefix");
-            var mrInjection = module.ImportReference(mInjection);
 
-            var callInjection = Instruction.Create(OpCodes.Call, mrInjection);
-            var ldAsm = Instruction.Create(OpCodes.Ldarg_1);
-            ilProcessor.InsertBefore(first, callInjection);
-            ilProcessor.InsertBefore(callInjection, ldAsm);
+            if (poke) {
+                var mInjection = loi.MainModule.GetMethod("LoadOrderInjections.Injections.LoadingApproach.AddAssemblyPrefix");
+                var mrInjection = module.ImportReference(mInjection);
+                var callInjection = Instruction.Create(OpCodes.Call, mrInjection);
+                var ldAsm = Instruction.Create(OpCodes.Ldarg_1);
+
+                ilProcessor.InsertBefore(first, callInjection);
+                ilProcessor.InsertBefore(callInjection, ldAsm);
+            } 
+            
+            if (breadthFirst) {
+                var callAdd = instructions.First(_c => _c.Calls("Add"));
+                var ret = Instruction.Create(OpCodes.Ret);
+            }
+
 
             logger_.LogSucessfull();
         }
@@ -206,14 +212,25 @@ namespace LoadOrderIPatch.Patches {
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
                 .First(_m => _m.Name == "AddPlugins");
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            var codes = mTarget.Body.Instructions.ToList();
 
             AssemblyDefinition asm = GetInjectionsAssemblyDefinition(workingPath_);
             var tLogs = asm.MainModule.Types
                 .First(_t => _t.Name == "Logs");
 
+            var tLoadingApproach = asm.MainModule.Types
+                .First(_t => _t.Name == "LoadingApproach");
+
             MethodDefinition mdPreCreateUserModInstance = tLogs.Methods
                 .First(_m => _m.Name == "PreCreateUserModInstance");
-            MethodReference mrPreCreateUserModInstance = tPluginManager.Module.ImportReference(mdPreCreateUserModInstance);
+            MethodReference mrPreCreateUserModInstance = 
+                tPluginManager.Module.ImportReference(mdPreCreateUserModInstance);
+
+            MethodDefinition mdAddPluginsPrefix = tLoadingApproach.Methods
+                .First(_m => _m.Name == "AddPluginsPrefix");
+            MethodReference mrAddPluginsPrefix = 
+                tPluginManager.Module.ImportReference(mdAddPluginsPrefix);
 
             MethodDefinition mdBeforeEnable = tLogs.Methods
                 .First(_m => _m.Name == "BeforeEnable");
@@ -224,18 +241,23 @@ namespace LoadOrderIPatch.Patches {
             MethodReference mrAfterEnable = tPluginManager.Module.ImportReference(mdAfterEnable);
 
             // find instructions
-            var codes = mTarget.Body.Instructions.ToList();
+            Instruction first = codes.First();
+
             Instruction getUserModInstance = codes.First(
                 _c => (_c.Operand as MethodReference)?.Name == "get_userModInstance");
             Instruction InvokeOnEnabled = codes.First(
                 _c => (_c.Operand as MethodReference)?.Name == "Invoke");
 
+            Instruction LoadPlugins = mTarget.GetLDArg("plugins");
             Instruction LoadPluginInfo = getUserModInstance.Previous;
             Instruction callPreCreateUserModInstance = Instruction.Create(OpCodes.Call, mrPreCreateUserModInstance);
+            Instruction callAddPluginsPrefix = Instruction.Create(OpCodes.Call, mrAddPluginsPrefix);
             Instruction callBeforeEnable = Instruction.Create(OpCodes.Call, mrBeforeEnable);
             Instruction callAfterEnable = Instruction.Create(OpCodes.Call, mrAfterEnable);
 
-            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            ilProcessor.InsertBefore(first, callAddPluginsPrefix); // insert call
+            ilProcessor.InsertBefore(callAddPluginsPrefix, LoadPlugins.Duplicate()); // load input argument
+
             ilProcessor.InsertBefore(getUserModInstance, callPreCreateUserModInstance); // insert call
             ilProcessor.InsertBefore(callPreCreateUserModInstance, LoadPluginInfo.Duplicate()); // load argument for the call
 

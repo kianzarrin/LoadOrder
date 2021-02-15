@@ -15,6 +15,11 @@ namespace LoadOrderInjections.Util {
             }
         }
 
+        public static bool HasArg(string arg) =>
+            Environment.GetCommandLineArgs().Any(_arg => _arg == arg);
+        public static bool breadthFirst = HasArg("-phased");
+        public static bool poke = HasArg("-poke");
+
         internal const string LoadOrderSettingsFile = "LoadOrder";
         const int DEFAULT_ORDER = 1000; // unordered plugins come last.
 

@@ -12,7 +12,7 @@ namespace LoadOrderIPatch.Patches {
     /// modifies Unity Logger to insert time stamps
     /// </summary>
     public class UnityLoggerPatch : IPatch {
-        public int PatchOrderAsc { get; } = 100;
+        public int PatchOrderAsc { get; } = 101;
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("UnityEngine", new Version());
         private ILogger logger_;
         private string workingPath_;
