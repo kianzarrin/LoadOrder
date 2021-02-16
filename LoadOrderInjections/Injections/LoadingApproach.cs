@@ -10,12 +10,29 @@
     using System.Runtime.CompilerServices;
     using ICities;
     using static LoadOrderInjections.Util.LoadOrderUtil;
+    using Mono.Cecil;
+
     public static class LoadingApproach {
         public static void AddAssemblyPrefix(Assembly asm) {
             try {
                 if (poke && !breadthFirst) {
-                    Log.Info($"Poking {asm.Name()} ...", true);
-                    Log.Info("calling GetExportedTypes() for " + asm);
+                    Log.Info($"Poking {asm} ...", true);
+
+                    var path = GetAssemblyLocation(asm);
+                    var cecilTypes = GetAllCecilTypes(path);
+
+                    Log.Info("poking public types individually");
+                    foreach (var cecilType in cecilTypes) {
+                        if (cecilType.IsPublic || cecilType.IsNestedPublic) {
+                            try {
+                                asm.GetType(cecilType.FullName, true);
+                            } catch (Exception ex) {
+                                Log.Exception(ex, "failed to get " + cecilType.FullName, showInPanel:false);
+                            }
+                        }
+                    }
+                    
+                    Log.Info("calling GetExportedTypes()");
                     asm.GetExportedTypes(); // public only
                     Log.Info("GetExportedTypes sucessfull!");
 
@@ -24,6 +41,15 @@
                         Log.Info("call static constructor of IUSerMod implementation.");
                         t.CallStaticConstructor();
                         Log.Info("successfully called static constructor of IUserMod.");
+                    }
+
+                    Log.Info("poking types individually");
+                    foreach (var cecilType in cecilTypes) {
+                        try {
+                            asm.GetType(cecilType.FullName, true);
+                        } catch (Exception ex) {
+                            Log.Exception(ex, "failed to get " + cecilType.FullName, showInPanel: false);
+                        }
                     }
 
                     Log.Info("calling asm.GetTypes()");
@@ -69,7 +95,6 @@
                 }
 
                 if (poke) {
-                    Log.Info("calling GetTypes() ...");
                     foreach (var plugin in plugins.Values) {
                         try {
                             plugin.GetAllTypes();
@@ -81,6 +106,41 @@
                 }
             }
         }
+
+        public static IEnumerable<TypeDefinition> GetAllCecilTypes(string path) {
+            AssemblyDefinition asm = AssemblyDefinition.ReadAssembly(path);
+            foreach(var type in asm.MainModule.Types) {
+                yield return type;
+                foreach (var nestedType in GetNestedCecilTypesRecursive(type)) {
+                    yield return nestedType;
+                }
+            }
+        }
+
+        public static IEnumerable<TypeDefinition> GetNestedCecilTypesRecursive(TypeDefinition type) {
+            foreach(var nestedType in type.NestedTypes) {
+                yield return nestedType;
+                foreach(var nestedType2 in GetNestedCecilTypesRecursive(nestedType)) {
+                    yield return nestedType2;
+                }
+            }
+        }
+
+        public static string GetAssemblyLocation(Assembly assembly) {
+            var name = assembly.FullName;
+            foreach(var pair in m_AssemblyLocations) {
+                string roName = pair.Key.FullName;
+                string path = pair.Value;
+                if (name  == roName) {
+                    return pair.Value;
+                }
+            }
+            return null;
+        }
+
+        static private Dictionary<Assembly, string> m_AssemblyLocations =
+            GetFieldValue(PluginManager.instance, "m_AssemblyLocations") as Dictionary<Assembly, string>;
+
 
         public static IEnumerable<Type> GetExportedTypes(this PluginInfo plugin) {
             foreach(var asm in plugin.GetAssemblies())
