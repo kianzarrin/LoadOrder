@@ -25,6 +25,7 @@ namespace LoadOrderIPatch.Patches {
 
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
             //assemblyDefinition = LoadPluginsPatch(assemblyDefinition); // its loaded in ASCPatch.LoadDLL() instead
+            LoadAssemblyPatch(assemblyDefinition);
             AddAssemlyPatch(assemblyDefinition);
             assemblyDefinition = AddPluginsPatch(assemblyDefinition);
 #if DEBUG
@@ -210,6 +211,31 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertAfter(loadDllPath, callInjection);
             logger_.LogSucessfull();
             return CM;
+        }
+
+        /// <summary>
+        /// load mdb/pdb files
+        /// </summary>
+        public void LoadAssemblyPatch(AssemblyDefinition CM) {
+            logger_.LogStartPatching();
+            var module = CM.MainModule;
+            var mTarget = module.GetMethod("ColossalFramework.Plugins.PluginManager.LoadPlugin");
+            var instructions = mTarget.Body.Instructions;
+            var ilProcessor = mTarget.Body.GetILProcessor();
+
+            AssemblyDefinition asm = GetInjectionsAssemblyDefinition(workingPath_);
+            var mdInjection = asm.MainModule.GetMethod("LoadOrderInjections.Injections.Utils.LoadAssemblyModified");
+            var mrInjection = module.ImportReference(mdInjection);
+
+            Instruction loadDllPath = mTarget.GetLDArg("dllPath");
+            Instruction callInjection = Instruction.Create(OpCodes.Call, mrInjection);
+            Instruction ret = Instruction.Create(OpCodes.Ret);
+            Instruction first = instructions.First();
+
+            ilProcessor.InsertBefore(first, loadDllPath);
+            ilProcessor.InsertAfter(loadDllPath, callInjection);
+            ilProcessor.InsertAfter(callInjection, ret);
+            logger_.LogSucessfull();
         }
 
         /// <summary>

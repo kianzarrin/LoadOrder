@@ -29,7 +29,8 @@ namespace LoadOrderIPatch.Patches {
             //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition); // handled by harmony patch
             LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
             InstallResolverLog();
-            InstallHarmonyResolver();
+            if(!Commons.HasArg("-noHarmonyResolver"))
+                InstallHarmonyResolver();
 
             bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
             //if (sman) 

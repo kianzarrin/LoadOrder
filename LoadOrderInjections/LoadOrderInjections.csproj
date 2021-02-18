@@ -57,6 +57,10 @@
       <HintPath>$(ManagedDLLPath)\ICities.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="pdb2mdb">
+      <HintPath>..\libs\pdb2mdb.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(ManagedDLLPath)\UnityEngine.dll</HintPath>
       <Private>False</Private>
