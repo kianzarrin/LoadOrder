@@ -27,6 +27,10 @@ namespace LoadOrderIPatch.Patches {
             assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
             assemblyDefinition = BindEnableDisableAllPatch(assemblyDefinition);
             //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition); // handled by harmony patch
+            LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\pdb2mdb.dll"));
+            LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\Mono.CompilerServices.SymbolWriter.dll"));
+            LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\Mono.Cecil.dll"));
+
             LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
             InstallResolverLog();
             if(!Commons.HasArg("-noHarmonyResolver"))

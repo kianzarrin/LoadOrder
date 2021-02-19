@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{16FA65D4-EB2B-4863-B95E-8629F97BC9B9}</ProjectGuid>
     <TargetFramework>net35</TargetFramework>
@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <PackageReference Include="Mono.Cecil" Version="0.10.3" />
+    <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
@@ -56,10 +57,6 @@
     <Reference Include="ICities">
       <HintPath>$(ManagedDLLPath)\ICities.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="pdb2mdb">
-      <HintPath>..\libs\pdb2mdb.dll</HintPath>
-      <Private>true</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(ManagedDLLPath)\UnityEngine.dll</HintPath>
@@ -88,12 +85,14 @@
     </PropertyGroup>
     <ItemGroup>
       <AuxilaryFiles Include="$(TargetDir)Resources\*.png" />
+      <Pdb2mdbFiles Include="$(PkgMono_Unofficial_pdb2mdb)\tools\*.*" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
     <Delete Files="$(TargetPath).mdb" />
-    <Exec Command="&quot;$(MonoDir)bin\mono.exe&quot; &quot;$(MonoDir)lib\mono\4.5\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" />
+    <Exec Command="&quot;$(PkgMono_Unofficial_pdb2mdb)\tools\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" />
     <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
-
+    <Copy SourceFiles="@(Pdb2mdbFiles)" DestinationFolder="$(DeployDir)pdb2mdb" />
+	  
     <!--<Copy SourceFiles="@(AuxilaryFiles)" DestinationFolder="$(DeployDir)" />-->
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />

@@ -17,7 +17,9 @@
 
                 if (File.Exists(pdbPath)) {
                     try {
-                        Pdb2Mdb.Converter.Convert(dllPath);
+                        var mConvert = Type.GetType("Pdb2Mdb.Converter,pdb2mdb").GetMethod("Convert");
+                        mConvert.Invoke(null, new object[] { dllPath });
+
                         Log.Info($"Created {mdbPath} from {pdbPath} to ...");
                     } catch (Exception ex) {
                         Log.Exception(ex, $"failed to convert {pdbPath} to mdb.", showInPanel: false);

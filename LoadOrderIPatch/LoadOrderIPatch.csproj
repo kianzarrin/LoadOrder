@@ -45,6 +45,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Patch.API">
+      <HintPath>..\libs\Patch.API.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(ManagedDLLPath)\UnityEngine.dll</HintPath>
       <Private>false</Private>
@@ -56,9 +59,6 @@
     <Reference Include="ColossalManaged">
       <HintPath>$(ManagedDLLPath)\ColossalManaged.dll</HintPath>
       <Private>false</Private>
-    </Reference>
-    <Reference Include="Patch.API">
-      <HintPath>..\libs\Patch.API.dll</HintPath>
     </Reference>
   </ItemGroup>
 
