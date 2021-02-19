@@ -16,8 +16,8 @@ namespace LoadOrderIPatch.Patches {
         private string workingPath_;
 
         public AssemblyDefinition Execute(
-            AssemblyDefinition assemblyDefinition, 
-            ILogger logger, 
+            AssemblyDefinition assemblyDefinition,
+            ILogger logger,
             string patcherWorkingPath,
             IPaths gamePaths) {
             logger_ = logger;
@@ -25,8 +25,13 @@ namespace LoadOrderIPatch.Patches {
 
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
             //assemblyDefinition = LoadPluginsPatch(assemblyDefinition); // its loaded in ASCPatch.LoadDLL() instead
-            LoadAssemblyPatch(assemblyDefinition);
+
+            if (IsDebugMono) {
+                LoadAssemblyPatch(assemblyDefinition);
+            }
+
             AddAssemlyPatch(assemblyDefinition);
+            
             assemblyDefinition = AddPluginsPatch(assemblyDefinition);
 #if DEBUG
             //assemblyDefinition = InsertPrintStackTrace(assemblyDefinition);
@@ -218,6 +223,12 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         public void LoadAssemblyPatch(AssemblyDefinition CM) {
             logger_.LogStartPatching();
+
+            Commons.Logger = logger_;
+            LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\pdb2mdb.dll"));
+            LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\Mono.CompilerServices.SymbolWriter.dll"));
+            LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\Mono.Cecil.dll"));
+
             var module = CM.MainModule;
             var mTarget = module.GetMethod("ColossalFramework.Plugins.PluginManager.LoadPlugin");
             var instructions = mTarget.Body.Instructions;

@@ -15,22 +15,18 @@ namespace LoadOrderIPatch.Patches {
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("Assembly-CSharp", new Version());
         private ILogger logger_;
         private string workingPath_;
-
+        
         public AssemblyDefinition Execute(
             AssemblyDefinition assemblyDefinition, 
             ILogger logger, 
             string patcherWorkingPath,
             IPaths gamePaths) {
-            logger_ = logger;
+            Commons.Logger = logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
             assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
             assemblyDefinition = BindEnableDisableAllPatch(assemblyDefinition);
             //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition); // handled by harmony patch
-            LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\pdb2mdb.dll"));
-            LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\Mono.CompilerServices.SymbolWriter.dll"));
-            LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\Mono.Cecil.dll"));
-
             LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
             InstallResolverLog();
             if(!Commons.HasArg("-noHarmonyResolver"))
@@ -47,30 +43,7 @@ namespace LoadOrderIPatch.Patches {
             return assemblyDefinition;
         }
 
-        public Assembly LoadDLL(string dllPath)
-        {
-            void Log(string _m) => logger_.Info(_m);
-            try {
-                Assembly assembly;
-                string symPath = dllPath + ".mdb";
-                if(File.Exists(symPath)) {
-                    Log("\nLoading " + dllPath + "\nSymbols " + symPath);
-                    assembly = Assembly.Load(File.ReadAllBytes(dllPath), File.ReadAllBytes(symPath));
-                } else {
-                    Log("Loading " + dllPath);
-                    assembly = Assembly.Load(File.ReadAllBytes(dllPath));
-                }
-                if(assembly != null) {
-                    Log("Assembly " + assembly.FullName + " loaded.\n");
-                } else {
-                    Log("Assembly at " + dllPath + " failed to load.\n");
-                }
-                return assembly;
-            } catch(Exception ex) {
-                logger_.Error("Assembly at " + dllPath + " failed to load.\n" + ex.ToString());
-                return null;
-            }
-        }
+
 
         /// <summary>
         /// replaces the normal loading process with subscription manger tool
