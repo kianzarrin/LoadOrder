@@ -23,7 +23,7 @@
     <None Remove="Settings\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\LoadOrder\.editorconfig" Link=".editorconfig" />
+    <EditorConfigFiles Include="..\LoadOrder\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>

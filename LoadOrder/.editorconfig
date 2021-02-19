@@ -2,3 +2,6 @@
 
 # CS8632: The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 dotnet_diagnostic.CS8632.severity = none
+
+# HAA0101: Array allocation for params parameter
+dotnet_diagnostic.HAA0101.severity = none

@@ -218,6 +218,8 @@ namespace LoadOrderIPatch.Patches {
             return CM;
         }
 
+        public static System.Reflection.Assembly Pdb2mdb; 
+
         /// <summary>
         /// load mdb/pdb files
         /// </summary>
@@ -225,7 +227,7 @@ namespace LoadOrderIPatch.Patches {
             logger_.LogStartPatching();
 
             Commons.Logger = logger_;
-            LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\pdb2mdb.dll"));
+            Pdb2mdb = LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\pdb2mdb.exe"));
             LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\Mono.CompilerServices.SymbolWriter.dll"));
             LoadDLL(Path.Combine(workingPath_, @"pdb2mdb\Mono.Cecil.dll"));
 
@@ -233,19 +235,23 @@ namespace LoadOrderIPatch.Patches {
             var mTarget = module.GetMethod("ColossalFramework.Plugins.PluginManager.LoadPlugin");
             var instructions = mTarget.Body.Instructions;
             var ilProcessor = mTarget.Body.GetILProcessor();
+            Instruction first = instructions.First();
 
             AssemblyDefinition asm = GetInjectionsAssemblyDefinition(workingPath_);
             var mdInjection = asm.MainModule.GetMethod("LoadOrderInjections.Injections.Utils.LoadAssemblyModified");
             var mrInjection = module.ImportReference(mdInjection);
 
-            Instruction loadDllPath = mTarget.GetLDArg("dllPath");
-            Instruction callInjection = Instruction.Create(OpCodes.Call, mrInjection);
-            Instruction ret = Instruction.Create(OpCodes.Ret);
-            Instruction first = instructions.First();
+            var fPdb2mdb = GetType().GetField("Pdb2mdb");
 
-            ilProcessor.InsertBefore(first, loadDllPath);
-            ilProcessor.InsertAfter(loadDllPath, callInjection);
-            ilProcessor.InsertAfter(callInjection, ret);
+            ilProcessor.Prefix(
+                mTarget.GetLDArg("dllPath"), 
+                Instruction.Create(OpCodes.Ldsfld, module.ImportReference(fPdb2mdb)),
+                Instruction.Create(OpCodes.Call, mrInjection),
+                Instruction.Create(OpCodes.Ret));
+
+            foreach(var c in mTarget.Body.Instructions) {
+                logger_.Info(c.ToString());
+            }
             logger_.LogSucessfull();
         }
 
