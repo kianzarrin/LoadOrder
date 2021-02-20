@@ -35,6 +35,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Injections\Utils.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="KianCommons\KianCommons\Util\ReflectionHelpers.cs" />
     <Compile Include="KianCommons\KianCommons\Util\Assertion.cs" />
     <Compile Include="KianCommons\KianCommons\Util\Log.cs" />

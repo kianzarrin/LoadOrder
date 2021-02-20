@@ -10,7 +10,12 @@
     using KianCommons;
 
     public static class Utils {
-        public static Assembly LoadAssemblyModified(string dllPath, Assembly pdb2mdb) {
+        //static Assembly GetPdb2Mdb() {
+        //    AppDomain.CurrentDomain.GetAssemblies().First(item => item.Name == "pdb2mdb");
+        //}
+
+
+        public static Assembly LoadAssemblyModified(string dllPath) {
             try {
                 string mdbPath = dllPath + ".mdb";
                 string pdbPath = dllPath.Substring(0, dllPath.Length - 3) + "pdb";
@@ -25,6 +30,10 @@
                         mConvert.Invoke(null, new object[] { dllPath });
 
                         Log.Info($"Created {mdbPath} from {pdbPath}");
+                    } catch (ReflectionTypeLoadException ex) {
+                        Log.Exception(ex, 
+                            $"\n{ex.Types.ToSTR()}\n" + 
+                            $"failed to convert {pdbPath} to mdb.", showInPanel: false);
                     } catch (Exception ex) {
                         Log.Exception(ex, $"failed to convert {pdbPath} to mdb.", showInPanel: false);
                     }
