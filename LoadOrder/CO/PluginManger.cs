@@ -117,6 +117,15 @@ namespace CO.Plugins {
 
             public string ModPath => m_Path;
 
+            public string ModIncludedPath {
+                get {
+                    if (dirName.StartsWith("_")) 
+                        return Path.Combine(parentDirName, dirName.Substring(1));
+                    else
+                        return ModPath;
+                }
+            }
+
             public string dirName => new DirectoryInfo(ModPath).Name;
 
             public string parentDirName => Directory.GetParent(ModPath).Name;
@@ -153,7 +162,7 @@ namespace CO.Plugins {
 
             public PublishedFileId publishedFileID => this.m_PublishedFileID;
 
-           
+
 
             public bool IsIncluded {
                 get => !dirName.StartsWith("_");
@@ -171,8 +180,7 @@ namespace CO.Plugins {
                 }
             }
 
-            public void MoveToPath(string targetPath)
-            {
+            public void MoveToPath(string targetPath) {
                 try {
                     Log.Debug($"moving mod from {ModPath} to {targetPath}");
                     Directory.Move(ModPath, targetPath);
@@ -193,12 +201,10 @@ namespace CO.Plugins {
 
             private PublishedFileId m_PublishedFileID = PublishedFileId.invalid;
 
-            private PluginInfo()
-            {
+            private PluginInfo() {
             }
 
-            public PluginInfo(string path, bool builtin, PublishedFileId id)
-            {
+            public PluginInfo(string path, bool builtin, PublishedFileId id) {
                 this.m_Path = path;
                 this.m_CachedName = Path.GetFileNameWithoutExtension(path);
                 if (m_CachedName.StartsWith("_"))
@@ -229,8 +235,7 @@ namespace CO.Plugins {
             //}
 
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-            public unsafe int GetLegacyHashCode(string str)
-            {
+            public unsafe int GetLegacyHashCode(string str) {
                 fixed (char* ptr = str + RuntimeHelpers.OffsetToStringData / 2) {
                     char* ptr2 = ptr;
                     char* ptr3 = ptr2 + str.Length - 1;
@@ -248,10 +253,8 @@ namespace CO.Plugins {
                 }
             }
 
-
-
-
-            public string savedEnabledKey_ => name + GetLegacyHashCode(ModPath).ToString() + ".enabled";
+            public string savedEnabledKey_ => 
+                name + GetLegacyHashCode(ModIncludedPath).ToString() + ".enabled";
             public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, def:false, autoUpdate:true);
             public bool isEnabled {
                 get => SavedEnabled.value;

@@ -12,7 +12,8 @@ Mod:
 	dump profiler resutls to a file and view externally using GUI created by unity editor.
 
 Tool:
-	use mono to load mods
+	fix enable/disable excluded items
+	fix fast clicking.
 	auto luncher
 	load/save-as
 	list asets
