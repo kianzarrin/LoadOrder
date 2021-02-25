@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <PackageReference Include="Mono.Cecil" Version="0.10.3" />
+    <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">

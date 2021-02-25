@@ -12,11 +12,9 @@ Mod:
 	dump profiler resutls to a file and view externally using GUI created by unity editor.
 
 Tool:
+	use mono to load mods
 	auto luncher
 	load/save-as
 	list asets
-
-
-
 
 * high Prioirty

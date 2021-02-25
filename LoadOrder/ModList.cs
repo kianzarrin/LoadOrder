@@ -59,7 +59,7 @@ namespace LoadOrderTool {
         {
             if (p.IsHarmonyMod())
                 return 0;
-            foreach (var file in Directory.GetFiles(p.ModPath, "*.dll")) {
+            foreach (var file in p.DllPaths) {
                 var name = Path.GetFileNameWithoutExtension(file);
                 if (name == "CitiesHarmony.API")
                     return 1;

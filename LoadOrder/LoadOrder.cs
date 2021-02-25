@@ -79,7 +79,7 @@ namespace LoadOrderTool {
             foreach (var p in ModList) {
                 string savedKey = p.savedEnabledKey_;
                 Log.Debug($"plugin info: dllName={p.dllName} harmonyVersion={ ModList.GetHarmonyOrder(p)} " +
-                     $"savedKey={savedKey} asms=[{p.assembliesString}]  modPath={p.ModPath}");
+                     $"savedKey={savedKey} modPath={p.ModPath}");
             }
             foreach (var mod in ModList) {
                 rows.Add(mod.LoadOrder, mod.IsIncluded, mod.isEnabled, mod.DisplayText);

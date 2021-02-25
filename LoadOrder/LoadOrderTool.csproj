@@ -30,6 +30,10 @@
   <ItemGroup>
     <Compile Include="..\LoadOrderMod\LoadOrderCache.cs" Link="LoadOrderCache.cs" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Mono.Cecil" Version="0.11.3" />
+  </ItemGroup>
 
   <Target Name="DeployToModDirectory" AfterTargets="Build">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">

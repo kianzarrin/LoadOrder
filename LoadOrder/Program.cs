@@ -1,14 +1,14 @@
-using CO.IO;
-using CO.Plugins;
-using System;
-using System.IO;
-using System.Reflection;
-using System.Windows.Forms;
-using System.Collections.Generic;
-
-
 namespace LoadOrderTool
 {
+    using CO.IO;
+    using CO.Plugins;
+    using System;
+    using System.IO;
+    using System.Reflection;
+    using System.Windows.Forms;
+    using System.Collections.Generic;
+    using LoadOrderTool.Util;
+
     static class Program
     {
         /// <summary>
@@ -23,7 +23,9 @@ namespace LoadOrderTool
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Console.WriteLine("Hello!");
-                LoadAssemblies();
+                //LoadAssemblies();
+                
+                PluginManager.instance.LoadPlugins();
 
                 Application.Run(new LoadOrder());
             }
@@ -43,10 +45,10 @@ namespace LoadOrderTool
             AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
 
             LoadManagedDLLs();
+            
+            //PluginManager.instance.LoadPlugins();
 
-            PluginManager.instance.LoadPlugins();
             Log.Info("LoadAssemblies() was successful");
-
         }
 
         static void LoadManagedDLLs()
@@ -56,7 +58,7 @@ namespace LoadOrderTool
             {
                 try
                 {
-                    var asm = Assembly.LoadFrom(dll);
+                    var asm = AssemblyUtil.LoadDLL(dll);
                     Log.Info($"Assembly loaded: {asm}");
                 }
                 catch (Exception ex)
@@ -75,12 +77,13 @@ namespace LoadOrderTool
         private static Assembly ResolveInterface(object sender, ResolveEventArgs args)
         {
             Log.Info("Resolving Assembly " + args.Name);
-            string file = Path.Combine(Path.Combine(Path.Combine(DataLocation.DataPath), "Managed"), new AssemblyName(args.Name).Name + ".dll");
+            string file = PathUtil.Combine(
+                DataLocation.DataPath, 
+                "Managed", 
+                new AssemblyName(args.Name).Name + ".dll"); // parse name
             if (!File.Exists(file))
-            {
                 return null;
-            }
-            return Assembly.LoadFrom(file);
+            return AssemblyUtil.LoadDLL(file);
         }
     }
 }

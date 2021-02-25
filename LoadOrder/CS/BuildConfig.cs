@@ -144,7 +144,7 @@ public class BuildConfig
 			}
 		}
 		if (ret != null)
-			Log.Info($"Assembly '{name0}' resolved to '{ret.Location}'");
+			Log.Info($"Assembly '{name0}' resolved to '{ret}'");
 		else
 			Log.Error($"Assembly resolution failure. No assembly named '{name0}' was found.");
 		return ret;

@@ -1,18 +1,19 @@
 #pragma warning disable 
-
-using CO.IO;
-using CO.PlatformServices;
-using LoadOrderTool;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
-
 namespace CO.Plugins {
+    using CO.IO;
+    using CO.PlatformServices;
+    using LoadOrderTool;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.CompilerServices;
+    using System.Runtime.ConstrainedExecution;
+    using LoadOrderTool.Util;
+    using Mono.Cecil;
+
     public class PluginManager : SingletonLite<PluginManager> {
         public static bool TryGetID(string dir, out ulong id)
         {
@@ -95,9 +96,11 @@ namespace CO.Plugins {
         public delegate void PluginsChangedHandler();
 
         public class PluginInfo {
-            private Type m_UserModImplementation;
+            // private Type m_UserModImplementation;
+            // public List<Assembly> m_Assemblies;
+            // public int assemblyCount => m_Assemblies.Count;
 
-            public List<Assembly> m_Assemblies;
+            private TypeDefinition m_UserModImplementation;
 
             private string m_Path;
 
@@ -108,7 +111,7 @@ namespace CO.Plugins {
             /// <summary> dir name without prefix. </summary>
             private string m_CachedName;
 
-            public string dllName => userModImplementation?.Assembly.GetName().Name;
+            public string dllName => userModImplementation?.Module.Assembly.Name.Name;
 
             public bool isBuiltin => m_IsBuiltin;
 
@@ -132,10 +135,13 @@ namespace CO.Plugins {
                 }
             }
 
+            public string[] DllPaths =>
+                Directory.GetFiles(ModPath, "*.dll", SearchOption.AllDirectories);
+
             /// <summary>
             /// precondition: all dependent assemblies are loaded.
             /// </summary>
-            public bool isCameraScript => GetImplementation(cameraScriptType) != null;
+            public bool isCameraScript => GetImplementation(kCameraScript) != null;
 
             public bool IsHarmonyMod() => name == "2040656402";
 
@@ -147,7 +153,7 @@ namespace CO.Plugins {
 
             public PublishedFileId publishedFileID => this.m_PublishedFileID;
 
-            public int assemblyCount => m_Assemblies.Count;
+           
 
             public bool IsIncluded {
                 get => !dirName.StartsWith("_");
@@ -178,7 +184,7 @@ namespace CO.Plugins {
                     }
                     m_Path = targetPath;
                 } catch (Exception ex) {
-                    if (userModType.GetType().Name == "LoadOrderMod")
+                    if (userModImplementation.Name == "LoadOrderMod")
                         Log.Error("Cannot move Load Order because LoadOrderTool is in use");
                     else
                         Log.Exception(ex);
@@ -197,30 +203,30 @@ namespace CO.Plugins {
                 this.m_CachedName = Path.GetFileNameWithoutExtension(path);
                 if (m_CachedName.StartsWith("_"))
                     m_CachedName = m_CachedName.Substring(1);
-                this.m_Assemblies = new List<Assembly>();
+                //this.m_Assemblies = new List<Assembly>();
                 this.m_IsBuiltin = builtin;
                 this.m_PublishedFileID = id;
             }
 
-            public bool ContainsAssembly(Assembly asm)
-            {
-                for (int i = 0; i < this.m_Assemblies.Count; i++) {
-                    if (this.m_Assemblies[i] == asm) {
-                        return true;
-                    }
-                }
-                return false;
-            }
+            //public bool ContainsAssembly(Assembly asm)
+            //{
+            //    for (int i = 0; i < this.m_Assemblies.Count; i++) {
+            //        if (this.m_Assemblies[i] == asm) {
+            //            return true;
+            //        }
+            //    }
+            //    return false;
+            //}
 
-            public bool ContainsAssembly(AssemblyName asmName)
-            {
-                foreach (Assembly assembly in this.m_Assemblies) {
-                    if (assembly.GetName().FullName == asmName.FullName) {
-                        return true;
-                    }
-                }
-                return false;
-            }
+            //public bool ContainsAssembly(AssemblyName asmName)
+            //{
+            //    foreach (Assembly assembly in this.m_Assemblies) {
+            //        if (assembly.GetName().FullName == asmName.FullName) {
+            //            return true;
+            //        }
+            //    }
+            //    return false;
+            //}
 
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
             public unsafe int GetLegacyHashCode(string str)
@@ -263,66 +269,72 @@ namespace CO.Plugins {
             public override string ToString()
             {
                 return $"PluginInfo: path={ModPath} included={IsIncluded} enabled={isEnabled} DisplayText={DisplayText} " +
-                    $"cachedName={m_CachedName} assemblies=" + assembliesString;
+                    $"cachedName={m_CachedName}"; /*assemblies={assembliesString}"*/
             }
 
-            public string assembliesString {
-                get {
-                    int assemblyCount = this.assemblyCount;
-                    string strCount = (assemblyCount > 0) ? string.Empty : "No assemblies";
-                    for (int i = 0; i < assemblyCount; i++) {
-                        AssemblyName asmName = this.m_Assemblies[i].GetName();
-                        strCount = string.Concat(new object[]
-                        {
-                            strCount,
-                            asmName.Name,
-                            "[",
-                            asmName.Version,
-                            "]"
-                        });
-                        if (i < assemblyCount - 1) {
-                            strCount += ", ";
-                        }
-                    }
-                    return strCount;
-                }
-            }
+            //public string assembliesString {
+            //    get {
+            //        int assemblyCount = this.assemblyCount;
+            //        string strCount = (assemblyCount > 0) ? string.Empty : "No assemblies";
+            //        for (int i = 0; i < assemblyCount; i++) {
+            //            AssemblyName asmName = this.m_Assemblies[i].GetName();
+            //            strCount = string.Concat(new object[]
+            //            {
+            //                strCount,
+            //                asmName.Name,
+            //                "[",
+            //                asmName.Version,
+            //                "]"
+            //            });
+            //            if (i < assemblyCount - 1) {
+            //                strCount += ", ";
+            //            }
+            //        }
+            //        return strCount;
+            //    }
+            //}
 
+            public TypeDefinition userModImplementation => 
+                m_UserModImplementation ??= GetImplementation(PluginManager.kUserMod);
 
-            public Type userModImplementation {
-                get {
-                    return m_UserModImplementation =
-                        m_UserModImplementation ??
-                        GetImplementation(PluginManager.userModType);
-                }
-            }
-            /// <summary>
-            /// precondition: all dependent assemblies are loaded.            
-            /// </summary>
-            public Type GetImplementation(Type type)
-            {
-                for (int i = 0; i < this.m_Assemblies.Count; i++) {
-                    try {
-                        var asm = m_Assemblies[i];
-                        if (!asm.GetReferencedAssemblies().Any(_asm => _asm?.Name == "ICities")) {
-                            // this also filters out non-CS mods.
-                            continue;
-                        }
-                        foreach (Type type2 in this.m_Assemblies[i].GetExportedTypes()) {
-                            if (type2.IsClass && !type2.IsAbstract) {
-                                Type[] interfaces = type2.GetInterfaces();
-                                if (interfaces.Contains(type)) {
-                                    return type2;
-                                }
-                            }
-                        }
-                    } catch (Exception ex) {
-                        Log.Exception(new Exception("this can happen if not all dependencies are laoded", ex));
-                    }
-                }
-                return null;
-            }
+            public TypeDefinition GetImplementation(string fullInterfaceName) =>
+                AssemblyUtil.FindImplementation(DllPaths, fullInterfaceName);
         }
+
+        //public Type userModImplementation {
+        //        get {
+        //            return m_UserModImplementation =
+        //                m_UserModImplementation ??
+        //                GetImplementation(PluginManager.userModType);
+        //        }
+        //    }
+        //    /// <summary>
+        //    /// precondition: all dependent assemblies are loaded.            
+        //    /// </summary>
+        //    public Type GetImplementation(Type type)
+        //    {
+        //        for (int i = 0; i < this.m_Assemblies.Count; i++) {
+        //            try {
+        //                var asm = m_Assemblies[i];
+        //                if (!asm.GetReferencedAssemblies().Any(_asm => _asm?.Name == "ICities")) {
+        //                    // this also filters out non-CS mods.
+        //                    continue;
+        //                }
+        //                foreach (Type type2 in this.m_Assemblies[i].GetExportedTypes()) {
+        //                    if (type2.IsClass && !type2.IsAbstract) {
+        //                        Type[] interfaces = type2.GetInterfaces();
+        //                        if (interfaces.Contains(type)) {
+        //                            return type2;
+        //                        }
+        //                    }
+        //                }
+        //            } catch (Exception ex) {
+        //                Log.Exception(new Exception("this can happen if not all dependencies are laoded", ex));
+        //            }
+        //        }
+        //        return null;
+        //    }
+        //}
 
         public static readonly string kModExtension = ".dll";
 
@@ -342,9 +354,12 @@ namespace CO.Plugins {
         public static string assetStateSettingsFile => "userGameState";
         public static string LoadOrderSettingsFile => "LoadOrder";
 
-        public static Type userModType => Type.GetType("ICities.IUserMod, ICities");
+        //public static Type userModType => Type.GetType("ICities.IUserMod, ICities");
+        public const string kUserMod = "ICities.IUserMod";
 
-        public static Type cameraScriptType => Type.GetType("ICities.ICameraExtension, ICities");
+        //public static Type cameraScriptType => Type.GetType("ICities.ICameraExtension, ICities");
+        public const string kCameraScript = "ICities.ICameraExtension";
+
 
         public static event PluginManager.AddMessageHandler eventLogMessage;
 
@@ -375,7 +390,7 @@ namespace CO.Plugins {
                 if (!PluginManager.noWorkshop) {
                     this.LoadWorkshopPluginInfos();
                 }
-                this.LoadAssemblies();
+                //this.LoadAssemblies();
                 Log.Debug($"{m_Plugins.Count} pluggins loaded.");
 
                 // purge plugins without a IUserMod Implementation. this also filters out non-cs mods.
@@ -422,23 +437,23 @@ namespace CO.Plugins {
             }
         }
 
-        private void LoadAssemblies()
-        {
-            foreach (PluginInfo pluginInfo in m_Plugins) {
-                string modPath = pluginInfo.ModPath;
-                string[] files = Directory.GetFiles(modPath, "*.dll", SearchOption.AllDirectories);
-                foreach (string dllpath in files) {
-                    try {
-                        Assembly asm = Assembly.LoadFrom(dllpath);
-                        pluginInfo.m_Assemblies.Add(asm);
-                        //this.m_AssemblyLocations[asm] = dllpath;
-                        Log.Info("Assembly loaded: " + asm);
-                    } catch (Exception ex) {
-                        Log.Info("Assembly at " + dllpath + " failed to load.\n" + ex.Message);
-                    }
-                }
-            }
-        }
+        //private void LoadAssemblies()
+        //{
+        //    foreach (PluginInfo pluginInfo in m_Plugins) {
+        //        string modPath = pluginInfo.ModPath;
+        //        string[] files = Directory.GetFiles(modPath, "*.dll", SearchOption.AllDirectories);
+        //        foreach (string dllpath in files) {
+        //            try {
+        //                Assembly asm = AssemblyUtil.LoadDLL(dllpath);
+        //                pluginInfo.m_Assemblies.Add(asm);
+        //                //this.m_AssemblyLocations[asm] = dllpath;
+        //                Log.Info("Assembly loaded: " + asm);
+        //            } catch (Exception ex) {
+        //                Log.Info("Assembly at " + dllpath + " failed to load.\n" + ex.Message);
+        //            }
+        //        }
+        //    }
+        //}
 
         //public static void SetAdditionalAssemblies(params string[] assemblies)
         //{
@@ -576,10 +591,6 @@ namespace CO.Plugins {
         //    DirectoryUtils.DeleteDirectory(text2);
         //    return !compilerResults.Errors.HasErrors;
         //}
-
-        public PluginInfo FindPluginInfo(Assembly asmRO) =>
-            m_Plugins.FirstOrDefault(p => p.isEnabled && p.ContainsAssembly(asmRO));
-
 
         public PluginManager()
         {
