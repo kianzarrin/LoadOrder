@@ -11,6 +11,7 @@ namespace LoadOrderMod.Util {
     using static KianCommons.Assertion;
     using static KianCommons.ReflectionHelpers;
     using static SimulationMetaData;
+    using ModInfo = global::ModInfo;
 
     public class AutoLoad : MonoBehaviour {
         void Start() {

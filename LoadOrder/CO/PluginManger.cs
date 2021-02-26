@@ -13,8 +13,20 @@ namespace CO.Plugins {
     using System.Runtime.ConstrainedExecution;
     using LoadOrderTool.Util;
     using Mono.Cecil;
+    using System.Threading;
 
     public class PluginManager : SingletonLite<PluginManager> {
+        public global::LoadOrder.LoadOrderConfig Config;
+        private bool config_dirty = false;
+
+        public void SaveConfig() {
+            if (config_dirty) {
+                Config.Serialize(DataLocation.localApplicationData);
+                config_dirty = false;
+                Log.Info("Saved config");
+            }
+        }
+
         public static bool TryGetID(string dir, out ulong id)
         {
             string dir2;
@@ -152,7 +164,8 @@ namespace CO.Plugins {
             /// </summary>
             public bool isCameraScript => GetImplementation(kCameraScript) != null;
 
-            public bool IsHarmonyMod() => name == "2040656402";
+            public bool IsHarmonyMod() => 
+                name == "2040656402" || dllName == "CitiesHarmony";
 
 
             /// <summary>
@@ -161,8 +174,6 @@ namespace CO.Plugins {
             public bool HasUserMod => userModImplementation != null;
 
             public PublishedFileId publishedFileID => this.m_PublishedFileID;
-
-
 
             public bool IsIncluded {
                 get => !dirName.StartsWith("_");
@@ -212,6 +223,12 @@ namespace CO.Plugins {
                 //this.m_Assemblies = new List<Assembly>();
                 this.m_IsBuiltin = builtin;
                 this.m_PublishedFileID = id;
+                this.ModInfo = PluginManager.instance.Config.Mods.FirstOrDefault(
+                    _mod => _mod.Path == ModIncludedPath);
+                this.ModInfo ??= new LoadOrder.ModInfo { 
+                    Path = ModIncludedPath,
+                    LoadOrder =global::LoadOrder.LoadOrderConfig.DefaultLoadOrder,
+                };
             }
 
             //public bool ContainsAssembly(Assembly asm)
@@ -261,13 +278,16 @@ namespace CO.Plugins {
                 set => SavedEnabled.value = value;
             }
 
-            private string savedLoadIndexKey_ => name + "." + parentDirName + ".Order";
-            public SavedInt SavedLoadOrder => new SavedInt(savedLoadIndexKey_, LoadOrderSettingsFile, 1000, autoUpdate:true);
-            public int LoadOrder {
-                get => SavedLoadOrder.value;
-                set => SavedLoadOrder.value = value; 
-            }
+            public LoadOrder.ModInfo ModInfo { get; private set; }
 
+            public int LoadOrder {
+                get => ModInfo.LoadOrder;
+                set {
+                    ModInfo.LoadOrder = value;
+                    PluginManager.instance.config_dirty = true;
+                }
+                
+            }
 
             public override string ToString()
             {
@@ -403,6 +423,17 @@ namespace CO.Plugins {
                 }
                 m_Plugins = m_Plugins.Where(p => p.HasUserMod).ToList();
                 Log.Debug($"{m_Plugins.Count} pluggins remained after purging non-cs or non-mods.");
+
+                var mods = Config.Mods.ToList();
+
+                foreach (var plugin in m_Plugins) {
+                    plugin.ModInfo.AssemblyName = plugin.dllName;
+                    if (!mods.Any(_mod => _mod == plugin.ModInfo))
+                        mods.Add(plugin.ModInfo);
+                }
+                Config.Mods = mods.ToArray();
+                SaveConfig();
+
             } catch (Exception ex) {
                 Log.Exception(ex);
             } finally {
@@ -597,15 +628,52 @@ namespace CO.Plugins {
 
         public PluginManager()
         {
+            Config = global::LoadOrder.LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+                ?? new global::LoadOrder.LoadOrderConfig();
+            
+            StartSaveThread();
         }
+
+        #region savethread
+        Thread m_SaveThread;
+        bool m_Run = true;
+        object m_LockObject = new object();
+
+        private void StartSaveThread() {
+            Log.Info("Load Order Config Monitor Started...");
+            m_SaveThread = new Thread(new ThreadStart(MonitorSave));
+            m_SaveThread.Name = "SaveSettingsThread";
+            m_SaveThread.IsBackground = true;
+            m_SaveThread.Start();
+        }
+
+        private void MonitorSave() {
+            try {
+                while (m_Run) {
+                    SaveConfig();
+                    lock (m_LockObject) {
+                        Monitor.Wait(m_LockObject, 100);
+                    }
+                }
+                
+                Log.Info("Load Order Config Monitor Exiting...");
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
+        }
+        ~PluginManager() {
+            m_Run = false;
+            lock (m_LockObject) {
+                Monitor.Pulse(m_LockObject);
+            }
+            Log.Info("LoadOrderConfig terminated");
+        }
+        #endregion
 
         static PluginManager()
         {
             if (GameSettings.FindSettingsFileByName(assetStateSettingsFile) == null) {
                 GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = assetStateSettingsFile } });
-            }
-            if (GameSettings.FindSettingsFileByName(LoadOrderSettingsFile) == null) {
-                GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = LoadOrderSettingsFile } });
             }
         }
     }

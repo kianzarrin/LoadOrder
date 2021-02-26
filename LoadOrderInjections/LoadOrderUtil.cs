@@ -1,19 +1,32 @@
-using ColossalFramework;
 using KianCommons;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using static ColossalFramework.Plugins.PluginManager;
+using LoadOrder;
+using ColossalFramework;
+using ColossalFramework.IO;
+using ColossalFramework.Plugins;
+using ColossalFramework.PlatformServices;
 
 namespace LoadOrderInjections.Util {
     internal static class LoadOrderUtil {
+        public static LoadOrderConfig Config;
+
         static LoadOrderUtil() {
-            if (GameSettings.FindSettingsFileByName(LoadOrderSettingsFile) == null) {
-                GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = LoadOrderSettingsFile } });
-                Log.Info("Added Settings file: " + LoadOrderSettingsFile);
-            }
+            Config = LoadOrderConfig.Deserialize(DataLocation.localApplicationData);
         }
+
+        internal static int GetLoadOrder(this PluginInfo p) {
+            var mod = p.GetModConfig();
+            if (mod == null)
+                return LoadOrderConfig.DefaultLoadOrder;
+            return mod.LoadOrder;
+        }
+
+        internal static LoadOrder.ModInfo GetModConfig(this PluginInfo p) =>
+            Config.Mods?.FirstOrDefault(_mod => _mod.Path == p.modPath);
 
         public static bool HasArg(string arg) =>
             Environment.GetCommandLineArgs().Any(_arg => _arg == arg);
@@ -21,16 +34,7 @@ namespace LoadOrderInjections.Util {
         public static bool poke = HasArg("-poke");
 
         internal const string LoadOrderSettingsFile = "LoadOrder";
-        const int DEFAULT_ORDER = 1000; // unordered plugins come last.
 
-        internal static SavedInt SavedLoadOrder(this PluginInfo p) {
-            string parentDirName = Directory.GetParent(p.modPath).Name;
-            var savedLoadIndexKey = p.name + "." + parentDirName + ".Order";
-            var ret = new SavedInt(savedLoadIndexKey, LoadOrderSettingsFile, DEFAULT_ORDER, autoUpdate: true);
-            _ = ret.value; //force sync
-            return ret;
-        }
-        internal static int GetLoadOrder(this PluginInfo p) => p.SavedLoadOrder().value;
         internal static string DllName(this PluginInfo p) => p.userModInstance?.GetType()?.Assembly?.GetName()?.Name;
         internal static bool IsHarmonyMod(this PluginInfo p) => p.name == "2040656402" || p.name == "CitiesHarmony";
         internal static bool IsLSM(this PluginInfo p) => p.name == "667342976" || p.name == "LoadingScreenMod";

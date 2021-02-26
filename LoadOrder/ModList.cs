@@ -9,6 +9,7 @@ using static CO.Plugins.PluginManager;
 
 namespace LoadOrderTool {
     public class ModList : List<PluginManager.PluginInfo> {
+        const int DefaultLoadOrder = global::LoadOrder.LoadOrderConfig.DefaultLoadOrder;
         public ModList(IEnumerable<PluginManager.PluginInfo> list) : base(list)
         {
         }
@@ -24,19 +25,19 @@ namespace LoadOrderTool {
 
         public static int DefaultComparison(PluginInfo p1, PluginInfo p2)
         {
-            var savedOrder1 = p1.SavedLoadOrder;
-            var savedOrder2 = p2.SavedLoadOrder;
+            var savedOrder1 = p1.LoadOrder;
+            var savedOrder2 = p2.LoadOrder;
 
             // orderless harmony comes first
-            if (!savedOrder1.exists && p1.IsHarmonyMod())
+            if (savedOrder1== DefaultLoadOrder && p1.IsHarmonyMod())
                 return -1;
-            if (!savedOrder2.exists && p2.IsHarmonyMod())
+            if (savedOrder2== DefaultLoadOrder && p2.IsHarmonyMod())
                 return +1;
 
             // if neither have order, use string comparison
             // then builin first, workshop second, local last
             // otherwise use string comparison
-            if (!savedOrder1.exists && !savedOrder2.exists) {
+            if (savedOrder1== DefaultLoadOrder && savedOrder2== DefaultLoadOrder) {
                 int order(PluginInfo _p) =>
                     _p.isBuiltin ? 0 :
                     (_p.publishedFileID != PublishedFileId.invalid ? 1 : 2);
@@ -71,10 +72,10 @@ namespace LoadOrderTool {
 
         public static int HarmonyComparison(PluginInfo p1, PluginInfo p2)
         {
-            var savedOrder1 = p1.SavedLoadOrder;
-            var savedOrder2 = p2.SavedLoadOrder;
+            var savedOrder1 = p1.LoadOrder;
+            var savedOrder2 = p2.LoadOrder;
 
-            if (!savedOrder1.exists && !savedOrder2.exists) {
+            if (savedOrder1== DefaultLoadOrder && savedOrder2 == DefaultLoadOrder) {
                 // if neither have saved order,
                 {
                     // 1st: harmony mod 

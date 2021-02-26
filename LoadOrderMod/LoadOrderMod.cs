@@ -13,6 +13,7 @@ namespace LoadOrderMod {
     using UnityEngine;
     using ColossalFramework.UI;
     using static KianCommons.ReflectionHelpers;
+    using LoadOrder;
 
     public class LoadOrderMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderMod).Assembly.GetName().Version;
@@ -35,15 +36,18 @@ namespace LoadOrderMod {
             //    string savedKey = p.name + p.modPath.GetHashCode().ToString() + ".enabled";
             //    Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.modPath}");
             //}
-            LoadOrderCache data = new LoadOrderCache { GamePath = DataLocation.applicationBase };
 
+            var config = LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+                ?? new LoadOrderConfig();
+            config.GamePath = DataLocation.applicationBase;
             var plugin = PluginManager.instance.GetPluginsInfo()
                  .FirstOrDefault(_p => _p.publishedFileID != PublishedFileId.invalid);
             if (plugin?.modPath is string path) {
-                data.WorkShopContentPath = Path.GetDirectoryName(path); // get parent directory.
+                config.WorkShopContentPath = Path.GetDirectoryName(path); // get parent directory.
             }
+            config.Serialize(DataLocation.localApplicationData);
+            Util.LoadOrderUtil.Config = config;
 
-            data.Serialize(DataLocation.localApplicationData);
             HarmonyHelper.DoOnHarmonyReady(() => {
                 //HarmonyLib.Harmony.DEBUG = true;
                 HarmonyUtil.InstallHarmony(HARMONY_ID);
@@ -74,6 +78,7 @@ namespace LoadOrderMod {
             LoadingManager.instance.m_introLoaded -= TurnOffSteamPanels;
             Log.Buffered = false;
             HarmonyUtil.UninstallHarmony(HARMONY_ID);
+            Util.LoadOrderUtil.Config = null;
         }
 
         public static void OnSceneLoaded(Scene scene, LoadSceneMode mode) {

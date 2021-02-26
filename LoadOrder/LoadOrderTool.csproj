@@ -28,7 +28,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Include="..\LoadOrderMod\LoadOrderCache.cs" Link="LoadOrderCache.cs" />
+    <Compile Include="..\LoadOrderMod\LoadOrderConfig.cs" Link="LoadOrderConfig.cs" />
   </ItemGroup>
   
   <ItemGroup>
