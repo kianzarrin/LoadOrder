@@ -225,7 +225,7 @@ namespace CO.Plugins {
                 this.m_PublishedFileID = id;
                 this.ModInfo = PluginManager.instance.Config.Mods.FirstOrDefault(
                     _mod => _mod.Path == ModIncludedPath);
-                this.ModInfo ??= new LoadOrder.ModInfo { 
+                this.ModInfo ??= new global::LoadOrder.ModInfo { 
                     Path = ModIncludedPath,
                     LoadOrder =global::LoadOrder.LoadOrderConfig.DefaultLoadOrder,
                 };
@@ -278,7 +278,7 @@ namespace CO.Plugins {
                 set => SavedEnabled.value = value;
             }
 
-            public LoadOrder.ModInfo ModInfo { get; private set; }
+            public global::LoadOrder.ModInfo ModInfo { get; private set; }
 
             public int LoadOrder {
                 get => ModInfo.LoadOrder;
