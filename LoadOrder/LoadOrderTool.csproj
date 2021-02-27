@@ -1,11 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" DefaultTargets="Build;Publish">
   <PropertyGroup>
     <AssemblyVersion>0.1.7.0</AssemblyVersion>
-    <OutputType>WinExe</OutputType>
+    <OutputType>WinExe</OutputType> 
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PathMap>$(MSBuildProjectDirectory)\=$(ProjectName)\</PathMap>
+    <StartupObject>LoadOrderTool.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
      
   <ItemGroup>

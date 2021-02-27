@@ -17,5 +17,6 @@ Tool:
 	auto luncher
 	load/save-as
 	list asets
+	auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 
 * high Prioirty
