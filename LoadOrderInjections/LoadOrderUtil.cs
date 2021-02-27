@@ -26,7 +26,7 @@ namespace LoadOrderInjections.Util {
         }
 
         internal static LoadOrder.ModInfo GetModConfig(this PluginInfo p) =>
-            Config.Mods?.FirstOrDefault(_mod => _mod.Path == p.modPath);
+            Config?.Mods?.FirstOrDefault(_mod => _mod.Path == p.modPath);
 
         public static bool HasArg(string arg) =>
             Environment.GetCommandLineArgs().Any(_arg => _arg == arg);

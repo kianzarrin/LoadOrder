@@ -20,7 +20,7 @@ namespace LoadOrderMod.Util {
         }
 
         internal static LoadOrder.ModInfo GetModConfig(this PluginInfo p)=>
-            Config.Mods?.FirstOrDefault(_mod => _mod.Path == p.modPath);
+            Config?.Mods?.FirstOrDefault(_mod => _mod.Path == p.modPath);
 
         internal static string DllName(this PluginInfo p) =>
             p.userModInstance?.GetType()?.Assembly?.GetName()?.Name;
