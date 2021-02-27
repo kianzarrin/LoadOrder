@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using PluginInfo = ColossalFramework.Plugins.PluginManager.PluginInfo;
+using System;
 
 namespace LoadOrderInjections.Injections {
     public static class SortPlugins {
@@ -37,24 +38,28 @@ namespace LoadOrderInjections.Injections {
         }
 
         public static void Sort(Dictionary<string, PluginInfo> plugins) {
-            var list = plugins.ToList();
-            list.Sort((p1, p2) => Comparison(p1.Value, p2.Value));
+            try {
+                var list = plugins.ToList();
 
-            plugins.Clear();
-            foreach (var pair in list)
-                plugins.Add(pair.Key, pair.Value);
+                Log.Info("Sorting assemblies ...", true);
+                list.Sort((p1, p2) => Comparison(p1.Value, p2.Value));
 
-            Log.Info("Sorting assemblies ...", true);
-            Log.Info("\n=========================== plugins.Values: =======================",false);
-            foreach (var p in plugins.Values) {
-                string dlls = string.Join( ", ",
-                    Directory.GetFiles(p.modPath, "*.dll", SearchOption.AllDirectories));
-                Log.Debug(
-                    $"loadOrder={p.GetLoadOrder()} path={p.modPath} dlls={{{dlls}}}"
-                    , false);
+                plugins.Clear();
+                foreach (var pair in list)
+                    plugins.Add(pair.Key, pair.Value);
+
+                Log.Info("\n=========================== plugins.Values: =======================", false);
+                foreach (var p in plugins.Values) {
+                    string dlls = string.Join(", ",
+                        Directory.GetFiles(p.modPath, "*.dll", SearchOption.AllDirectories));
+                    Log.Debug(
+                        $"loadOrder={p.GetLoadOrder()} path={p.modPath} dlls={{{dlls}}}"
+                        , false);
+                }
+                Log.Info("\n=========================== END plugins.Values =====================\n", false);
+            }catch(Exception ex) {
+                Log.Exception(ex);
             }
-            Log.Info("\n=========================== END plugins.Values =====================\n",false);
-
         }
     }
 }
