@@ -59,6 +59,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="KianCommons\KianCommons\Plugins\AdaptiveRoadsUtil.cs" />
     <Compile Remove="Patches\LoadingProfiler_NewEventPatch.cs" />
     <Compile Remove="Patches\SetSceneProgressPatch.cs" />
     <Compile Remove="Util\Log.cs" />
@@ -81,6 +82,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CitiesHarmony.API" Version="2.0.0" />
+    <PackageReference Include="GitInfo" Version="2.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
   </ItemGroup>
   <ItemGroup>
@@ -118,33 +123,25 @@
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />
     </GetAssemblyIdentity>
-    <PropertyGroup>
-      <DeployDir>$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)\</DeployDir>
-      <UnityPath>$(MSBuildExtensionsPath64)\..\Unity\</UnityPath>
-      <UnityPath Condition="! Exists ('$(UnityPath)')">..\Unity\</UnityPath>
-      <MonoDir>$(UnityPath)Editor\Data\MonoBleedingEdge\</MonoDir>
-      <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
-    </PropertyGroup>
     <ItemGroup>
-      <AuxilaryFiles Include="$(TargetDir)Resources\*.png;$(TargetDir)CitiesHarmony.API.dll" />
+      <AuxiliaryFiles Include="$(TargetDir)CitiesHarmony.API.dll" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
+    <PropertyGroup>
+      <DeployDir Condition="'$(DeployDir)'==''">$(LOCALAPPDATA)/Colossal Order/Cities_Skylines/Addons/Mods/$(ProjectName)/</DeployDir>
+      <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
+      <pdb2mdb>$(PkgMono_Unofficial_pdb2mdb)/tools/pdb2mdb.exe</pdb2mdb>
+      <ZipFileName>$(ProjectName)-V@(VersionNumber)-$(GitCommit)-$(Configuration).zip</ZipFileName>
+      <ZipFile>$(DeployDir)/../$(ZipFileName)</ZipFile>
+    </PropertyGroup>
+
     <Delete Files="$(TargetPath).mdb" />
-    <Exec Command="&quot;$(MonoDir)bin\mono.exe&quot; &quot;$(MonoDir)lib\mono\4.5\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" />
+    <Exec Command='"$(pdb2mdb)" "$(TargetPath)"' />
     <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
 
-    <Copy SourceFiles="@(AuxilaryFiles)" DestinationFolder="$(DeployDir)" /> 
+    <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" /> 
     <Delete Files="$(DeployDir)$(TargetFileName)" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
   </Target>
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\dell\source\repos\LoadOrder\LoadOrderMod\KianCommons\KianCommons\.editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\dell\source\repos\LoadOrder\LoadOrderMod\KianCommons\KianCommons\.editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\dell\source\repos\LoadOrder\LoadOrderMod\KianCommons\KianCommons\.editorconfig" />
-  </ItemGroup>
 </Project>

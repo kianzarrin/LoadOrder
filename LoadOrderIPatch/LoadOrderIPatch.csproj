@@ -27,6 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GitInfo" Version="2.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Mono.Cecil" Version="0.10.3" />
     <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
   </ItemGroup>
@@ -75,14 +79,14 @@
       <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
     </PropertyGroup>
     <ItemGroup>
-      <AuxilaryFiles Include="$(TargetDir)Mono.Cecil.dll;$(TargetDir)Patch.API.dll" />
+      <AuxiliaryFiles Include="$(TargetDir)Mono.Cecil.dll;$(TargetDir)Patch.API.dll" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
     <Delete Files="$(TargetPath).mdb" />
     <Exec Command="&quot;$(MonoDir)bin\mono.exe&quot; &quot;$(MonoDir)lib\mono\4.5\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" />
     <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
 
-    <Copy SourceFiles="@(AuxilaryFiles)" DestinationFolder="$(DeployDir)" />
+    <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" />
     <!-- <Message Importance="high" Text="Deleting $(DeployDir)$(TargetFileName)" /> -->
     <Delete Files="$(DeployDir)$(TargetFileName)" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />

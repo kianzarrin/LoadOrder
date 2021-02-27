@@ -43,6 +43,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GitInfo" Version="2.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Mono.Cecil" Version="0.10.3" />
     <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
   </ItemGroup>
@@ -85,7 +89,7 @@
       <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
     </PropertyGroup>
     <ItemGroup>
-      <AuxilaryFiles Include="$(TargetDir)Resources\*.png" />
+      <AuxiliaryFiles Include="$(TargetDir)Resources\*.png" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
     <Delete Files="$(TargetPath).mdb" />
