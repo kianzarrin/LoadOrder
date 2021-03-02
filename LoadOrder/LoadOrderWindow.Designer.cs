@@ -1,7 +1,7 @@
 ﻿namespace LoadOrderTool
 {
     using System.Windows.Forms;
-    partial class LoadOrder
+    partial class LoadOrderWindow
     {
         /// <summary>
         /// Required designer variable.

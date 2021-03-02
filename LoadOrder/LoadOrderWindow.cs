@@ -6,12 +6,12 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace LoadOrderTool {
-    public partial class LoadOrder : Form {
-        public static LoadOrder Instance;
+    public partial class LoadOrderWindow : Form {
+        public static LoadOrderWindow Instance;
 
         ModList ModList;
 
-        public LoadOrder()
+        public LoadOrderWindow()
         {
             InitializeComponent();
             this.dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;

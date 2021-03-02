@@ -27,7 +27,7 @@ namespace LoadOrderTool
                 
                 PluginManager.instance.LoadPlugins();
 
-                Application.Run(new LoadOrder());
+                Application.Run(new LoadOrderWindow());
             }
             catch (Exception ex)
             {
