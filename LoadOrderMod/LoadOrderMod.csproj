@@ -2,7 +2,6 @@
   <PropertyGroup>
     <ProjectGuid>{F75E7E61-C575-44A8-AA22-690CD89E9BA2}</ProjectGuid>
     <TargetFramework>net35</TargetFramework>
-    <Copyright>Copyright ©  2020</Copyright>
     <Deterministic>false</Deterministic>
     <AssemblyVersion>0.2.2.*</AssemblyVersion>
     <FileAlignment>512</FileAlignment>
@@ -119,6 +118,9 @@
     <Folder Include="KianCommons\KianCommons\Math\" />
     <Folder Include="Resources\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LoadOrderInjections\LoadOrderInjections.csproj" />
+  </ItemGroup>
   <Target Name="DeployToModDirectory" AfterTargets="Build">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />
@@ -136,7 +138,7 @@
     </PropertyGroup>
 
     <Delete Files="$(TargetPath).mdb" />
-    <Exec Command='"$(pdb2mdb)" "$(TargetPath)"' />
+    <Exec Command="&quot;$(pdb2mdb)&quot; &quot;$(TargetPath)&quot;" />
     <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
 
     <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" /> 

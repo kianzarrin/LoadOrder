@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectGuid>{16FA65D4-EB2B-4863-B95E-8629F97BC9B9}</ProjectGuid>
     <TargetFramework>net35</TargetFramework>
-    <Copyright>Copyright ©  2020</Copyright>
     <Deterministic>false</Deterministic>
     <AssemblyVersion>0.2.2.*</AssemblyVersion>
     <FileAlignment>512</FileAlignment>
