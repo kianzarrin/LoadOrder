@@ -20,7 +20,7 @@ namespace LoadOrderShared {
 
         public void Serialize(string dir) {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));
-            using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.OpenOrCreate, FileAccess.Write)) {
+            using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Create, FileAccess.Write)) {
                 ser.Serialize(fs, this);
             }
         }

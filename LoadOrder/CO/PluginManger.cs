@@ -16,109 +16,8 @@ namespace CO.Plugins {
     using System.Threading;
 
     public class PluginManager : SingletonLite<PluginManager> {
-        public LoadOrderShared.LoadOrderConfig Config;
-        private bool config_dirty = false;
-
-        public void SaveConfig() {
-            if(Thread.CurrentThread != m_SaveThread)
-                config_dirty = true;
-            else if (config_dirty)
-                SaveConfigImpl();
-        }
-
-        public void SaveConfigImpl() {
-            Config.Serialize(DataLocation.localApplicationData);
-            config_dirty = false;
-            Log.Info("Saved config");
-        }
-
-        public static bool TryGetID(string dir, out ulong id)
-        {
-            string dir2;
-            if (dir.StartsWith("_"))
-                dir2 = dir.Remove(0, 1);
-            else
-                dir2 = dir;
-            return ulong.TryParse(dir2, out id);
-        }
-
-        static ulong Path2ID(string path)
-        {
-            TryGetID(Path.GetFileName(path), out ulong ret);
-            return ret;
-        }
-
-        public static void EnsureSubscribedItems()
-        {
-            List<string> includedPaths = new List<string>();
-            List<string> excludedPaths = new List<string>();
-            foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath)) {
-                var dirName = Path.GetFileName(path);
-                if (!TryGetID(dirName, out ulong id)) continue;
-                if (dirName.StartsWith("_"))
-                    excludedPaths.Add(path);
-                else
-                    includedPaths.Add(path);
-            }
-
-            foreach (var excludedPath in excludedPaths) {
-                var excludedID = Path2ID(excludedPath);
-                foreach (var includedPath in includedPaths) {
-                    var includedID = Path2ID(includedPath);
-                    if(excludedID == includedID) {
-                        Directory.Delete(excludedPath, recursive:true);
-                        Directory.Move(includedPath, excludedPath);
-                        break;
-                    }
-                }
-            }
-        }
-
-        public static void EnsureLocalItemsAt(string parentDir) {
-            List<string> includedPaths = new List<string>();
-            List<string> excludedPaths = new List<string>();
-            foreach (var path in Directory.GetDirectories(parentDir)) {
-                var dirName = Path.GetFileName(path);
-                if (dirName.StartsWith("_"))
-                    excludedPaths.Add(path);
-                else
-                    includedPaths.Add(path);
-            }
-
-            foreach (var excludedPath in excludedPaths) {
-                var excludedID = Path2ID(excludedPath);
-                foreach (var includedPath in includedPaths) {
-                    var includedID = Path2ID(includedPath);
-                    if (excludedID == includedID) {
-                        Directory.Delete(excludedPath, recursive: true);
-                        //Directory.Move(includedPath, excludedPath);
-                        break;
-                    }
-                }
-            }
-        }
-
-        public static IEnumerable<PublishedFileId> GetSubscribedItems()
-        {
-            EnsureSubscribedItems();
-            foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath)) {
-                var dirName = Path.GetFileName(path);
-                if (!TryGetID(dirName, out ulong id)) continue;
-                //if (!Directory.GetFiles(dir, "*.dll").Any()) continue;
-                yield return new PublishedFileId(id);
-            }
-        }
-
-        public static string GetSubscribedItemPath(PublishedFileId id)
-        {
-            var ret = Path.Combine(DataLocation.WorkshopContentPath, id.AsUInt64.ToString());
-            if (Directory.Exists(ret))
-                return ret;
-            ret = Path.Combine(DataLocation.WorkshopContentPath, "_" + id.AsUInt64.ToString());
-            if (Directory.Exists(ret))
-                return ret;
-            return null;
-        }
+        ConfigWrapper configWrapper_;
+        LoadOrderShared.LoadOrderConfig Config => configWrapper_.Config;
 
         public enum MessageType {
             Error,
@@ -313,7 +212,7 @@ namespace CO.Plugins {
                 get => ModInfo.LoadOrder;
                 set {
                     ModInfo.LoadOrder = value;
-                    PluginManager.instance.config_dirty = true;
+                    PluginManager.instance.configWrapper_.Dirty = true;
                 }
                 
             }
@@ -461,7 +360,7 @@ namespace CO.Plugins {
                         mods.Add(plugin.ModInfo);
                 }
                 Config.Mods = mods.ToArray();
-                SaveConfig();
+                configWrapper_.SaveConfig();
 
             } catch (Exception ex) {
                 Log.Exception(ex);
@@ -472,7 +371,7 @@ namespace CO.Plugins {
 
         private void LoadPluginInfosAtPath(string path, bool builtin)
         {
-            EnsureLocalItemsAt(parentDir: path);
+            ContentUtil.EnsureLocalItemsAt(parentDir: path);
             string[] directories = Directory.GetDirectories(path);
             foreach (string dir in directories) {
                 //if (!Path.GetFileName(dir).StartsWith("_"))
@@ -485,11 +384,11 @@ namespace CO.Plugins {
 
         private void LoadWorkshopPluginInfos()
         {
-            var subscribedItems = GetSubscribedItems();
+            var subscribedItems = ContentUtil.GetSubscribedItems();
             Log.Debug($"subscribed items are: " + string.Join(", ", subscribedItems));
             if (subscribedItems != null) {
                 foreach (var id in subscribedItems) {
-                    string subscribedItemPath = GetSubscribedItemPath(id);
+                    string subscribedItemPath = ContentUtil.GetSubscribedItemPath(id);
                     if (subscribedItemPath != null && Directory.Exists(subscribedItemPath)) {
                         Log.Debug("scanned: " + subscribedItemPath);
                         m_Plugins.Add(new PluginInfo(subscribedItemPath, false, id));
@@ -656,49 +555,7 @@ namespace CO.Plugins {
         //    return !compilerResults.Errors.HasErrors;
         //}
 
-        public PluginManager()
-        {
-            Config = LoadOrderShared.LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
-                ?? new LoadOrderShared.LoadOrderConfig();
-            
-            StartSaveThread();
-        }
-
-        #region savethread
-        Thread m_SaveThread;
-        bool m_Run = true;
-        object m_LockObject = new object();
-
-        private void StartSaveThread() {
-            Log.Info("Load Order Config Monitor Started...");
-            m_SaveThread = new Thread(new ThreadStart(MonitorSave));
-            m_SaveThread.Name = "SaveSettingsThread";
-            m_SaveThread.IsBackground = true;
-            m_SaveThread.Start();
-        }
-
-        private void MonitorSave() {
-            try {
-                while (m_Run) {
-                    SaveConfig();
-                    lock (m_LockObject) {
-                        Monitor.Wait(m_LockObject, 100);
-                    }
-                }
-                
-                Log.Info("Load Order Config Monitor Exiting...");
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-        ~PluginManager() {
-            m_Run = false;
-            lock (m_LockObject) {
-                Monitor.Pulse(m_LockObject);
-            }
-            Log.Info("LoadOrderConfig terminated");
-        }
-        #endregion
+        public PluginManager() => configWrapper_ = new ConfigWrapper();
 
         static PluginManager()
         {

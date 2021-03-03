@@ -76,7 +76,7 @@ namespace LoadOrderTool
         private static Assembly ResolveInterface(object sender, ResolveEventArgs args)
         {
             Log.Info("Resolving Assembly " + args.Name);
-            string file = PathUtil.Combine(
+            string file = Path.Combine(
                 DataLocation.DataPath, 
                 "Managed", 
                 new AssemblyName(args.Name).Name + ".dll"); // parse name
