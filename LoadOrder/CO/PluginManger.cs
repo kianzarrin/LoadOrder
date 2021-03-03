@@ -250,9 +250,9 @@ namespace CO.Plugins {
                 this.m_PublishedFileID = id;
                 this.ModInfo = PluginManager.instance.Config.Mods.FirstOrDefault(
                     _mod => _mod.Path == ModIncludedPath);
-                this.ModInfo ??= new global::LoadOrderShared.ModInfo { 
+                this.ModInfo ??= new LoadOrderShared.ModInfo { 
                     Path = ModIncludedPath,
-                    LoadOrder =global::LoadOrderShared.LoadOrderConfig.DefaultLoadOrder,
+                    LoadOrder =LoadOrderShared.LoadOrderConfig.DefaultLoadOrder,
                 };
             }
 
@@ -303,7 +303,7 @@ namespace CO.Plugins {
                 set => SavedEnabled.value = value;
             }
 
-            public global::LoadOrderShared.ModInfo ModInfo { get; private set; }
+            public LoadOrderShared.ModInfo ModInfo { get; private set; }
 
             public int LoadOrder {
                 get => ModInfo.LoadOrder;
@@ -654,8 +654,8 @@ namespace CO.Plugins {
 
         public PluginManager()
         {
-            Config = global::LoadOrderShared.LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
-                ?? new global::LoadOrderShared.LoadOrderConfig();
+            Config = LoadOrderShared.LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+                ?? new LoadOrderShared.LoadOrderConfig();
             
             StartSaveThread();
         }

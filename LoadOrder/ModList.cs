@@ -9,7 +9,7 @@ using static CO.Plugins.PluginManager;
 
 namespace LoadOrderTool {
     public class ModList : List<PluginManager.PluginInfo> {
-        const int DefaultLoadOrder = global::LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
+        const int DefaultLoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
         public ModList(IEnumerable<PluginManager.PluginInfo> list) : base(list)
         {
         }
