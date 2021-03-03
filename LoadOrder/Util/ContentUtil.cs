@@ -56,12 +56,11 @@
             }
 
             foreach (var excludedPath in excludedPaths) {
-                var excludedID = Path2ID(excludedPath);
+                var excludedDir = Path.GetFileName(excludedPath);
+                var includedDir = excludedDir.Substring(1);
                 foreach (var includedPath in includedPaths) {
-                    var includedID = Path2ID(includedPath);
-                    if (excludedID == includedID) {
+                    if (Path.GetFileName(includedPath) == includedDir) {
                         Directory.Delete(excludedPath, recursive: true);
-                        //Directory.Move(includedPath, excludedPath);
                         break;
                     }
                 }

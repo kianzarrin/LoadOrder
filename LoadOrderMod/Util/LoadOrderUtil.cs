@@ -7,10 +7,49 @@ using System.Reflection;
 using UnityEngine;
 using static ColossalFramework.Plugins.PluginManager;
 using LoadOrderShared;
+using CitiesHarmony.API;
+using ColossalFramework.IO;
+using ColossalFramework.PlatformServices;
+using ColossalFramework.Plugins;
+using ICities;
+using UnityEngine.SceneManagement;
+using ColossalFramework.UI;
+using static KianCommons.ReflectionHelpers;
+using KianCommons.Plugins;
 
 namespace LoadOrderMod.Util {
     internal static class LoadOrderUtil {
-        public static LoadOrderConfig Config;
+        public static LoadOrderConfig config_;
+        public static LoadOrderConfig Config => config_ ??=
+            LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+            ?? new LoadOrderConfig();
+
+        public static void SaveConfig() =>
+            config_?.Serialize(DataLocation.localApplicationData);
+
+        public static void SavePathDetails() {
+            Config.GamePath = DataLocation.applicationBase;
+            var plugin = PluginManager.instance.GetPluginsInfo()
+                 .FirstOrDefault(_p => _p.publishedFileID != PublishedFileId.invalid);
+            if(plugin?.modPath is string path) {
+                Config.WorkShopContentPath = Path.GetDirectoryName(path); // get parent directory.
+            }
+            SaveConfig();
+        }
+
+        public static void SaveModDetails() {
+            foreach(var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
+                var modInfo = Config.Mods.FirstOrDefault(_mod => _mod.Path == pluginInfo.modPath);
+                modInfo ??= new LoadOrderShared.ModInfo {
+                    Path = pluginInfo.modPath,
+                    LoadOrder = LoadOrderConfig.DefaultLoadOrder,
+                };
+                modInfo.Description = pluginInfo.GetUserModInstance().Description;
+                modInfo.ModName = pluginInfo.GetModName();
+            }
+            SaveConfig();
+        }
+
 
         internal static int GetLoadOrder(this PluginInfo p) {
             var mod = p.GetModConfig();
@@ -42,5 +81,19 @@ namespace LoadOrderMod.Util {
             Debug.Log("************************** Removed logging stacktrace bloat **************************");
             Debug.Log(Environment.StackTrace);
         }
+
+        public static void TurnOffSteamPanels() {
+            SetFieldValue<WorkshopAdPanel>("dontInitialize", true);
+            Log.Info("Turning off steam panels", true);
+            var news = GameObject.FindObjectOfType<NewsFeedPanel>();
+            var ad = GameObject.FindObjectOfType<WorkshopAdPanel>();
+            var dlc = GameObject.FindObjectOfType<DLCPanelNew>();
+            var paradox = GameObject.FindObjectOfType<ParadoxAccountPanel>();
+            GameObject.Destroy(news?.gameObject);
+            GameObject.Destroy(ad?.gameObject);
+            GameObject.Destroy(dlc?.gameObject);
+            GameObject.Destroy(paradox?.gameObject);
+        }
+
     }
 }

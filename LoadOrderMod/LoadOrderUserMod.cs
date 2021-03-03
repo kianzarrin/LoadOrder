@@ -14,9 +14,10 @@ namespace LoadOrderMod {
     using ColossalFramework.UI;
     using static KianCommons.ReflectionHelpers;
     using LoadOrderShared;
+    using LoadOrderMod.Util;
 
-    public class LoadOrderMod : IUserMod {
-        public static Version ModVersion => typeof(LoadOrderMod).Assembly.GetName().Version;
+    public class LoadOrderUserMod : IUserMod {
+        public static Version ModVersion => typeof(LoadOrderUserMod).Assembly.GetName().Version;
         public static string VersionString => ModVersion.ToString(2);
         public string Name => "Load Order Mod " + VersionString;
         public string Description => "use LoadOrderTool.exe to manage the order in which mods are loaded.";
@@ -37,16 +38,8 @@ namespace LoadOrderMod {
             //    Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.modPath}");
             //}
 
-            var config = LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
-                ?? new LoadOrderConfig();
-            config.GamePath = DataLocation.applicationBase;
-            var plugin = PluginManager.instance.GetPluginsInfo()
-                 .FirstOrDefault(_p => _p.publishedFileID != PublishedFileId.invalid);
-            if (plugin?.modPath is string path) {
-                config.WorkShopContentPath = Path.GetDirectoryName(path); // get parent directory.
-            }
-            config.Serialize(DataLocation.localApplicationData);
-            Util.LoadOrderUtil.Config = config;
+            LoadOrderUtil.SavePathDetails();
+            LoadingManager.instance.m_introLoaded += LoadOrderUtil.SaveModDetails;
 
             HarmonyHelper.DoOnHarmonyReady(() => {
                 //HarmonyLib.Harmony.DEBUG = true;
@@ -55,30 +48,19 @@ namespace LoadOrderMod {
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
-            LoadingManager.instance.m_introLoaded += TurnOffSteamPanels;
-            TurnOffSteamPanels();
+            LoadingManager.instance.m_introLoaded += LoadOrderUtil.TurnOffSteamPanels;
+            LoadOrderUtil.TurnOffSteamPanels();
 
             Log.Flush();
         }
 
-        public void TurnOffSteamPanels() {
-            SetFieldValue<WorkshopAdPanel>("dontInitialize", true);
-            Log.Info("Turning off steam panels", true);
-            var news = GameObject.FindObjectOfType<NewsFeedPanel>();
-            var ad = GameObject.FindObjectOfType<WorkshopAdPanel>();
-            var dlc = GameObject.FindObjectOfType<DLCPanelNew>();
-            var paradox = GameObject.FindObjectOfType<ParadoxAccountPanel>();
-            GameObject.Destroy(news?.gameObject);
-            GameObject.Destroy(ad?.gameObject);
-            GameObject.Destroy(dlc?.gameObject);
-            GameObject.Destroy(paradox?.gameObject);
-        }
 
         public void OnDisabled() {
-            LoadingManager.instance.m_introLoaded -= TurnOffSteamPanels;
+            LoadingManager.instance.m_introLoaded -= LoadOrderUtil.TurnOffSteamPanels;
+            LoadingManager.instance.m_introLoaded -= LoadOrderUtil.SaveModDetails;
             Log.Buffered = false;
             HarmonyUtil.UninstallHarmony(HARMONY_ID);
-            Util.LoadOrderUtil.Config = null;
+            LoadOrderUtil.config_ = null;
         }
 
         public static void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
