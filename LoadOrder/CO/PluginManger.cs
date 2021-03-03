@@ -14,18 +14,22 @@ namespace CO.Plugins {
     using LoadOrderTool.Util;
     using Mono.Cecil;
     using System.Threading;
-    using LoadOrderShared;
 
     public class PluginManager : SingletonLite<PluginManager> {
-        public LoadOrderConfig Config;
+        public LoadOrderShared.LoadOrderConfig Config;
         private bool config_dirty = false;
 
         public void SaveConfig() {
-            if (config_dirty) {
-                Config.Serialize(DataLocation.localApplicationData);
-                config_dirty = false;
-                Log.Info("Saved config");
-            }
+            if(Thread.CurrentThread != m_SaveThread)
+                config_dirty = true;
+            else if (config_dirty)
+                SaveConfigImpl();
+        }
+
+        public void SaveConfigImpl() {
+            Config.Serialize(DataLocation.localApplicationData);
+            config_dirty = false;
+            Log.Info("Saved config");
         }
 
         public static bool TryGetID(string dir, out ulong id)
