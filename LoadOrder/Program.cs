@@ -35,7 +35,6 @@ namespace LoadOrderTool
             }
         }
 
-
         public static void LoadAssemblies()
         {
             Log.Info("LoadAssemblies() called ...");

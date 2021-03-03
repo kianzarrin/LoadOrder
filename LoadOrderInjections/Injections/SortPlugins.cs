@@ -9,7 +9,7 @@ using System;
 
 namespace LoadOrderInjections.Injections {
     public static class SortPlugins {
-        const int DefaultLoadOrder = global::LoadOrder.LoadOrderConfig.DefaultLoadOrder;
+        const int DefaultLoadOrder = global::LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
 
         public static int Comparison(PluginInfo p1, PluginInfo p2) {
             var savedOrder1 = p1.GetLoadOrder();

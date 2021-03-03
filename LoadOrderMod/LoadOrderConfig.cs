@@ -1,7 +1,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace LoadOrder {
+namespace LoadOrderShared {
     public class ModInfo {
         public string Path;
         public int LoadOrder;
@@ -13,6 +13,7 @@ namespace LoadOrder {
     public class LoadOrderConfig {
         public const int DefaultLoadOrder = 1000;
         public const string FILE_NAME = "LoadOrderConfig.xml";
+
         public string WorkShopContentPath;
         public string GamePath;
         public ModInfo[] Mods = new ModInfo[0];

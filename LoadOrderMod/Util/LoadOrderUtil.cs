@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using static ColossalFramework.Plugins.PluginManager;
-using LoadOrder;
+using LoadOrderShared;
 
 namespace LoadOrderMod.Util {
     internal static class LoadOrderUtil {
@@ -19,7 +19,7 @@ namespace LoadOrderMod.Util {
             return mod.LoadOrder;
         }
 
-        internal static LoadOrder.ModInfo GetModConfig(this PluginInfo p)=>
+        internal static LoadOrderShared.ModInfo GetModConfig(this PluginInfo p)=>
             Config?.Mods?.FirstOrDefault(_mod => _mod.Path == p.modPath);
 
         internal static string DllName(this PluginInfo p) =>

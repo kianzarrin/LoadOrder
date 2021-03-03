@@ -98,7 +98,7 @@ namespace LoadOrderTool {
         private void SortByHarmony_Click(object sender, EventArgs e)
         {
             foreach (var p in ModList)
-                p.LoadOrder = global::LoadOrder.LoadOrderConfig.DefaultLoadOrder;
+                p.LoadOrder = global::LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
             ModList.SortBy(ModList.HarmonyComparison);
             Populate();
         }

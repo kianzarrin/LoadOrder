@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using static ColossalFramework.Plugins.PluginManager;
-using LoadOrder;
+using LoadOrderShared;
 using ColossalFramework;
 using ColossalFramework.IO;
 using ColossalFramework.Plugins;
@@ -25,7 +25,7 @@ namespace LoadOrderInjections.Util {
             return mod.LoadOrder;
         }
 
-        internal static LoadOrder.ModInfo GetModConfig(this PluginInfo p) =>
+        internal static LoadOrderShared.ModInfo GetModConfig(this PluginInfo p) =>
             Config?.Mods?.FirstOrDefault(_mod => _mod.Path == p.modPath);
 
         public static bool HasArg(string arg) =>

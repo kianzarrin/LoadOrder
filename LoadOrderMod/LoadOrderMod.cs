@@ -13,7 +13,7 @@ namespace LoadOrderMod {
     using UnityEngine;
     using ColossalFramework.UI;
     using static KianCommons.ReflectionHelpers;
-    using LoadOrder;
+    using LoadOrderShared;
 
     public class LoadOrderMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderMod).Assembly.GetName().Version;

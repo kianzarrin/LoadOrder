@@ -14,9 +14,10 @@ namespace CO.Plugins {
     using LoadOrderTool.Util;
     using Mono.Cecil;
     using System.Threading;
+    using LoadOrderShared;
 
     public class PluginManager : SingletonLite<PluginManager> {
-        public global::LoadOrder.LoadOrderConfig Config;
+        public LoadOrderConfig Config;
         private bool config_dirty = false;
 
         public void SaveConfig() {
@@ -63,6 +64,30 @@ namespace CO.Plugins {
                     if(excludedID == includedID) {
                         Directory.Delete(excludedPath, recursive:true);
                         Directory.Move(includedPath, excludedPath);
+                        break;
+                    }
+                }
+            }
+        }
+
+        public static void EnsureLocalItemsAt(string parentDir) {
+            List<string> includedPaths = new List<string>();
+            List<string> excludedPaths = new List<string>();
+            foreach (var path in Directory.GetDirectories(parentDir)) {
+                var dirName = Path.GetFileName(path);
+                if (dirName.StartsWith("_"))
+                    excludedPaths.Add(path);
+                else
+                    includedPaths.Add(path);
+            }
+
+            foreach (var excludedPath in excludedPaths) {
+                var excludedID = Path2ID(excludedPath);
+                foreach (var includedPath in includedPaths) {
+                    var includedID = Path2ID(includedPath);
+                    if (excludedID == includedID) {
+                        Directory.Delete(excludedPath, recursive: true);
+                        //Directory.Move(includedPath, excludedPath);
                         break;
                     }
                 }
@@ -225,9 +250,9 @@ namespace CO.Plugins {
                 this.m_PublishedFileID = id;
                 this.ModInfo = PluginManager.instance.Config.Mods.FirstOrDefault(
                     _mod => _mod.Path == ModIncludedPath);
-                this.ModInfo ??= new global::LoadOrder.ModInfo { 
+                this.ModInfo ??= new global::LoadOrderShared.ModInfo { 
                     Path = ModIncludedPath,
-                    LoadOrder =global::LoadOrder.LoadOrderConfig.DefaultLoadOrder,
+                    LoadOrder =global::LoadOrderShared.LoadOrderConfig.DefaultLoadOrder,
                 };
             }
 
@@ -278,7 +303,7 @@ namespace CO.Plugins {
                 set => SavedEnabled.value = value;
             }
 
-            public global::LoadOrder.ModInfo ModInfo { get; private set; }
+            public global::LoadOrderShared.ModInfo ModInfo { get; private set; }
 
             public int LoadOrder {
                 get => ModInfo.LoadOrder;
@@ -443,6 +468,7 @@ namespace CO.Plugins {
 
         private void LoadPluginInfosAtPath(string path, bool builtin)
         {
+            EnsureLocalItemsAt(parentDir: path);
             string[] directories = Directory.GetDirectories(path);
             foreach (string dir in directories) {
                 //if (!Path.GetFileName(dir).StartsWith("_"))
@@ -628,8 +654,8 @@ namespace CO.Plugins {
 
         public PluginManager()
         {
-            Config = global::LoadOrder.LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
-                ?? new global::LoadOrder.LoadOrderConfig();
+            Config = global::LoadOrderShared.LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+                ?? new global::LoadOrderShared.LoadOrderConfig();
             
             StartSaveThread();
         }
