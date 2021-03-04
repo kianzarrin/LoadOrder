@@ -59,7 +59,7 @@
             try {
                 while (m_Run) {
                     if(Dirty)
-                        SaveConfig();
+                        SaveConfigImpl();
                     lock (m_LockObject) {
                         Monitor.Wait(m_LockObject, 100);
                     }

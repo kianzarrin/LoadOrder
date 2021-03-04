@@ -23,6 +23,7 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
+            FindAssemblySoftPatch(assemblyDefinition);
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
             //assemblyDefinition = LoadPluginsPatch(assemblyDefinition); // its loaded in ASCPatch.LoadDLL() instead
             AddAssemlyPatch(assemblyDefinition);
@@ -36,6 +37,39 @@ namespace LoadOrderIPatch.Patches {
             }
 
             return assemblyDefinition;
+        }
+
+        public void FindAssemblySoftPatch(AssemblyDefinition CM) {
+            logger_.LogStartPatching();
+            var cm = CM.MainModule;
+            var mTarget = cm.GetMethod(
+                "ColossalFramework.Plugins.PluginManager.FindPluginAssemblyByName");
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            var instructions = mTarget.Body.Instructions;
+
+            var loi = GetInjectionsAssemblyDefinition(workingPath_);
+            var mInjection = loi.MainModule.GetMethod(
+                "LoadOrderInjections.Injections.LoadingApproach.FindDependancySoft");
+            var mrInjection = cm.ImportReference(mInjection);
+
+            // find return null;
+            Instruction ldnull = null;
+            for(int i=0; i < instructions.Count; ++i) {
+                if(instructions[i].OpCode == OpCodes.Ldnull &&
+                   instructions[i+1].OpCode == OpCodes.Ret) {
+                    ldnull = instructions[i];
+                }
+            }
+
+            // replace 'return null' with 'return FindDependancySoft(asmName, asms)'
+            var ldarg1 = Instruction.Create(OpCodes.Ldarg_1);
+            var ldarg2 = Instruction.Create(OpCodes.Ldarg_2);
+            var callInjection = Instruction.Create(OpCodes.Call, mrInjection);
+            ilProcessor.Replace(ldnull, ldarg1);
+            ilProcessor.InsertAfter(ldarg1, ldarg2);
+            ilProcessor.InsertAfter(ldarg2, callInjection);
+
+            logger_.LogSucessfull();
         }
 
         public void AddAssemlyPatch(AssemblyDefinition CM) {

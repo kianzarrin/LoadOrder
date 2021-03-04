@@ -13,6 +13,23 @@
     using Mono.Cecil;
 
     public static class LoadingApproach {
+        public static Assembly FindDependancySoft(
+            AssemblyName name, Dictionary<Assembly, PluginInfo> asms) {
+            Log.Info(ThisMethod + ": searching for  " + name, true);
+
+            foreach (Assembly asm in asms.Keys) {
+                AssemblyName name2 = asm.GetName();
+                if (name.Name == name2.Name)
+                {
+                    Log.Info($"FindDependancySoft found {asm}");
+                    return asm;
+                } 
+            }
+
+            return null;
+        }
+
+
         public static void AddAssemblyPrefix(Assembly asm) {
             try {
                 if (poke && !breadthFirst) {
