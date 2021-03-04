@@ -18,6 +18,13 @@ namespace LoadOrderInjections.Util {
             Config = LoadOrderConfig.Deserialize(DataLocation.localApplicationData);
         }
 
+        internal static bool HasLoadOrder(this PluginInfo p) {
+            var mod = p.GetModConfig();
+            if (mod == null)
+                return false;
+            return mod.LoadOrder != LoadOrderConfig.DefaultLoadOrder;
+        }
+
         internal static int GetLoadOrder(this PluginInfo p) {
             var mod = p.GetModConfig();
             if (mod == null)

@@ -1,55 +1,87 @@
-using ColossalFramework;
+using ColossalFramework.IO;
+using ColossalFramework.PlatformServices;
+using ColossalFramework.Plugins;
 using KianCommons;
+using KianCommons.Plugins;
+using LoadOrderShared;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using static ColossalFramework.Plugins.PluginManager;
-using LoadOrderShared;
-using CitiesHarmony.API;
-using ColossalFramework.IO;
-using ColossalFramework.PlatformServices;
-using ColossalFramework.Plugins;
-using ICities;
-using UnityEngine.SceneManagement;
-using ColossalFramework.UI;
 using static KianCommons.ReflectionHelpers;
-using KianCommons.Plugins;
+using HarmonyLib;
 
 namespace LoadOrderMod.Util {
     internal static class LoadOrderUtil {
         public static LoadOrderConfig config_;
-        public static LoadOrderConfig Config => config_ ??=
-            LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
-            ?? new LoadOrderConfig();
+        public static LoadOrderConfig Config {
+            get {
+                try {
+                    return config_ ??=
+                        LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+                        ?? new LoadOrderConfig();
+                } catch(Exception ex) {
+                    Log.Exception(ex);
+                    return null;
+                }
+            }
+        }
 
         public static void SaveConfig() =>
             config_?.Serialize(DataLocation.localApplicationData);
 
-        public static void SavePathDetails() {
-            Config.GamePath = DataLocation.applicationBase;
-            var plugin = PluginManager.instance.GetPluginsInfo()
-                 .FirstOrDefault(_p => _p.publishedFileID != PublishedFileId.invalid);
-            if(plugin?.modPath is string path) {
-                Config.WorkShopContentPath = Path.GetDirectoryName(path); // get parent directory.
+        public static void GetPathDetails() {
+            try {
+                Config.GamePath = DataLocation.applicationBase;
+                foreach(var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
+                    if(pluginInfo.publishedFileID != PublishedFileId.invalid) {
+                        Config.WorkShopContentPath = Path.GetDirectoryName(pluginInfo.modPath);
+                        break;
+                    }
+                }
+                SaveConfig();
+            } catch(Exception ex) {
+                Log.Exception(ex);
             }
-            SaveConfig();
         }
 
-        public static void SaveModDetails() {
+        public static void GetModsDetails() {
             foreach(var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
-                var modInfo = Config.Mods.FirstOrDefault(_mod => _mod.Path == pluginInfo.modPath);
-                modInfo ??= new LoadOrderShared.ModInfo {
-                    Path = pluginInfo.modPath,
-                    LoadOrder = LoadOrderConfig.DefaultLoadOrder,
-                };
-                modInfo.Description = pluginInfo.GetUserModInstance().Description;
-                modInfo.ModName = pluginInfo.GetModName();
+                try {
+                    var modInfo = pluginInfo.GetModConfig();
+                    if(modInfo == null) {
+                        modInfo = new LoadOrderShared.ModInfo {
+                            Path = pluginInfo.modPath,
+                            LoadOrder = LoadOrderConfig.DefaultLoadOrder,
+                        };
+                        Config.Mods = Config.Mods.AddToArray(modInfo);
+                    }
+                    modInfo.Description = pluginInfo.GetUserModInstance().Description;
+                    modInfo.ModName = pluginInfo.GetModName();
+                } catch(Exception ex) {
+                    Log.Exception(ex);
+                }
             }
-            SaveConfig();
         }
 
+        public static void StoreConifgDetails() {
+            try {
+                GetPathDetails();
+                GetModsDetails();
+                SaveConfig();
+            } catch(Exception ex) {
+                Log.Exception(ex);
+            }
+        }
+
+        internal static bool HasLoadOrder(this PluginInfo p) {
+            var mod = p.GetModConfig();
+            if(mod == null)
+                return false;
+            return mod.LoadOrder != LoadOrderConfig.DefaultLoadOrder;
+        }
 
         internal static int GetLoadOrder(this PluginInfo p) {
             var mod = p.GetModConfig();
@@ -58,7 +90,7 @@ namespace LoadOrderMod.Util {
             return mod.LoadOrder;
         }
 
-        internal static LoadOrderShared.ModInfo GetModConfig(this PluginInfo p)=>
+        internal static LoadOrderShared.ModInfo GetModConfig(this PluginInfo p) =>
             Config?.Mods?.FirstOrDefault(_mod => _mod.Path == p.modPath);
 
         internal static string DllName(this PluginInfo p) =>
@@ -71,9 +103,8 @@ namespace LoadOrderMod.Util {
             AppDomain.CurrentDomain.GetAssemblies()
             .FirstOrDefault(_asm => _asm.GetName().Name == "LoadingScreenMod");
 
-        
-        public static void ApplyGameLoggingImprovements()
-        {
+
+        public static void ApplyGameLoggingImprovements() {
             Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
             Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
             Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);

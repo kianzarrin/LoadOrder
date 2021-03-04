@@ -16,15 +16,15 @@ namespace LoadOrderInjections.Injections {
             var savedOrder2 = p2.GetLoadOrder();
 
             // orderless harmony comes first
-            if (savedOrder1 == DefaultLoadOrder && p1.IsHarmonyMod())
+            if (!p1.HasLoadOrder() && p1.IsHarmonyMod())
                 return -1;
-            if (savedOrder2 == DefaultLoadOrder && p2.IsHarmonyMod())
+            if (!p2.HasLoadOrder() && p2.IsHarmonyMod())
                 return +1;
 
             // if neither have order, use string comparison
             // then builin first, workshop second, local last
             // otherwise use string comparison
-            if (savedOrder1 == DefaultLoadOrder && savedOrder2 == DefaultLoadOrder) {
+            if (!p1.HasLoadOrder() && !p2.HasLoadOrder()) {
                 int order(PluginInfo _p) =>
                     _p.isBuiltin ? 0 :
                     (_p.publishedFileID != PublishedFileId.invalid ? 1 : 2);

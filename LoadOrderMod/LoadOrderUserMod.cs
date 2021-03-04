@@ -27,40 +27,49 @@ namespace LoadOrderMod {
         //public LoadOrderMod() => Log.Debug("Instance Ctor " + Environment.StackTrace);
 
         public void OnEnabled() {
-            Util.LoadOrderUtil.ApplyGameLoggingImprovements();
-            Log.ShowGap = true;
-            Log.Buffered = true;
-            //Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: true);
-            //KianCommons.UI.TextureUtil.EmbededResources = false;
-            //HelpersExtensions.VERBOSE = false;
-            //foreach(var p in ColossalFramework.Plugins.PluginManager.instance.GetPluginsInfo()) {
-            //    string savedKey = p.name + p.modPath.GetHashCode().ToString() + ".enabled";
-            //    Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.modPath}");
-            //}
+            try {
+                Util.LoadOrderUtil.ApplyGameLoggingImprovements();
+                Log.ShowGap = true;
+                Log.Buffered = true;
+                //Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: true);
+                //KianCommons.UI.TextureUtil.EmbededResources = false;
+                //HelpersExtensions.VERBOSE = false;
+                //foreach(var p in ColossalFramework.Plugins.PluginManager.instance.GetPluginsInfo()) {
+                //    string savedKey = p.name + p.modPath.GetHashCode().ToString() + ".enabled";
+                //    Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.modPath}");
+                //}
 
-            LoadOrderUtil.SavePathDetails();
-            LoadingManager.instance.m_introLoaded += LoadOrderUtil.SaveModDetails;
 
-            HarmonyHelper.DoOnHarmonyReady(() => {
-                //HarmonyLib.Harmony.DEBUG = true;
-                HarmonyUtil.InstallHarmony(HARMONY_ID);
+                HarmonyHelper.DoOnHarmonyReady(() => {
+                    //HarmonyLib.Harmony.DEBUG = true;
+                    HarmonyUtil.InstallHarmony(HARMONY_ID);
                 });
-            SceneManager.sceneLoaded += OnSceneLoaded;
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+                SceneManager.sceneLoaded += OnSceneLoaded;
+                SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
-            LoadingManager.instance.m_introLoaded += LoadOrderUtil.TurnOffSteamPanels;
-            LoadOrderUtil.TurnOffSteamPanels();
+                LoadingManager.instance.m_introLoaded += LoadOrderUtil.TurnOffSteamPanels;
+                LoadOrderUtil.TurnOffSteamPanels();
 
-            Log.Flush();
+                LoadingManager.instance.m_introLoaded += LoadOrderUtil.StoreConifgDetails;
+
+                Log.Flush();
+            } catch(Exception ex) {
+                Log.Exception(ex);
+            }
         }
 
 
         public void OnDisabled() {
-            LoadingManager.instance.m_introLoaded -= LoadOrderUtil.TurnOffSteamPanels;
-            LoadingManager.instance.m_introLoaded -= LoadOrderUtil.SaveModDetails;
-            Log.Buffered = false;
-            HarmonyUtil.UninstallHarmony(HARMONY_ID);
-            LoadOrderUtil.config_ = null;
+            try {
+
+                LoadingManager.instance.m_introLoaded -= LoadOrderUtil.TurnOffSteamPanels;
+                LoadingManager.instance.m_introLoaded -= LoadOrderUtil.StoreConifgDetails;
+                Log.Buffered = false;
+                HarmonyUtil.UninstallHarmony(HARMONY_ID);
+                LoadOrderUtil.config_ = null;
+            } catch(Exception ex) {
+                Log.Exception(ex);
+            }
         }
 
         public static void OnSceneLoaded(Scene scene, LoadSceneMode mode) {

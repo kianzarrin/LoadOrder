@@ -24,7 +24,8 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
 #if DEBUG
             var asm = loadingExtension.GetType().Assembly;
             var p = PluginManager.instance.GetPluginsInfo().Single(_p => _p.ContainsAssembly(asm));
-            Log.Debug($"loadOrder={p.GetLoadOrder()}", true);
+            if(p.HasLoadOrder())
+                Log.Debug($"loadOrder={p.GetLoadOrder()}", true);
 #endif
 
             sw.Reset();
