@@ -139,4 +139,21 @@ namespace LoadOrderIPatch {
             return name == method;
         }
     }
+    public static class ILProcessorExtensions {
+        public static void InsertAfter(this ILProcessor ilprocessor, Instruction target, params Instruction[] codes) {
+            for (int i = codes.Length - 1; i >= 0; i++)
+                ilprocessor.InsertAfter(target, codes[i]);
+        }
+
+        public static void InsertBefore(this ILProcessor ilprocessor, Instruction target, params Instruction[] codes) {
+            for (int i = 0; i < codes.Length; i++)
+                ilprocessor.InsertBefore(target, codes[i]);
+        }
+
+        public static void Prefix(this ILProcessor ilprocessor, params Instruction[] codes) {
+            var target = ilprocessor.Body.Instructions.First();
+            for (int i = 0; i < codes.Length; i++)
+                ilprocessor.InsertBefore(target, codes[i]);
+        }
+    }
 }

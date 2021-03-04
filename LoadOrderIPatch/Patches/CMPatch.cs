@@ -24,6 +24,10 @@ namespace LoadOrderIPatch.Patches {
             workingPath_ = patcherWorkingPath;
 
             FindAssemblySoftPatch(assemblyDefinition);
+            
+            // TODO uncomment after understanding how CS prevents double loading during hot reload
+            //NoDoubleLoadPatch(assemblyDefinition);
+            
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
             //assemblyDefinition = LoadPluginsPatch(assemblyDefinition); // its loaded in ASCPatch.LoadDLL() instead
             AddAssemlyPatch(assemblyDefinition);
@@ -37,6 +41,46 @@ namespace LoadOrderIPatch.Patches {
             }
 
             return assemblyDefinition;
+        }
+
+        /// <summary>
+        /// if the assembly already exists in the current domain, 
+        /// do not double load it.
+        /// </summary>
+        /// <param name="CM"></param>
+        public void NoDoubleLoadPatch(AssemblyDefinition CM) {
+            logger_.LogStartPatching();
+            var cm = CM.MainModule;
+            var mTarget = cm.GetMethod(
+                "ColossalFramework.Plugins.PluginManager.LoadPlugin");
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            var instructions = mTarget.Body.Instructions;
+            var first = instructions.First();
+
+            var loi = GetInjectionsAssemblyDefinition(workingPath_);
+            var mInjection = loi.MainModule.GetMethod(
+                "LoadOrderInjections.Injections.LoadingApproach.ExistingAssembly");
+            var mrInjection = cm.ImportReference(mInjection);
+
+            var loadDllPath = mTarget.GetLDArg("dllPath");
+            var callExistingAssembly = Instruction.Create(OpCodes.Call, mrInjection);
+            var storeResult = Instruction.Create(OpCodes.Stloc_0);
+            var returnResult = instructions.Last(
+                c => c.OpCode == OpCodes.Ldloc_0 && 
+                c.Next?.OpCode == OpCodes.Ret);
+            var GotoToReturnResultIfNotNull = Instruction.Create(OpCodes.Brfalse, returnResult);
+
+            /*
+            result =  ExistingAssembly(dllPath)
+            if(result is not null) goto ReturnResult
+            ...
+            ReturnResult: 
+            return result
+
+             */
+            ilProcessor.Prefix(loadDllPath, callExistingAssembly, storeResult, GotoToReturnResultIfNotNull);
+
+            logger_.LogSucessfull();
         }
 
         public void FindAssemblySoftPatch(AssemblyDefinition CM) {

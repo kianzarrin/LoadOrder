@@ -15,8 +15,6 @@
     public static class LoadingApproach {
         public static Assembly FindDependancySoft(
             AssemblyName name, Dictionary<Assembly, PluginInfo> asms) {
-            Log.Info(ThisMethod + ": searching for  " + name, true);
-
             foreach (Assembly asm in asms.Keys) {
                 AssemblyName name2 = asm.GetName();
                 if (name.Name == name2.Name)
@@ -28,6 +26,23 @@
 
             return null;
         }
+
+        public static Assembly ExistingAssembly(string dllPath) {
+            Log.Info(ThisMethod + " dllPath=" + dllPath);
+            AssemblyDefinition asm = ReadAssemblyDefinition(dllPath);
+            var asmName = new AssemblyName {
+                Name = asm.Name.Name,
+                Version = asm.Name.Version,
+            };
+            var fullname = asmName.FullName;
+            
+            foreach (var asm2 in AppDomain.CurrentDomain.GetAssemblies()) {
+                if (fullname == asm2.GetName().FullName)
+                    return asm2;
+            }
+            return null;
+        }
+
 
 
         public static void AddAssemblyPrefix(Assembly asm) {
@@ -124,8 +139,28 @@
             }
         }
 
+        public static AssemblyDefinition ReadAssemblyDefinition(string dllpath) {
+            try {
+                var readInMemory = new ReaderParameters {
+                    ReadWrite = false,
+                    InMemory = true,
+                };
+                var asm = AssemblyDefinition.ReadAssembly(dllpath, readInMemory);
+
+                if (asm != null)
+                    Log.Info("Assembly Definition loaded: " + asm);
+                else
+                    Log.Info("Assembly Definition at " + dllpath + " failed to load.");
+
+                return asm;
+            } catch (Exception ex) {
+                Log.Info("Assembly Definition at " + dllpath + " failed to load.\n" + ex.Message);
+                return null;
+            }
+        }
+
         public static IEnumerable<TypeDefinition> GetAllCecilTypes(string path) {
-            AssemblyDefinition asm = AssemblyDefinition.ReadAssembly(path);
+            AssemblyDefinition asm = ReadAssemblyDefinition(path);
             foreach(var type in asm.MainModule.Types) {
                 yield return type;
                 foreach (var nestedType in GetNestedCecilTypesRecursive(type)) {
