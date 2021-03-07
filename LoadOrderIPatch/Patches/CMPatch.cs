@@ -26,7 +26,7 @@ namespace LoadOrderIPatch.Patches {
             FindAssemblySoftPatch(assemblyDefinition);
             
             // TODO uncomment after understanding how CS prevents double loading during hot reload
-            //NoDoubleLoadPatch(assemblyDefinition);
+            // NoDoubleLoadPatch(assemblyDefinition);
             
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
             //assemblyDefinition = LoadPluginsPatch(assemblyDefinition); // its loaded in ASCPatch.LoadDLL() instead
