@@ -46,6 +46,7 @@
             this.LoadProfile = new System.Windows.Forms.Button();
             this.Save = new System.Windows.Forms.Button();
             this.AutoSave = new System.Windows.Forms.CheckBox();
+            this.ReloadMods = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).BeginInit();
             this.SuspendLayout();
             // 
@@ -248,11 +249,25 @@
             this.AutoSave.UseVisualStyleBackColor = true;
             this.AutoSave.CheckedChanged += new System.EventHandler(this.AutoSave_CheckedChanged);
             // 
+            // ReloadMods
+            // 
+            this.ReloadMods.AutoSize = true;
+            this.ReloadMods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ReloadMods.Location = new System.Drawing.Point(522, 569);
+            this.ReloadMods.Margin = new System.Windows.Forms.Padding(2);
+            this.ReloadMods.Name = "ReloadMods";
+            this.ReloadMods.Size = new System.Drawing.Size(97, 27);
+            this.ReloadMods.TabIndex = 4;
+            this.ReloadMods.Text = "Reload Mods";
+            this.ReloadMods.UseVisualStyleBackColor = true;
+            this.ReloadMods.Click += new System.EventHandler(this.ReloadMods_Click);
+            // 
             // LoadOrderWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(759, 726);
+            this.Controls.Add(this.ReloadMods);
             this.Controls.Add(this.AutoSave);
             this.Controls.Add(this.Save);
             this.Controls.Add(this.LoadProfile);
@@ -291,5 +306,6 @@
         private Button LoadProfile;
         private Button Save;
         private CheckBox AutoSave;
+        private Button ReloadMods;
     }
 }

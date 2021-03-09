@@ -19,6 +19,11 @@ namespace LoadOrderTool {
             InitializeComponent();
             this.dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
             Instance = this;
+            LoadMods();
+        }
+
+        public void LoadMods() {
+            PluginManager.instance.LoadPlugins();
             ModList = ModList.GetAllMods();
             ModList.SortBy(ModList.HarmonyComparison);
             Populate();
@@ -177,6 +182,10 @@ public void Populate()
 
         private void AutoSave_CheckedChanged(object sender, EventArgs e) {
             PluginManager.instance.ConfigWrapper.AutoSave = AutoSave.Checked;
+        }
+
+        private void ReloadMods_Click(object sender, EventArgs e) {
+            LoadMods();
         }
     }
 }

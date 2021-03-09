@@ -356,9 +356,6 @@ namespace CO.Plugins {
 
         public int modCount => GetPluginsInfo().Count();
 
-        public int enabledModCount =>
-            GetPluginsInfo().Count(p => p.isEnabled);
-
         public void LoadPlugins() {
             string builtinModsPath = Path.Combine(DataLocation.gameContentPath, "Mods");
             string addonsModsPath = DataLocation.modsPath;

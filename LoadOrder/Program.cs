@@ -20,8 +20,6 @@ namespace LoadOrderTool {
                 Console.WriteLine("Hello!");
                 //LoadAssemblies();
 
-                PluginManager.instance.LoadPlugins();
-
                 Application.Run(new LoadOrderWindow());
             } catch (Exception ex) {
                 Log.Exception(ex);
