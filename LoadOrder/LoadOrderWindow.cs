@@ -1,5 +1,6 @@
 ﻿using CO;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -148,6 +149,25 @@ namespace LoadOrderTool {
         private void LoadOrder_FormClosing(object sender, FormClosingEventArgs e)
         {
             GameSettings.SaveAll();
+        }
+
+        private void SaveProfile_Click(object sender, EventArgs e) {
+            SaveFileDialog diaglog = new SaveFileDialog();
+            diaglog.Filter = "xml files (*.xml)|*.xml";
+            diaglog.InitialDirectory = LoadOrderProfile.DIR;
+            if (diaglog.ShowDialog() == DialogResult.OK) {
+                ModList.SaveProfile(diaglog.FileName);
+            }
+        }
+
+        private void LoadProfile_Click(object sender, EventArgs e) {
+            using (OpenFileDialog diaglog = new OpenFileDialog()) {
+                diaglog.Filter = "xml files (*.xml)|*.xml";
+                diaglog.InitialDirectory = LoadOrderProfile.DIR;
+                if (diaglog.ShowDialog() == DialogResult.OK) {
+                    ModList.LoadProfile(diaglog.FileName);
+                }
+            }
         }
     }
 }

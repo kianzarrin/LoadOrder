@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Windows.Forms;
 using static CO.Plugins.PluginManager;
 
 namespace LoadOrderTool {
@@ -168,7 +169,9 @@ namespace LoadOrderTool {
             }
 
             var missing = profile.Mods.Where(m => GetPluginInfo(m.IncludedPath) == null);
-            // TODO warn about missing.
+            var strMissing = string.Join('\n', missing.Select(p => p.DisplayText).ToArray());
+            
+            MessageBox.Show(strMissing, "Warning! Missing Mods", MessageBoxButtons.OK);
         }
 
         public void SaveProfile(string file) {

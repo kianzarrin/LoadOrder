@@ -29,7 +29,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.LoadIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IsIncluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ModEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -42,6 +42,8 @@
             this.ExcludeAll = new System.Windows.Forms.Button();
             this.ReverseOrder = new System.Windows.Forms.Button();
             this.RandomizeOrder = new System.Windows.Forms.Button();
+            this.SaveProfile = new System.Windows.Forms.Button();
+            this.LoadProfile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).BeginInit();
             this.SuspendLayout();
             // 
@@ -82,8 +84,8 @@
             this.dataGridViewMods.AllowUserToAddRows = false;
             this.dataGridViewMods.AllowUserToDeleteRows = false;
             this.dataGridViewMods.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
-            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Beige;
+            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridViewMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewMods.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -96,7 +98,7 @@
             this.dataGridViewMods.MultiSelect = false;
             this.dataGridViewMods.Name = "dataGridViewMods";
             this.dataGridViewMods.RowHeadersVisible = false;
-            this.dataGridViewMods.Size = new System.Drawing.Size(420, 756);
+            this.dataGridViewMods.Size = new System.Drawing.Size(420, 726);
             this.dataGridViewMods.TabIndex = 0;
             this.dataGridViewMods.Text = "Mods";
             this.dataGridViewMods.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewMods_CellValueChanged);
@@ -194,11 +196,39 @@
             this.RandomizeOrder.UseVisualStyleBackColor = true;
             this.RandomizeOrder.Click += new System.EventHandler(this.RandomizeOrder_Click);
             // 
-            // LoadOrder
+            // SaveProfile
+            // 
+            this.SaveProfile.AutoSize = true;
+            this.SaveProfile.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.SaveProfile.Location = new System.Drawing.Point(425, 229);
+            this.SaveProfile.Margin = new System.Windows.Forms.Padding(2);
+            this.SaveProfile.Name = "SaveProfile";
+            this.SaveProfile.Size = new System.Drawing.Size(117, 27);
+            this.SaveProfile.TabIndex = 2;
+            this.SaveProfile.Text = "Save Profile As ...";
+            this.SaveProfile.UseVisualStyleBackColor = true;
+            this.SaveProfile.Click += new System.EventHandler(this.SaveProfile_Click);
+            // 
+            // LoadProfile
+            // 
+            this.LoadProfile.AutoSize = true;
+            this.LoadProfile.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.LoadProfile.Location = new System.Drawing.Point(425, 260);
+            this.LoadProfile.Margin = new System.Windows.Forms.Padding(2);
+            this.LoadProfile.Name = "LoadProfile";
+            this.LoadProfile.Size = new System.Drawing.Size(88, 27);
+            this.LoadProfile.TabIndex = 3;
+            this.LoadProfile.Text = "Load Profile";
+            this.LoadProfile.UseVisualStyleBackColor = true;
+            this.LoadProfile.Click += new System.EventHandler(this.LoadProfile_Click);
+            // 
+            // LoadOrderWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(570, 756);
+            this.ClientSize = new System.Drawing.Size(570, 726);
+            this.Controls.Add(this.LoadProfile);
+            this.Controls.Add(this.SaveProfile);
             this.Controls.Add(this.RandomizeOrder);
             this.Controls.Add(this.ReverseOrder);
             this.Controls.Add(this.ExcludeAll);
@@ -207,7 +237,7 @@
             this.Controls.Add(this.EnableAll);
             this.Controls.Add(this.SortByHarmony);
             this.Controls.Add(this.dataGridViewMods);
-            this.Name = "LoadOrder";
+            this.Name = "LoadOrderWindow";
             this.Text = "LoadOrder";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoadOrder_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).EndInit();
@@ -229,5 +259,7 @@
         private Button ExcludeAll;
         private Button ReverseOrder;
         private Button RandomizeOrder;
+        private Button SaveProfile;
+        private Button LoadProfile;
     }
 }

@@ -32,23 +32,30 @@
         }
 
         const int DefaultLoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
-        static string DIR = Path.Combine(DataLocation.localApplicationData, "LOMProfiles");
+        public static string DIR {
+            get {
+                var dir = Path.Combine(DataLocation.localApplicationData, "LOMProfiles");
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+                return dir;
+            }
+        }
 
         public Mod[] Mods = new Mod[0];
 
         public Mod GetMod(string path) => Mods.FirstOrDefault(m => m.IncludedPath == path);
 
-        public void Serialize(string file) {
+        public void Serialize(string path) {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderProfile));
-            using (FileStream fs = new FileStream(Path.Combine(DIR, file), FileMode.Create, FileAccess.Write)) {
+            using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write)) {
                 ser.Serialize(fs, this);
             }
         }
 
-        public static LoadOrderProfile Deserialize(string file) {
+        public static LoadOrderProfile Deserialize(string path) {
             try {
                 XmlSerializer ser = new XmlSerializer(typeof(LoadOrderProfile));
-                using (FileStream fs = new FileStream(Path.Combine(DIR, file), FileMode.Open, FileAccess.Read)) {
+                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
                     return ser.Deserialize(fs) as LoadOrderProfile;
                 }
             } catch {
