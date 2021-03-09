@@ -155,23 +155,23 @@ namespace LoadOrderTool {
         public PluginManager.PluginInfo GetPluginInfo(string path) =>
             this.FirstOrDefault(p => p.ModIncludedPath == path);
 
-        static bool excludeExtras_ = true;
-        public void LoadProfile(string file) {
+        public void LoadProfile(string file, bool excludeExtras=true) {
             var profile = LoadOrderProfile.Deserialize(file);
             foreach (var modInfo in this) {
                 var modProfile = profile.GetMod(modInfo.ModIncludedPath);
                 if (modProfile != null) {
                     modProfile.Write(modInfo);
-                } else if(excludeExtras_) {
+                } else if(excludeExtras) {
                     modInfo.LoadOrder = DefaultLoadOrder;
                     modInfo.IsIncluded = false;
                 }
             }
 
             var missing = profile.Mods.Where(m => GetPluginInfo(m.IncludedPath) == null);
-            var strMissing = string.Join('\n', missing.Select(p => p.DisplayText).ToArray());
-            
-            MessageBox.Show(strMissing, "Warning! Missing Mods", MessageBoxButtons.OK);
+            if (missing.Any()) {
+                var strMissing = string.Join('\n', missing.Select(p => p.DisplayText).ToArray());
+                MessageBox.Show(strMissing, "Warning! Missing Mods", MessageBoxButtons.OK);
+            }
         }
 
         public void SaveProfile(string file) {
