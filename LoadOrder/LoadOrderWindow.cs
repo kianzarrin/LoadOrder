@@ -166,6 +166,7 @@ namespace LoadOrderTool {
                 diaglog.InitialDirectory = LoadOrderProfile.DIR;
                 if (diaglog.ShowDialog() == DialogResult.OK) {
                     ModList.LoadProfile(diaglog.FileName);
+                    Populate();
                 }
             }
         }

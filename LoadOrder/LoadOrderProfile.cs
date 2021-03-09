@@ -43,7 +43,7 @@
 
         public Mod[] Mods = new Mod[0];
 
-        public Mod GetMod(string path) => Mods.FirstOrDefault(m => m.IncludedPath == path);
+        public Mod GetMod(string includedPath) => Mods.FirstOrDefault(m => m.IncludedPath == includedPath);
 
         public void Serialize(string path) {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderProfile));

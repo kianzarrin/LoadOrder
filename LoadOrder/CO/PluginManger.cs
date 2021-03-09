@@ -60,15 +60,21 @@ namespace CO.Plugins {
             public string ModIncludedPath {
                 get {
                     if (dirName.StartsWith("_")) 
-                        return Path.Combine(parentDirName, dirName.Substring(1));
+                        return Path.Combine(parentDirPath, dirName.Substring(1));
                     else
                         return ModPath;
                 }
             }
 
+            /// <summary>
+            /// the name of the directory that contains the mod
+            /// </summary>
             public string dirName => new DirectoryInfo(ModPath).Name;
 
-            public string parentDirName => Directory.GetParent(ModPath).Name;
+            /// <summary>
+            /// full path to the parent of the mod's directory.
+            /// </summary>
+            public string parentDirPath => Directory.GetParent(ModPath).FullName;
 
             /// <summary> dir name without prefix. </summary>
             public string name => m_CachedName;

@@ -162,6 +162,7 @@ namespace LoadOrderTool {
                 if (modProfile != null) {
                     modProfile.Write(modInfo);
                 } else if(excludeExtras) {
+                    Log.Debug("mod profile with path not found: " + modInfo.ModIncludedPath);
                     modInfo.LoadOrder = DefaultLoadOrder;
                     modInfo.IsIncluded = false;
                 }
