@@ -151,9 +151,34 @@ namespace LoadOrderTool {
                 this[i].LoadOrder = i;
         }
 
+        public PluginManager.PluginInfo GetPluginInfo(string path) =>
+            this.FirstOrDefault(p => p.ModIncludedPath == path);
 
+        static bool excludeExtras_ = true;
+        public void LoadProfile(string file) {
+            var profile = LoadOrderProfile.Deserialize(file);
+            foreach (var modInfo in this) {
+                var modProfile = profile.GetMod(modInfo.ModIncludedPath);
+                if (modProfile != null) {
+                    modProfile.Write(modInfo);
+                } else if(excludeExtras_) {
+                    modInfo.LoadOrder = DefaultLoadOrder;
+                    modInfo.IsIncluded = false;
+                }
+            }
+
+            var missing = profile.Mods.Where(m => GetPluginInfo(m.IncludedPath) == null);
+            // TODO warn about missing.
+        }
+
+        public void SaveProfile(string file) {
+            var list = new List<LoadOrderProfile.Mod>(this.Count);
+            foreach (var pluginInfo in this) {
+                var modProfile = new LoadOrderProfile.Mod(pluginInfo);
+                list.Add(modProfile);
+            }
+            var profile = new LoadOrderProfile { Mods = list.ToArray() };
+            profile.Serialize(file);
+        }
     }
-
-
-
 }
