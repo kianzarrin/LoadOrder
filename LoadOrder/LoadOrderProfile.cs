@@ -15,15 +15,15 @@
 
             public Mod(CO.Plugins.PluginManager.PluginInfo pluginInfo) {
                 IncludedPath = pluginInfo.ModIncludedPath;
-                IsIncluded = pluginInfo.IsIncluded;
-                IsEnabled = pluginInfo.isEnabled;
+                IsIncluded = pluginInfo.IsIncludedPending;
+                IsEnabled = pluginInfo.IsEnabledPending;
                 LoadOrder = pluginInfo.LoadOrder;
                 DisplayText = pluginInfo.DisplayText;
             }
 
             public void Write(CO.Plugins.PluginManager.PluginInfo pluginInfo) {
-                pluginInfo.IsIncluded = IsIncluded;
-                pluginInfo.isEnabled = IsEnabled;
+                pluginInfo.IsIncludedPending = IsIncluded;
+                pluginInfo.IsEnabledPending = IsEnabled;
                 pluginInfo.LoadOrder = LoadOrder;
             }
 

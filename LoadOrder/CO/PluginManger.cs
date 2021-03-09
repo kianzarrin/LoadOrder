@@ -173,6 +173,8 @@ namespace CO.Plugins {
                     Path = ModIncludedPath,
                     LoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder,
                 };
+                isIncludedPending_ = IsIncluded;
+                isEnabledPending_ = isEnabled;
             }
 
             //public bool ContainsAssembly(Assembly asm)
@@ -242,7 +244,7 @@ namespace CO.Plugins {
             }
 
             public override string ToString() {
-                return $"PluginInfo: path={ModPath} included={IsIncluded} enabled={isEnabled} DisplayText={DisplayText} " +
+                return $"PluginInfo: path={ModPath} included={IsIncludedPending} enabled={IsEnabledPending} DisplayText={DisplayText} " +
                     $"cachedName={m_CachedName}"; /*assemblies={assembliesString}"*/
             }
 
@@ -387,7 +389,7 @@ namespace CO.Plugins {
                         mods.Add(plugin.ModInfo);
                 }
                 Config.Mods = mods.ToArray();
-                ConfigWrapper.SaveConfig();
+                ConfigWrapper.Dirty = true;
 
             } catch (Exception ex) {
                 Log.Exception(ex);

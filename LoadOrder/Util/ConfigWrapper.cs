@@ -36,16 +36,14 @@
             Log.Info("LoadOrderConfig terminated");
         }
 
-        public bool AutoSave {
-            get => m_Run;
-            set => m_Run = value;
-        }
+        public bool AutoSave { get; set; } = false;
 
         public void SaveConfig() {
-            if (!m_Run) {
+            if (!AutoSave) {
                 SaveConfigImpl();
-            } else if (Thread.CurrentThread != m_SaveThread)
+            } else if (Thread.CurrentThread != m_SaveThread) {
                 Dirty = true;
+            }
         }
 
         private void SaveConfigImpl() {
@@ -66,7 +64,7 @@
         private void MonitorSave() {
             try {
                 while (m_Run) {
-                    if(Dirty)
+                    if(AutoSave && Dirty)
                         SaveConfigImpl();
                     lock (m_LockObject) {
                         Monitor.Wait(m_LockObject, 100);
