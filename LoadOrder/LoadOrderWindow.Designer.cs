@@ -140,7 +140,7 @@
             this.DisableAll.Name = "DisableAll";
             this.DisableAll.Size = new System.Drawing.Size(75, 27);
             this.DisableAll.TabIndex = 1;
-            this.DisableAll.Text = "DisableAll";
+            this.DisableAll.Text = "Disable All";
             this.DisableAll.UseVisualStyleBackColor = true;
             this.DisableAll.Click += new System.EventHandler(this.DisableAll_Click);
             // 
@@ -204,8 +204,8 @@
             this.SaveProfile.Margin = new System.Windows.Forms.Padding(2);
             this.SaveProfile.Name = "SaveProfile";
             this.SaveProfile.Size = new System.Drawing.Size(117, 27);
-            this.SaveProfile.TabIndex = 2;
-            this.SaveProfile.Text = "Save Profile As ...";
+            this.SaveProfile.TabIndex = 1;
+            this.SaveProfile.Text = "Save As Profile ";
             this.SaveProfile.UseVisualStyleBackColor = true;
             this.SaveProfile.Click += new System.EventHandler(this.SaveProfile_Click);
             // 
@@ -217,7 +217,7 @@
             this.LoadProfile.Margin = new System.Windows.Forms.Padding(2);
             this.LoadProfile.Name = "LoadProfile";
             this.LoadProfile.Size = new System.Drawing.Size(88, 27);
-            this.LoadProfile.TabIndex = 3;
+            this.LoadProfile.TabIndex = 1;
             this.LoadProfile.Text = "Load Profile";
             this.LoadProfile.UseVisualStyleBackColor = true;
             this.LoadProfile.Click += new System.EventHandler(this.LoadProfile_Click);
