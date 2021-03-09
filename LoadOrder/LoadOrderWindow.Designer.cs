@@ -44,6 +44,8 @@
             this.RandomizeOrder = new System.Windows.Forms.Button();
             this.SaveProfile = new System.Windows.Forms.Button();
             this.LoadProfile = new System.Windows.Forms.Button();
+            this.Save = new System.Windows.Forms.Button();
+            this.AutoSave = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).BeginInit();
             this.SuspendLayout();
             // 
@@ -98,7 +100,7 @@
             this.dataGridViewMods.MultiSelect = false;
             this.dataGridViewMods.Name = "dataGridViewMods";
             this.dataGridViewMods.RowHeadersVisible = false;
-            this.dataGridViewMods.Size = new System.Drawing.Size(420, 726);
+            this.dataGridViewMods.Size = new System.Drawing.Size(506, 726);
             this.dataGridViewMods.TabIndex = 0;
             this.dataGridViewMods.Text = "Mods";
             this.dataGridViewMods.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewMods_CellValueChanged);
@@ -109,7 +111,7 @@
             // 
             this.SortByHarmony.AutoSize = true;
             this.SortByHarmony.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.SortByHarmony.Location = new System.Drawing.Point(425, 8);
+            this.SortByHarmony.Location = new System.Drawing.Point(522, 8);
             this.SortByHarmony.Margin = new System.Windows.Forms.Padding(2);
             this.SortByHarmony.Name = "SortByHarmony";
             this.SortByHarmony.Size = new System.Drawing.Size(116, 27);
@@ -122,7 +124,7 @@
             // 
             this.EnableAll.AutoSize = true;
             this.EnableAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.EnableAll.Location = new System.Drawing.Point(425, 103);
+            this.EnableAll.Location = new System.Drawing.Point(522, 103);
             this.EnableAll.Margin = new System.Windows.Forms.Padding(2);
             this.EnableAll.Name = "EnableAll";
             this.EnableAll.Size = new System.Drawing.Size(75, 27);
@@ -135,10 +137,10 @@
             // 
             this.DisableAll.AutoSize = true;
             this.DisableAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.DisableAll.Location = new System.Drawing.Point(425, 131);
+            this.DisableAll.Location = new System.Drawing.Point(522, 131);
             this.DisableAll.Margin = new System.Windows.Forms.Padding(2);
             this.DisableAll.Name = "DisableAll";
-            this.DisableAll.Size = new System.Drawing.Size(75, 27);
+            this.DisableAll.Size = new System.Drawing.Size(79, 27);
             this.DisableAll.TabIndex = 1;
             this.DisableAll.Text = "Disable All";
             this.DisableAll.UseVisualStyleBackColor = true;
@@ -148,7 +150,7 @@
             // 
             this.IncludeAll.AutoSize = true;
             this.IncludeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.IncludeAll.Location = new System.Drawing.Point(425, 159);
+            this.IncludeAll.Location = new System.Drawing.Point(522, 159);
             this.IncludeAll.Margin = new System.Windows.Forms.Padding(2);
             this.IncludeAll.Name = "IncludeAll";
             this.IncludeAll.Size = new System.Drawing.Size(77, 27);
@@ -161,7 +163,7 @@
             // 
             this.ExcludeAll.AutoSize = true;
             this.ExcludeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ExcludeAll.Location = new System.Drawing.Point(425, 187);
+            this.ExcludeAll.Location = new System.Drawing.Point(522, 187);
             this.ExcludeAll.Margin = new System.Windows.Forms.Padding(2);
             this.ExcludeAll.Name = "ExcludeAll";
             this.ExcludeAll.Size = new System.Drawing.Size(80, 27);
@@ -174,7 +176,7 @@
             // 
             this.ReverseOrder.AutoSize = true;
             this.ReverseOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ReverseOrder.Location = new System.Drawing.Point(425, 36);
+            this.ReverseOrder.Location = new System.Drawing.Point(522, 36);
             this.ReverseOrder.Margin = new System.Windows.Forms.Padding(2);
             this.ReverseOrder.Name = "ReverseOrder";
             this.ReverseOrder.Size = new System.Drawing.Size(103, 27);
@@ -187,7 +189,7 @@
             // 
             this.RandomizeOrder.AutoSize = true;
             this.RandomizeOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.RandomizeOrder.Location = new System.Drawing.Point(425, 64);
+            this.RandomizeOrder.Location = new System.Drawing.Point(522, 64);
             this.RandomizeOrder.Margin = new System.Windows.Forms.Padding(2);
             this.RandomizeOrder.Name = "RandomizeOrder";
             this.RandomizeOrder.Size = new System.Drawing.Size(122, 27);
@@ -200,12 +202,12 @@
             // 
             this.SaveProfile.AutoSize = true;
             this.SaveProfile.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.SaveProfile.Location = new System.Drawing.Point(425, 229);
+            this.SaveProfile.Location = new System.Drawing.Point(522, 612);
             this.SaveProfile.Margin = new System.Windows.Forms.Padding(2);
             this.SaveProfile.Name = "SaveProfile";
-            this.SaveProfile.Size = new System.Drawing.Size(117, 27);
+            this.SaveProfile.Size = new System.Drawing.Size(72, 27);
             this.SaveProfile.TabIndex = 1;
-            this.SaveProfile.Text = "Save As Profile ";
+            this.SaveProfile.Text = "Save As...";
             this.SaveProfile.UseVisualStyleBackColor = true;
             this.SaveProfile.Click += new System.EventHandler(this.SaveProfile_Click);
             // 
@@ -213,7 +215,7 @@
             // 
             this.LoadProfile.AutoSize = true;
             this.LoadProfile.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.LoadProfile.Location = new System.Drawing.Point(425, 260);
+            this.LoadProfile.Location = new System.Drawing.Point(522, 643);
             this.LoadProfile.Margin = new System.Windows.Forms.Padding(2);
             this.LoadProfile.Name = "LoadProfile";
             this.LoadProfile.Size = new System.Drawing.Size(88, 27);
@@ -222,11 +224,37 @@
             this.LoadProfile.UseVisualStyleBackColor = true;
             this.LoadProfile.Click += new System.EventHandler(this.LoadProfile_Click);
             // 
+            // Save
+            // 
+            this.Save.AutoSize = true;
+            this.Save.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.Save.Location = new System.Drawing.Point(522, 688);
+            this.Save.Margin = new System.Windows.Forms.Padding(2);
+            this.Save.Name = "Save";
+            this.Save.Size = new System.Drawing.Size(101, 27);
+            this.Save.TabIndex = 2;
+            this.Save.Text = "Save To Game";
+            this.Save.UseVisualStyleBackColor = true;
+            this.Save.Click += new System.EventHandler(this.Save_Click);
+            // 
+            // AutoSave
+            // 
+            this.AutoSave.AutoSize = true;
+            this.AutoSave.Location = new System.Drawing.Point(628, 692);
+            this.AutoSave.Name = "AutoSave";
+            this.AutoSave.Size = new System.Drawing.Size(85, 21);
+            this.AutoSave.TabIndex = 3;
+            this.AutoSave.Text = "Auto-save";
+            this.AutoSave.UseVisualStyleBackColor = true;
+            this.AutoSave.CheckedChanged += new System.EventHandler(this.AutoSave_CheckedChanged);
+            // 
             // LoadOrderWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(570, 726);
+            this.ClientSize = new System.Drawing.Size(759, 726);
+            this.Controls.Add(this.AutoSave);
+            this.Controls.Add(this.Save);
             this.Controls.Add(this.LoadProfile);
             this.Controls.Add(this.SaveProfile);
             this.Controls.Add(this.RandomizeOrder);
@@ -261,5 +289,7 @@
         private Button RandomizeOrder;
         private Button SaveProfile;
         private Button LoadProfile;
+        private Button Save;
+        private CheckBox AutoSave;
     }
 }

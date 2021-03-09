@@ -16,8 +16,8 @@ namespace CO.Plugins {
     using System.Threading;
 
     public class PluginManager : SingletonLite<PluginManager> {
-        ConfigWrapper configWrapper_;
-        LoadOrderShared.LoadOrderConfig Config => configWrapper_.Config;
+        public ConfigWrapper ConfigWrapper;
+        LoadOrderShared.LoadOrderConfig Config => ConfigWrapper.Config;
 
         public enum MessageType {
             Error,
@@ -59,7 +59,7 @@ namespace CO.Plugins {
 
             public string ModIncludedPath {
                 get {
-                    if (dirName.StartsWith("_")) 
+                    if (dirName.StartsWith("_"))
                         return Path.Combine(parentDirPath, dirName.Substring(1));
                     else
                         return ModPath;
@@ -98,7 +98,7 @@ namespace CO.Plugins {
             /// </summary>
             public bool isCameraScript => GetImplementation(kCameraScript) != null;
 
-            public bool IsHarmonyMod() => 
+            public bool IsHarmonyMod() =>
                 name == "2040656402" || dllName == "CitiesHarmony";
 
 
@@ -109,10 +109,20 @@ namespace CO.Plugins {
 
             public PublishedFileId publishedFileID => this.m_PublishedFileID;
 
+            bool isIncludedPending_;
+            public bool IsIncludedPending {
+                get => isIncludedPending_;
+                set {
+                    isIncludedPending_ = value;
+                    PluginManager.instance.ConfigWrapper.Dirty = true;
+                }
+            }
+
             public bool IsIncluded {
                 get => !dirName.StartsWith("_");
                 set {
                     Log.Debug($"set_IsIncluded current value = {IsIncluded} | target value = {value}");
+                    IsIncludedPending = value;
                     if (value == IsIncluded)
                         return;
                     string parentPath = Directory.GetParent(m_Path).FullName;
@@ -159,9 +169,9 @@ namespace CO.Plugins {
                 this.m_PublishedFileID = id;
                 this.ModInfo = PluginManager.instance.Config.Mods.FirstOrDefault(
                     _mod => _mod.Path == ModIncludedPath);
-                this.ModInfo ??= new LoadOrderShared.ModInfo { 
+                this.ModInfo ??= new LoadOrderShared.ModInfo {
                     Path = ModIncludedPath,
-                    LoadOrder =LoadOrderShared.LoadOrderConfig.DefaultLoadOrder,
+                    LoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder,
                 };
             }
 
@@ -204,12 +214,20 @@ namespace CO.Plugins {
                 }
             }
 
-            public string savedEnabledKey_ => 
+            bool isEnabledPending_;
+            public bool IsEnabledPending {
+                get => isEnabledPending_;
+                set {
+                    isEnabledPending_ = value;
+                    PluginManager.instance.ConfigWrapper.Dirty = true;
+                }
+            }
+            public string savedEnabledKey_ =>
                 name + GetLegacyHashCode(ModIncludedPath).ToString() + ".enabled";
-            public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, def:false, autoUpdate:true);
+            public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, def: false, autoUpdate: true);
             public bool isEnabled {
                 get => SavedEnabled.value;
-                set => SavedEnabled.value = value;
+                set => SavedEnabled.value = IsEnabledPending = value;
             }
 
             public LoadOrderShared.ModInfo ModInfo { get; private set; }
@@ -218,13 +236,12 @@ namespace CO.Plugins {
                 get => ModInfo.LoadOrder;
                 set {
                     ModInfo.LoadOrder = value;
-                    PluginManager.instance.configWrapper_.Dirty = true;
+                    PluginManager.instance.ConfigWrapper.Dirty = true;
                 }
-                
+
             }
 
-            public override string ToString()
-            {
+            public override string ToString() {
                 return $"PluginInfo: path={ModPath} included={IsIncluded} enabled={isEnabled} DisplayText={DisplayText} " +
                     $"cachedName={m_CachedName}"; /*assemblies={assembliesString}"*/
             }
@@ -251,11 +268,16 @@ namespace CO.Plugins {
             //    }
             //}
 
-            public TypeDefinition userModImplementation => 
+            public TypeDefinition userModImplementation =>
                 m_UserModImplementation ??= GetImplementation(PluginManager.kUserMod);
 
             public TypeDefinition GetImplementation(string fullInterfaceName) =>
                 AssemblyUtil.FindImplementation(DllPaths, fullInterfaceName);
+
+            public void ApplyPendingValues() {
+                IsIncluded = isIncludedPending_;
+                isEnabled = isEnabledPending_;
+            }
         }
 
         //public Type userModImplementation {
@@ -335,8 +357,7 @@ namespace CO.Plugins {
         public int enabledModCount =>
             GetPluginsInfo().Count(p => p.isEnabled);
 
-        public void LoadPlugins()
-        {
+        public void LoadPlugins() {
             string builtinModsPath = Path.Combine(DataLocation.gameContentPath, "Mods");
             string addonsModsPath = DataLocation.modsPath;
             m_Plugins = new List<PluginInfo>();
@@ -366,7 +387,7 @@ namespace CO.Plugins {
                         mods.Add(plugin.ModInfo);
                 }
                 Config.Mods = mods.ToArray();
-                configWrapper_.SaveConfig();
+                ConfigWrapper.SaveConfig();
 
             } catch (Exception ex) {
                 Log.Exception(ex);
@@ -375,8 +396,7 @@ namespace CO.Plugins {
             }
         }
 
-        private void LoadPluginInfosAtPath(string path, bool builtin)
-        {
+        private void LoadPluginInfosAtPath(string path, bool builtin) {
             ContentUtil.EnsureLocalItemsAt(parentDir: path);
             string[] directories = Directory.GetDirectories(path);
             foreach (string dir in directories) {
@@ -388,8 +408,7 @@ namespace CO.Plugins {
             }
         }
 
-        private void LoadWorkshopPluginInfos()
-        {
+        private void LoadWorkshopPluginInfos() {
             var subscribedItems = ContentUtil.GetSubscribedItems();
             Log.Debug($"subscribed items are: " + string.Join(", ", subscribedItems));
             if (subscribedItems != null) {
@@ -404,6 +423,10 @@ namespace CO.Plugins {
 
                 }
             }
+        }
+        public void ApplyPendingValues() {
+            foreach(var p in GetPluginsInfo())
+                p.ApplyPendingValues();
         }
 
         //private void LoadAssemblies()
@@ -561,7 +584,7 @@ namespace CO.Plugins {
         //    return !compilerResults.Errors.HasErrors;
         //}
 
-        public PluginManager() => configWrapper_ = new ConfigWrapper();
+        public PluginManager() => ConfigWrapper = new ConfigWrapper();
 
         static PluginManager()
         {

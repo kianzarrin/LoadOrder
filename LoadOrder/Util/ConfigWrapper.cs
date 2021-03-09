@@ -1,6 +1,6 @@
 ﻿namespace LoadOrderTool.Util {
     using CO.IO;
-    using CO.PlatformServices;
+    using CO.Plugins;
     using LoadOrderTool;
     using System;
     using System.Collections.Generic;
@@ -36,13 +36,21 @@
             Log.Info("LoadOrderConfig terminated");
         }
 
+        public bool AutoSave {
+            get => m_Run;
+            set => m_Run = value;
+        }
+
         public void SaveConfig() {
-            if (Thread.CurrentThread != m_SaveThread)
+            if (!m_Run) {
+                SaveConfigImpl();
+            } else if (Thread.CurrentThread != m_SaveThread)
                 Dirty = true;
         }
 
-        public void SaveConfigImpl() {
+        private void SaveConfigImpl() {
             Config.Serialize(DataLocation.localApplicationData);
+            PluginManager.instance.ApplyPendingValues();
             Dirty = false;
             Log.Info("Saved config");
         }

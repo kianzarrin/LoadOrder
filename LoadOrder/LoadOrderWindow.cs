@@ -1,4 +1,5 @@
 ﻿using CO;
+using CO.Plugins;
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -64,15 +65,14 @@ namespace LoadOrderTool {
                 ModList.MoveItem(oldVal, newVal);
                 Populate();
             } else if (col == ModEnabled) {
-                plugin.isEnabled = (bool)cell.Value;
+                plugin.IsEnabledPending = (bool)cell.Value;
             } else if (col == IsIncluded) {
-                plugin.IsIncluded = (bool)cell.Value;
+                plugin.IsIncludedPending = (bool)cell.Value;
             } else {
                 return;
             }
         }
-
-        public void Populate()
+public void Populate()
         {
             SuspendLayout();
             var rows = this.dataGridViewMods.Rows;
@@ -84,7 +84,7 @@ namespace LoadOrderTool {
                      $"savedKey={savedKey} modPath={p.ModPath}");
             }
             foreach (var mod in ModList) {
-                rows.Add(mod.LoadOrder, mod.IsIncluded, mod.isEnabled, mod.DisplayText);
+                rows.Add(mod.LoadOrder, mod.IsIncludedPending, mod.IsEnabledPending, mod.DisplayText);
                 Log.Debug("row added: " + mod.ToString());
             }
             ResumeLayout();
@@ -108,7 +108,7 @@ namespace LoadOrderTool {
         private void EnableAll_Click(object sender, EventArgs e)
         {
             foreach (var p in ModList)
-                p.isEnabled = true;
+                p.IsEnabledPending = true;
             Populate();
 
         }
@@ -116,21 +116,21 @@ namespace LoadOrderTool {
         private void DisableAll_Click(object sender, EventArgs e)
         {
             foreach (var p in ModList)
-                p.isEnabled = false;
+                p.IsEnabledPending = false;
             Populate();
         }
 
         private void IncludeAll_Click(object sender, EventArgs e)
         {
             foreach (var p in ModList)
-                p.IsIncluded = true;
+                p.IsIncludedPending = true;
             Populate();
         }
 
         private void ExcludeAll_Click(object sender, EventArgs e)
         {
             foreach (var p in ModList)
-                p.IsIncluded = false;
+                p.IsIncludedPending = false;
             Populate();
         }
 
@@ -169,6 +169,14 @@ namespace LoadOrderTool {
                     Populate();
                 }
             }
+        }
+
+        private void Save_Click(object sender, EventArgs e) {
+            PluginManager.instance.ConfigWrapper.SaveConfig();
+        }
+
+        private void AutoSave_CheckedChanged(object sender, EventArgs e) {
+            PluginManager.instance.ConfigWrapper.AutoSave = AutoSave.Checked;
         }
     }
 }
