@@ -127,6 +127,18 @@ namespace LoadOrderIPatch {
         }
 
         #endregion
+
+        public static bool ImplementsInterface(this TypeDefinition type, string fullInterfaceName) {
+            return type.GetAllInterfaces().Any(i => i.FullName == fullInterfaceName);
+        }
+
+        public static IEnumerable<TypeReference> GetAllInterfaces(this TypeDefinition type) {
+            while (type != null) {
+                foreach (var i in type.Interfaces)
+                    yield return i.InterfaceType;
+                try { type = type.BaseType?.Resolve(); } catch { type = null; }
+            }
+        }
     }
 
     public static class InstructionExtensions {

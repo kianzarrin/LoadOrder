@@ -1,10 +1,11 @@
 ﻿namespace LoadOrderTool.Util {
     using Mono.Cecil;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Reflection;
-
+    using CO.IO;
     public static class AssemblyUtil {
         public static Assembly LoadDLL(string dllpath) {
             try {
@@ -22,9 +23,13 @@
 
         public static AssemblyDefinition ReadAssemblyDefinition(string dllpath) {
             try {
+                var r = new DefaultAssemblyResolver();
+                r.AddSearchDirectory(DataLocation.ManagedDLL);
+                r.AddSearchDirectory(Path.GetDirectoryName(dllpath));
                 var readInMemory = new ReaderParameters {
                     ReadWrite = false,
                     InMemory = true,
+                    AssemblyResolver = r,
                 };
                 var asm = AssemblyDefinition.ReadAssembly(dllpath, readInMemory);
 
@@ -44,7 +49,7 @@
             foreach (string dllpath in dllPaths) {
                 try {
                     var asm = ReadAssemblyDefinition(dllpath);
-                    var userMod = asm?.GetImplementation(fullInterfaceName);
+                    var userMod = asm?.GetExportedImplementation(fullInterfaceName);
                     if (userMod != null)
                         return userMod;
                 } catch (Exception ex) {
@@ -54,11 +59,20 @@
             return null;
         }
 
-        public static TypeDefinition GetImplementation(this AssemblyDefinition asm, string fullInterfaceName) =>
-            asm.MainModule.Types.FirstOrDefault(t => t.Implements(fullInterfaceName));
+        public static TypeDefinition GetExportedImplementation(this AssemblyDefinition asm, string fullInterfaceName) =>
+            asm.MainModule.Types.FirstOrDefault(t =>
+                !t.IsAbstract && t.IsPublic && t.ImplementsInterface(fullInterfaceName));
+        
+        public static bool ImplementsInterface(this TypeDefinition type, string fullInterfaceName) {
+            return type.GetAllInterfaces().Any(i => i.FullName == fullInterfaceName);
+        }
 
-        public static bool Implements(this TypeDefinition type, string fullInterfaceName) =>
-            !type.IsAbstract && type.IsPublic && 
-            type.Interfaces.Any(_interface => _interface.InterfaceType.FullName == fullInterfaceName);
+        public static IEnumerable<TypeReference> GetAllInterfaces(this TypeDefinition type) {
+            while (type != null) {
+                foreach (var i in type.Interfaces)
+                    yield return i.InterfaceType;
+                try { type = type.BaseType?.Resolve(); } catch { type = null; }
+            }
+        }
     }
 }
