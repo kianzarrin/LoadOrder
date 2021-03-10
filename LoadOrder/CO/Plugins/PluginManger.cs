@@ -328,12 +328,8 @@ namespace CO.Plugins {
         //private Dictionary<string, PluginInfo> m_Plugins = new Dictionary<string, PluginInfo>();
         private List<PluginInfo> m_Plugins = new List<PluginInfo>();
 
-        private static int sUniqueCompilationID;
-
-        private static string[] m_AdditionalAssemblies;
 
         public static string assetStateSettingsFile => "userGameState";
-        public static string LoadOrderSettingsFile => "LoadOrder";
 
         //public static Type userModType => Type.GetType("ICities.IUserMod, ICities");
         public const string kUserMod = "ICities.IUserMod";
@@ -428,6 +424,8 @@ namespace CO.Plugins {
                 p.ApplyPendingValues();
         }
 
+        //private static int sUniqueCompilationID;
+        //private static string[] m_AdditionalAssemblies;
         //private void LoadAssemblies()
         //{
         //    foreach (PluginInfo pluginInfo in m_Plugins) {

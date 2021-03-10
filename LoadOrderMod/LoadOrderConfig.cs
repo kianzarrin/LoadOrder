@@ -3,11 +3,16 @@ using System.Xml.Serialization;
 
 namespace LoadOrderShared {
     public class ModInfo {
-        public string Path;
+        public string Path; // included path
         public int LoadOrder;
         public string AssemblyName;
         public string ModName;
         public string Description;
+    }
+
+    public class AssetInfo {
+        public string Path; // included path
+        public string AssetName;
     }
 
     public class LoadOrderConfig {
@@ -17,6 +22,7 @@ namespace LoadOrderShared {
         public string WorkShopContentPath;
         public string GamePath;
         public ModInfo[] Mods = new ModInfo[0];
+        public AssetInfo[] Assets = new AssetInfo[0];
 
         public void Serialize(string dir) {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));
