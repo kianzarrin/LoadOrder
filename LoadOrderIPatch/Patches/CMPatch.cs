@@ -38,7 +38,10 @@ namespace LoadOrderIPatch.Patches {
             bool noAssets = Environment.GetCommandLineArgs().Any(_arg => _arg == "-noAssets");
             if (noAssets) {
                 assemblyDefinition = NoCustomAssetsPatch(assemblyDefinition);
+            } else {
+                ExcludeAssetPatch(assemblyDefinition);
             }
+
 
             return assemblyDefinition;
         }
@@ -201,6 +204,41 @@ namespace LoadOrderIPatch.Patches {
         {
             return path == DataLocation.assetsPath;
         }
+
+        public void ExcludeAssetPatch(AssemblyDefinition CM) {
+            logger_.LogStartPatching();
+            var module = CM.MainModule;
+            var type = module.GetType("ColossalFramework.Packaging.PackageManager");
+
+            //void Update(string path)
+            //void Update(PublishedFileId id, string path)
+            var mTargets = type.Methods.Where(_m => _m.Name == "Update").ToList();
+
+            // LoadPackages(string path, bool)
+            var mLoadPackages =  type.Methods.Single(_m =>
+                _m.Name == "LoadPackages" && _m.HasParameter("path"));
+
+            mTargets.Add(mLoadPackages);
+
+
+            foreach(var mTarget in mTargets) {
+                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                var instructions = mTarget.Body.Instructions;
+                var first = instructions.First();
+                var last = instructions.Last();
+
+                // skip method only if path is asset path
+                var LdArgPath = mTarget.GetLDArg("path");
+                var mIsExcluded = GetType().GetMethod(nameof(IsPathExcluded));
+                var callIsExcluded = Instruction.Create(OpCodes.Call, module.ImportReference(mIsExcluded));
+                var skipIfExcluded = Instruction.Create(OpCodes.Brtrue, last); // goto to return.
+                ilProcessor.Prefix(new[] { LdArgPath, callIsExcluded, skipIfExcluded });
+            }
+
+            logger_.LogSucessfull();
+        }
+
+        public static bool IsPathExcluded(string path)  => path.StartsWith("_");
 
 #if DEBUG
         // get the stack trace for debugging purposes.
