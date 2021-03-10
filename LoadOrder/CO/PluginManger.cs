@@ -81,11 +81,11 @@ namespace CO.Plugins {
 
             public string DisplayText {
                 get {
-                    string ret = dllName;
-                    var id = publishedFileID;
-                    if (id != PublishedFileId.invalid) {
-                        ret = $"{id.AsUInt64}: " + ret;
-                    }
+                    string ret = ModInfo.ModName;
+                    if(string.IsNullOrEmpty(ret))
+                        ret = dllName;
+                    if (publishedFileID != PublishedFileId.invalid)
+                        ret = $"{publishedFileID.AsUInt64}: " + ret;
                     return ret;
                 }
             }

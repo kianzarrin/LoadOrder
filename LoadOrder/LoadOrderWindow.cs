@@ -187,5 +187,13 @@ public void Populate()
         private void ReloadMods_Click(object sender, EventArgs e) {
             LoadMods();
         }
+
+        private void dataGridViewMods_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
+            //Log.Info($"e.ColumnIndex={e.ColumnIndex} Description.Index={Description.Index}");
+            if (e.ColumnIndex == Description.Index && e.Value != null) {
+                var cell = dataGridViewMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                cell.ToolTipText = ModList[e.RowIndex].ModInfo.Description;
+            }
+        }
     }
 }
