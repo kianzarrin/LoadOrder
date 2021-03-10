@@ -39,17 +39,17 @@
             this.AutoSave = new System.Windows.Forms.CheckBox();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
-            this.AssetsTab = new System.Windows.Forms.TabPage();
-            this.SortByHarmony = new System.Windows.Forms.Button();
-            this.RandomizeOrder = new System.Windows.Forms.Button();
-            this.ReverseOrder = new System.Windows.Forms.Button();
-            this.EnableAll = new System.Windows.Forms.Button();
-            this.DisableAll = new System.Windows.Forms.Button();
-            this.IncludeAll = new System.Windows.Forms.Button();
-            this.ExcludeAll = new System.Windows.Forms.Button();
-            this.LoadProfile = new System.Windows.Forms.Button();
-            this.SaveProfile = new System.Windows.Forms.Button();
             this.ReloadMods = new System.Windows.Forms.Button();
+            this.SortByHarmony = new System.Windows.Forms.Button();
+            this.EnableAll = new System.Windows.Forms.Button();
+            this.LoadProfile = new System.Windows.Forms.Button();
+            this.DisableAll = new System.Windows.Forms.Button();
+            this.SaveProfile = new System.Windows.Forms.Button();
+            this.IncludeAll = new System.Windows.Forms.Button();
+            this.RandomizeOrder = new System.Windows.Forms.Button();
+            this.ExcludeAll = new System.Windows.Forms.Button();
+            this.ReverseOrder = new System.Windows.Forms.Button();
+            this.AssetsTab = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).BeginInit();
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
@@ -151,6 +151,7 @@
             // 
             // ModsTab
             // 
+            this.ModsTab.BackColor = System.Drawing.SystemColors.Control;
             this.ModsTab.Controls.Add(this.dataGridViewMods);
             this.ModsTab.Controls.Add(this.AutoSave);
             this.ModsTab.Controls.Add(this.ReloadMods);
@@ -170,17 +171,19 @@
             this.ModsTab.Size = new System.Drawing.Size(723, 721);
             this.ModsTab.TabIndex = 0;
             this.ModsTab.Text = "Mods";
-            this.ModsTab.UseVisualStyleBackColor = true;
             // 
-            // AssetsTab
+            // ReloadMods
             // 
-            this.AssetsTab.Location = new System.Drawing.Point(4, 26);
-            this.AssetsTab.Name = "AssetsTab";
-            this.AssetsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AssetsTab.Size = new System.Drawing.Size(1139, 696);
-            this.AssetsTab.TabIndex = 1;
-            this.AssetsTab.Text = "Assets";
-            this.AssetsTab.UseVisualStyleBackColor = true;
+            this.ReloadMods.AutoSize = true;
+            this.ReloadMods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ReloadMods.Location = new System.Drawing.Point(515, 576);
+            this.ReloadMods.Margin = new System.Windows.Forms.Padding(2);
+            this.ReloadMods.Name = "ReloadMods";
+            this.ReloadMods.Size = new System.Drawing.Size(97, 27);
+            this.ReloadMods.TabIndex = 4;
+            this.ReloadMods.Text = "Reload Mods";
+            this.ReloadMods.UseVisualStyleBackColor = true;
+            this.ReloadMods.Click += new System.EventHandler(this.ReloadMods_Click);
             // 
             // SortByHarmony
             // 
@@ -195,32 +198,6 @@
             this.SortByHarmony.UseVisualStyleBackColor = true;
             this.SortByHarmony.Click += new System.EventHandler(this.SortByHarmony_Click);
             // 
-            // RandomizeOrder
-            // 
-            this.RandomizeOrder.AutoSize = true;
-            this.RandomizeOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.RandomizeOrder.Location = new System.Drawing.Point(515, 94);
-            this.RandomizeOrder.Margin = new System.Windows.Forms.Padding(2);
-            this.RandomizeOrder.Name = "RandomizeOrder";
-            this.RandomizeOrder.Size = new System.Drawing.Size(122, 27);
-            this.RandomizeOrder.TabIndex = 1;
-            this.RandomizeOrder.Text = "Randomize Order";
-            this.RandomizeOrder.UseVisualStyleBackColor = true;
-            this.RandomizeOrder.Click += new System.EventHandler(this.RandomizeOrder_Click);
-            // 
-            // ReverseOrder
-            // 
-            this.ReverseOrder.AutoSize = true;
-            this.ReverseOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ReverseOrder.Location = new System.Drawing.Point(515, 66);
-            this.ReverseOrder.Margin = new System.Windows.Forms.Padding(2);
-            this.ReverseOrder.Name = "ReverseOrder";
-            this.ReverseOrder.Size = new System.Drawing.Size(103, 27);
-            this.ReverseOrder.TabIndex = 1;
-            this.ReverseOrder.Text = "Reverse Order";
-            this.ReverseOrder.UseVisualStyleBackColor = true;
-            this.ReverseOrder.Click += new System.EventHandler(this.ReverseOrder_Click);
-            // 
             // EnableAll
             // 
             this.EnableAll.AutoSize = true;
@@ -233,45 +210,6 @@
             this.EnableAll.Text = "Enable All";
             this.EnableAll.UseVisualStyleBackColor = true;
             this.EnableAll.Click += new System.EventHandler(this.EnableAll_Click);
-            // 
-            // DisableAll
-            // 
-            this.DisableAll.AutoSize = true;
-            this.DisableAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.DisableAll.Location = new System.Drawing.Point(515, 161);
-            this.DisableAll.Margin = new System.Windows.Forms.Padding(2);
-            this.DisableAll.Name = "DisableAll";
-            this.DisableAll.Size = new System.Drawing.Size(79, 27);
-            this.DisableAll.TabIndex = 1;
-            this.DisableAll.Text = "Disable All";
-            this.DisableAll.UseVisualStyleBackColor = true;
-            this.DisableAll.Click += new System.EventHandler(this.DisableAll_Click);
-            // 
-            // IncludeAll
-            // 
-            this.IncludeAll.AutoSize = true;
-            this.IncludeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.IncludeAll.Location = new System.Drawing.Point(515, 189);
-            this.IncludeAll.Margin = new System.Windows.Forms.Padding(2);
-            this.IncludeAll.Name = "IncludeAll";
-            this.IncludeAll.Size = new System.Drawing.Size(77, 27);
-            this.IncludeAll.TabIndex = 1;
-            this.IncludeAll.Text = "Include All";
-            this.IncludeAll.UseVisualStyleBackColor = true;
-            this.IncludeAll.Click += new System.EventHandler(this.IncludeAll_Click);
-            // 
-            // ExcludeAll
-            // 
-            this.ExcludeAll.AutoSize = true;
-            this.ExcludeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ExcludeAll.Location = new System.Drawing.Point(515, 217);
-            this.ExcludeAll.Margin = new System.Windows.Forms.Padding(2);
-            this.ExcludeAll.Name = "ExcludeAll";
-            this.ExcludeAll.Size = new System.Drawing.Size(80, 27);
-            this.ExcludeAll.TabIndex = 1;
-            this.ExcludeAll.Text = "Exclude All";
-            this.ExcludeAll.UseVisualStyleBackColor = true;
-            this.ExcludeAll.Click += new System.EventHandler(this.ExcludeAll_Click);
             // 
             // LoadProfile
             // 
@@ -286,6 +224,19 @@
             this.LoadProfile.UseVisualStyleBackColor = true;
             this.LoadProfile.Click += new System.EventHandler(this.LoadProfile_Click);
             // 
+            // DisableAll
+            // 
+            this.DisableAll.AutoSize = true;
+            this.DisableAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.DisableAll.Location = new System.Drawing.Point(515, 161);
+            this.DisableAll.Margin = new System.Windows.Forms.Padding(2);
+            this.DisableAll.Name = "DisableAll";
+            this.DisableAll.Size = new System.Drawing.Size(79, 27);
+            this.DisableAll.TabIndex = 1;
+            this.DisableAll.Text = "Disable All";
+            this.DisableAll.UseVisualStyleBackColor = true;
+            this.DisableAll.Click += new System.EventHandler(this.DisableAll_Click);
+            // 
             // SaveProfile
             // 
             this.SaveProfile.AutoSize = true;
@@ -299,18 +250,67 @@
             this.SaveProfile.UseVisualStyleBackColor = true;
             this.SaveProfile.Click += new System.EventHandler(this.SaveProfile_Click);
             // 
-            // ReloadMods
+            // IncludeAll
             // 
-            this.ReloadMods.AutoSize = true;
-            this.ReloadMods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ReloadMods.Location = new System.Drawing.Point(515, 576);
-            this.ReloadMods.Margin = new System.Windows.Forms.Padding(2);
-            this.ReloadMods.Name = "ReloadMods";
-            this.ReloadMods.Size = new System.Drawing.Size(97, 27);
-            this.ReloadMods.TabIndex = 4;
-            this.ReloadMods.Text = "Reload Mods";
-            this.ReloadMods.UseVisualStyleBackColor = true;
-            this.ReloadMods.Click += new System.EventHandler(this.ReloadMods_Click);
+            this.IncludeAll.AutoSize = true;
+            this.IncludeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.IncludeAll.Location = new System.Drawing.Point(515, 189);
+            this.IncludeAll.Margin = new System.Windows.Forms.Padding(2);
+            this.IncludeAll.Name = "IncludeAll";
+            this.IncludeAll.Size = new System.Drawing.Size(77, 27);
+            this.IncludeAll.TabIndex = 1;
+            this.IncludeAll.Text = "Include All";
+            this.IncludeAll.UseVisualStyleBackColor = true;
+            this.IncludeAll.Click += new System.EventHandler(this.IncludeAll_Click);
+            // 
+            // RandomizeOrder
+            // 
+            this.RandomizeOrder.AutoSize = true;
+            this.RandomizeOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.RandomizeOrder.Location = new System.Drawing.Point(515, 94);
+            this.RandomizeOrder.Margin = new System.Windows.Forms.Padding(2);
+            this.RandomizeOrder.Name = "RandomizeOrder";
+            this.RandomizeOrder.Size = new System.Drawing.Size(122, 27);
+            this.RandomizeOrder.TabIndex = 1;
+            this.RandomizeOrder.Text = "Randomize Order";
+            this.RandomizeOrder.UseVisualStyleBackColor = true;
+            this.RandomizeOrder.Click += new System.EventHandler(this.RandomizeOrder_Click);
+            // 
+            // ExcludeAll
+            // 
+            this.ExcludeAll.AutoSize = true;
+            this.ExcludeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ExcludeAll.Location = new System.Drawing.Point(515, 217);
+            this.ExcludeAll.Margin = new System.Windows.Forms.Padding(2);
+            this.ExcludeAll.Name = "ExcludeAll";
+            this.ExcludeAll.Size = new System.Drawing.Size(80, 27);
+            this.ExcludeAll.TabIndex = 1;
+            this.ExcludeAll.Text = "Exclude All";
+            this.ExcludeAll.UseVisualStyleBackColor = true;
+            this.ExcludeAll.Click += new System.EventHandler(this.ExcludeAll_Click);
+            // 
+            // ReverseOrder
+            // 
+            this.ReverseOrder.AutoSize = true;
+            this.ReverseOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ReverseOrder.Location = new System.Drawing.Point(515, 66);
+            this.ReverseOrder.Margin = new System.Windows.Forms.Padding(2);
+            this.ReverseOrder.Name = "ReverseOrder";
+            this.ReverseOrder.Size = new System.Drawing.Size(103, 27);
+            this.ReverseOrder.TabIndex = 1;
+            this.ReverseOrder.Text = "Reverse Order";
+            this.ReverseOrder.UseVisualStyleBackColor = true;
+            this.ReverseOrder.Click += new System.EventHandler(this.ReverseOrder_Click);
+            // 
+            // AssetsTab
+            // 
+            this.AssetsTab.BackColor = System.Drawing.SystemColors.Control;
+            this.AssetsTab.Location = new System.Drawing.Point(4, 26);
+            this.AssetsTab.Name = "AssetsTab";
+            this.AssetsTab.Padding = new System.Windows.Forms.Padding(3);
+            this.AssetsTab.Size = new System.Drawing.Size(723, 721);
+            this.AssetsTab.TabIndex = 1;
+            this.AssetsTab.Text = "Assets";
             // 
             // LoadOrderWindow
             // 

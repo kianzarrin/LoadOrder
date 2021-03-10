@@ -170,24 +170,24 @@ namespace LoadOrderIPatch.Patches {
             foreach (var mTarget in mTargets) {
                 bool top = mTarget.Name == "LoadPackages" && mTarget.Parameters.Count == 0;
                 if (top) continue;
-                bool loadPath = mTarget.HasParameter("path");
+                bool loadPath = mTarget.HasParameter("path"); // LoadPackages(string path,bool)
                 ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
                 var instructions = mTarget.Body.Instructions;
-
                 var first = instructions.First();
                 var last = instructions.Last();
-                // return to skip method.
+
+                logger_.Info("patching " + mTarget.Name);
                 if (loadPath) {
-                    logger_.Info("patching LoadPackages(string path,bool)");
                     // skip method only if path is asset path
                     var LdArgPath = mTarget.GetLDArg("path");
                     var mIsAssetPath = GetType().GetMethod(nameof(IsAssetPath));
                     var callIsAssetPath = Instruction.Create(OpCodes.Call, module.ImportReference(mIsAssetPath));
-                    var skipIfAsset = Instruction.Create(OpCodes.Brtrue, last); 
+                    var skipIfAsset = Instruction.Create(OpCodes.Brtrue, last); // goto to return.
                     ilProcessor.InsertBefore(first, LdArgPath);
                     ilProcessor.InsertAfter(LdArgPath, callIsAssetPath);
                     ilProcessor.InsertAfter(callIsAssetPath, skipIfAsset);
                 } else {
+                    // return to skip method.
                     var ret = Instruction.Create(OpCodes.Ret);
                     ilProcessor.InsertBefore(first, ret);
                 }
