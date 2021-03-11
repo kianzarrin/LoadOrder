@@ -152,12 +152,13 @@ namespace LoadOrderTool {
 
         public void LoadMods() {
             PluginManager.instance.LoadPlugins();
-            RefreshModList();
+            ModList = ModList.GetAllMods();
+            RefreshModList(true);
         }
 
-        public void RefreshModList() {
-            ModList = ModList.GetAllMods();
-            ModList.DefaultSort();
+        public void RefreshModList(bool sort=false) {
+            if(sort)
+                ModList.DefaultSort();
             ModList.FilterIn(ModPredicate);
             PopulateMods();
         }
@@ -167,12 +168,12 @@ namespace LoadOrderTool {
             var rows = this.dataGridViewMods.Rows;
             rows.Clear();
             Log.Info("Populating");
-            foreach (var p in ModList) {
+            foreach (var p in ModList.Filtered) {
                 string savedKey = p.savedEnabledKey_;
                 Log.Debug($"plugin info: dllName={p.dllName} harmonyVersion={ ModList.GetHarmonyOrder(p)} " +
                      $"savedKey={savedKey} modPath={p.ModPath}");
             }
-            foreach (var mod in ModList) {
+            foreach (var mod in ModList.Filtered) {
                 rows.Add(mod.LoadOrder, mod.IsIncludedPending, mod.IsEnabledPending, mod.DisplayText);
                 Log.Debug("row added: " + mod.ToString());
             }
@@ -232,15 +233,14 @@ namespace LoadOrderTool {
 
         private void dataGridViewMods_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
             Log.Debug("dataGridViewMods_CellValueChanged() called");
-            var plugin = ModList[e.RowIndex];
+            var plugin = ModList.Filtered[e.RowIndex];
             var cell = dataGridViewMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
             var col = cell.OwningColumn;
 
             if (col == LoadIndex) {
                 int newVal = Int32.Parse(cell.Value as string);
-                int oldVal = e.RowIndex;
-                ModList.MoveItem(oldVal, newVal);
-                PopulateMods();
+                ModList.MoveItem(ModList.Filtered[e.RowIndex], newVal);
+                RefreshModList();
             } else if (col == ModEnabled) {
                 plugin.IsEnabledPending = (bool)cell.Value;
             } else if (col == IsIncluded) {
@@ -260,42 +260,41 @@ namespace LoadOrderTool {
         private void SortByHarmony_Click(object sender, EventArgs e) {
             ModList.ResetLoadOrders();
             ModList.SortBy(ModList.HarmonyComparison);
-            PopulateMods();
+            RefreshModList();
         }
 
         private void EnableAllMods_Click(object sender, EventArgs e) {
-            foreach (var p in ModList)
+            foreach (var p in ModList.Filtered)
                 p.IsEnabledPending = true;
             PopulateMods();
-
         }
 
         private void DisableAllMods_Click(object sender, EventArgs e) {
-            foreach (var p in ModList)
+            foreach (var p in ModList.Filtered)
                 p.IsEnabledPending = false;
             PopulateMods();
         }
 
         private void IncludeAllMods_Click(object sender, EventArgs e) {
-            foreach (var p in ModList)
+            foreach (var p in ModList.Filtered)
                 p.IsIncludedPending = true;
             PopulateMods();
         }
 
         private void ExcludeAllMods_Click(object sender, EventArgs e) {
-            foreach (var p in ModList)
+            foreach (var p in ModList.Filtered)
                 p.IsIncludedPending = false;
             PopulateMods();
         }
 
         private void ReverseOrder_Click(object sender, EventArgs e) {
             ModList.ReverseOrder();
-            PopulateMods();
+            RefreshModList();
         }
 
         private void RandomizeOrder_Click(object sender, EventArgs e) {
             ModList.RandomizeOrder();
-            PopulateMods();
+            RefreshModList();
         }
 
 
@@ -314,7 +313,8 @@ namespace LoadOrderTool {
                 diaglog.InitialDirectory = LoadOrderProfile.DIR;
                 if (diaglog.ShowDialog() == DialogResult.OK) {
                     ModList.LoadProfile(diaglog.FileName);
-                    PopulateMods();
+                    ModList.DefaultSort();
+                    RefreshModList(true);
                 }
             }
         }
@@ -336,7 +336,7 @@ namespace LoadOrderTool {
             //Log.Info($"e.ColumnIndex={e.ColumnIndex} Description.Index={Description.Index}");
             if (e.ColumnIndex == Description.Index && e.Value != null) {
                 var cell = dataGridViewMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                cell.ToolTipText = ModList[e.RowIndex].ModInfo.Description;
+                cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
             }
         }
 

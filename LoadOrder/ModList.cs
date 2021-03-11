@@ -154,6 +154,7 @@ namespace LoadOrderTool {
         }
 
 
+        [Obsolete("Does not work if Load order is not pre-determined", true)]
         public void MoveItem(int oldIndex, int newIndex)
         {
             if (oldIndex == newIndex) return;
@@ -165,6 +166,33 @@ namespace LoadOrderTool {
             for (int i = 0; i < Count; ++i)
                 this[i].LoadOrder = i;
         }
+
+        public void MoveItem(PluginInfo p, int newLoadOrder) {
+            if (p.LoadOrder == newLoadOrder) return;
+
+            p.LoadOrder = newLoadOrder;
+
+            if (!p.HasLoadOrder()) {
+                DefaultSort();
+                return;
+            }
+
+            //int oldIndex = this.FindIndex(item => item == p);
+            int newIndex = this.FindLastIndex(item => DefaultComparison(item, p) < 0);
+
+            this.Remove(p);
+            this.Insert(newIndex, p);
+            for (int i = 1; i < Count; ++i) {
+                if (this[i].HasLoadOrder() && this[i].LoadOrder >= this[i - 1].LoadOrder) {
+                    this[i].LoadOrder = this[i - 1].LoadOrder+1;
+                    if (!this[i].HasLoadOrder())
+                        this[i].LoadOrder++;
+                }
+            }
+        }
+
+
+
 
         public PluginManager.PluginInfo GetPluginInfo(string path) =>
             this.FirstOrDefault(p => p.ModIncludedPath == path);
