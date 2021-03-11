@@ -37,10 +37,10 @@
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.ComboBoxIncluded = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.ComboBoxEnabled = new System.Windows.Forms.ComboBox();
+            this.ComboBoxWS = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.TextFilterMods = new System.Windows.Forms.TextBox();
             this.ModsButtons = new System.Windows.Forms.Panel();
             this.SortByHarmony = new System.Windows.Forms.Button();
             this.ReverseOrder = new System.Windows.Forms.Button();
@@ -166,7 +166,7 @@
             // 
             // splitContainer3.Panel2
             // 
-            this.splitContainer3.Panel2.Controls.Add(this.textBox1);
+            this.splitContainer3.Panel2.Controls.Add(this.TextFilterMods);
             this.splitContainer3.Size = new System.Drawing.Size(792, 31);
             this.splitContainer3.SplitterDistance = 422;
             this.splitContainer3.TabIndex = 0;
@@ -174,8 +174,8 @@
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this.ComboBoxIncluded);
-            this.flowLayoutPanel1.Controls.Add(this.comboBox2);
-            this.flowLayoutPanel1.Controls.Add(this.comboBox3);
+            this.flowLayoutPanel1.Controls.Add(this.ComboBoxEnabled);
+            this.flowLayoutPanel1.Controls.Add(this.ComboBoxWS);
             this.flowLayoutPanel1.Controls.Add(this.label1);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
@@ -194,19 +194,19 @@
             // 
             // comboBox2
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(130, 3);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 25);
-            this.comboBox2.TabIndex = 3;
+            this.ComboBoxEnabled.FormattingEnabled = true;
+            this.ComboBoxEnabled.Location = new System.Drawing.Point(130, 3);
+            this.ComboBoxEnabled.Name = "comboBox2";
+            this.ComboBoxEnabled.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxEnabled.TabIndex = 3;
             // 
             // comboBox3
             // 
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(257, 3);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(121, 25);
-            this.comboBox3.TabIndex = 4;
+            this.ComboBoxWS.FormattingEnabled = true;
+            this.ComboBoxWS.Location = new System.Drawing.Point(257, 3);
+            this.ComboBoxWS.Name = "comboBox3";
+            this.ComboBoxWS.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxWS.TabIndex = 4;
             // 
             // label1
             // 
@@ -221,11 +221,11 @@
             // 
             // textBox1
             // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox1.Location = new System.Drawing.Point(0, 0);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(366, 25);
-            this.textBox1.TabIndex = 0;
+            this.TextFilterMods.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TextFilterMods.Location = new System.Drawing.Point(0, 0);
+            this.TextFilterMods.Name = "textBox1";
+            this.TextFilterMods.Size = new System.Drawing.Size(366, 25);
+            this.TextFilterMods.TabIndex = 0;
             // 
             // ModsButtons
             // 
@@ -578,9 +578,9 @@
         private SplitContainer splitContainer3;
         private FlowLayoutPanel flowLayoutPanel1;
         private ComboBox ComboBoxIncluded;
-        private ComboBox comboBox2;
-        private TextBox textBox1;
-        private ComboBox comboBox3;
+        private ComboBox ComboBoxEnabled;
+        private TextBox TextFilterMods;
+        private ComboBox ComboBoxWS;
         private Label label1;
     }
 }

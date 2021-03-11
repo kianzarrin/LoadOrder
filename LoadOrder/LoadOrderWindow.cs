@@ -19,9 +19,9 @@ namespace LoadOrderTool {
             Included,
             Excluded,
         }
-        enum BuiltInFilter {
+        enum WSFilter {
             None = 0,
-            BuiltIn,
+            Workshop,
             Local,
         }
 
@@ -34,6 +34,12 @@ namespace LoadOrderTool {
         public LoadOrderWindow() {
             InitializeComponent();
             ComboBoxIncluded.SetItems<IncludedFilter>();
+            ComboBoxIncluded.SelectedIndex = 0;
+            ComboBoxEnabled.SetItems<EnabledFilter>();
+            ComboBoxEnabled.SelectedIndex = 0;
+            ComboBoxWS.SetItems<WSFilter>();
+            ComboBoxWS.SelectedIndex = 0;
+
             this.dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
             Instance = this;
             LoadMods();
@@ -44,8 +50,32 @@ namespace LoadOrderTool {
             {
                 var filter = ComboBoxIncluded.GetSelectedItem<IncludedFilter>();
                 if (filter != IncludedFilter.None) {
-                    bool toggle = filter == IncludedFilter.Included;
-                    if (p.IsIncludedPending != toggle)
+                    bool b = filter == IncludedFilter.Included;
+                    if (p.IsIncludedPending != b)
+                        return false;
+                }
+            }
+            {
+                var filter = ComboBoxEnabled.GetSelectedItem<EnabledFilter>();
+                if (filter != EnabledFilter.None) {
+                    bool b = filter == EnabledFilter.Enabled;
+                    if (p.IsEnabledPending != b)
+                        return false;
+                }
+            }
+            {
+                var filter = ComboBoxWS.GetSelectedItem<WSFilter>();
+                if (filter != WSFilter.None) {
+                    bool b = filter == WSFilter.Workshop;
+                    if (p.IsWorkshop != b)
+                        return false;
+                }
+            }
+            {
+                var words = TextFilterMods.Text?.Split("");
+                if (words != null && words.Length > 0) {
+                    bool match = words.Any(word => p.DisplayText.Contains(word, StringComparison.OrdinalIgnoreCase));
+                    if (!match)
                         return false;
                 }
             }
