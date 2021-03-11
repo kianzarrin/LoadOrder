@@ -1,6 +1,7 @@
 ﻿using CO.PlatformServices;
 using CO.Plugins;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,7 @@ using static CO.Plugins.PluginManager;
 namespace LoadOrderTool {
     public class ModList : List<PluginManager.PluginInfo> {
         const int DefaultLoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
+
         public ModList(IEnumerable<PluginManager.PluginInfo> list) : base(list)
         {
         }
@@ -19,6 +21,11 @@ namespace LoadOrderTool {
         {
             var mods = new ModList(PluginManager.instance.GetPluginsInfo());
             return mods;
+        }
+
+        public static ModList GetAllMods(Func<PluginInfo, bool> predicate) {
+            var mods = PluginManager.instance.GetPluginsInfo().Where(predicate);
+            return new ModList(mods);
         }
 
         public static int LoadOrderComparison(PluginInfo p1, PluginInfo p2) =>

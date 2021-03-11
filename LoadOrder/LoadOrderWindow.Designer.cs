@@ -29,11 +29,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.ComboBoxIncluded = new System.Windows.Forms.ComboBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.ModsButtons = new System.Windows.Forms.Panel();
             this.SortByHarmony = new System.Windows.Forms.Button();
             this.ReverseOrder = new System.Windows.Forms.Button();
@@ -48,16 +55,16 @@
             this.ModEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AssetsTab = new System.Windows.Forms.TabPage();
-            this.AutoSave = new System.Windows.Forms.CheckBox();
-            this.ReloadAll = new System.Windows.Forms.Button();
-            this.Save = new System.Windows.Forms.Button();
-            this.LoadProfile = new System.Windows.Forms.Button();
-            this.SaveProfile = new System.Windows.Forms.Button();
             this.AssetTabSplitter = new System.Windows.Forms.SplitContainer();
             this.AssetsActionsPanel = new System.Windows.Forms.Panel();
             this.ExcludeAllAssets = new System.Windows.Forms.Button();
             this.IncludeAllAssets = new System.Windows.Forms.Button();
             this.CheckedListBoxAssets = new System.Windows.Forms.CheckedListBox();
+            this.AutoSave = new System.Windows.Forms.CheckBox();
+            this.ReloadAll = new System.Windows.Forms.Button();
+            this.Save = new System.Windows.Forms.Button();
+            this.LoadProfile = new System.Windows.Forms.Button();
+            this.SaveProfile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -65,8 +72,14 @@
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.ModsButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).BeginInit();
             this.AssetsTab.SuspendLayout();
@@ -95,7 +108,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.Save);
             this.splitContainer1.Panel2.Controls.Add(this.LoadProfile);
             this.splitContainer1.Panel2.Controls.Add(this.SaveProfile);
-            this.splitContainer1.Size = new System.Drawing.Size(811, 646);
+            this.splitContainer1.Size = new System.Drawing.Size(806, 646);
             this.splitContainer1.SplitterDistance = 610;
             this.splitContainer1.TabIndex = 6;
             // 
@@ -107,7 +120,7 @@
             this.TabContainer.Location = new System.Drawing.Point(0, 0);
             this.TabContainer.Name = "TabContainer";
             this.TabContainer.SelectedIndex = 0;
-            this.TabContainer.Size = new System.Drawing.Size(811, 610);
+            this.TabContainer.Size = new System.Drawing.Size(806, 610);
             this.TabContainer.TabIndex = 6;
             // 
             // ModsTab
@@ -117,7 +130,7 @@
             this.ModsTab.Location = new System.Drawing.Point(4, 26);
             this.ModsTab.Name = "ModsTab";
             this.ModsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.ModsTab.Size = new System.Drawing.Size(803, 580);
+            this.ModsTab.Size = new System.Drawing.Size(798, 580);
             this.ModsTab.TabIndex = 0;
             this.ModsTab.Text = "Mods";
             // 
@@ -128,13 +141,91 @@
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.splitContainer3);
+            // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.ModsButtons);
             this.splitContainer2.Panel2.Controls.Add(this.dataGridViewMods);
-            this.splitContainer2.Size = new System.Drawing.Size(797, 574);
-            this.splitContainer2.SplitterDistance = 30;
+            this.splitContainer2.Size = new System.Drawing.Size(792, 574);
+            this.splitContainer2.SplitterDistance = 31;
             this.splitContainer2.TabIndex = 3;
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.flowLayoutPanel1);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.textBox1);
+            this.splitContainer3.Size = new System.Drawing.Size(792, 31);
+            this.splitContainer3.SplitterDistance = 422;
+            this.splitContainer3.TabIndex = 0;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.ComboBoxIncluded);
+            this.flowLayoutPanel1.Controls.Add(this.comboBox2);
+            this.flowLayoutPanel1.Controls.Add(this.comboBox3);
+            this.flowLayoutPanel1.Controls.Add(this.label1);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(422, 31);
+            this.flowLayoutPanel1.TabIndex = 0;
+            this.flowLayoutPanel1.WrapContents = false;
+            // 
+            // ComboBoxIncluded
+            // 
+            this.ComboBoxIncluded.FormattingEnabled = true;
+            this.ComboBoxIncluded.Location = new System.Drawing.Point(3, 3);
+            this.ComboBoxIncluded.Name = "ComboBoxIncluded";
+            this.ComboBoxIncluded.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxIncluded.TabIndex = 1;
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(130, 3);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(121, 25);
+            this.comboBox2.TabIndex = 3;
+            // 
+            // comboBox3
+            // 
+            this.comboBox3.FormattingEnabled = true;
+            this.comboBox3.Location = new System.Drawing.Point(257, 3);
+            this.comboBox3.Name = "comboBox3";
+            this.comboBox3.Size = new System.Drawing.Size(121, 25);
+            this.comboBox3.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(384, 0);
+            this.label1.MinimumSize = new System.Drawing.Size(0, 25);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(39, 25);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Filter:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox1.Location = new System.Drawing.Point(0, 0);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(366, 25);
+            this.textBox1.TabIndex = 0;
             // 
             // ModsButtons
             // 
@@ -147,9 +238,9 @@
             this.ModsButtons.Controls.Add(this.DisableAllMods);
             this.ModsButtons.Controls.Add(this.IncludeAllMods);
             this.ModsButtons.Dock = System.Windows.Forms.DockStyle.Right;
-            this.ModsButtons.Location = new System.Drawing.Point(659, 0);
+            this.ModsButtons.Location = new System.Drawing.Point(654, 0);
             this.ModsButtons.Name = "ModsButtons";
-            this.ModsButtons.Size = new System.Drawing.Size(138, 540);
+            this.ModsButtons.Size = new System.Drawing.Size(138, 539);
             this.ModsButtons.TabIndex = 3;
             // 
             // SortByHarmony
@@ -162,7 +253,6 @@
             this.SortByHarmony.TabIndex = 1;
             this.SortByHarmony.Text = "Sort By Harmony";
             this.SortByHarmony.UseVisualStyleBackColor = true;
-            this.SortByHarmony.Click +=  SortByHarmony_Click;
             // 
             // ReverseOrder
             // 
@@ -174,32 +264,28 @@
             this.ReverseOrder.TabIndex = 1;
             this.ReverseOrder.Text = "Reverse Order";
             this.ReverseOrder.UseVisualStyleBackColor = true;
-            this.ReverseOrder.Click += ReverseOrder_Click;
             // 
             // ExcludeAllMods
             // 
             this.ExcludeAllMods.AutoSize = true;
             this.ExcludeAllMods.Location = new System.Drawing.Point(9, 180);
             this.ExcludeAllMods.Margin = new System.Windows.Forms.Padding(2);
-            this.ExcludeAllMods.Name = "ExcludeAll";
+            this.ExcludeAllMods.Name = "ExcludeAllMods";
             this.ExcludeAllMods.Size = new System.Drawing.Size(122, 27);
             this.ExcludeAllMods.TabIndex = 1;
             this.ExcludeAllMods.Text = "Exclude All";
             this.ExcludeAllMods.UseVisualStyleBackColor = true;
-            this.ExcludeAllMods.Click += ExcludeAllMods_Click;
             // 
             // EnableAllMods
             // 
             this.EnableAllMods.AutoSize = true;
             this.EnableAllMods.Location = new System.Drawing.Point(9, 96);
             this.EnableAllMods.Margin = new System.Windows.Forms.Padding(2);
-            this.EnableAllMods.Name = "EnableAll";
+            this.EnableAllMods.Name = "EnableAllMods";
             this.EnableAllMods.Size = new System.Drawing.Size(122, 27);
             this.EnableAllMods.TabIndex = 1;
             this.EnableAllMods.Text = "Enable All";
             this.EnableAllMods.UseVisualStyleBackColor = true;
-            this.ExcludeAllMods.Click += EnableAllMods_Click;
-
             // 
             // RandomizeOrder
             // 
@@ -211,39 +297,36 @@
             this.RandomizeOrder.TabIndex = 1;
             this.RandomizeOrder.Text = "Randomize Order";
             this.RandomizeOrder.UseVisualStyleBackColor = true;
-            this.RandomizeOrder.Click += RandomizeOrder_Click;
             // 
             // DisableAllMods
             // 
             this.DisableAllMods.AutoSize = true;
             this.DisableAllMods.Location = new System.Drawing.Point(9, 124);
             this.DisableAllMods.Margin = new System.Windows.Forms.Padding(2);
-            this.DisableAllMods.Name = "DisableAll";
+            this.DisableAllMods.Name = "DisableAllMods";
             this.DisableAllMods.Size = new System.Drawing.Size(122, 27);
             this.DisableAllMods.TabIndex = 1;
             this.DisableAllMods.Text = "Disable All";
             this.DisableAllMods.UseVisualStyleBackColor = true;
-            this.DisableAllMods.Click += DisableAllMods_Click;
             // 
             // IncludeAllMods
             // 
             this.IncludeAllMods.AutoSize = true;
             this.IncludeAllMods.Location = new System.Drawing.Point(9, 152);
             this.IncludeAllMods.Margin = new System.Windows.Forms.Padding(2);
-            this.IncludeAllMods.Name = "IncludeAll";
+            this.IncludeAllMods.Name = "IncludeAllMods";
             this.IncludeAllMods.Size = new System.Drawing.Size(122, 27);
             this.IncludeAllMods.TabIndex = 1;
             this.IncludeAllMods.Text = "Include All";
             this.IncludeAllMods.UseVisualStyleBackColor = true;
-            this.DisableAllMods.Click += IncludeAllMods_Click;
             // 
             // dataGridViewMods
             // 
             this.dataGridViewMods.AllowUserToAddRows = false;
             this.dataGridViewMods.AllowUserToDeleteRows = false;
             this.dataGridViewMods.AllowUserToResizeRows = false;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Beige;
-            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
+            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridViewMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridViewMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewMods.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -256,13 +339,9 @@
             this.dataGridViewMods.MultiSelect = false;
             this.dataGridViewMods.Name = "dataGridViewMods";
             this.dataGridViewMods.RowHeadersVisible = false;
-            this.dataGridViewMods.Size = new System.Drawing.Size(797, 540);
+            this.dataGridViewMods.Size = new System.Drawing.Size(792, 539);
             this.dataGridViewMods.TabIndex = 1;
             this.dataGridViewMods.Text = "Mods";
-            dataGridViewMods.CellValueChanged += this.dataGridViewMods_CellValueChanged;
-            dataGridViewMods.CellFormatting += this.dataGridViewMods_CellFormatting;
-            dataGridViewMods.CurrentCellDirtyStateChanged += this.dataGridViewMods_CurrentCellDirtyStateChanged;
-            dataGridViewMods.EditingControlShowing += this.dataGridViewMods_EditingControlShowing;
             // 
             // LoadIndex
             // 
@@ -303,9 +382,69 @@
             this.AssetsTab.Location = new System.Drawing.Point(4, 26);
             this.AssetsTab.Name = "AssetsTab";
             this.AssetsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AssetsTab.Size = new System.Drawing.Size(803, 580);
+            this.AssetsTab.Size = new System.Drawing.Size(798, 580);
             this.AssetsTab.TabIndex = 1;
             this.AssetsTab.Text = "Assets";
+            // 
+            // AssetTabSplitter
+            // 
+            this.AssetTabSplitter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.AssetTabSplitter.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.AssetTabSplitter.Location = new System.Drawing.Point(3, 3);
+            this.AssetTabSplitter.Name = "AssetTabSplitter";
+            this.AssetTabSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // AssetTabSplitter.Panel2
+            // 
+            this.AssetTabSplitter.Panel2.Controls.Add(this.AssetsActionsPanel);
+            this.AssetTabSplitter.Panel2.Controls.Add(this.CheckedListBoxAssets);
+            this.AssetTabSplitter.Size = new System.Drawing.Size(792, 574);
+            this.AssetTabSplitter.SplitterDistance = 30;
+            this.AssetTabSplitter.TabIndex = 0;
+            // 
+            // AssetsActionsPanel
+            // 
+            this.AssetsActionsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AssetsActionsPanel.Controls.Add(this.ExcludeAllAssets);
+            this.AssetsActionsPanel.Controls.Add(this.IncludeAllAssets);
+            this.AssetsActionsPanel.Dock = System.Windows.Forms.DockStyle.Right;
+            this.AssetsActionsPanel.Location = new System.Drawing.Point(712, 0);
+            this.AssetsActionsPanel.Name = "AssetsActionsPanel";
+            this.AssetsActionsPanel.Size = new System.Drawing.Size(80, 540);
+            this.AssetsActionsPanel.TabIndex = 5;
+            // 
+            // ExcludeAllAssets
+            // 
+            this.ExcludeAllAssets.AutoSize = true;
+            this.ExcludeAllAssets.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ExcludeAllAssets.Location = new System.Drawing.Point(1, 28);
+            this.ExcludeAllAssets.Margin = new System.Windows.Forms.Padding(2);
+            this.ExcludeAllAssets.Name = "ExcludeAllAssets";
+            this.ExcludeAllAssets.Size = new System.Drawing.Size(80, 27);
+            this.ExcludeAllAssets.TabIndex = 1;
+            this.ExcludeAllAssets.Text = "Exclude All";
+            this.ExcludeAllAssets.UseVisualStyleBackColor = true;
+            // 
+            // IncludeAllAssets
+            // 
+            this.IncludeAllAssets.AutoSize = true;
+            this.IncludeAllAssets.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.IncludeAllAssets.Location = new System.Drawing.Point(1, 0);
+            this.IncludeAllAssets.Margin = new System.Windows.Forms.Padding(2);
+            this.IncludeAllAssets.Name = "IncludeAllAssets";
+            this.IncludeAllAssets.Size = new System.Drawing.Size(77, 27);
+            this.IncludeAllAssets.TabIndex = 1;
+            this.IncludeAllAssets.Text = "Include All";
+            this.IncludeAllAssets.UseVisualStyleBackColor = true;
+            // 
+            // CheckedListBoxAssets
+            // 
+            this.CheckedListBoxAssets.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CheckedListBoxAssets.FormattingEnabled = true;
+            this.CheckedListBoxAssets.Location = new System.Drawing.Point(0, 0);
+            this.CheckedListBoxAssets.Name = "CheckedListBoxAssets";
+            this.CheckedListBoxAssets.Size = new System.Drawing.Size(792, 540);
+            this.CheckedListBoxAssets.TabIndex = 4;
             // 
             // AutoSave
             // 
@@ -316,8 +455,6 @@
             this.AutoSave.TabIndex = 8;
             this.AutoSave.Text = "Auto-save";
             this.AutoSave.UseVisualStyleBackColor = true;
-            this.AutoSave.Click +=this.AutoSave_CheckedChanged;
-
             // 
             // ReloadAll
             // 
@@ -326,7 +463,7 @@
             this.ReloadAll.Location = new System.Drawing.Point(0, 1);
             this.ReloadAll.Margin = new System.Windows.Forms.Padding(2);
             this.ReloadAll.Name = "ReloadAll";
-            this.ReloadAll.Size = new System.Drawing.Size(97, 27);
+            this.ReloadAll.Size = new System.Drawing.Size(77, 27);
             this.ReloadAll.TabIndex = 9;
             this.ReloadAll.Text = "Reload All";
             this.ReloadAll.UseVisualStyleBackColor = true;
@@ -343,8 +480,6 @@
             this.Save.TabIndex = 7;
             this.Save.Text = "Save To Game";
             this.Save.UseVisualStyleBackColor = true;
-            this.Save.Click += this.Save_Click;
-
             // 
             // LoadProfile
             // 
@@ -357,8 +492,6 @@
             this.LoadProfile.TabIndex = 5;
             this.LoadProfile.Text = "Load Profile";
             this.LoadProfile.UseVisualStyleBackColor = true;
-            this.LoadProfile.Click += this.LoadProfile_Click;
-
             // 
             // SaveProfile
             // 
@@ -371,78 +504,12 @@
             this.SaveProfile.TabIndex = 6;
             this.SaveProfile.Text = "Save As...";
             this.SaveProfile.UseVisualStyleBackColor = true;
-            this.SaveProfile.Click += this.SaveProfile_Click;
-
-            // 
-            // AssetTabSplitter
-            // 
-            this.AssetTabSplitter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AssetTabSplitter.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.AssetTabSplitter.Location = new System.Drawing.Point(3, 3);
-            this.AssetTabSplitter.Name = "AssetTabSplitter";
-            this.AssetTabSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // AssetTabSplitter.Panel2
-            // 
-            this.AssetTabSplitter.Panel2.Controls.Add(this.AssetsActionsPanel);
-            this.AssetTabSplitter.Panel2.Controls.Add(this.CheckedListBoxAssets);
-            this.AssetTabSplitter.Size = new System.Drawing.Size(797, 574);
-            this.AssetTabSplitter.SplitterDistance = 30;
-            this.AssetTabSplitter.TabIndex = 0;
-            // 
-            // AssetsActionsPanel
-            // 
-            this.AssetsActionsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.AssetsActionsPanel.Controls.Add(this.ExcludeAllAssets);
-            this.AssetsActionsPanel.Controls.Add(this.IncludeAllAssets);
-            this.AssetsActionsPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.AssetsActionsPanel.Location = new System.Drawing.Point(717, 0);
-            this.AssetsActionsPanel.Name = "AssetsActionsPanel";
-            this.AssetsActionsPanel.Size = new System.Drawing.Size(80, 540);
-            this.AssetsActionsPanel.TabIndex = 5;
-            // 
-            // ExcludeAllAssets
-            // 
-            this.ExcludeAllAssets.AutoSize = true;
-            this.ExcludeAllAssets.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ExcludeAllAssets.Location = new System.Drawing.Point(1, 28);
-            this.ExcludeAllAssets.Margin = new System.Windows.Forms.Padding(2);
-            this.ExcludeAllAssets.Name = "ExcludeAllAssets";
-            this.ExcludeAllAssets.Size = new System.Drawing.Size(80, 27);
-            this.ExcludeAllAssets.TabIndex = 1;
-            this.ExcludeAllAssets.Text = "Exclude All";
-            this.ExcludeAllAssets.UseVisualStyleBackColor = true;
-            ExcludeAllAssets.Click += ExcludeAllAssets_Click;
-
-            // 
-            // IncludeAllAssets
-            // 
-            this.IncludeAllAssets.AutoSize = true;
-            this.IncludeAllAssets.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.IncludeAllAssets.Location = new System.Drawing.Point(1, 0);
-            this.IncludeAllAssets.Margin = new System.Windows.Forms.Padding(2);
-            this.IncludeAllAssets.Name = "IncludeAllAssets";
-            this.IncludeAllAssets.Size = new System.Drawing.Size(77, 27);
-            this.IncludeAllAssets.TabIndex = 1;
-            this.IncludeAllAssets.Text = "Include All";
-            this.IncludeAllAssets.UseVisualStyleBackColor = true;
-            IncludeAllAssets.Click += IncludeAllAssets_Click;
-            // 
-            // CheckedListBoxAssets
-            // 
-            this.CheckedListBoxAssets.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CheckedListBoxAssets.FormattingEnabled = true;
-            this.CheckedListBoxAssets.Location = new System.Drawing.Point(0, 0);
-            this.CheckedListBoxAssets.Name = "CheckedListBoxAssets";
-            this.CheckedListBoxAssets.Size = new System.Drawing.Size(797, 540);
-            this.CheckedListBoxAssets.TabIndex = 4;
-            CheckedListBoxAssets.ItemCheck += CheckedListBoxAssets_ItemCheck;
             // 
             // LoadOrderWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(811, 646);
+            this.ClientSize = new System.Drawing.Size(806, 646);
             this.Controls.Add(this.splitContainer1);
             this.MinimumSize = new System.Drawing.Size(524, 334);
             this.Name = "LoadOrderWindow";
@@ -455,9 +522,17 @@
             this.splitContainer1.ResumeLayout(false);
             this.TabContainer.ResumeLayout(false);
             this.ModsTab.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            this.splitContainer3.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ModsButtons.ResumeLayout(false);
             this.ModsButtons.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).EndInit();
@@ -500,5 +575,12 @@
         private Button ExcludeAllAssets;
         private Button IncludeAllAssets;
         private CheckedListBox CheckedListBoxAssets;
+        private SplitContainer splitContainer3;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private ComboBox ComboBoxIncluded;
+        private ComboBox comboBox2;
+        private TextBox textBox1;
+        private ComboBox comboBox3;
+        private Label label1;
     }
 }

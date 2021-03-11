@@ -3,10 +3,28 @@ using CO.Packaging;
 using CO.Plugins;
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using LoadOrderTool.Util;
 
 namespace LoadOrderTool {
     public partial class LoadOrderWindow : Form {
+        enum EnabledFilter {
+            None=0,
+            Enabled,
+            Disabled,
+        }
+        enum IncludedFilter {
+            None = 0,
+            Included,
+            Excluded,
+        }
+        enum BuiltInFilter {
+            None = 0,
+            BuiltIn,
+            Local,
+        }
+
         public static LoadOrderWindow Instance;
 
         ModList ModList;
@@ -15,15 +33,33 @@ namespace LoadOrderTool {
 
         public LoadOrderWindow() {
             InitializeComponent();
+            ComboBoxIncluded.SetItems<IncludedFilter>();
             this.dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
             Instance = this;
             LoadMods();
             LoadAsssets();
         }
 
+        public bool ModPredicate(PluginManager.PluginInfo p) {
+            {
+                var filter = ComboBoxIncluded.GetSelectedItem<IncludedFilter>();
+                if (filter != IncludedFilter.None) {
+                    bool toggle = filter == IncludedFilter.Included;
+                    if (p.IsIncludedPending != toggle)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
         public void LoadMods() {
             PluginManager.instance.LoadPlugins();
-            ModList = ModList.GetAllMods();
+            RefreshModList();
+        }
+
+        public void RefreshModList() {
+            ModList = ModList.GetAllMods(ModPredicate);
             ModList.SortBy(ModList.HarmonyComparison);
             PopulateMods();
         }
@@ -212,5 +248,7 @@ namespace LoadOrderTool {
                 asset.IsIncluded = false;
             PopulateAssets();
         }
+
+        private void RefreshModList(object sender, EventArgs e) => RefreshModList();
     }
 }
