@@ -55,7 +55,7 @@ namespace CO.Plugins {
 
             public bool isBuiltin => m_IsBuiltin;
 
-            public bool IsLocal => publishedFileID == PublishedFileId.invalid
+            public bool IsLocal => publishedFileID == PublishedFileId.invalid;
             public bool IsWorkshop => !IsLocal;
 
             public string ModPath => m_Path;

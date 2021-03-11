@@ -33,6 +33,8 @@ namespace LoadOrderTool {
 
         public LoadOrderWindow() {
             InitializeComponent();
+            dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
+
             ComboBoxIncluded.SetItems<IncludedFilter>();
             ComboBoxIncluded.SelectedIndex = 0;
             ComboBoxEnabled.SetItems<EnabledFilter>();
@@ -40,7 +42,32 @@ namespace LoadOrderTool {
             ComboBoxWS.SetItems<WSFilter>();
             ComboBoxWS.SelectedIndex = 0;
 
-            this.dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
+            ComboBoxIncluded.TextChanged += RefreshModList;
+            ComboBoxEnabled.TextChanged += RefreshModList;
+            ComboBoxWS.TextChanged += RefreshModList;
+            TextFilterMods.TextChanged += RefreshModList;
+
+            this.SaveProfile.Click += SaveProfile_Click;
+            this.LoadProfile.Click += LoadProfile_Click;
+            this.Save.Click += Save_Click;
+            this.AutoSave.CheckedChanged += AutoSave_CheckedChanged;
+            this.ReloadAll.Click += ReloadAll_Click;
+
+            this.SortByHarmony.Click += SortByHarmony_Click;
+            this.ReverseOrder.Click += ReverseOrder_Click;
+            this.RandomizeOrder.Click += RandomizeOrder_Click;
+            this.IncludeAllMods.Click += IncludeAllMods_Click;
+            this.EnableAllMods.Click += EnableAllMods_Click;
+            this.DisableAllMods.Click += DisableAllMods_Click;
+            this.IncludeAllAssets.Click += IncludeAllAssets_Click;
+            this.ExcludeAllAssets.Click += ExcludeAllAssets_Click;
+
+            dataGridViewMods.CellFormatting += dataGridViewMods_CellFormatting;
+            dataGridViewMods.CellValueChanged += dataGridViewMods_CellValueChanged;
+            dataGridViewMods.CurrentCellDirtyStateChanged += dataGridViewMods_CurrentCellDirtyStateChanged;
+            dataGridViewMods.EditingControlShowing += dataGridViewMods_EditingControlShowing;
+            CheckedListBoxAssets.ItemCheck += CheckedListBoxAssets_ItemCheck;
+
             Instance = this;
             LoadMods();
             LoadAsssets();
@@ -139,6 +166,12 @@ namespace LoadOrderTool {
             }
         }
 
+        private void RefreshModList(object sender, EventArgs e) => RefreshModList();
+
+        private void LoadOrder_FormClosing(object sender, FormClosingEventArgs e) {
+            GameSettings.SaveAll();
+        }
+
         private void dataGridViewMods_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e) {
             if (dataGridViewMods.CurrentCell.ColumnIndex == 0 && e.Control is TextBox tb) // Desired Column
             {
@@ -218,9 +251,6 @@ namespace LoadOrderTool {
             PopulateMods();
         }
 
-        private void LoadOrder_FormClosing(object sender, FormClosingEventArgs e) {
-            GameSettings.SaveAll();
-        }
 
         private void SaveProfile_Click(object sender, EventArgs e) {
             SaveFileDialog diaglog = new SaveFileDialog();
@@ -278,7 +308,5 @@ namespace LoadOrderTool {
                 asset.IsIncluded = false;
             PopulateAssets();
         }
-
-        private void RefreshModList(object sender, EventArgs e) => RefreshModList();
     }
 }

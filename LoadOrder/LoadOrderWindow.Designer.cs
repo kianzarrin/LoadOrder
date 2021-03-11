@@ -467,7 +467,6 @@
             this.ReloadAll.TabIndex = 9;
             this.ReloadAll.Text = "Reload All";
             this.ReloadAll.UseVisualStyleBackColor = true;
-            this.ReloadAll.Click += new System.EventHandler(this.ReloadAll_Click);
             // 
             // Save
             // 
