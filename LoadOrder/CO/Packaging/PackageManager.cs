@@ -30,6 +30,9 @@ namespace CO.Packaging {
 
             public bool isBuiltin => m_IsBuiltin;
 
+            public bool IsLocal => publishedFileID == PublishedFileId.invalid;
+            public bool IsWorkshop => !IsLocal
+
             public string AssetPath => m_Path;
 
 

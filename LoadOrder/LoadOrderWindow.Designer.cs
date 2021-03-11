@@ -29,7 +29,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
@@ -65,6 +65,13 @@
             this.Save = new System.Windows.Forms.Button();
             this.LoadProfile = new System.Windows.Forms.Button();
             this.SaveProfile = new System.Windows.Forms.Button();
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.ComboBoxAssetIncluded = new System.Windows.Forms.ComboBox();
+            this.ComboBoxAssetWS = new System.Windows.Forms.ComboBox();
+            this.ComboBoxAssetCategory = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.TextFilterAsset = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -84,9 +91,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).BeginInit();
             this.AssetsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AssetTabSplitter)).BeginInit();
+            this.AssetTabSplitter.Panel1.SuspendLayout();
             this.AssetTabSplitter.Panel2.SuspendLayout();
             this.AssetTabSplitter.SuspendLayout();
             this.AssetsActionsPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
+            this.splitContainer4.Panel1.SuspendLayout();
+            this.splitContainer4.Panel2.SuspendLayout();
+            this.splitContainer4.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -325,8 +338,8 @@
             this.dataGridViewMods.AllowUserToAddRows = false;
             this.dataGridViewMods.AllowUserToDeleteRows = false;
             this.dataGridViewMods.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
-            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Beige;
+            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridViewMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewMods.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -393,6 +406,10 @@
             this.AssetTabSplitter.Location = new System.Drawing.Point(3, 3);
             this.AssetTabSplitter.Name = "AssetTabSplitter";
             this.AssetTabSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // AssetTabSplitter.Panel1
+            // 
+            this.AssetTabSplitter.Panel1.Controls.Add(this.splitContainer4);
             // 
             // AssetTabSplitter.Panel2
             // 
@@ -504,6 +521,80 @@
             this.SaveProfile.Text = "Save As...";
             this.SaveProfile.UseVisualStyleBackColor = true;
             // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer4.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.flowLayoutPanel2);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.TextFilterAsset);
+            this.splitContainer4.Size = new System.Drawing.Size(792, 30);
+            this.splitContainer4.SplitterDistance = 422;
+            this.splitContainer4.TabIndex = 1;
+            // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.Controls.Add(this.ComboBoxAssetIncluded);
+            this.flowLayoutPanel2.Controls.Add(this.ComboBoxAssetWS);
+            this.flowLayoutPanel2.Controls.Add(this.ComboBoxAssetCategory);
+            this.flowLayoutPanel2.Controls.Add(this.label2);
+            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(422, 30);
+            this.flowLayoutPanel2.TabIndex = 0;
+            this.flowLayoutPanel2.WrapContents = false;
+            // 
+            // ComboBoxAssetIncluded
+            // 
+            this.ComboBoxAssetIncluded.FormattingEnabled = true;
+            this.ComboBoxAssetIncluded.Location = new System.Drawing.Point(3, 3);
+            this.ComboBoxAssetIncluded.Name = "ComboBoxAssetIncluded";
+            this.ComboBoxAssetIncluded.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetIncluded.TabIndex = 1;
+            // 
+            // CombBoxAssetWS
+            // 
+            this.ComboBoxAssetWS.FormattingEnabled = true;
+            this.ComboBoxAssetWS.Location = new System.Drawing.Point(130, 3);
+            this.ComboBoxAssetWS.Name = "CombBoxAssetWS";
+            this.ComboBoxAssetWS.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetWS.TabIndex = 3;
+            // 
+            // ComboBoxAssetCategory
+            // 
+            this.ComboBoxAssetCategory.FormattingEnabled = true;
+            this.ComboBoxAssetCategory.Location = new System.Drawing.Point(257, 3);
+            this.ComboBoxAssetCategory.Name = "ComboBoxAssetCategory";
+            this.ComboBoxAssetCategory.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetCategory.TabIndex = 4;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(384, 0);
+            this.label2.MinimumSize = new System.Drawing.Size(0, 25);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 25);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Filter:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // TextBoxAssetFilter
+            // 
+            this.TextFilterAsset.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TextFilterAsset.Location = new System.Drawing.Point(0, 0);
+            this.TextFilterAsset.Name = "TextBoxAssetFilter";
+            this.TextFilterAsset.Size = new System.Drawing.Size(366, 25);
+            this.TextFilterAsset.TabIndex = 0;
+            // 
             // LoadOrderWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -536,11 +627,19 @@
             this.ModsButtons.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).EndInit();
             this.AssetsTab.ResumeLayout(false);
+            this.AssetTabSplitter.Panel1.ResumeLayout(false);
             this.AssetTabSplitter.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.AssetTabSplitter)).EndInit();
             this.AssetTabSplitter.ResumeLayout(false);
             this.AssetsActionsPanel.ResumeLayout(false);
             this.AssetsActionsPanel.PerformLayout();
+            this.splitContainer4.Panel1.ResumeLayout(false);
+            this.splitContainer4.Panel2.ResumeLayout(false);
+            this.splitContainer4.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
+            this.splitContainer4.ResumeLayout(false);
+            this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -581,5 +680,12 @@
         private TextBox TextFilterMods;
         private ComboBox ComboBoxWS;
         private Label label1;
+        private SplitContainer splitContainer4;
+        private FlowLayoutPanel flowLayoutPanel2;
+        private ComboBox ComboBoxAssetIncluded;
+        private ComboBox ComboBoxAssetWS;
+        private ComboBox ComboBoxAssetCategory;
+        private Label label2;
+        private TextBox TextFilterAsset;
     }
 }

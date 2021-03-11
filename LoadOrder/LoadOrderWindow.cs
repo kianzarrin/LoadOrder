@@ -42,9 +42,9 @@ namespace LoadOrderTool {
             ComboBoxWS.SetItems<WSFilter>();
             ComboBoxWS.SelectedIndex = 0;
 
-            ComboBoxIncluded.TextChanged += RefreshModList;
-            ComboBoxEnabled.TextChanged += RefreshModList;
-            ComboBoxWS.TextChanged += RefreshModList;
+            ComboBoxIncluded.SelectedIndexChanged += RefreshModList;
+            ComboBoxEnabled.SelectedIndexChanged += RefreshModList;
+            ComboBoxWS.SelectedIndexChanged += RefreshModList;
             TextFilterMods.TextChanged += RefreshModList;
 
             this.SaveProfile.Click += SaveProfile_Click;
@@ -59,13 +59,24 @@ namespace LoadOrderTool {
             this.IncludeAllMods.Click += IncludeAllMods_Click;
             this.EnableAllMods.Click += EnableAllMods_Click;
             this.DisableAllMods.Click += DisableAllMods_Click;
-            this.IncludeAllAssets.Click += IncludeAllAssets_Click;
-            this.ExcludeAllAssets.Click += ExcludeAllAssets_Click;
 
             dataGridViewMods.CellFormatting += dataGridViewMods_CellFormatting;
             dataGridViewMods.CellValueChanged += dataGridViewMods_CellValueChanged;
             dataGridViewMods.CurrentCellDirtyStateChanged += dataGridViewMods_CurrentCellDirtyStateChanged;
             dataGridViewMods.EditingControlShowing += dataGridViewMods_EditingControlShowing;
+
+            ComboBoxAssetIncluded.SetItems<IncludedFilter>();
+            ComboBoxAssetIncluded.SelectedIndex = 0;
+            ComboBoxAssetWS.SetItems<WSFilter>();
+            ComboBoxAssetWS.SelectedIndex = 0;
+
+            ComboBoxAssetIncluded.SelectedIndexChanged += RefreshAssetList;
+            ComboBoxAssetWS.SelectedIndexChanged += RefreshAssetList;
+            TextFilterAsset.TextChanged += RefreshAssetList;
+
+            this.IncludeAllAssets.Click += IncludeAllAssets_Click;
+            this.ExcludeAllAssets.Click += ExcludeAllAssets_Click;
+
             CheckedListBoxAssets.ItemCheck += CheckedListBoxAssets_ItemCheck;
 
             Instance = this;
@@ -110,6 +121,35 @@ namespace LoadOrderTool {
             return true;
         }
 
+        public bool AssetPredicate(PackageManager.AssetInfo a) {
+            {
+                var filter = ComboBoxAssetIncluded.GetSelectedItem<IncludedFilter>();
+                if (filter != IncludedFilter.None) {
+                    bool b = filter == IncludedFilter.Included;
+                    if (a.IsIncludedPending != b)
+                        return false;
+                }
+            }
+            {
+                var filter = ComboBoxAssetWS.GetSelectedItem<WSFilter>();
+                if (filter != WSFilter.None) {
+                    bool b = filter == WSFilter.Workshop;
+                    if (a.IsWorkshop != b)
+                        return false;
+                }
+            }
+            {
+                var words = TextFilterAsset.Text?.Split("");
+                if (words != null && words.Length > 0) {
+                    bool match = words.Any(word => a.DisplayText.Contains(word, StringComparison.OrdinalIgnoreCase));
+                    if (!match)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
         public void LoadMods() {
             PluginManager.instance.LoadPlugins();
             RefreshModList();
@@ -119,19 +159,6 @@ namespace LoadOrderTool {
             ModList = ModList.GetAllMods(ModPredicate);
             ModList.SortBy(ModList.HarmonyComparison);
             PopulateMods();
-        }
-
-        public void LoadAsssets() {
-            PackageManager.instance.LoadPackages();
-            AssetList = AssetList.GetAllAssets();
-            PopulateAssets();
-        }
-
-        public void PopulateAssets() {
-            Log.Info("Populating assets");
-            foreach (var asset in AssetList) {
-                CheckedListBoxAssets.Items.Add(asset.DisplayText, asset.IsIncludedPending);
-            }
         }
 
         public void PopulateMods() {
@@ -166,7 +193,26 @@ namespace LoadOrderTool {
             }
         }
 
+        public void LoadAsssets() {
+            PackageManager.instance.LoadPackages();
+            RefreshAssetList();
+        }
+
+        public void RefreshAssetList() {
+            AssetList.FilterIn(AssetPredicate);
+            PopulateAssets();
+        }
+
+        public void PopulateAssets() {
+            Log.Info("Populating assets");
+            foreach (var asset in AssetList.Filtered) {
+                CheckedListBoxAssets.Items.Add(asset.DisplayText, asset.IsIncludedPending);
+            }
+        }
+
         private void RefreshModList(object sender, EventArgs e) => RefreshModList();
+
+        private void RefreshAssetList(object sender, EventArgs e) => RefreshAssetList();
 
         private void LoadOrder_FormClosing(object sender, FormClosingEventArgs e) {
             GameSettings.SaveAll();
