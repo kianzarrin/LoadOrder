@@ -37,15 +37,15 @@ namespace LoadOrderTool {
             var savedOrder2 = p2.LoadOrder;
 
             // orderless harmony comes first
-            if (p1.HasLoadOrder() && p1.IsHarmonyMod())
+            if (!p1.HasLoadOrder() && p1.IsHarmonyMod())
                 return -1;
-            if (p2.HasLoadOrder() && p2.IsHarmonyMod())
+            if (!p2.HasLoadOrder() && p2.IsHarmonyMod())
                 return +1;
 
             // if neither have order, use string comparison
             // then builin first, workshop second, local last
             // otherwise use string comparison
-            if (p1.HasLoadOrder() && p2.HasLoadOrder()) {
+            if (!p1.HasLoadOrder() && !p2.HasLoadOrder()) {
                 int order(PluginInfo _p) =>
                     _p.isBuiltin ? 0 :
                     (_p.publishedFileID != PublishedFileId.invalid ? 1 : 2);
@@ -83,7 +83,7 @@ namespace LoadOrderTool {
             var savedOrder1 = p1.LoadOrder;
             var savedOrder2 = p2.LoadOrder;
 
-            if (p1.HasLoadOrder() && savedOrder2 == DefaultLoadOrder) {
+            if (!p1.HasLoadOrder() && savedOrder2 == DefaultLoadOrder) {
                 // if neither have saved order,
                 {
                     // 1st: harmony mod 
@@ -177,13 +177,12 @@ namespace LoadOrderTool {
                 return;
             }
 
-            //int oldIndex = this.FindIndex(item => item == p);
-            int newIndex = this.FindLastIndex(item => DefaultComparison(item, p) < 0);
-
+            int newIndex = this.FindIndex(item => DefaultComparison(item, p) >= 0);
             this.Remove(p);
             this.Insert(newIndex, p);
+            Log.Debug($"newIndex={newIndex} newLoadOrder={p.LoadOrder}");
             for (int i = 1; i < Count; ++i) {
-                if (this[i].HasLoadOrder() && this[i].LoadOrder >= this[i - 1].LoadOrder) {
+                if (this[i].HasLoadOrder() && this[i].LoadOrder <= this[i - 1].LoadOrder) {
                     this[i].LoadOrder = this[i - 1].LoadOrder+1;
                     if (!this[i].HasLoadOrder())
                         this[i].LoadOrder++;

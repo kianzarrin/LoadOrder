@@ -239,7 +239,7 @@ namespace CO.Plugins {
 
             public void ResetLoadOrder() => LoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
 
-            public bool HasLoadOrder() => LoadOrder == LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
+            public bool HasLoadOrder() => LoadOrder != LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
 
 
             public int LoadOrder {
