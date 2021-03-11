@@ -192,19 +192,19 @@
             this.ComboBoxIncluded.Size = new System.Drawing.Size(121, 25);
             this.ComboBoxIncluded.TabIndex = 1;
             // 
-            // comboBox2
+            // ComboBoxEnabled
             // 
             this.ComboBoxEnabled.FormattingEnabled = true;
             this.ComboBoxEnabled.Location = new System.Drawing.Point(130, 3);
-            this.ComboBoxEnabled.Name = "comboBox2";
+            this.ComboBoxEnabled.Name = "ComboBoxEnabled";
             this.ComboBoxEnabled.Size = new System.Drawing.Size(121, 25);
             this.ComboBoxEnabled.TabIndex = 3;
             // 
-            // comboBox3
+            // ComboBoxWS
             // 
             this.ComboBoxWS.FormattingEnabled = true;
             this.ComboBoxWS.Location = new System.Drawing.Point(257, 3);
-            this.ComboBoxWS.Name = "comboBox3";
+            this.ComboBoxWS.Name = "ComboBoxWS";
             this.ComboBoxWS.Size = new System.Drawing.Size(121, 25);
             this.ComboBoxWS.TabIndex = 4;
             // 
@@ -219,11 +219,11 @@
             this.label1.Text = "Filter:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // textBox1
+            // TextFilterMods
             // 
             this.TextFilterMods.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TextFilterMods.Location = new System.Drawing.Point(0, 0);
-            this.TextFilterMods.Name = "textBox1";
+            this.TextFilterMods.Name = "TextFilterMods";
             this.TextFilterMods.Size = new System.Drawing.Size(366, 25);
             this.TextFilterMods.TabIndex = 0;
             // 
