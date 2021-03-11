@@ -195,6 +195,7 @@ namespace LoadOrderTool {
 
         public void LoadAsssets() {
             PackageManager.instance.LoadPackages();
+            AssetList = AssetList.GetAllAssets();
             RefreshAssetList();
         }
 
