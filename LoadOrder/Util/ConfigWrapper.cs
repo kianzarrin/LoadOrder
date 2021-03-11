@@ -47,9 +47,9 @@
         }
 
         private void SaveConfigImpl() {
+            Dirty = false;
             Config.Serialize(DataLocation.localApplicationData);
             PluginManager.instance.ApplyPendingValues();
-            Dirty = false;
             Log.Info("Saved config");
         }
 
