@@ -156,8 +156,9 @@ namespace LoadOrderTool {
         }
 
         public void RefreshModList() {
-            ModList = ModList.GetAllMods(ModPredicate);
-            ModList.SortBy(ModList.HarmonyComparison);
+            ModList = ModList.GetAllMods();
+            ModList.DefaultSort();
+            ModList.FilterIn(ModPredicate);
             PopulateMods();
         }
 
@@ -257,8 +258,7 @@ namespace LoadOrderTool {
         }
 
         private void SortByHarmony_Click(object sender, EventArgs e) {
-            foreach (var p in ModList)
-                p.LoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
+            ModList.ResetLoadOrders();
             ModList.SortBy(ModList.HarmonyComparison);
             PopulateMods();
         }

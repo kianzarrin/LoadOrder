@@ -12,20 +12,20 @@ using static CO.Plugins.PluginManager;
 namespace LoadOrderTool {
     public class ModList : List<PluginManager.PluginInfo> {
         const int DefaultLoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
+        public List<PluginInfo> Filtered;
 
         public ModList(IEnumerable<PluginManager.PluginInfo> list) : base(list)
         {
+            Filtered = list.ToList();
         }
 
         public static ModList GetAllMods()
         {
-            var mods = new ModList(PluginManager.instance.GetPluginsInfo());
-            return mods;
+            return new ModList(PluginManager.instance.GetPluginsInfo());
         }
 
-        public static ModList GetAllMods(Func<PluginInfo, bool> predicate) {
-            var mods = PluginManager.instance.GetPluginsInfo().Where(predicate);
-            return new ModList(mods);
+        public void FilterIn(Func<PluginInfo, bool> predicate) {
+            Filtered = this.Where(predicate).ToList();
         }
 
         public static int LoadOrderComparison(PluginInfo p1, PluginInfo p2) =>
@@ -37,15 +37,15 @@ namespace LoadOrderTool {
             var savedOrder2 = p2.LoadOrder;
 
             // orderless harmony comes first
-            if (savedOrder1== DefaultLoadOrder && p1.IsHarmonyMod())
+            if (p1.HasLoadOrder() && p1.IsHarmonyMod())
                 return -1;
-            if (savedOrder2== DefaultLoadOrder && p2.IsHarmonyMod())
+            if (p2.HasLoadOrder() && p2.IsHarmonyMod())
                 return +1;
 
             // if neither have order, use string comparison
             // then builin first, workshop second, local last
             // otherwise use string comparison
-            if (savedOrder1== DefaultLoadOrder && savedOrder2== DefaultLoadOrder) {
+            if (p1.HasLoadOrder() && p2.HasLoadOrder()) {
                 int order(PluginInfo _p) =>
                     _p.isBuiltin ? 0 :
                     (_p.publishedFileID != PublishedFileId.invalid ? 1 : 2);
@@ -83,7 +83,7 @@ namespace LoadOrderTool {
             var savedOrder1 = p1.LoadOrder;
             var savedOrder2 = p2.LoadOrder;
 
-            if (savedOrder1== DefaultLoadOrder && savedOrder2 == DefaultLoadOrder) {
+            if (p1.HasLoadOrder() && savedOrder2 == DefaultLoadOrder) {
                 // if neither have saved order,
                 {
                     // 1st: harmony mod 
@@ -113,13 +113,20 @@ namespace LoadOrderTool {
             return savedOrder1 - savedOrder2;
         }
 
+        public void ResetLoadOrders() {
+            foreach(var p in this) 
+                p.ResetLoadOrder();
+        }
+
+        public void DefaultSort() {
+            Sort(HarmonyComparison);
+        }
 
         public void SortBy(Comparison<PluginInfo> comparison)
         {
             Sort(comparison);
             for (int i = 0; i < Count; ++i)
                 this[i].LoadOrder = i;
-
         }
 
         public void ReverseOrder()

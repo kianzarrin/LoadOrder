@@ -8,10 +8,12 @@
     public class AssetList :List<PackageManager.AssetInfo> {
         public List<PackageManager.AssetInfo> Filtered;
 
+        public AssetList(IEnumerable<PackageManager.AssetInfo> list) : base(list) {
+            Filtered = list.ToList();
+        }
+
         public static AssetList GetAllAssets() {
-            var ret =  new AssetList();
-            ret.AddRange(PackageManager.instance.GetAssets());
-            return ret;
+            return  new AssetList(PackageManager.instance.GetAssets());
         }
 
         public void FilterIn(Func<PackageManager.AssetInfo,bool> predicate) {
