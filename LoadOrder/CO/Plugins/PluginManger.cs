@@ -116,18 +116,20 @@ namespace CO.Plugins {
             public bool IsIncludedPending {
                 get => isIncludedPending_;
                 set {
-                    isIncludedPending_ = value;
-                    PluginManager.instance.ConfigWrapper.Dirty = true;
+                    if (isIncludedPending_ != value) {
+                        isIncludedPending_ = value;
+                        PluginManager.instance.ConfigWrapper.Dirty = true;
+                    }
                 }
             }
 
             public bool IsIncluded {
                 get => !dirName.StartsWith("_");
                 set {
-                    Log.Debug($"set_IsIncluded current value = {IsIncluded} | target value = {value}");
-                    IsIncludedPending = value;
+                    isIncludedPending_ = value; 
                     if (value == IsIncluded)
                         return;
+                    Log.Debug($"set_IsIncluded current value = {IsIncluded} | target value = {value}");
                     string parentPath = Directory.GetParent(m_Path).FullName;
                     string targetDirname =
                         value
@@ -140,13 +142,13 @@ namespace CO.Plugins {
 
             public void MoveToPath(string targetPath) {
                 try {
-                    Log.Debug($"moving mod from {ModPath} to {targetPath}");
-                    Directory.Move(ModPath, targetPath);
+                    Log.Debug($"moving mod from {m_Path} to {targetPath}");
+                    Directory.Move(m_Path, targetPath);
                     if (Directory.Exists(targetPath))
                         Log.Debug($"move successful!");
                     else {
                         Log.Debug($"FAILED!");
-                        throw new Exception("failed to move directory from {ModPath} to {targetPath}");
+                        throw new Exception($"failed to move directory from {m_Path} to {targetPath}");
                     }
                     m_Path = targetPath;
                 } catch (Exception ex) {
@@ -223,8 +225,10 @@ namespace CO.Plugins {
             public bool IsEnabledPending {
                 get => isEnabledPending_;
                 set {
-                    isEnabledPending_ = value;
-                    PluginManager.instance.ConfigWrapper.Dirty = true;
+                    if (isEnabledPending_ != value) {
+                        isEnabledPending_ = value;
+                        PluginManager.instance.ConfigWrapper.Dirty = true;
+                    }
                 }
             }
             public string savedEnabledKey_ =>
@@ -232,7 +236,7 @@ namespace CO.Plugins {
             public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, def: false, autoUpdate: true);
             public bool isEnabled {
                 get => SavedEnabled.value;
-                set => SavedEnabled.value = IsEnabledPending = value;
+                set => SavedEnabled.value = isEnabledPending_ = value;
             }
 
             public LoadOrderShared.ModInfo ModInfo { get; private set; }

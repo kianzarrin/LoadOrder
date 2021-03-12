@@ -1,6 +1,7 @@
 ﻿namespace LoadOrderTool.Util {
     using CO.IO;
     using CO.Plugins;
+    using CO.Packaging;
     using LoadOrderTool;
     using System;
     using System.Collections.Generic;
@@ -50,7 +51,8 @@
             Dirty = false;
             Config.Serialize(DataLocation.localApplicationData);
             PluginManager.instance.ApplyPendingValues();
-            Log.Info("Saved config");
+            PackageManager.instance.ApplyPendingValues();
+            Log.Info($"SaveConfigImpl() done. (Dirty={Dirty})");
         }
 
         private void StartSaveThread() {

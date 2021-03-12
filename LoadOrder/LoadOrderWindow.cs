@@ -31,6 +31,8 @@ namespace LoadOrderTool {
 
         AssetList AssetList;
 
+        bool populatingAssets_;
+
         public LoadOrderWindow() {
             InitializeComponent();
             dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
@@ -208,6 +210,7 @@ namespace LoadOrderTool {
 
         public void PopulateAssets() {
             Log.Info("Populating assets");
+            populatingAssets_ = true;
             CheckedListBoxAssets.SuspendLayout();
             try {
                 CheckedListBoxAssets.Items.Clear();
@@ -218,8 +221,9 @@ namespace LoadOrderTool {
                 Log.Exception(ex);
             } finally {
                 CheckedListBoxAssets.ResumeLayout();
+                populatingAssets_ = false;
             }
-            
+
         }
 
         private void RefreshModList(object sender, EventArgs e) => RefreshModList();
@@ -350,6 +354,7 @@ namespace LoadOrderTool {
         }
 
         private void CheckedListBoxAssets_ItemCheck(object sender, ItemCheckEventArgs e) {
+            if (populatingAssets_) return;
             if (e.NewValue == CheckState.Indeterminate) {
                 Log.Error("unexpected check value: Indeterminate");
                 return;
@@ -362,13 +367,13 @@ namespace LoadOrderTool {
 
         private void IncludeAllAssets_Click(object sender, EventArgs e) {
             foreach (var asset in AssetList)
-                asset.IsIncluded = true;
+                asset.IsIncludedPending = true;
             PopulateAssets();
         }
 
         private void ExcludeAllAssets_Click(object sender, EventArgs e) {
             foreach (var asset in AssetList)
-                asset.IsIncluded = false;
+                asset.IsIncludedPending = false;
             PopulateAssets();
         }
     }

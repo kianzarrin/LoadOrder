@@ -20,10 +20,6 @@ namespace CO.Packaging {
         LoadOrderShared.LoadOrderConfig Config => ConfigWrapper.Config;
 
         public class AssetInfo {
-            // private Type m_UserModImplementation;
-            // public List<Assembly> m_Assemblies;
-            // public int assemblyCount => m_Assemblies.Count;
-
             private string m_Path;
 
             private bool m_IsBuiltin;
@@ -69,37 +65,38 @@ namespace CO.Packaging {
             public bool IsIncludedPending {
                 get => isIncludedPending_;
                 set {
-                    isIncludedPending_ = value;
-                    PackageManager.instance.ConfigWrapper.Dirty = true;
+                    if (isIncludedPending_ != value) {
+                        isIncludedPending_ = value;
+                        PackageManager.instance.ConfigWrapper.Dirty = true;
+                    }
                 }
             }
 
             public bool IsIncluded {
                 get => !FileName.StartsWith("_");
                 set {
+                    isIncludedPending_ = value;
+                    if (value == IsIncluded) return;
                     Log.Debug($"set_IsIncluded current value = {IsIncluded} | target value = {value}");
-                    IsIncludedPending = value;
-                    if (value == IsIncluded)
-                        return;
                     string parentPath = Directory.GetParent(m_Path).FullName;
                     string targetFilename =
                         value
                         ? FileName.Substring(1)  // drop _ prefix
                         : "_" + FileName; // add _ prefix
                     string targetPath = Path.Combine(parentPath, targetFilename);
-                    MoveToPath(targetPath);
+                    MoveFileToPath(targetPath);
                 }
             }
 
-            public void MoveToPath(string targetPath) {
+            public void MoveFileToPath(string targetPath) {
                 try {
-                    Log.Debug($"moving mod from {AssetPath} to {targetPath}");
-                    Directory.Move(AssetPath, targetPath);
-                    if (Directory.Exists(targetPath))
+                    Log.Debug($"moving asset from {m_Path} to {targetPath}");
+                    File.Move(m_Path, targetPath);
+                    if (File.Exists(targetPath))
                         Log.Debug($"move successful!");
                     else {
                         Log.Debug($"FAILED!");
-                        throw new Exception("failed to move directory from {ModPath} to {targetPath}");
+                        throw new Exception($"failed to move asset from {m_Path} to {targetPath}");
                     }
                     m_Path = targetPath;
                 } catch (Exception ex) {
