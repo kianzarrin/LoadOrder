@@ -29,13 +29,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.splitContainerTopLevel = new System.Windows.Forms.SplitContainer();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.splitContainerModsTab = new System.Windows.Forms.SplitContainer();
+            this.splitContainerModFilters = new System.Windows.Forms.SplitContainer();
+            this.flowLayoutModsFiltersComboBoxes = new System.Windows.Forms.FlowLayoutPanel();
             this.ComboBoxIncluded = new System.Windows.Forms.ComboBox();
             this.ComboBoxEnabled = new System.Windows.Forms.ComboBox();
             this.ComboBoxWS = new System.Windows.Forms.ComboBox();
@@ -56,6 +56,13 @@
             this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AssetsTab = new System.Windows.Forms.TabPage();
             this.AssetTabSplitter = new System.Windows.Forms.SplitContainer();
+            this.splitContainerAssetFilters = new System.Windows.Forms.SplitContainer();
+            this.flowLayoutAssetFilterComboBoxes = new System.Windows.Forms.FlowLayoutPanel();
+            this.ComboBoxAssetIncluded = new System.Windows.Forms.ComboBox();
+            this.ComboBoxAssetWS = new System.Windows.Forms.ComboBox();
+            this.ComboBoxAssetCategory = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.TextFilterAsset = new System.Windows.Forms.TextBox();
             this.AssetsActionsPanel = new System.Windows.Forms.Panel();
             this.ExcludeAllAssets = new System.Windows.Forms.Button();
             this.IncludeAllAssets = new System.Windows.Forms.Button();
@@ -65,28 +72,21 @@
             this.Save = new System.Windows.Forms.Button();
             this.LoadProfile = new System.Windows.Forms.Button();
             this.SaveProfile = new System.Windows.Forms.Button();
-            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.ComboBoxAssetIncluded = new System.Windows.Forms.ComboBox();
-            this.ComboBoxAssetWS = new System.Windows.Forms.ComboBox();
-            this.ComboBoxAssetCategory = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.TextFilterAsset = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerTopLevel)).BeginInit();
+            this.splitContainerTopLevel.Panel1.SuspendLayout();
+            this.splitContainerTopLevel.Panel2.SuspendLayout();
+            this.splitContainerTopLevel.SuspendLayout();
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
-            this.splitContainer3.Panel1.SuspendLayout();
-            this.splitContainer3.Panel2.SuspendLayout();
-            this.splitContainer3.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerModsTab)).BeginInit();
+            this.splitContainerModsTab.Panel1.SuspendLayout();
+            this.splitContainerModsTab.Panel2.SuspendLayout();
+            this.splitContainerModsTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerModFilters)).BeginInit();
+            this.splitContainerModFilters.Panel1.SuspendLayout();
+            this.splitContainerModFilters.Panel2.SuspendLayout();
+            this.splitContainerModFilters.SuspendLayout();
+            this.flowLayoutModsFiltersComboBoxes.SuspendLayout();
             this.ModsButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).BeginInit();
             this.AssetsTab.SuspendLayout();
@@ -94,36 +94,36 @@
             this.AssetTabSplitter.Panel1.SuspendLayout();
             this.AssetTabSplitter.Panel2.SuspendLayout();
             this.AssetTabSplitter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAssetFilters)).BeginInit();
+            this.splitContainerAssetFilters.Panel1.SuspendLayout();
+            this.splitContainerAssetFilters.Panel2.SuspendLayout();
+            this.splitContainerAssetFilters.SuspendLayout();
+            this.flowLayoutAssetFilterComboBoxes.SuspendLayout();
             this.AssetsActionsPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
-            this.splitContainer4.Panel1.SuspendLayout();
-            this.splitContainer4.Panel2.SuspendLayout();
-            this.splitContainer4.SuspendLayout();
-            this.flowLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // splitContainer1
+            // splitContainerTopLevel
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.splitContainerTopLevel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerTopLevel.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainerTopLevel.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerTopLevel.Name = "splitContainerTopLevel";
+            this.splitContainerTopLevel.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // splitContainer1.Panel1
+            // splitContainerTopLevel.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.TabContainer);
+            this.splitContainerTopLevel.Panel1.Controls.Add(this.TabContainer);
             // 
-            // splitContainer1.Panel2
+            // splitContainerTopLevel.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.AutoSave);
-            this.splitContainer1.Panel2.Controls.Add(this.ReloadAll);
-            this.splitContainer1.Panel2.Controls.Add(this.Save);
-            this.splitContainer1.Panel2.Controls.Add(this.LoadProfile);
-            this.splitContainer1.Panel2.Controls.Add(this.SaveProfile);
-            this.splitContainer1.Size = new System.Drawing.Size(806, 646);
-            this.splitContainer1.SplitterDistance = 610;
-            this.splitContainer1.TabIndex = 6;
+            this.splitContainerTopLevel.Panel2.Controls.Add(this.AutoSave);
+            this.splitContainerTopLevel.Panel2.Controls.Add(this.ReloadAll);
+            this.splitContainerTopLevel.Panel2.Controls.Add(this.Save);
+            this.splitContainerTopLevel.Panel2.Controls.Add(this.LoadProfile);
+            this.splitContainerTopLevel.Panel2.Controls.Add(this.SaveProfile);
+            this.splitContainerTopLevel.Size = new System.Drawing.Size(806, 646);
+            this.splitContainerTopLevel.SplitterDistance = 610;
+            this.splitContainerTopLevel.TabIndex = 6;
             // 
             // TabContainer
             // 
@@ -139,7 +139,7 @@
             // ModsTab
             // 
             this.ModsTab.BackColor = System.Drawing.SystemColors.Control;
-            this.ModsTab.Controls.Add(this.splitContainer2);
+            this.ModsTab.Controls.Add(this.splitContainerModsTab);
             this.ModsTab.Location = new System.Drawing.Point(4, 26);
             this.ModsTab.Name = "ModsTab";
             this.ModsTab.Padding = new System.Windows.Forms.Padding(3);
@@ -147,55 +147,55 @@
             this.ModsTab.TabIndex = 0;
             this.ModsTab.Text = "Mods";
             // 
-            // splitContainer2
+            // splitContainerModsTab
             // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.splitContainerModsTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerModsTab.Location = new System.Drawing.Point(3, 3);
+            this.splitContainerModsTab.Name = "splitContainerModsTab";
+            this.splitContainerModsTab.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // splitContainer2.Panel1
+            // splitContainerModsTab.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.splitContainer3);
+            this.splitContainerModsTab.Panel1.Controls.Add(this.splitContainerModFilters);
             // 
-            // splitContainer2.Panel2
+            // splitContainerModsTab.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.ModsButtons);
-            this.splitContainer2.Panel2.Controls.Add(this.dataGridViewMods);
-            this.splitContainer2.Size = new System.Drawing.Size(792, 574);
-            this.splitContainer2.SplitterDistance = 31;
-            this.splitContainer2.TabIndex = 3;
+            this.splitContainerModsTab.Panel2.Controls.Add(this.ModsButtons);
+            this.splitContainerModsTab.Panel2.Controls.Add(this.dataGridViewMods);
+            this.splitContainerModsTab.Size = new System.Drawing.Size(792, 574);
+            this.splitContainerModsTab.SplitterDistance = 31;
+            this.splitContainerModsTab.TabIndex = 3;
             // 
-            // splitContainer3
+            // splitContainerModFilters
             // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Name = "splitContainer3";
+            this.splitContainerModFilters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerModFilters.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainerModFilters.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerModFilters.Name = "splitContainerModFilters";
             // 
-            // splitContainer3.Panel1
+            // splitContainerModFilters.Panel1
             // 
-            this.splitContainer3.Panel1.Controls.Add(this.flowLayoutPanel1);
+            this.splitContainerModFilters.Panel1.Controls.Add(this.flowLayoutModsFiltersComboBoxes);
             // 
-            // splitContainer3.Panel2
+            // splitContainerModFilters.Panel2
             // 
-            this.splitContainer3.Panel2.Controls.Add(this.TextFilterMods);
-            this.splitContainer3.Size = new System.Drawing.Size(792, 31);
-            this.splitContainer3.SplitterDistance = 422;
-            this.splitContainer3.TabIndex = 0;
+            this.splitContainerModFilters.Panel2.Controls.Add(this.TextFilterMods);
+            this.splitContainerModFilters.Size = new System.Drawing.Size(792, 31);
+            this.splitContainerModFilters.SplitterDistance = 422;
+            this.splitContainerModFilters.TabIndex = 0;
             // 
-            // flowLayoutPanel1
+            // flowLayoutModsFiltersComboBoxes
             // 
-            this.flowLayoutPanel1.Controls.Add(this.ComboBoxIncluded);
-            this.flowLayoutPanel1.Controls.Add(this.ComboBoxEnabled);
-            this.flowLayoutPanel1.Controls.Add(this.ComboBoxWS);
-            this.flowLayoutPanel1.Controls.Add(this.label1);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(422, 31);
-            this.flowLayoutPanel1.TabIndex = 0;
-            this.flowLayoutPanel1.WrapContents = false;
+            this.flowLayoutModsFiltersComboBoxes.Controls.Add(this.ComboBoxIncluded);
+            this.flowLayoutModsFiltersComboBoxes.Controls.Add(this.ComboBoxEnabled);
+            this.flowLayoutModsFiltersComboBoxes.Controls.Add(this.ComboBoxWS);
+            this.flowLayoutModsFiltersComboBoxes.Controls.Add(this.label1);
+            this.flowLayoutModsFiltersComboBoxes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutModsFiltersComboBoxes.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutModsFiltersComboBoxes.Name = "flowLayoutModsFiltersComboBoxes";
+            this.flowLayoutModsFiltersComboBoxes.Size = new System.Drawing.Size(422, 31);
+            this.flowLayoutModsFiltersComboBoxes.TabIndex = 0;
+            this.flowLayoutModsFiltersComboBoxes.WrapContents = false;
             // 
             // ComboBoxIncluded
             // 
@@ -338,8 +338,8 @@
             this.dataGridViewMods.AllowUserToAddRows = false;
             this.dataGridViewMods.AllowUserToDeleteRows = false;
             this.dataGridViewMods.AllowUserToResizeRows = false;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Beige;
-            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
+            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridViewMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridViewMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewMods.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -409,7 +409,7 @@
             // 
             // AssetTabSplitter.Panel1
             // 
-            this.AssetTabSplitter.Panel1.Controls.Add(this.splitContainer4);
+            this.AssetTabSplitter.Panel1.Controls.Add(this.splitContainerAssetFilters);
             // 
             // AssetTabSplitter.Panel2
             // 
@@ -418,6 +418,80 @@
             this.AssetTabSplitter.Size = new System.Drawing.Size(792, 574);
             this.AssetTabSplitter.SplitterDistance = 30;
             this.AssetTabSplitter.TabIndex = 0;
+            // 
+            // splitContainerAssetFilters
+            // 
+            this.splitContainerAssetFilters.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerAssetFilters.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainerAssetFilters.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerAssetFilters.Name = "splitContainerAssetFilters";
+            // 
+            // splitContainerAssetFilters.Panel1
+            // 
+            this.splitContainerAssetFilters.Panel1.Controls.Add(this.flowLayoutAssetFilterComboBoxes);
+            // 
+            // splitContainerAssetFilters.Panel2
+            // 
+            this.splitContainerAssetFilters.Panel2.Controls.Add(this.TextFilterAsset);
+            this.splitContainerAssetFilters.Size = new System.Drawing.Size(792, 30);
+            this.splitContainerAssetFilters.SplitterDistance = 422;
+            this.splitContainerAssetFilters.TabIndex = 1;
+            // 
+            // flowLayoutAssetFilterComboBoxes
+            // 
+            this.flowLayoutAssetFilterComboBoxes.Controls.Add(this.ComboBoxAssetIncluded);
+            this.flowLayoutAssetFilterComboBoxes.Controls.Add(this.ComboBoxAssetWS);
+            this.flowLayoutAssetFilterComboBoxes.Controls.Add(this.ComboBoxAssetCategory);
+            this.flowLayoutAssetFilterComboBoxes.Controls.Add(this.label2);
+            this.flowLayoutAssetFilterComboBoxes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutAssetFilterComboBoxes.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutAssetFilterComboBoxes.Name = "flowLayoutAssetFilterComboBoxes";
+            this.flowLayoutAssetFilterComboBoxes.Size = new System.Drawing.Size(422, 30);
+            this.flowLayoutAssetFilterComboBoxes.TabIndex = 0;
+            this.flowLayoutAssetFilterComboBoxes.WrapContents = false;
+            // 
+            // ComboBoxAssetIncluded
+            // 
+            this.ComboBoxAssetIncluded.FormattingEnabled = true;
+            this.ComboBoxAssetIncluded.Location = new System.Drawing.Point(3, 3);
+            this.ComboBoxAssetIncluded.Name = "ComboBoxAssetIncluded";
+            this.ComboBoxAssetIncluded.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetIncluded.TabIndex = 1;
+            // 
+            // ComboBoxAssetWS
+            // 
+            this.ComboBoxAssetWS.FormattingEnabled = true;
+            this.ComboBoxAssetWS.Location = new System.Drawing.Point(130, 3);
+            this.ComboBoxAssetWS.Name = "ComboBoxAssetWS";
+            this.ComboBoxAssetWS.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetWS.TabIndex = 3;
+            // 
+            // ComboBoxAssetCategory
+            // 
+            this.ComboBoxAssetCategory.FormattingEnabled = true;
+            this.ComboBoxAssetCategory.Location = new System.Drawing.Point(257, 3);
+            this.ComboBoxAssetCategory.Name = "ComboBoxAssetCategory";
+            this.ComboBoxAssetCategory.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetCategory.TabIndex = 4;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(384, 0);
+            this.label2.MinimumSize = new System.Drawing.Size(0, 25);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 25);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Filter:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // TextFilterAsset
+            // 
+            this.TextFilterAsset.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TextFilterAsset.Location = new System.Drawing.Point(0, 0);
+            this.TextFilterAsset.Name = "TextFilterAsset";
+            this.TextFilterAsset.Size = new System.Drawing.Size(366, 25);
+            this.TextFilterAsset.TabIndex = 0;
             // 
             // AssetsActionsPanel
             // 
@@ -521,108 +595,34 @@
             this.SaveProfile.Text = "Save As...";
             this.SaveProfile.UseVisualStyleBackColor = true;
             // 
-            // splitContainer4
-            // 
-            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer4.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer4.Name = "splitContainer4";
-            // 
-            // splitContainer4.Panel1
-            // 
-            this.splitContainer4.Panel1.Controls.Add(this.flowLayoutPanel2);
-            // 
-            // splitContainer4.Panel2
-            // 
-            this.splitContainer4.Panel2.Controls.Add(this.TextFilterAsset);
-            this.splitContainer4.Size = new System.Drawing.Size(792, 30);
-            this.splitContainer4.SplitterDistance = 422;
-            this.splitContainer4.TabIndex = 1;
-            // 
-            // flowLayoutPanel2
-            // 
-            this.flowLayoutPanel2.Controls.Add(this.ComboBoxAssetIncluded);
-            this.flowLayoutPanel2.Controls.Add(this.ComboBoxAssetWS);
-            this.flowLayoutPanel2.Controls.Add(this.ComboBoxAssetCategory);
-            this.flowLayoutPanel2.Controls.Add(this.label2);
-            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(422, 30);
-            this.flowLayoutPanel2.TabIndex = 0;
-            this.flowLayoutPanel2.WrapContents = false;
-            // 
-            // ComboBoxAssetIncluded
-            // 
-            this.ComboBoxAssetIncluded.FormattingEnabled = true;
-            this.ComboBoxAssetIncluded.Location = new System.Drawing.Point(3, 3);
-            this.ComboBoxAssetIncluded.Name = "ComboBoxAssetIncluded";
-            this.ComboBoxAssetIncluded.Size = new System.Drawing.Size(121, 25);
-            this.ComboBoxAssetIncluded.TabIndex = 1;
-            // 
-            // CombBoxAssetWS
-            // 
-            this.ComboBoxAssetWS.FormattingEnabled = true;
-            this.ComboBoxAssetWS.Location = new System.Drawing.Point(130, 3);
-            this.ComboBoxAssetWS.Name = "CombBoxAssetWS";
-            this.ComboBoxAssetWS.Size = new System.Drawing.Size(121, 25);
-            this.ComboBoxAssetWS.TabIndex = 3;
-            // 
-            // ComboBoxAssetCategory
-            // 
-            this.ComboBoxAssetCategory.FormattingEnabled = true;
-            this.ComboBoxAssetCategory.Location = new System.Drawing.Point(257, 3);
-            this.ComboBoxAssetCategory.Name = "ComboBoxAssetCategory";
-            this.ComboBoxAssetCategory.Size = new System.Drawing.Size(121, 25);
-            this.ComboBoxAssetCategory.TabIndex = 4;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(384, 0);
-            this.label2.MinimumSize = new System.Drawing.Size(0, 25);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(39, 25);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Filter:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // TextBoxAssetFilter
-            // 
-            this.TextFilterAsset.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TextFilterAsset.Location = new System.Drawing.Point(0, 0);
-            this.TextFilterAsset.Name = "TextBoxAssetFilter";
-            this.TextFilterAsset.Size = new System.Drawing.Size(366, 25);
-            this.TextFilterAsset.TabIndex = 0;
-            // 
             // LoadOrderWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(806, 646);
-            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.splitContainerTopLevel);
             this.MinimumSize = new System.Drawing.Size(524, 334);
             this.Name = "LoadOrderWindow";
             this.Text = "LoadOrder";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoadOrder_FormClosing);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
+            this.splitContainerTopLevel.Panel1.ResumeLayout(false);
+            this.splitContainerTopLevel.Panel2.ResumeLayout(false);
+            this.splitContainerTopLevel.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerTopLevel)).EndInit();
+            this.splitContainerTopLevel.ResumeLayout(false);
             this.TabContainer.ResumeLayout(false);
             this.ModsTab.ResumeLayout(false);
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
-            this.splitContainer3.Panel1.ResumeLayout(false);
-            this.splitContainer3.Panel2.ResumeLayout(false);
-            this.splitContainer3.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
-            this.splitContainer3.ResumeLayout(false);
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.PerformLayout();
+            this.splitContainerModsTab.Panel1.ResumeLayout(false);
+            this.splitContainerModsTab.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerModsTab)).EndInit();
+            this.splitContainerModsTab.ResumeLayout(false);
+            this.splitContainerModFilters.Panel1.ResumeLayout(false);
+            this.splitContainerModFilters.Panel2.ResumeLayout(false);
+            this.splitContainerModFilters.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerModFilters)).EndInit();
+            this.splitContainerModFilters.ResumeLayout(false);
+            this.flowLayoutModsFiltersComboBoxes.ResumeLayout(false);
+            this.flowLayoutModsFiltersComboBoxes.PerformLayout();
             this.ModsButtons.ResumeLayout(false);
             this.ModsButtons.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).EndInit();
@@ -631,21 +631,21 @@
             this.AssetTabSplitter.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.AssetTabSplitter)).EndInit();
             this.AssetTabSplitter.ResumeLayout(false);
+            this.splitContainerAssetFilters.Panel1.ResumeLayout(false);
+            this.splitContainerAssetFilters.Panel2.ResumeLayout(false);
+            this.splitContainerAssetFilters.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerAssetFilters)).EndInit();
+            this.splitContainerAssetFilters.ResumeLayout(false);
+            this.flowLayoutAssetFilterComboBoxes.ResumeLayout(false);
+            this.flowLayoutAssetFilterComboBoxes.PerformLayout();
             this.AssetsActionsPanel.ResumeLayout(false);
             this.AssetsActionsPanel.PerformLayout();
-            this.splitContainer4.Panel1.ResumeLayout(false);
-            this.splitContainer4.Panel2.ResumeLayout(false);
-            this.splitContainer4.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
-            this.splitContainer4.ResumeLayout(false);
-            this.flowLayoutPanel2.ResumeLayout(false);
-            this.flowLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-        private SplitContainer splitContainer1;
+        private SplitContainer splitContainerTopLevel;
         private TabControl TabContainer;
         private TabPage ModsTab;
         private TabPage AssetsTab;
@@ -654,7 +654,7 @@
         private Button Save;
         private Button LoadProfile;
         private Button SaveProfile;
-        private SplitContainer splitContainer2;
+        private SplitContainer splitContainerModsTab;
         private Panel ModsButtons;
         private Button SortByHarmony;
         private Button ReverseOrder;
@@ -673,15 +673,15 @@
         private Button ExcludeAllAssets;
         private Button IncludeAllAssets;
         private CheckedListBox CheckedListBoxAssets;
-        private SplitContainer splitContainer3;
-        private FlowLayoutPanel flowLayoutPanel1;
+        private SplitContainer splitContainerModFilters;
+        private FlowLayoutPanel flowLayoutModsFiltersComboBoxes;
         private ComboBox ComboBoxIncluded;
         private ComboBox ComboBoxEnabled;
         private TextBox TextFilterMods;
         private ComboBox ComboBoxWS;
         private Label label1;
-        private SplitContainer splitContainer4;
-        private FlowLayoutPanel flowLayoutPanel2;
+        private SplitContainer splitContainerAssetFilters;
+        private FlowLayoutPanel flowLayoutAssetFilterComboBoxes;
         private ComboBox ComboBoxAssetIncluded;
         private ComboBox ComboBoxAssetWS;
         private ComboBox ComboBoxAssetCategory;

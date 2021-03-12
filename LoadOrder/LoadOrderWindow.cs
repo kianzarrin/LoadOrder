@@ -208,9 +208,18 @@ namespace LoadOrderTool {
 
         public void PopulateAssets() {
             Log.Info("Populating assets");
-            foreach (var asset in AssetList.Filtered) {
-                CheckedListBoxAssets.Items.Add(asset.DisplayText, asset.IsIncludedPending);
+            CheckedListBoxAssets.SuspendLayout();
+            try {
+                CheckedListBoxAssets.Items.Clear();
+                foreach (var asset in AssetList.Filtered) {
+                    CheckedListBoxAssets.Items.Add(asset.DisplayText, asset.IsIncludedPending);
+                }
+            }catch(Exception ex) {
+                Log.Exception(ex);
+            } finally {
+                CheckedListBoxAssets.ResumeLayout();
             }
+            
         }
 
         private void RefreshModList(object sender, EventArgs e) => RefreshModList();
@@ -341,7 +350,14 @@ namespace LoadOrderTool {
         }
 
         private void CheckedListBoxAssets_ItemCheck(object sender, ItemCheckEventArgs e) {
-            AssetList[e.Index].IsIncludedPending = e.NewValue != CheckState.Unchecked;
+            if (e.NewValue == CheckState.Indeterminate) {
+                Log.Error("unexpected check value: Indeterminate");
+                return;
+            }
+            var assetInfo = AssetList.Filtered[e.Index];
+            bool newVal = e.NewValue == CheckState.Checked;
+            Log.Debug($"{assetInfo} | IsIncludedPending changes to {newVal}");
+            assetInfo.IsIncludedPending = newVal;
         }
 
         private void IncludeAllAssets_Click(object sender, EventArgs e) {
