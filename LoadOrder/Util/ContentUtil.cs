@@ -10,14 +10,14 @@
         }
         public static string ToIncludedPath(string fullPath) {
             string parent = Path.GetDirectoryName(fullPath);
-            string file = Path.GetFullPath(fullPath);
+            string file = Path.GetFileName(fullPath);
             if(file.StartsWith("_"))
                 file = file.Substring(1); //drop _
             return Path.Combine(parent, file);
         }
         public static string ToExcludedPath(string fullPath) {
             string parent = Path.GetDirectoryName(fullPath);
-            string file = Path.GetFullPath(fullPath);
+            string file = Path.GetFileName(fullPath);
             if (!file.StartsWith("_"))
                 file = "_" + file;
             return Path.Combine(parent, file);
