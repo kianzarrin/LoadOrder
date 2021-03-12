@@ -42,7 +42,7 @@ namespace LoadOrderIPatch.Patches {
             if (noAssets) {
                 assemblyDefinition = NoCustomAssetsPatch(assemblyDefinition);
             } else {
-                //ExcludeAssetPatch(assemblyDefinition);
+                ExcludeAssetPatch(assemblyDefinition);
             }
 
 
@@ -222,7 +222,7 @@ namespace LoadOrderIPatch.Patches {
 
                 var callGetFiles = instructions.FirstOrDefault(_c => _c.Calls("GetFiles"));
                 if( callGetFiles != null) {
-                    logger_.Info("patching " + mTarget.Name);
+                    logger_.Info($"patching {mTarget}");
                     var mCheckFiles = GetType().GetMethod(nameof(CheckFiles));
                     var callCheckFiles = Instruction.Create(OpCodes.Call, cm.ImportReference(mCheckFiles));
                     ilProcessor.InsertBefore(callGetFiles, callCheckFiles);
@@ -231,7 +231,7 @@ namespace LoadOrderIPatch.Patches {
             logger_.LogSucessfull();
         }
 
-        public string CheckFiles(string path) {
+        public static string CheckFiles(string path) {
             LoadOrderInjections.SteamUtilities.EnsureIncludedOrExcludedFiles(path);
             return path;
         }
