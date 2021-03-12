@@ -87,14 +87,12 @@ namespace LoadOrderIPatch.Patches {
             Instruction BranchTarget = instructions.Last();// return
             Instruction BrTrueEnd = Instruction.Create(OpCodes.Brtrue, BranchTarget);
 
-            ilProcessor.InsertAfter(CallBoot, call1);
-            ilProcessor.InsertAfter(call1, BrTrueEnd);
-
+            ilProcessor.InsertAfter(CallBoot, call1, BrTrueEnd);
             /**********************************/
             method = asm.MainModule.GetMethod(
                 "LoadOrderInjections.SteamUtilities.RegisterEvents");
             var call2 = Instruction.Create(OpCodes.Call, module.ImportReference(method));
-            ilProcessor.InsertBefore(instructions.First(), call2);
+            ilProcessor.Prefix(call2);
             /**********************************/
 
             logger_.LogSucessfull();

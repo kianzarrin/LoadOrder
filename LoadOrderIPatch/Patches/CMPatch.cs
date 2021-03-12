@@ -186,13 +186,11 @@ namespace LoadOrderIPatch.Patches {
                     var mIsAssetPath = GetType().GetMethod(nameof(IsAssetPath));
                     var callIsAssetPath = Instruction.Create(OpCodes.Call, module.ImportReference(mIsAssetPath));
                     var skipIfAsset = Instruction.Create(OpCodes.Brtrue, last); // goto to return.
-                    ilProcessor.InsertBefore(first, LdArgPath);
-                    ilProcessor.InsertAfter(LdArgPath, callIsAssetPath);
-                    ilProcessor.InsertAfter(callIsAssetPath, skipIfAsset);
+                    ilProcessor.Prefix(LdArgPath, callIsAssetPath, skipIfAsset);
                 } else {
                     // return to skip method.
                     var ret = Instruction.Create(OpCodes.Ret);
-                    ilProcessor.InsertBefore(first, ret);
+                    ilProcessor.Prefix(ret);
                 }
             }
 
