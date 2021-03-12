@@ -5,6 +5,24 @@
     using System.IO;
 
     public static class ContentUtil {
+        public static bool IsPathIncluded(string fullPath) {
+            return Path.GetFileName(fullPath).StartsWith("_");
+        }
+        public static string ToIncludedPath(string fullPath) {
+            string parent = Path.GetDirectoryName(fullPath);
+            string file = Path.GetFullPath(fullPath);
+            if(file.StartsWith("_"))
+                file = file.Substring(1); //drop _
+            return Path.Combine(parent, file);
+        }
+        public static string ToExcludedPath(string fullPath) {
+            string parent = Path.GetDirectoryName(fullPath);
+            string file = Path.GetFullPath(fullPath);
+            if (!file.StartsWith("_"))
+                file = "_" + file;
+            return Path.Combine(parent, file);
+        }
+
         public static bool TryGetID(string dir, out ulong id) {
             string dir2;
             if (dir.StartsWith("_"))

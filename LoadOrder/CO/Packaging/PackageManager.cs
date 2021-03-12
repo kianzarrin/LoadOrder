@@ -143,15 +143,15 @@ namespace CO.Packaging {
 
                 m_Assets = new List<AssetInfo>();
 
-                this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Maps"), PublishedFileId.invalid);
-                this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Scenarios"), PublishedFileId.invalid);
+                //this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Maps"), PublishedFileId.invalid);
+                //this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Scenarios"), PublishedFileId.invalid);
                 this.LoadWorkshopPackages();
                 this.LoadPackages(DataLocation.stylesPath, PublishedFileId.invalid);
                 this.LoadPackages(DataLocation.assetsPath, PublishedFileId.invalid);
-                this.LoadPackages(DataLocation.mapLocation, PublishedFileId.invalid);
-                this.LoadPackages(DataLocation.saveLocation, PublishedFileId.invalid);
+                //this.LoadPackages(DataLocation.mapLocation, PublishedFileId.invalid);
+                //this.LoadPackages(DataLocation.saveLocation, PublishedFileId.invalid);
                 this.LoadPackages(DataLocation.mapThemesPath, PublishedFileId.invalid);
-                this.LoadPackages(DataLocation.scenarioLocation, PublishedFileId.invalid);
+                //this.LoadPackages(DataLocation.scenarioLocation, PublishedFileId.invalid);
 
                 var assets = Config.Assets.Union(
                     m_Assets.Select(item => item.ConfigAssetInfo));
@@ -178,6 +178,7 @@ namespace CO.Packaging {
         }
 
         public void LoadPackages(string path, PublishedFileId id) {
+            CheckFiles(path);
             try {
                 foreach (string file in Directory.GetFiles(path)) {
                     try {
@@ -196,8 +197,27 @@ namespace CO.Packaging {
             }
         }
 
-        public void LoadPackage(string fileName, PublishedFileId id) {
-            var package = new PackageManager.AssetInfo(fileName, false, id);
+
+        public static void CheckFiles(string path) {
+            try {
+                foreach (string file in Directory.GetFiles(path))
+                    CheckFile(file);
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
+        }
+    
+        public static void CheckFile(string fullFilePath) {
+            string included = ContentUtil.ToIncludedPath(fullFilePath);
+            string excluded = ContentUtil.ToExcludedPath(fullFilePath);
+            if (File.Exists(included) && File.Exists(excluded)) {
+                File.Move(included, excluded, overwrite:true);
+                fullFilePath = excluded;
+            }
+        }
+
+        public void LoadPackage(string fullFilePath, PublishedFileId id) {
+            var package = new PackageManager.AssetInfo(fullFilePath, false, id);
             m_Assets.Add(package);
         }
 
