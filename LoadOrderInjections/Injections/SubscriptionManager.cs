@@ -377,15 +377,16 @@ namespace LoadOrderInjections {
         public static void EnsureIncludedOrExcludedFiles(string path) {
             try {
                 foreach (string file in Directory.GetFiles(path))
-                    CheckFile(file);
+                    EnsureFile(file);
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
         }
 
-        public static void CheckFile(string fullFilePath) {
+        public static void EnsureFile(string fullFilePath) {
+            if (string.IsNullOrEmpty(fullFilePath)) return;
             string included = ToIncludedPath(fullFilePath);
-            string excluded = ToExcludedPath(fullFilePath);
+            string excluded = ToExcludedPath2(fullFilePath);
             if (File.Exists(included) && File.Exists(excluded)) {
                 File.Delete(excluded);
                 File.Move(included, excluded);

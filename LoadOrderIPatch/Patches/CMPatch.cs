@@ -35,12 +35,14 @@ namespace LoadOrderIPatch.Patches {
 #if DEBUG
             //assemblyDefinition = InsertPrintStackTrace(assemblyDefinition);
 #endif
+            
+            EnsureIncludedExcludedPackagePatch(assemblyDefinition);
+
             bool noAssets = Environment.GetCommandLineArgs().Any(_arg => _arg == "-noAssets");
             if (noAssets) {
                 assemblyDefinition = NoCustomAssetsPatch(assemblyDefinition);
             } else {
-                EnsureIncludedExcludedPackagePatch(assemblyDefinition);
-                ExcludeAssetPatch(assemblyDefinition);
+                //ExcludeAssetPatch(assemblyDefinition);
             }
 
 
@@ -218,7 +220,8 @@ namespace LoadOrderIPatch.Patches {
                 ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
                 var instructions = mTarget.Body.Instructions;
 
-                foreach( var callGetFiles in instructions.Where(_c => _c.Calls("GetFiles"))) {
+                var callGetFiles = instructions.FirstOrDefault(_c => _c.Calls("GetFiles"));
+                if( callGetFiles != null) {
                     logger_.Info("patching " + mTarget.Name);
                     var mCheckFiles = GetType().GetMethod(nameof(CheckFiles));
                     var callCheckFiles = Instruction.Create(OpCodes.Call, cm.ImportReference(mCheckFiles));
