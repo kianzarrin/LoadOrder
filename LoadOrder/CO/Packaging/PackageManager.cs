@@ -197,7 +197,6 @@ namespace CO.Packaging {
             }
         }
 
-
         public static void CheckFiles(string path) {
             try {
                 foreach (string file in Directory.GetFiles(path))

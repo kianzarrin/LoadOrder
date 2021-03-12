@@ -343,6 +343,24 @@ namespace LoadOrderInjections {
             return Path.Combine(p1, p2);
         }
 
+        public static bool IsPathIncluded(string fullPath) {
+            return Path.GetFileName(fullPath).StartsWith("_");
+        }
+        public static string ToIncludedPath(string fullPath) {
+            string parent = Path.GetDirectoryName(fullPath);
+            string file = Path.GetFullPath(fullPath);
+            if (file.StartsWith("_"))
+                file = file.Substring(1); //drop _
+            return Path.Combine(parent, file);
+        }
+        public static string ToExcludedPath2(string fullPath) {
+            string parent = Path.GetDirectoryName(fullPath);
+            string file = Path.GetFullPath(fullPath);
+            if (!file.StartsWith("_"))
+                file = "_" + file;
+            return Path.Combine(parent, file);
+        }
+
         public static void EnsureIncludedOrExcluded(PublishedFileId id) {
             try {
                 string path1 = PlatformService.workshop.GetSubscribedItemPath(id);
@@ -353,6 +371,25 @@ namespace LoadOrderInjections {
                 }
             } catch (Exception ex) {
                 Log.Exception(ex, $"EnsureIncludedOrExcluded({id})", showInPanel: false);
+            }
+        }
+
+        public static void EnsureIncludedOrExcludedFiles(string path) {
+            try {
+                foreach (string file in Directory.GetFiles(path))
+                    CheckFile(file);
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
+        }
+
+        public static void CheckFile(string fullFilePath) {
+            string included = ToIncludedPath(fullFilePath);
+            string excluded = ToExcludedPath(fullFilePath);
+            if (File.Exists(included) && File.Exists(excluded)) {
+                File.Delete(excluded);
+                File.Move(included, excluded);
+                fullFilePath = excluded;
             }
         }
 

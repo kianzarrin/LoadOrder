@@ -39,6 +39,7 @@ namespace LoadOrderIPatch.Patches {
             if (noAssets) {
                 assemblyDefinition = NoCustomAssetsPatch(assemblyDefinition);
             } else {
+                EnsureIncludedExcludedPackagePatch(assemblyDefinition);
                 ExcludeAssetPatch(assemblyDefinition);
             }
 
@@ -201,6 +202,35 @@ namespace LoadOrderIPatch.Patches {
         public static bool IsAssetPath(string path)
         {
             return path == DataLocation.assetsPath;
+        }
+
+        /// <summary>
+        /// moved folder to _folder if neccessary before calling getfiles.
+        /// </summary>
+        public void EnsureIncludedExcludedPackagePatch(AssemblyDefinition CM) {
+            logger_.LogStartPatching();
+            var cm = CM.MainModule;
+            var type = cm.GetType("ColossalFramework.Packaging.PackageManager");
+            var mTargets = type.Methods.Where(_m => _m.Name == "LoadPackages");
+
+            foreach (var mTarget in mTargets) {
+                bool loadPath = mTarget.HasParameter("path"); // LoadPackages(string path,bool)
+                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                var instructions = mTarget.Body.Instructions;
+
+                foreach( var callGetFiles in instructions.Where(_c => _c.Calls("GetFiles"))) {
+                    logger_.Info("patching " + mTarget.Name);
+                    var mCheckFiles = GetType().GetMethod(nameof(CheckFiles));
+                    var callCheckFiles = Instruction.Create(OpCodes.Call, cm.ImportReference(mCheckFiles));
+                    ilProcessor.InsertBefore(callGetFiles, callCheckFiles);
+                }
+            }
+            logger_.LogSucessfull();
+        }
+
+        public string CheckFiles(string path) {
+            LoadOrderInjections.SteamUtilities.EnsureIncludedOrExcludedFiles(path);
+            return path;
         }
 
         public void ExcludeAssetPatch(AssemblyDefinition CM) {
