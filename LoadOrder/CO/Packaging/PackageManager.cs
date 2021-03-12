@@ -3,6 +3,8 @@ namespace CO.Packaging {
     using CO.IO;
     using CO.PlatformServices;
     using LoadOrderTool;
+    using LoadOrderTool.Util;
+    using Mono.Cecil;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -11,8 +13,6 @@ namespace CO.Packaging {
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Runtime.ConstrainedExecution;
-    using LoadOrderTool.Util;
-    using Mono.Cecil;
     using System.Threading;
 
     public class PackageManager : SingletonLite<PackageManager> {
@@ -31,7 +31,6 @@ namespace CO.Packaging {
 
             public string AssetPath => m_Path;
 
-
             public string AssetIncludedPath {
                 get {
                     if (FileName.StartsWith("_"))
@@ -45,19 +44,16 @@ namespace CO.Packaging {
             public string FileName => Path.GetFileName(AssetPath);
             public string parentDirPath => Path.GetDirectoryName(AssetPath);
 
-
-
             public string DisplayText {
                 get {
                     string ret = ConfigAssetInfo.AssetName;
-                    if(string.IsNullOrEmpty(ret))
+                    if (string.IsNullOrEmpty(ret))
                         ret = AssetName;
                     if (publishedFileID != PublishedFileId.invalid)
                         ret = $"{publishedFileID.AsUInt64}: " + ret;
                     return ret;
                 }
             }
-
 
             public PublishedFileId publishedFileID => this.m_PublishedFileID;
 
@@ -106,8 +102,7 @@ namespace CO.Packaging {
 
             private PublishedFileId m_PublishedFileID = PublishedFileId.invalid;
 
-            private AssetInfo() {
-            }
+            private AssetInfo() { }
 
             public AssetInfo(string path, bool builtin, PublishedFileId id) {
                 this.m_Path = path;
@@ -121,10 +116,10 @@ namespace CO.Packaging {
                 isIncludedPending_ = IsIncluded;
             }
 
-                   public LoadOrderShared.AssetInfo ConfigAssetInfo { get; private set; }
+            public LoadOrderShared.AssetInfo ConfigAssetInfo { get; private set; }
 
             public override string ToString() {
-                return 
+                return
                     $"AssetInfo: path={AssetPath} " +
                     $"included={IsIncludedPending} " +
                     $"DisplayText={DisplayText} " +
@@ -143,13 +138,12 @@ namespace CO.Packaging {
 
         public IEnumerable<AssetInfo> GetAssets() => m_Assets;
 
-        
         public void LoadPackages() {
             try {
 
                 m_Assets = new List<AssetInfo>();
 
-                this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Maps") , PublishedFileId.invalid);
+                this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Maps"), PublishedFileId.invalid);
                 this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Scenarios"), PublishedFileId.invalid);
                 this.LoadWorkshopPackages();
                 this.LoadPackages(DataLocation.stylesPath, PublishedFileId.invalid);
@@ -163,7 +157,7 @@ namespace CO.Packaging {
                     m_Assets.Select(item => item.ConfigAssetInfo));
                 Config.Assets = assets.ToArray();
                 ConfigWrapper.Dirty = true;
-            }catch (Exception ex) {
+            } catch (Exception ex) {
                 Log.Exception(ex);
             }
         }
@@ -207,9 +201,8 @@ namespace CO.Packaging {
             m_Assets.Add(package);
         }
 
-
         public void ApplyPendingValues() {
-            foreach(var p in GetAssets())
+            foreach (var p in GetAssets())
                 p.ApplyPendingValues();
         }
     }
