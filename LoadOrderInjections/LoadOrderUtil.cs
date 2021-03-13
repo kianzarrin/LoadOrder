@@ -12,10 +12,18 @@ using ColossalFramework.PlatformServices;
 
 namespace LoadOrderInjections.Util {
     internal static class LoadOrderUtil {
-        public static LoadOrderConfig Config;
-
-        static LoadOrderUtil() {
-            Config = LoadOrderConfig.Deserialize(DataLocation.localApplicationData);
+        public static LoadOrderConfig config_;
+        public static LoadOrderConfig Config {
+            get {
+                try {
+                    return config_ ??=
+                        LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+                        ?? new LoadOrderConfig();
+                } catch (Exception ex) {
+                    Log.Exception(ex);
+                    return null;
+                }
+            }
         }
 
         internal static bool HasLoadOrder(this PluginInfo p) {

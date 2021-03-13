@@ -13,6 +13,9 @@ namespace LoadOrderShared {
     public class AssetInfo {
         public string Path; // included path
         public string AssetName;
+        public string description;
+        public string Tags;
+        public string Author;
     }
 
     public class LoadOrderConfig {

@@ -1,6 +1,7 @@
 using ColossalFramework.IO;
 using ColossalFramework.PlatformServices;
 using ColossalFramework.Plugins;
+using ColossalFramework.Packaging;
 using KianCommons;
 using KianCommons.Plugins;
 using LoadOrderShared;
@@ -12,6 +13,7 @@ using UnityEngine;
 using static ColossalFramework.Plugins.PluginManager;
 using static KianCommons.ReflectionHelpers;
 using HarmonyLib;
+using ColossalFramework.Globalization;
 
 namespace LoadOrderMod.Util {
     internal static class LoadOrderUtil {
@@ -32,7 +34,7 @@ namespace LoadOrderMod.Util {
         public static void SaveConfig() =>
             config_?.Serialize(DataLocation.localApplicationData);
 
-        public static void GetPathDetails() {
+        public static void AquirePathDetails() {
             try {
                 Config.GamePath = DataLocation.applicationBase;
                 foreach(var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
@@ -47,7 +49,7 @@ namespace LoadOrderMod.Util {
             }
         }
 
-        public static void GetModsDetails() {
+        public static void AquireModsDetails() {
             foreach(var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
                 try {
                     var modInfo = pluginInfo.GetModConfig();
@@ -66,10 +68,34 @@ namespace LoadOrderMod.Util {
             }
         }
 
+        public static void AquireAssetsDetails() {
+            foreach(var asset in PackageManager.FilterAssets(UserAssetType.CustomAssetMetaData)) {
+                try {
+                    if(!asset.isMainAsset) continue;
+                    string path = asset.pathOnDisk;
+                    var assetInfo = asset.GetAssetConfig();
+                    if(assetInfo == null) {
+                        assetInfo = new LoadOrderShared.AssetInfo { Path = asset.pathOnDisk};
+                        Config.Assets = Config.Assets.AddToArray(assetInfo);
+                    }
+                    CustomAssetMetaData metaData = asset.Instantiate<CustomAssetMetaData>();
+                    assetInfo.AssetName = asset.name;
+                    assetInfo.Author = asset.package.packageAuthor;
+                    assetInfo.description = SafeGetAssetDesc(metaData, asset.package);
+                    var tags = metaData.steamTags;
+                    tags.ReplaceElement("Road", "Network");
+                    assetInfo.Tags = string.Join(" ", metaData.steamTags);
+                } catch(Exception ex) {
+                    Log.Exception(ex);
+                }
+            }
+        }
+
         public static void StoreConifgDetails() {
             try {
-                GetPathDetails();
-                GetModsDetails();
+                AquirePathDetails();
+                AquireModsDetails();
+                AquireAssetsDetails();
                 SaveConfig();
             } catch(Exception ex) {
                 Log.Exception(ex);
@@ -91,7 +117,36 @@ namespace LoadOrderMod.Util {
         }
 
         internal static LoadOrderShared.ModInfo GetModConfig(this PluginInfo p) =>
-            Config?.Mods?.FirstOrDefault(_mod => _mod.Path == p.modPath);
+            Config?.Mods?.FirstOrDefault(item => item.Path == p.modPath);
+
+        internal static LoadOrderShared.AssetInfo GetAssetConfig(this Package.Asset a) =>
+            Config?.Assets?.FirstOrDefault(item => item.Path == a.pathOnDisk);
+        private static string SafeGetAssetDesc(CustomAssetMetaData metaData, Package package) {
+            string localeID;
+            if(metaData.type == CustomAssetMetaData.Type.Building) {
+                localeID = "BUILDING_DESC";
+            } else if(metaData.type == CustomAssetMetaData.Type.Prop) {
+                localeID = "PROPS_DESC";
+            } else if(metaData.type == CustomAssetMetaData.Type.Tree) {
+                localeID = "TREE_DESC";
+            } else {
+                if(metaData.type != CustomAssetMetaData.Type.Road) {
+                    return metaData.name;
+                }
+                localeID = "NET_DESC";
+            }
+            return SafeGetAssetString(localeID, metaData.name, package);
+        }
+
+        private static string SafeGetAssetString(string localeID, string assetName, Package package) {
+            if(package != null) {
+                string key = package.packageName + "." + assetName + "_Data";
+                if(Locale.Exists(localeID, key)) {
+                    return Locale.Get(localeID, key);
+                }
+            }
+            return assetName;
+        }
 
         internal static string DllName(this PluginInfo p) =>
             p.userModInstance?.GetType()?.Assembly?.GetName()?.Name;
