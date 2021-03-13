@@ -385,8 +385,10 @@
             this.Description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.Description.HeaderText = "Description";
             this.Description.Name = "Description";
+            this.Description.ReadOnly = true;
             this.Description.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Description.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+
             // 
             // AssetsTab
             // 
