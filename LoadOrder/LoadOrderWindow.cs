@@ -389,7 +389,7 @@ namespace LoadOrderTool {
                         asset.AssetName,
                         asset.ConfigAssetInfo.Author,
                         asset.ConfigAssetInfo.Date,
-                        asset.ConfigAssetInfo.Tags,
+                        string.Join(", ",asset.ConfigAssetInfo.Tags),
                         asset);
                     dataGridAssets.Rows[row].Cells[cName.Index].ToolTipText = 
                         asset.ConfigAssetInfo.description;
@@ -398,8 +398,7 @@ namespace LoadOrderTool {
                 ComboBoxAssetTags.Items.Clear();
                 ComboBoxAssetTags.Items.Add("None");
                 ComboBoxAssetTags.Items.AddRange(PackageManager.instance.GetAllTags());
-                ComboBoxAssetTags.SelectedIndex = 0
-                    ;
+                ComboBoxAssetTags.SelectedIndex = 0;
             } catch (Exception ex) {
                 Log.Exception(ex);
             } finally {
