@@ -293,8 +293,6 @@ namespace LoadOrderTool {
 
         DataGridViewColumn cAsset;
 
-        AssetList AssetList;
-
         void InitializeAssetTab() {
             cAsset = new DataGridViewColumn(new ObjectCell()) {
                 Name = "AssetColumn",
@@ -363,18 +361,16 @@ namespace LoadOrderTool {
 
         public void LoadAsssets() {
             PackageManager.instance.LoadPackages();
-            AssetList = AssetList.GetAllAssets();
             PopulateAssets();
             FilterAssetRows();
         }
-
 
         public void PopulateAssets() {
             Log.Info("Populating assets");
             dataGridAssets.SuspendLayout();
             try {
                 dataGridAssets.Rows.Clear();
-                foreach (var asset in AssetList.Filtered) {
+                foreach (var asset in PackageManager.instance.GetAssets()) {
                     int row = dataGridAssets.Rows.Add(
                         asset.IsIncludedPending,
                         asset.publishedFileID,
@@ -382,7 +378,8 @@ namespace LoadOrderTool {
                         asset.ConfigAssetInfo.Author,
                         asset.ConfigAssetInfo.Tags,
                         asset);
-                    dataGridAssets.Rows[row].Cells[cName.Index].ToolTipText = asset.ConfigAssetInfo.description;
+                    dataGridAssets.Rows[row].Cells[cName.Index].ToolTipText = 
+                        asset.ConfigAssetInfo.description;
                 }
             } catch (Exception ex) {
                 Log.Exception(ex);
