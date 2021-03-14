@@ -507,6 +507,7 @@
             this.dataGridAssets.AllowUserToDeleteRows = false;
             this.dataGridAssets.AllowUserToOrderColumns = true;
             this.dataGridAssets.AllowUserToResizeRows = false;
+            this.dataGridAssets.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dataGridAssets.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridAssets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridAssets.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {

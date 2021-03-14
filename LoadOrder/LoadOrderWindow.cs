@@ -1,6 +1,7 @@
 ﻿using CO;
 using CO.Packaging;
 using CO.Plugins;
+using CO.PlatformServices;
 using LoadOrderTool.Util;
 using System;
 using System.Collections.Generic;
@@ -370,12 +371,17 @@ namespace LoadOrderTool {
             dataGridAssets.SuspendLayout();
             try {
                 dataGridAssets.Rows.Clear();
+
                 foreach (var asset in PackageManager.instance.GetAssets()) {
+                    string id = asset.publishedFileID.AsUInt64.ToString();
+                    if (id == "0" || asset.publishedFileID == PublishedFileId.invalid)
+                        id = "";
                     int row = dataGridAssets.Rows.Add(
                         asset.IsIncludedPending,
-                        asset.publishedFileID,
+                        id,
                         asset.AssetName,
                         asset.ConfigAssetInfo.Author,
+                        asset.ConfigAssetInfo.Date,
                         asset.ConfigAssetInfo.Tags,
                         asset);
                     dataGridAssets.Rows[row].Cells[cName.Index].ToolTipText = 
@@ -389,6 +395,7 @@ namespace LoadOrderTool {
         }
 
         public void FilterAssetRows() {
+            Log.Debug("cAsset.Index="+cAsset.Index);
             foreach (DataGridViewRow row in dataGridAssets.Rows) {
                 var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
                 row.Visible = AssetPredicate(asset);

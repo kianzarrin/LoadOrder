@@ -82,6 +82,7 @@ namespace LoadOrderMod.Util {
                     assetInfo.AssetName = asset.name;
                     assetInfo.Author = asset.package.packageAuthor;
                     assetInfo.description = SafeGetAssetDesc(metaData, asset.package);
+                    assetInfo.Date = metaData.getTimeStamp.ToLocalTime().ToString();
                     var tags = metaData.steamTags;
                     tags.ReplaceElement("Road", "Network");
                     assetInfo.Tags = string.Join(" ", metaData.steamTags);
