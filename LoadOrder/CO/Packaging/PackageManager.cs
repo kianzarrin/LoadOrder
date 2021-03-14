@@ -22,9 +22,9 @@ namespace CO.Packaging {
         public class AssetInfo {
             private string m_Path;
 
-            private bool m_IsBuiltin;
+            //private bool m_IsBuiltin;
 
-            public bool isBuiltin => m_IsBuiltin;
+            //public bool isBuiltin => m_IsBuiltin;
 
             public bool IsLocal => publishedFileID == PublishedFileId.invalid;
             public bool IsWorkshop => !IsLocal;
@@ -102,11 +102,15 @@ namespace CO.Packaging {
 
             private PublishedFileId m_PublishedFileID = PublishedFileId.invalid;
 
+            public IEnumerable<string> GetTags() => 
+                ConfigAssetInfo?.Tags?.Split(' ') ?? 
+                new string[] { };
+
             private AssetInfo() { }
 
             public AssetInfo(string path, bool builtin, PublishedFileId id) {
                 this.m_Path = path;
-                this.m_IsBuiltin = builtin;
+                //this.m_IsBuiltin = builtin;
                 this.m_PublishedFileID = id;
                 this.ConfigAssetInfo = PackageManager.instance.Config.Assets.FirstOrDefault(
                     item => item.Path == AssetIncludedPath);
@@ -137,6 +141,9 @@ namespace CO.Packaging {
         private List<AssetInfo> m_Assets = new List<AssetInfo>();
 
         public IEnumerable<AssetInfo> GetAssets() => m_Assets;
+
+        public string[] GetAllTags() => 
+            m_Assets.SelectMany(a => a.GetTags()).ToArray();
 
         public void LoadPackages() {
             try {

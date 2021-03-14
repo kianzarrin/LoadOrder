@@ -341,6 +341,12 @@ namespace LoadOrderTool {
                 }
             }
             {
+                var filter = ComboBoxAssetTags.SelectedItem as string;
+                if(filter != "None" && !a.GetTags().Contains(filter)) {
+                    return false;
+                }
+            }
+            {
                 var words = TextFilterAsset.Text?.Split("");
                 if (ContainsWords(a.DisplayText, words))
                     return true;
@@ -387,6 +393,12 @@ namespace LoadOrderTool {
                     dataGridAssets.Rows[row].Cells[cName.Index].ToolTipText = 
                         asset.ConfigAssetInfo.description;
                 }
+
+                ComboBoxAssetTags.Items.Clear();
+                ComboBoxAssetTags.Items.Add("None");
+                ComboBoxAssetTags.Items.AddRange(PackageManager.instance.GetAllTags());
+                ComboBoxAssetTags.SelectedIndex = 0
+                    ;
             } catch (Exception ex) {
                 Log.Exception(ex);
             } finally {

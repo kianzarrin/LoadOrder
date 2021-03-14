@@ -60,7 +60,7 @@
             this.flowLayoutAssetFilterComboBoxes = new System.Windows.Forms.FlowLayoutPanel();
             this.ComboBoxAssetIncluded = new System.Windows.Forms.ComboBox();
             this.ComboBoxAssetWS = new System.Windows.Forms.ComboBox();
-            this.ComboBoxAssetCategory = new System.Windows.Forms.ComboBox();
+            this.ComboBoxAssetTags = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.TextFilterAsset = new System.Windows.Forms.TextBox();
             this.dataGridAssets = new System.Windows.Forms.DataGridView();
@@ -449,7 +449,7 @@
             // 
             this.flowLayoutAssetFilterComboBoxes.Controls.Add(this.ComboBoxAssetIncluded);
             this.flowLayoutAssetFilterComboBoxes.Controls.Add(this.ComboBoxAssetWS);
-            this.flowLayoutAssetFilterComboBoxes.Controls.Add(this.ComboBoxAssetCategory);
+            this.flowLayoutAssetFilterComboBoxes.Controls.Add(this.ComboBoxAssetTags);
             this.flowLayoutAssetFilterComboBoxes.Controls.Add(this.label2);
             this.flowLayoutAssetFilterComboBoxes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutAssetFilterComboBoxes.Location = new System.Drawing.Point(0, 0);
@@ -476,11 +476,11 @@
             // 
             // ComboBoxAssetCategory
             // 
-            this.ComboBoxAssetCategory.FormattingEnabled = true;
-            this.ComboBoxAssetCategory.Location = new System.Drawing.Point(257, 3);
-            this.ComboBoxAssetCategory.Name = "ComboBoxAssetCategory";
-            this.ComboBoxAssetCategory.Size = new System.Drawing.Size(121, 25);
-            this.ComboBoxAssetCategory.TabIndex = 4;
+            this.ComboBoxAssetTags.FormattingEnabled = true;
+            this.ComboBoxAssetTags.Location = new System.Drawing.Point(257, 3);
+            this.ComboBoxAssetTags.Name = "ComboBoxAssetCategory";
+            this.ComboBoxAssetTags.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetTags.TabIndex = 4;
             // 
             // label2
             // 
@@ -743,7 +743,7 @@
         private FlowLayoutPanel flowLayoutAssetFilterComboBoxes;
         private ComboBox ComboBoxAssetIncluded;
         private ComboBox ComboBoxAssetWS;
-        private ComboBox ComboBoxAssetCategory;
+        private ComboBox ComboBoxAssetTags;
         private Label label2;
         private TextBox TextFilterAsset;
         private DataGridView dataGridAssets;
