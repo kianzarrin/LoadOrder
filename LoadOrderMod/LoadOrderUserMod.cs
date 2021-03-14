@@ -51,6 +51,8 @@ namespace LoadOrderMod {
                 LoadOrderUtil.TurnOffSteamPanels();
 
                 LoadingManager.instance.m_introLoaded += LoadOrderUtil.StoreConifgDetails;
+                if(SceneManager.GetActiveScene().name == "IntroScreen")
+                    LoadOrderUtil.StoreConifgDetails();
 
                 Log.Flush();
             } catch(Exception ex) {

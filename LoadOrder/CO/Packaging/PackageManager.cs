@@ -103,8 +103,7 @@ namespace CO.Packaging {
             private PublishedFileId m_PublishedFileID = PublishedFileId.invalid;
 
             public IEnumerable<string> GetTags() => 
-                ConfigAssetInfo?.Tags?.Split(' ') ?? 
-                new string[] { };
+                ConfigAssetInfo?.Tags ?? new string[] { };
 
             private AssetInfo() { }
 

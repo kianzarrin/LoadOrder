@@ -81,12 +81,10 @@ namespace LoadOrderMod.Util {
                     }
                     CustomAssetMetaData metaData = asset.Instantiate<CustomAssetMetaData>();
                     assetInfo.AssetName = asset.name;
-                    assetInfo.Author = asset.package.packageAuthor;
+                    assetInfo.Author = asset.GetAuthor();
                     assetInfo.description = SafeGetAssetDesc(metaData, asset.package);
                     assetInfo.Date = metaData.getTimeStamp.ToLocalTime().ToString();
-                    var tags = metaData.steamTags;
-                    tags.ReplaceElement("Road", "Network");
-                    assetInfo.Tags = string.Join(" ", metaData.steamTags);
+                    assetInfo.Tags = metaData.Tags();
                 } catch(Exception ex) {
                     Log.Exception(ex);
                 }
@@ -124,6 +122,18 @@ namespace LoadOrderMod.Util {
         internal static LoadOrderShared.AssetInfo GetAssetConfig(this Package.Asset a) =>
             Config?.Assets?.FirstOrDefault(item => item.Path == a.GetPath());
         internal static string GetPath(this Package.Asset a) => a.package.packagePath;
+
+        static string GetAuthor(this Package.Asset a) => ResolveName(a.package.packageAuthor);
+        static string ResolveName(string str) {
+            string[] array = str.Split(':');
+            if(array.Length == 2 &&
+                array[0] == "steamid" &&
+                ulong.TryParse(array[1], out ulong value) &&
+                value > 0) {
+                return new Friend(new UserID(value)).personaName;
+            }
+            return null;
+        }
 
         private static string SafeGetAssetDesc(CustomAssetMetaData metaData, Package package) {
             string localeID;

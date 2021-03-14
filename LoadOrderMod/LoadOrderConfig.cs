@@ -15,7 +15,7 @@ namespace LoadOrderShared {
         public string AssetName;
         public string description;
         public string Date;
-        public string Tags;
+        public string[] Tags;
         public string Author;
 
     }
