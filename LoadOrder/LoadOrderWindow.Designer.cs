@@ -64,7 +64,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.TextFilterAsset = new System.Windows.Forms.TextBox();
             this.dataGridAssets = new System.Windows.Forms.DataGridView();
-            this.cIncluded = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cIncluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.cID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cAuthor = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -747,7 +747,7 @@
         private Label label2;
         private TextBox TextFilterAsset;
         private DataGridView dataGridAssets;
-        private DataGridViewTextBoxColumn cIncluded;
+        private DataGridViewCheckBoxColumn cIncluded;
         private DataGridViewTextBoxColumn cID;
         private DataGridViewTextBoxColumn cName;
         private DataGridViewTextBoxColumn cAuthor;
