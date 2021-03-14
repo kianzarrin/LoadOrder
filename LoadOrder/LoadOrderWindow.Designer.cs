@@ -63,10 +63,16 @@
             this.ComboBoxAssetCategory = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.TextFilterAsset = new System.Windows.Forms.TextBox();
+            this.dataGridAssets = new System.Windows.Forms.DataGridView();
+            this.cIncluded = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cAuthor = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cTags = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AssetsActionsPanel = new System.Windows.Forms.Panel();
             this.ExcludeAllAssets = new System.Windows.Forms.Button();
             this.IncludeAllAssets = new System.Windows.Forms.Button();
-            this.CheckedListBoxAssets = new System.Windows.Forms.CheckedListBox();
             this.AutoSave = new System.Windows.Forms.CheckBox();
             this.ReloadAll = new System.Windows.Forms.Button();
             this.Save = new System.Windows.Forms.Button();
@@ -99,6 +105,7 @@
             this.splitContainerAssetFilters.Panel2.SuspendLayout();
             this.splitContainerAssetFilters.SuspendLayout();
             this.flowLayoutAssetFilterComboBoxes.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridAssets)).BeginInit();
             this.AssetsActionsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -388,7 +395,6 @@
             this.Description.ReadOnly = true;
             this.Description.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Description.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-
             // 
             // AssetsTab
             // 
@@ -415,8 +421,8 @@
             // 
             // AssetTabSplitter.Panel2
             // 
+            this.AssetTabSplitter.Panel2.Controls.Add(this.dataGridAssets);
             this.AssetTabSplitter.Panel2.Controls.Add(this.AssetsActionsPanel);
-            this.AssetTabSplitter.Panel2.Controls.Add(this.CheckedListBoxAssets);
             this.AssetTabSplitter.Size = new System.Drawing.Size(792, 574);
             this.AssetTabSplitter.SplitterDistance = 30;
             this.AssetTabSplitter.TabIndex = 0;
@@ -495,6 +501,65 @@
             this.TextFilterAsset.Size = new System.Drawing.Size(366, 25);
             this.TextFilterAsset.TabIndex = 0;
             // 
+            // dataGridAssets
+            // 
+            this.dataGridAssets.AllowUserToAddRows = false;
+            this.dataGridAssets.AllowUserToDeleteRows = false;
+            this.dataGridAssets.AllowUserToOrderColumns = true;
+            this.dataGridAssets.AllowUserToResizeRows = false;
+            this.dataGridAssets.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.dataGridAssets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridAssets.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.cIncluded,
+            this.cID,
+            this.cName,
+            this.cAuthor,
+            this.cDate,
+            this.cTags});
+            this.dataGridAssets.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridAssets.Location = new System.Drawing.Point(0, 0);
+            this.dataGridAssets.Name = "dataGridAssets";
+            this.dataGridAssets.RowHeadersVisible = false;
+            this.dataGridAssets.RowTemplate.Height = 27;
+            this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridAssets.Size = new System.Drawing.Size(712, 540);
+            this.dataGridAssets.TabIndex = 6;
+            // 
+            // cIncluded
+            // 
+            this.cIncluded.HeaderText = "Included";
+            this.cIncluded.Name = "cIncluded";
+            // 
+            // cID
+            // 
+            this.cID.HeaderText = "ID";
+            this.cID.Name = "cID";
+            this.cID.ReadOnly = true;
+            // 
+            // cName
+            // 
+            this.cName.HeaderText = "Name";
+            this.cName.Name = "cName";
+            this.cName.ReadOnly = true;
+            // 
+            // cAuthor
+            // 
+            this.cAuthor.HeaderText = "Author";
+            this.cAuthor.Name = "cAuthor";
+            this.cAuthor.ReadOnly = true;
+            // 
+            // cDate
+            // 
+            this.cDate.HeaderText = "Date";
+            this.cDate.Name = "cDate";
+            this.cDate.ReadOnly = true;
+            // 
+            // cTags
+            // 
+            this.cTags.HeaderText = "Tags";
+            this.cTags.Name = "cTags";
+            this.cTags.ReadOnly = true;
+            // 
             // AssetsActionsPanel
             // 
             this.AssetsActionsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -529,15 +594,6 @@
             this.IncludeAllAssets.TabIndex = 1;
             this.IncludeAllAssets.Text = "Include All";
             this.IncludeAllAssets.UseVisualStyleBackColor = true;
-            // 
-            // CheckedListBoxAssets
-            // 
-            this.CheckedListBoxAssets.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CheckedListBoxAssets.FormattingEnabled = true;
-            this.CheckedListBoxAssets.Location = new System.Drawing.Point(0, 0);
-            this.CheckedListBoxAssets.Name = "CheckedListBoxAssets";
-            this.CheckedListBoxAssets.Size = new System.Drawing.Size(792, 540);
-            this.CheckedListBoxAssets.TabIndex = 4;
             // 
             // AutoSave
             // 
@@ -640,6 +696,7 @@
             this.splitContainerAssetFilters.ResumeLayout(false);
             this.flowLayoutAssetFilterComboBoxes.ResumeLayout(false);
             this.flowLayoutAssetFilterComboBoxes.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridAssets)).EndInit();
             this.AssetsActionsPanel.ResumeLayout(false);
             this.AssetsActionsPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -674,7 +731,6 @@
         private Panel AssetsActionsPanel;
         private Button ExcludeAllAssets;
         private Button IncludeAllAssets;
-        private CheckedListBox CheckedListBoxAssets;
         private SplitContainer splitContainerModFilters;
         private FlowLayoutPanel flowLayoutModsFiltersComboBoxes;
         private ComboBox ComboBoxIncluded;
@@ -689,5 +745,12 @@
         private ComboBox ComboBoxAssetCategory;
         private Label label2;
         private TextBox TextFilterAsset;
+        private DataGridView dataGridAssets;
+        private DataGridViewTextBoxColumn cIncluded;
+        private DataGridViewTextBoxColumn cID;
+        private DataGridViewTextBoxColumn cName;
+        private DataGridViewTextBoxColumn cAuthor;
+        private DataGridViewTextBoxColumn cDate;
+        private DataGridViewTextBoxColumn cTags;
     }
 }

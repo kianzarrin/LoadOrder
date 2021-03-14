@@ -1,16 +1,17 @@
 ﻿using CO;
 using CO.Packaging;
 using CO.Plugins;
+using LoadOrderTool.Util;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using LoadOrderTool.Util;
 
 namespace LoadOrderTool {
     public partial class LoadOrderWindow : Form {
         enum EnabledFilter {
-            None=0,
+            None = 0,
             Enabled,
             Disabled,
         }
@@ -29,11 +30,8 @@ namespace LoadOrderTool {
 
         ModList ModList;
 
-        AssetList AssetList;
-
-        bool populatingAssets_;
-
         public LoadOrderWindow() {
+            Instance = this;
             InitializeComponent();
             dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
 
@@ -67,23 +65,8 @@ namespace LoadOrderTool {
             dataGridViewMods.CurrentCellDirtyStateChanged += dataGridViewMods_CurrentCellDirtyStateChanged;
             dataGridViewMods.EditingControlShowing += dataGridViewMods_EditingControlShowing;
 
-            ComboBoxAssetIncluded.SetItems<IncludedFilter>();
-            ComboBoxAssetIncluded.SelectedIndex = 0;
-            ComboBoxAssetWS.SetItems<WSFilter>();
-            ComboBoxAssetWS.SelectedIndex = 0;
-
-            ComboBoxAssetIncluded.SelectedIndexChanged += RefreshAssetList;
-            ComboBoxAssetWS.SelectedIndexChanged += RefreshAssetList;
-            TextFilterAsset.TextChanged += RefreshAssetList;
-
-            this.IncludeAllAssets.Click += IncludeAllAssets_Click;
-            this.ExcludeAllAssets.Click += ExcludeAllAssets_Click;
-
-            CheckedListBoxAssets.ItemCheck += CheckedListBoxAssets_ItemCheck;
-
-            Instance = this;
             LoadMods();
-            LoadAsssets();
+            InitializeAssetTab();
         }
 
         public bool ModPredicate(PluginManager.PluginInfo p) {
@@ -123,43 +106,14 @@ namespace LoadOrderTool {
             return true;
         }
 
-        public bool AssetPredicate(PackageManager.AssetInfo a) {
-            {
-                var filter = ComboBoxAssetIncluded.GetSelectedItem<IncludedFilter>();
-                if (filter != IncludedFilter.None) {
-                    bool b = filter == IncludedFilter.Included;
-                    if (a.IsIncludedPending != b)
-                        return false;
-                }
-            }
-            {
-                var filter = ComboBoxAssetWS.GetSelectedItem<WSFilter>();
-                if (filter != WSFilter.None) {
-                    bool b = filter == WSFilter.Workshop;
-                    if (a.IsWorkshop != b)
-                        return false;
-                }
-            }
-            {
-                var words = TextFilterAsset.Text?.Split("");
-                if (words != null && words.Length > 0) {
-                    bool match = words.Any(word => a.DisplayText.Contains(word, StringComparison.OrdinalIgnoreCase));
-                    if (!match)
-                        return false;
-                }
-            }
-
-            return true;
-        }
-
         public void LoadMods() {
             PluginManager.instance.LoadPlugins();
             ModList = ModList.GetAllMods();
             RefreshModList(true);
         }
 
-        public void RefreshModList(bool sort=false) {
-            if(sort)
+        public void RefreshModList(bool sort = false) {
+            if (sort)
                 ModList.DefaultSort();
             ModList.FilterIn(ModPredicate);
             PopulateMods();
@@ -197,38 +151,9 @@ namespace LoadOrderTool {
             }
         }
 
-        public void LoadAsssets() {
-            PackageManager.instance.LoadPackages();
-            AssetList = AssetList.GetAllAssets();
-            RefreshAssetList();
-        }
 
-        public void RefreshAssetList() {
-            AssetList.FilterIn(AssetPredicate);
-            PopulateAssets();
-        }
-
-        public void PopulateAssets() {
-            Log.Info("Populating assets");
-            populatingAssets_ = true;
-            CheckedListBoxAssets.SuspendLayout();
-            try {
-                CheckedListBoxAssets.Items.Clear();
-                foreach (var asset in AssetList.Filtered) {
-                    CheckedListBoxAssets.Items.Add(asset.DisplayText, asset.IsIncludedPending);
-                }
-            }catch(Exception ex) {
-                Log.Exception(ex);
-            } finally {
-                CheckedListBoxAssets.ResumeLayout();
-                populatingAssets_ = false;
-            }
-
-        }
 
         private void RefreshModList(object sender, EventArgs e) => RefreshModList();
-
-        private void RefreshAssetList(object sender, EventArgs e) => RefreshAssetList();
 
         private void LoadOrder_FormClosing(object sender, FormClosingEventArgs e) {
             GameSettings.SaveAll();
@@ -262,7 +187,6 @@ namespace LoadOrderTool {
                 return;
             }
         }
-
 
         private void dataGridViewMods_CurrentCellDirtyStateChanged(object sender, EventArgs e) {
             if (dataGridViewMods.CurrentCell is DataGridViewCheckBoxCell) {
@@ -353,28 +277,165 @@ namespace LoadOrderTool {
             }
         }
 
-        private void CheckedListBoxAssets_ItemCheck(object sender, ItemCheckEventArgs e) {
-            if (populatingAssets_) return;
-            if (e.NewValue == CheckState.Indeterminate) {
-                Log.Error("unexpected check value: Indeterminate");
-                return;
+        #region AssetTab
+        class ObjectCell : DataGridViewCell {
+            object value_;
+            protected override object GetValue(int rowIndex) => value_;
+            protected override bool SetValue(int rowIndex, object value) {
+                value_ = value;
+                return true;
             }
-            var assetInfo = AssetList.Filtered[e.Index];
-            bool newVal = e.NewValue == CheckState.Checked;
-            Log.Debug($"{assetInfo} | IsIncludedPending changes to {newVal}");
-            assetInfo.IsIncludedPending = newVal;
+            public override bool Visible => false;
+
+            public override object Clone() => new ObjectCell { value_ = value_ };
+        }
+
+
+        DataGridViewColumn cAsset;
+
+        AssetList AssetList;
+
+        void InitializeAssetTab() {
+            cAsset = new DataGridViewColumn(new ObjectCell()) {
+                Name = "AssetColumn",
+                HeaderText = "AssetColumn",
+                Visible = false,
+                ReadOnly = true,
+            };
+            dataGridAssets.Columns.Add(cAsset);
+
+            ComboBoxAssetIncluded.SetItems<IncludedFilter>();
+            ComboBoxAssetIncluded.SelectedIndex = 0;
+            ComboBoxAssetWS.SetItems<WSFilter>();
+            ComboBoxAssetWS.SelectedIndex = 0;
+
+            ComboBoxAssetIncluded.SelectedIndexChanged += FilterAssetRows;
+            ComboBoxAssetWS.SelectedIndexChanged += FilterAssetRows;
+            TextFilterAsset.TextChanged += FilterAssetRows;
+
+            this.IncludeAllAssets.Click += IncludeAllAssets_Click;
+            this.ExcludeAllAssets.Click += ExcludeAllAssets_Click;
+
+            LoadAsssets();
+
+            dataGridAssets.CellValueChanged += dataGridAssets_CellValueChanged;
+            dataGridAssets.CurrentCellDirtyStateChanged += dataGridAssets_CurrentCellDirtyStateChanged;
+        }
+
+        private void FilterAssetRows(object sender, EventArgs e) => FilterAssetRows();
+
+        public bool AssetPredicate(PackageManager.AssetInfo a) {
+            {
+                var filter = ComboBoxAssetIncluded.GetSelectedItem<IncludedFilter>();
+                if (filter != IncludedFilter.None) {
+                    bool b = filter == IncludedFilter.Included;
+                    if (a.IsIncludedPending != b)
+                        return false;
+                }
+            }
+            {
+                var filter = ComboBoxAssetWS.GetSelectedItem<WSFilter>();
+                if (filter != WSFilter.None) {
+                    bool b = filter == WSFilter.Workshop;
+                    if (a.IsWorkshop != b)
+                        return false;
+                }
+            }
+            {
+                var words = TextFilterAsset.Text?.Split("");
+                if (ContainsWords(a.DisplayText, words))
+                    return true;
+                if (ContainsWords(a.ConfigAssetInfo.Author, words))
+                    return true;
+            }
+            return true;
+        }
+
+        public static bool ContainsWords(string text, IEnumerable<string> words) {
+            if (string.IsNullOrWhiteSpace(text) || words == null || !words.Any())
+                return false;
+            foreach (var word in words) {
+                if (text.Contains(word, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
+
+        public void LoadAsssets() {
+            PackageManager.instance.LoadPackages();
+            AssetList = AssetList.GetAllAssets();
+            PopulateAssets();
+            FilterAssetRows();
+        }
+
+
+        public void PopulateAssets() {
+            Log.Info("Populating assets");
+            dataGridAssets.SuspendLayout();
+            try {
+                dataGridAssets.Rows.Clear();
+                foreach (var asset in AssetList.Filtered) {
+                    int row = dataGridAssets.Rows.Add(
+                        asset.IsIncludedPending,
+                        asset.publishedFileID,
+                        asset.AssetName,
+                        asset.ConfigAssetInfo.Author,
+                        asset.ConfigAssetInfo.Tags,
+                        asset);
+                    dataGridAssets.Rows[row].Cells[cName.Index].ToolTipText = asset.ConfigAssetInfo.description;
+                }
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            } finally {
+                dataGridAssets.ResumeLayout();
+            }
+        }
+
+        public void FilterAssetRows() {
+            foreach (DataGridViewRow row in dataGridAssets.Rows) {
+                var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
+                row.Visible = AssetPredicate(asset);
+            }
+        }
+
+        public void IncludeExcludeVisibleAssets(bool value) {
+            foreach (DataGridViewRow row in dataGridAssets.Rows) {
+                if (!row.Visible) continue;
+                var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
+                row.Cells[cIncluded.Index].Value = asset.IsIncludedPending = value;
+            }
         }
 
         private void IncludeAllAssets_Click(object sender, EventArgs e) {
-            foreach (var asset in AssetList)
-                asset.IsIncludedPending = true;
-            PopulateAssets();
+            IncludeExcludeVisibleAssets(true);
         }
 
         private void ExcludeAllAssets_Click(object sender, EventArgs e) {
-            foreach (var asset in AssetList)
-                asset.IsIncludedPending = false;
-            PopulateAssets();
+            IncludeExcludeVisibleAssets(false);
         }
+
+        private void dataGridAssets_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
+            Log.Debug("dataGridAssets_CellValueChanged() called");
+            var row = dataGridAssets.Rows[e.RowIndex];
+            var assetInfo = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
+            var cell = row.Cells[e.ColumnIndex];
+            var col = cell.OwningColumn;
+            if (col == cIncluded) {
+                assetInfo.IsIncludedPending = (bool)cell.Value;
+                Log.Debug($"{assetInfo} | IsIncludedPending changes to {cell.Value}");
+            } else {
+                Log.Error("unexpected column changed: " + col.Name);
+            }
+        }
+
+        /// <summary>
+        /// makes clicking checkbox to immidiately takes effect without the need for user to press enter.
+        /// </summary>
+        private void dataGridAssets_CurrentCellDirtyStateChanged(object sender, EventArgs e) {
+            if (dataGridAssets.CurrentCell is DataGridViewCheckBoxCell) {
+                dataGridAssets.EndEdit();
+            }
+        }
+        #endregion
     }
 }

@@ -6,6 +6,7 @@ namespace LoadOrderTool {
     using System.IO;
     using System.Reflection;
     using System.Windows.Forms;
+    using System.Threading;
 
     static class Program {
         /// <summary>
@@ -18,7 +19,12 @@ namespace LoadOrderTool {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Console.WriteLine("Hello!");
-                //LoadAssemblies();
+
+                AppDomain.CurrentDomain.TypeResolve += BuildConfig.CurrentDomain_AssemblyResolve;
+                AppDomain.CurrentDomain.AssemblyResolve += BuildConfig.CurrentDomain_AssemblyResolve;
+                AppDomain.CurrentDomain.AssemblyResolve += ResolveInterface;
+                AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
+                Application.ThreadException += UnhandledThreadExceptionHandler;
 
                 Application.Run(new LoadOrderWindow());
             } catch (Exception ex) {
@@ -26,19 +32,6 @@ namespace LoadOrderTool {
             }
         }
 
-        public static void LoadAssemblies() {
-            Log.Info("LoadAssemblies() called ...");
-            AppDomain.CurrentDomain.TypeResolve += BuildConfig.CurrentDomain_AssemblyResolve;
-            AppDomain.CurrentDomain.AssemblyResolve += BuildConfig.CurrentDomain_AssemblyResolve;
-            AppDomain.CurrentDomain.AssemblyResolve += ResolveInterface;
-            AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
-
-            LoadManagedDLLs();
-
-            //PluginManager.instance.LoadPlugins();
-
-            Log.Info("LoadAssemblies() was successful");
-        }
 
         static void LoadManagedDLLs() {
             var dlls = Directory.GetFiles(DataLocation.ManagedDLL, "*.dll");
@@ -52,9 +45,14 @@ namespace LoadOrderTool {
             }
         }
 
+        private static void UnhandledThreadExceptionHandler(object sender, ThreadExceptionEventArgs args) {
+            Exception ex = (Exception)args.Exception;
+            Log.Exception(ex, "Unhandled Exception Occured.");
+        }
+
         private static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args) {
             Exception ex = (Exception)args.ExceptionObject;
-            Log.Exception(new Exception("Unhandled Exception Occured.", ex));
+            Log.Exception(ex, "Unhandled Exception Occured.");
         }
 
         private static Assembly ResolveInterface(object sender, ResolveEventArgs args) {

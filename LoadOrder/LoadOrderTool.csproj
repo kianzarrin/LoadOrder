@@ -31,11 +31,12 @@
     <Compile Remove="CO\PlatformServices\UGCQuery.cs" />
     <Compile Remove="CO\PlatformServices\UserID.cs" />
     <Compile Remove="CO\PlatformServices\Workshop.cs" />
+    <Compile Remove="DataGridViewU32Cell.cs" />
     <Compile Remove="MyPluginManger.cs" />
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Include="..\LoadOrderMod\LoadOrderConfig.cs" Link="LoadOrderConfig.cs" />
+    <Compile Include="..\LoadOrderMod\LoadOrderConfig.cs" Link="Data\LoadOrderConfig.cs" />
     <Compile Include="CO\Plugins\PluginManger.cs" />
   </ItemGroup>
   

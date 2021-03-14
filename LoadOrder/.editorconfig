@@ -5,3 +5,6 @@ dotnet_diagnostic.CS8632.severity = none
 
 # HAA0101: Array allocation for params parameter
 dotnet_diagnostic.HAA0101.severity = none
+
+# HAA0601: Value type to reference type conversion causing boxing allocation
+dotnet_diagnostic.HAA0601.severity = none

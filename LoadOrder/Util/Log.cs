@@ -145,37 +145,41 @@ namespace LoadOrderTool {
                 message = m + " -> \n" + message;
             if (showInPanel)
             {
-                Form prompt = new Form {
-                    Width = 500,
-                    Height = 300,
-                    FormBorderStyle = FormBorderStyle.FixedDialog,
-                    Text = e.GetType().Name,
-                    StartPosition = FormStartPosition.CenterScreen
-                };
-                TextBox textBox = new TextBox()
-                {
-                    Left = 20,
-                    Top = 20,
-                    Width = prompt.Width - 60,
-                    Height = prompt.Height - 115,
-                    Text = message,
-                    ReadOnly = true,
-                    ScrollBars = ScrollBars.Both,
-                    Multiline = true,
-                    WordWrap = false,
-                };
-                //Label textLabel = new Label() { Left = 20, Top = 20, Text = e.ToString()};
-                Button btnOK = new Button() { 
-                    Text = "Ok", 
-                    Left = prompt.Width-150, 
-                    Width = 100, 
-                    Top = prompt.Height - 80
-                };
-                btnOK.Click += (sender, e) => { prompt.Close(); };
-                prompt.Controls.Add(btnOK);
-                prompt.Controls.Add(textBox);
-                prompt.AcceptButton = btnOK;
+                var prompt = new ThreadExceptionDialog(e);
+                if (!string.IsNullOrEmpty(m))
+                    prompt.Text = m + "\n" + prompt.Text;
                 prompt.ShowDialog();
+                //Form prompt = new Form {
+                //    Width = 500,
+                //    Height = 300,
+                //    FormBorderStyle = FormBorderStyle.FixedDialog,
+                //    Text = e.GetType().Name,
+                //    StartPosition = FormStartPosition.CenterScreen
+                //};
+                //TextBox textBox = new TextBox()
+                //{
+                //    Left = 20,
+                //    Top = 20,
+                //    Width = prompt.Width - 60,
+                //    Height = prompt.Height - 115,
+                //    Text = message,
+                //    ReadOnly = true,
+                //    ScrollBars = ScrollBars.Both,
+                //    Multiline = true,
+                //    WordWrap = false,
+                //};
+                ////Label textLabel = new Label() { Left = 20, Top = 20, Text = e.ToString()};
+                //Button btnOK = new Button() { 
+                //    Text = "Ok", 
+                //    Left = prompt.Width-150, 
+                //    Width = 100, 
+                //    Top = prompt.Height - 80
+                //};
+                //btnOK.Click += (sender, e) => { prompt.Close(); };
+                //prompt.Controls.Add(btnOK);
+                //prompt.Controls.Add(textBox);
+                //prompt.AcceptButton = btnOK;
+                //prompt.ShowDialog();
             }
             LogImpl(message, LogLevel.Exception, true);
         }
