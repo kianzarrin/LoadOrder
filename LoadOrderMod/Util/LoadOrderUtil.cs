@@ -69,13 +69,14 @@ namespace LoadOrderMod.Util {
         }
 
         public static void AquireAssetsDetails() {
+            LogCalled();
             foreach(var asset in PackageManager.FilterAssets(UserAssetType.CustomAssetMetaData)) {
                 try {
                     if(!asset.isMainAsset) continue;
-                    string path = asset.pathOnDisk;
+                    string path = asset.package.packagePath;
                     var assetInfo = asset.GetAssetConfig();
                     if(assetInfo == null) {
-                        assetInfo = new LoadOrderShared.AssetInfo { Path = asset.pathOnDisk};
+                        assetInfo = new LoadOrderShared.AssetInfo { Path = asset.GetPath()};
                         Config.Assets = Config.Assets.AddToArray(assetInfo);
                     }
                     CustomAssetMetaData metaData = asset.Instantiate<CustomAssetMetaData>();
@@ -121,7 +122,9 @@ namespace LoadOrderMod.Util {
             Config?.Mods?.FirstOrDefault(item => item.Path == p.modPath);
 
         internal static LoadOrderShared.AssetInfo GetAssetConfig(this Package.Asset a) =>
-            Config?.Assets?.FirstOrDefault(item => item.Path == a.pathOnDisk);
+            Config?.Assets?.FirstOrDefault(item => item.Path == a.GetPath());
+        internal static string GetPath(this Package.Asset a) => a.package.packagePath;
+
         private static string SafeGetAssetDesc(CustomAssetMetaData metaData, Package package) {
             string localeID;
             if(metaData.type == CustomAssetMetaData.Type.Building) {
