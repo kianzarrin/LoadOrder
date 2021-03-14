@@ -142,8 +142,8 @@ namespace CO.Packaging {
 
         public IEnumerable<AssetInfo> GetAssets() => m_Assets;
 
-        public string[] GetAllTags() => 
-            m_Assets.SelectMany(a => a.GetTags()).ToArray();
+        public string[] GetAllTags() =>
+            m_Assets.SelectMany(a => a.GetTags()).Distinct().ToArray();
 
         public void LoadPackages() {
             try {

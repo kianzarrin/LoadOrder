@@ -310,6 +310,7 @@ namespace LoadOrderTool {
 
             ComboBoxAssetIncluded.SelectedIndexChanged += FilterAssetRows;
             ComboBoxAssetWS.SelectedIndexChanged += FilterAssetRows;
+            ComboBoxAssetTags.SelectedIndexChanged += FilterAssetRows;
             TextFilterAsset.TextChanged += FilterAssetRows;
 
             this.IncludeAllAssets.Click += IncludeAllAssets_Click;
