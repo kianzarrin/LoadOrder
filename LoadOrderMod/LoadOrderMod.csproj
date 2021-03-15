@@ -1,32 +1,45 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectGuid>{F75E7E61-C575-44A8-AA22-690CD89E9BA2}</ProjectGuid>
     <TargetFramework>net35</TargetFramework>
     <Deterministic>false</Deterministic>
     <AssemblyVersion>0.3.0.*</AssemblyVersion>
-    <FileAlignment>512</FileAlignment>
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <DefineConstants Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
-  
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DefineConstants />
-  </PropertyGroup>
-
   <PropertyGroup>
-    <ManagedDLLPath>..\dependencies</ManagedDLLPath>
+    <ManagedDLLPath>../dependencies</ManagedDLLPath>
     <SteamPath>~/Library/Application Support/Steam/</SteamPath>
-    <SteamPath Condition="! Exists ('$(SteamPath)')">$(ProgramFiles)\Steam</SteamPath>
+    <SteamPath Condition="! Exists ('$(SteamPath)')">$(ProgramFiles)/Steam</SteamPath>
     <SteamPath Condition="! Exists ('$(SteamPath)')">$(Registry:HKEY_CURRENT_USER\Software\Valve\Steam@SteamPath)</SteamPath>
-    <CSPath>$(SteamPath)\steamapps\common\Cities_Skylines</CSPath>
-    <ManagedDLLPath Condition="!  Exists ('$(ManagedDLLPath)')">$(CSPath)\Cities_Data\Managed</ManagedDLLPath>
-    <PathMap>$(MSBuildProjectDirectory)\=$(ProjectName)\</PathMap>
+    <CSPath>$(SteamPath)/steamapps/common/Cities_Skylines</CSPath>
+    <ManagedDLLPath Condition="!  Exists ('$(ManagedDLLPath)')">$(CSPath)/Cities_Data/Managed</ManagedDLLPath>
+    <AssemblySearchPaths>
+      $(AssemblySearchPaths);
+      $(ManagedDLLPath);
+      $(CitiesSkylinesBinaries);
+      ../libs/
+    </AssemblySearchPaths>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="CitiesHarmony.API" Version="2.0.0" />
+    <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
+    <PackageReference Include="GitInfo" Version="2.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp" />
+    <Reference Include="ColossalManaged" />
+    <Reference Include="ICities" />
+    <Reference Include="UnityEngine" />
+    <Reference Include="UnityEngine.UI" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LoadOrderInjections\LoadOrderInjections.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Remove="KianCommons\KianCommons\Math\**" />
     <Compile Remove="KianCommons\KianCommons\ObjUnity3D\**" />
@@ -55,21 +68,14 @@
     <None Remove="KianCommons\KianCommons\UI\**" />
     <None Remove="KianCommons\KianCommons\Util\**" />
     <None Remove="KianCommons\libs\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="KianCommons\KianCommons\Plugins\AdaptiveRoadsUtil.cs" />
     <Compile Remove="Patches\LoadingProfiler_NewEventPatch.cs" />
     <Compile Remove="Patches\SetSceneProgressPatch.cs" />
     <Compile Remove="Util\Log.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="KianCommons\.git" />
     <None Remove="KianCommons\.gitattributes" />
     <None Remove="KianCommons\.gitignore" />
     <None Remove="KianCommons\KianCommons\.editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="KianCommons\KianCommons\Patches\HarmonyUtil.cs" />
     <Compile Include="KianCommons\KianCommons\Patches\TranspilerUtils.cs" />
     <Compile Include="KianCommons\KianCommons\Util\Assertion.cs" />
@@ -78,49 +84,10 @@
     <Compile Include="KianCommons\KianCommons\Util\Log.cs" />
     <Compile Include="KianCommons\KianCommons\Util\ReflectionHelpers.cs" />
     <Compile Include="KianCommons\KianCommons\Util\StringExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="CitiesHarmony.API" Version="2.0.0" />
-    <PackageReference Include="GitInfo" Version="2.1.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(ManagedDLLPath)\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="ColossalManaged">
-      <HintPath>$(ManagedDLLPath)\ColossalManaged.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="ICities">
-      <HintPath>$(ManagedDLLPath)\ICities.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>$(ManagedDLLPath)\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>$(ManagedDLLPath)\UnityEngine.Networking.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>$(ManagedDLLPath)\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="KianCommons\KianCommons\Math\" />
     <Folder Include="Resources\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LoadOrderInjections\LoadOrderInjections.csproj" />
-  </ItemGroup>
+
   <Target Name="DeployToModDirectory" AfterTargets="Build">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />

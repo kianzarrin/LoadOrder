@@ -6,13 +6,16 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadOrderTool", "LoadOrder\LoadOrderTool.csproj", "{B89FEAE6-A22E-4576-9683-D2B5A1732544}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadOrderMod", "LoadOrderMod\LoadOrderMod.csproj", "{F75E7E61-C575-44A8-AA22-690CD89E9BA2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DB8FAB10-147B-484A-A18B-0EFB2B6442E9} = {DB8FAB10-147B-484A-A18B-0EFB2B6442E9}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadOrderIPatch", "LoadOrderIPatch\LoadOrderIPatch.csproj", "{DB8FAB10-147B-484A-A18B-0EFB2B6442E9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{16FA65D4-EB2B-4863-B95E-8629F97BC9B9} = {16FA65D4-EB2B-4863-B95E-8629F97BC9B9}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadOrderInjections", "LoadOrderInjections\LoadOrderInjections.csproj", "{16FA65D4-EB2B-4863-B95E-8629F97BC9B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadOrderInjections", "LoadOrderInjections\LoadOrderInjections.csproj", "{16FA65D4-EB2B-4863-B95E-8629F97BC9B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

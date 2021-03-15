@@ -7,39 +7,25 @@
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <PathMap>$(MSBuildProjectDirectory)/=$(ProjectName)/</PathMap>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DefineConstants />
-  </PropertyGroup>
-
   <PropertyGroup>
-    <ManagedDLLPath>..\dependencies</ManagedDLLPath>
+    <ManagedDLLPath>../dependencies</ManagedDLLPath>
     <SteamPath>~/Library/Application Support/Steam/</SteamPath>
-    <SteamPath Condition="! Exists ('$(SteamPath)')">$(ProgramFiles)\Steam</SteamPath>
+    <SteamPath Condition="! Exists ('$(SteamPath)')">$(ProgramFiles)/Steam</SteamPath>
     <SteamPath Condition="! Exists ('$(SteamPath)')">$(Registry:HKEY_CURRENT_USER\Software\Valve\Steam@SteamPath)</SteamPath>
-    <CSPath>$(SteamPath)\steamapps\common\Cities_Skylines</CSPath>
-    <ManagedDLLPath Condition="!  Exists ('$(ManagedDLLPath)')">$(CSPath)\Cities_Data\Managed</ManagedDLLPath>
-    <PathMap>$(MSBuildProjectDirectory)\=$(ProjectName)\</PathMap>
+    <CSPath>$(SteamPath)/steamapps/common/Cities_Skylines</CSPath>
+    <ManagedDLLPath Condition="!  Exists ('$(ManagedDLLPath)')">$(CSPath)/Cities_Data/Managed</ManagedDLLPath>
+    <AssemblySearchPaths>
+      $(AssemblySearchPaths);
+      $(ManagedDLLPath);
+      $(CitiesSkylinesBinaries);
+      ../libs/
+    </AssemblySearchPaths>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="KianCommons\**" />
-    <EmbeddedResource Remove="KianCommons\**" />
-    <None Remove="KianCommons\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\LoadOrderMod\LoadOrderConfig.cs" Link="LoadOrderConfig.cs" />
-    <Compile Include="KianCommons\KianCommons\Util\ReflectionHelpers.cs" />
-    <Compile Include="KianCommons\KianCommons\Util\Assertion.cs" />
-    <Compile Include="KianCommons\KianCommons\Util\Log.cs" />
-    <Compile Include="KianCommons\KianCommons\Util\StringExtensions.cs" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="GitInfo" Version="2.1.2">
       <PrivateAssets>all</PrivateAssets>
@@ -48,53 +34,43 @@
     <PackageReference Include="Mono.Cecil" Version="0.10.3" />
     <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(ManagedDLLPath)\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="ColossalManaged">
-      <HintPath>$(ManagedDLLPath)\ColossalManaged.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="ICities">
-      <HintPath>$(ManagedDLLPath)\ICities.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>$(ManagedDLLPath)\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>$(ManagedDLLPath)\UnityEngine.Networking.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>$(ManagedDLLPath)\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions" />
+   <ItemGroup>
+    <Reference Include="Assembly-CSharp" />
+    <Reference Include="ColossalManaged" />
+    <Reference Include="ICities" />
+    <Reference Include="UnityEngine" />
+    <Reference Include="UnityEngine.UI" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Remove="KianCommons\**" />
+    <EmbeddedResource Remove="KianCommons\**" />
+    <None Remove="KianCommons\**" />
+    <Compile Include="..\LoadOrderMod\LoadOrderConfig.cs" Link="LoadOrderConfig.cs" />
+    <Compile Include="KianCommons\KianCommons\Util\ReflectionHelpers.cs" />
+    <Compile Include="KianCommons\KianCommons\Util\Assertion.cs" />
+    <Compile Include="KianCommons\KianCommons\Util\Log.cs" />
+    <Compile Include="KianCommons\KianCommons\Util\StringExtensions.cs" />
+  </ItemGroup>
+
   <Target Name="DeployToModDirectory" AfterTargets="Build">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />
     </GetAssemblyIdentity>
-    <PropertyGroup>
-      <DeployDir>$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)\</DeployDir>
-      <UnityPath>$(MSBuildExtensionsPath64)\..\Unity\</UnityPath>
-      <UnityPath Condition="! Exists ('$(UnityPath)')">..\Unity\</UnityPath>
-      <MonoDir>$(UnityPath)Editor\Data\MonoBleedingEdge\</MonoDir>
-      <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
-    </PropertyGroup>
     <ItemGroup>
-      <AuxiliaryFiles Include="$(TargetDir)Resources\*.png" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
-    <Delete Files="$(TargetPath).mdb" />
-    <Exec Command="&quot;$(MonoDir)bin\mono.exe&quot; &quot;$(MonoDir)lib\mono\4.5\pdb2mdb.exe&quot; &quot;$(TargetPath)&quot;" />
-    <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
+    <PropertyGroup>
+      <DeployDir Condition="'$(DeployDir)'==''">$(LOCALAPPDATA)/Colossal Order/Cities_Skylines/Addons/Mods/$(SolutionName)/</DeployDir>
+      <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
+      <pdb2mdb>$(PkgMono_Unofficial_pdb2mdb)/tools/pdb2mdb.exe</pdb2mdb>
+    </PropertyGroup>
 
-    <!--<Copy SourceFiles="@(AuxilaryFiles)" DestinationFolder="$(DeployDir)" />-->
+    <Delete Files="$(TargetPath).mdb" />
+    <Exec Command="&quot;$(pdb2mdb)&quot; &quot;$(TargetPath)&quot;" />
+    <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
+    
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
   </Target>
