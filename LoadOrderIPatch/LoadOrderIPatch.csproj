@@ -4,7 +4,7 @@
     <Copyright>Copyright ©  2020</Copyright>
     <Deterministic>false</Deterministic>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>0.2.2.*</AssemblyVersion>
+    <AssemblyVersion>0.3.0.*</AssemblyVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>

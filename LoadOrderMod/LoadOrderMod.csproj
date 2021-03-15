@@ -3,7 +3,7 @@
     <ProjectGuid>{F75E7E61-C575-44A8-AA22-690CD89E9BA2}</ProjectGuid>
     <TargetFramework>net35</TargetFramework>
     <Deterministic>false</Deterministic>
-    <AssemblyVersion>0.2.2.*</AssemblyVersion>
+    <AssemblyVersion>0.3.0.*</AssemblyVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
