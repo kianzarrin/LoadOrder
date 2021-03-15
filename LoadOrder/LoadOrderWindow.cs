@@ -58,6 +58,7 @@ namespace LoadOrderTool {
             this.ReverseOrder.Click += ReverseOrder_Click;
             this.RandomizeOrder.Click += RandomizeOrder_Click;
             this.IncludeAllMods.Click += IncludeAllMods_Click;
+            this.ExcludeAllMods.Click += ExcludeAllMods_Click;
             this.EnableAllMods.Click += EnableAllMods_Click;
             this.DisableAllMods.Click += DisableAllMods_Click;
 
@@ -348,7 +349,7 @@ namespace LoadOrderTool {
                 }
             }
             {
-                var words = TextFilterAsset.Text?.Split("");
+                var words = TextFilterAsset.Text?.Split(" ");
                 if (ContainsWords(a.DisplayText, words))
                     return true;
                 if (ContainsWords(a.ConfigAssetInfo.Author, words))
