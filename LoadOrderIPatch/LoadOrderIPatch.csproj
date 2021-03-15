@@ -50,7 +50,7 @@
     <Compile Remove="Settings\**" />
     <EmbeddedResource Remove="Settings\**" />
     <None Remove="Settings\**" />
-    <None Include="..\LoadOrder\.editorconfig" Link=".editorconfig" />
+    <EditorConfigFiles Include="..\LoadOrder\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
 
@@ -69,7 +69,7 @@
     </PropertyGroup>
 
     <Delete Files="$(TargetPath).mdb" />
-    <Exec Command='"$(pdb2mdb)" "$(TargetPath)"' />
+    <Exec Command="&quot;$(pdb2mdb)&quot; &quot;$(TargetPath)&quot;" />
     <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
 
     <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" />

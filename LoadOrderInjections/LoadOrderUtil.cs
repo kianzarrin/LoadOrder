@@ -12,7 +12,7 @@ using ColossalFramework.PlatformServices;
 
 namespace LoadOrderInjections.Util {
     internal static class LoadOrderUtil {
-        public static LoadOrderConfig config_;
+        static LoadOrderConfig config_;
         public static LoadOrderConfig Config {
             get {
                 try {

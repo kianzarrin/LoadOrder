@@ -6,6 +6,8 @@ namespace LoadOrderTool {
     using System.Linq;
     using CO.IO;
     using System.Windows.Forms;
+    using LoadOrderTool.Util;
+    using System.ComponentModel;
 
     /// <summary>
     /// A simple logging class.
@@ -143,11 +145,23 @@ namespace LoadOrderTool {
             string message = e.ToString() + $"\n\t-- {assemblyName_}:end of inner stack trace --";
             if (!string.IsNullOrEmpty(m))
                 message = m + " -> \n" + message;
+            LogImpl(message, LogLevel.Exception, true);
             if (showInPanel)
             {
                 var prompt = new ThreadExceptionDialog(e);
-                if (!string.IsNullOrEmpty(m))
-                    prompt.Text = m + "\n" + prompt.Text;
+                prompt.Text = e.GetType().Name;
+                var label = typeof(ThreadExceptionDialog)
+                    .GetField("message", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .GetValue(prompt)
+                    as Label;
+                label.Text = e.Message;
+                message += "\n" + new StackTrace(1, true).ToString();
+                foreach(Control c in prompt.Controls) {
+                    if (c is TextBox t)
+                        t.Text = message;
+                }
+
+
                 prompt.ShowDialog();
                 //Form prompt = new Form {
                 //    Width = 500,
@@ -181,7 +195,6 @@ namespace LoadOrderTool {
                 //prompt.AcceptButton = btnOK;
                 //prompt.ShowDialog();
             }
-            LogImpl(message, LogLevel.Exception, true);
         }
 
         static string nl = Environment.NewLine;

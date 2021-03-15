@@ -1,8 +1,10 @@
 ﻿namespace LoadOrderTool.Util {
     using CO.IO;
     using CO.PlatformServices;
+    using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     public static class ContentUtil {
         public static bool IsPathIncluded(string fullPath) {
@@ -15,12 +17,33 @@
                 file = file.Substring(1); //drop _
             return Path.Combine(parent, file);
         }
+
         public static string ToExcludedPath(string fullPath) {
             string parent = Path.GetDirectoryName(fullPath);
             string file = Path.GetFileName(fullPath);
             if (!file.StartsWith("_"))
                 file = "_" + file;
             return Path.Combine(parent, file);
+        }
+
+        public static string ToIncludedPathFull(string path) {
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentException("path");
+
+
+            var dirs = SplitPath(path);
+            for (int i = 0; i < dirs.Length; ++i) {
+                var dir = dirs[i];
+                if (dir[0] == '_')
+                    dirs[i] = dir.Substring(1);
+            }
+            return Path.Combine(dirs);
+        }
+
+        public static string[] SplitPath(string path) {
+            return path.Split(
+                Path.DirectorySeparatorChar,
+                StringSplitOptions.RemoveEmptyEntries);
         }
 
         public static bool TryGetID(string dir, out ulong id) {

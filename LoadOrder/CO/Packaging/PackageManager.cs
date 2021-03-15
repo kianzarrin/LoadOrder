@@ -31,18 +31,14 @@ namespace CO.Packaging {
 
             public string AssetPath => m_Path;
 
-            public string AssetIncludedPath {
-                get {
-                    if (FileName.StartsWith("_"))
-                        return Path.Combine(parentDirPath, FileName.Substring(1));
-                    else
-                        return AssetPath;
-                }
-            }
+            //public string AssetIncludedPath {
+            //    get {
+            //        return ContentUtil.ToIncludedPath(m_Path);
+            //    }
+            //}
 
             public string AssetName => Path.GetFileNameWithoutExtension(AssetPath);
             public string FileName => Path.GetFileName(AssetPath);
-            public string parentDirPath => Path.GetDirectoryName(AssetPath);
 
             public string DisplayText {
                 get {
@@ -68,37 +64,45 @@ namespace CO.Packaging {
                 }
             }
 
+            //public bool IsIncluded {
+            //    get => !FileName.StartsWith("_");
+            //    set {
+            //        isIncludedPending_ = value;
+            //        if (value == IsIncluded) return;
+            //        Log.Debug($"set_IsIncluded current value = {IsIncluded} | target value = {value}");
+            //        string parentPath = Directory.GetParent(m_Path).FullName;
+            //        string targetFilename =
+            //            value
+            //            ? FileName.Substring(1)  // drop _ prefix
+            //            : "_" + FileName; // add _ prefix
+            //        string targetPath = Path.Combine(parentPath, targetFilename);
+            //        MoveFileToPath(targetPath);
+            //    }
+            //}
+
             public bool IsIncluded {
-                get => !FileName.StartsWith("_");
+                get => !ConfigAssetInfo.Excluded;
                 set {
                     isIncludedPending_ = value;
-                    if (value == IsIncluded) return;
-                    Log.Debug($"set_IsIncluded current value = {IsIncluded} | target value = {value}");
-                    string parentPath = Directory.GetParent(m_Path).FullName;
-                    string targetFilename =
-                        value
-                        ? FileName.Substring(1)  // drop _ prefix
-                        : "_" + FileName; // add _ prefix
-                    string targetPath = Path.Combine(parentPath, targetFilename);
-                    MoveFileToPath(targetPath);
+                    ConfigAssetInfo.Excluded = !value;
                 }
             }
 
-            public void MoveFileToPath(string targetPath) {
-                try {
-                    Log.Debug($"moving asset from {m_Path} to {targetPath}");
-                    File.Move(m_Path, targetPath);
-                    if (File.Exists(targetPath))
-                        Log.Debug($"move successful!");
-                    else {
-                        Log.Debug($"FAILED!");
-                        throw new Exception($"failed to move asset from {m_Path} to {targetPath}");
-                    }
-                    m_Path = targetPath;
-                } catch (Exception ex) {
-                    Log.Exception(ex);
-                }
-            }
+            //public void MoveFileToPath(string targetPath) {
+            //    try {
+            //        Log.Debug($"moving asset from {m_Path} to {targetPath}");
+            //        File.Move(m_Path, targetPath);
+            //        if (File.Exists(targetPath))
+            //            Log.Debug($"move successful!");
+            //        else {
+            //            Log.Debug($"FAILED!");
+            //            throw new Exception($"failed to move asset from {m_Path} to {targetPath}");
+            //        }
+            //        m_Path = targetPath;
+            //    } catch (Exception ex) {
+            //        Log.Exception(ex);
+            //    }
+            //}
 
             private PublishedFileId m_PublishedFileID = PublishedFileId.invalid;
 
@@ -108,13 +112,14 @@ namespace CO.Packaging {
             private AssetInfo() { }
 
             public AssetInfo(string path, bool builtin, PublishedFileId id) {
-                this.m_Path = path;
+                string includedPath = ContentUtil.ToIncludedPathFull(path);
+                this.m_Path = includedPath;
                 //this.m_IsBuiltin = builtin;
                 this.m_PublishedFileID = id;
                 this.ConfigAssetInfo = PackageManager.instance.Config.Assets.FirstOrDefault(
-                    item => item.Path == AssetIncludedPath);
+                    item => item.Path == includedPath);
                 this.ConfigAssetInfo ??= new LoadOrderShared.AssetInfo {
-                    Path = AssetIncludedPath,
+                    Path = includedPath,
                 };
                 isIncludedPending_ = IsIncluded;
             }

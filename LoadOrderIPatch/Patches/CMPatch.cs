@@ -42,7 +42,8 @@ namespace LoadOrderIPatch.Patches {
             if (noAssets) {
                 assemblyDefinition = NoCustomAssetsPatch(assemblyDefinition);
             } else {
-                ExcludeAssetPatch(assemblyDefinition);
+                ExcludeAssetFilePatch(assemblyDefinition);
+                ExcludeAssetDirPatch(assemblyDefinition);
             }
 
 
@@ -180,15 +181,15 @@ namespace LoadOrderIPatch.Patches {
                 ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
                 var instructions = mTarget.Body.Instructions;
                 var first = instructions.First();
-                var last = instructions.Last();
 
                 logger_.Info("patching " + mTarget.Name);
                 if (loadPath) {
                     // skip method only if path is asset path
+                    var ret = instructions.Last();
                     var LdArgPath = mTarget.GetLDArg("path");
                     var mIsAssetPath = GetType().GetMethod(nameof(IsAssetPath));
                     var callIsAssetPath = Instruction.Create(OpCodes.Call, module.ImportReference(mIsAssetPath));
-                    var skipIfAsset = Instruction.Create(OpCodes.Brtrue, last); // goto to return.
+                    var skipIfAsset = Instruction.Create(OpCodes.Brtrue, ret);
                     ilProcessor.Prefix(LdArgPath, callIsAssetPath, skipIfAsset);
                 } else {
                     // return to skip method.
@@ -216,7 +217,6 @@ namespace LoadOrderIPatch.Patches {
             var mTargets = type.Methods.Where(_m => _m.Name == "LoadPackages");
 
             foreach (var mTarget in mTargets) {
-                bool loadPath = mTarget.HasParameter("path"); // LoadPackages(string path,bool)
                 ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
                 var instructions = mTarget.Body.Instructions;
 
@@ -236,7 +236,7 @@ namespace LoadOrderIPatch.Patches {
             return path;
         }
 
-        public void ExcludeAssetPatch(AssemblyDefinition CM) {
+        public void ExcludeAssetFilePatch(AssemblyDefinition CM) {
             logger_.LogStartPatching();
             var module = CM.MainModule;
             var type = module.GetType("ColossalFramework.Packaging.PackageManager");
@@ -260,7 +260,7 @@ namespace LoadOrderIPatch.Patches {
 
                 // skip method only if path is asset path
                 var LdArgPath = mTarget.GetLDArg("path");
-                var mIsExcluded = GetType().GetMethod(nameof(IsPathExcluded));
+                var mIsExcluded = GetType().GetMethod(nameof(IsFileExcluded));
                 var callIsExcluded = Instruction.Create(OpCodes.Call, module.ImportReference(mIsExcluded));
                 var skipIfExcluded = Instruction.Create(OpCodes.Brtrue, last); // goto to return.
                 ilProcessor.Prefix(new[] { LdArgPath, callIsExcluded, skipIfExcluded });
@@ -269,7 +269,33 @@ namespace LoadOrderIPatch.Patches {
             logger_.LogSucessfull();
         }
 
-        public static bool IsPathExcluded(string path)  => path.StartsWith("_");
+        public static bool IsFileExcluded(string path) {
+            if (string.IsNullOrEmpty(path) || path[0] == '_')
+                return true;
+            return LoadOrderInjections.Injections.Packages.IsPathExcluded(path);
+        }
+
+        public void ExcludeAssetDirPatch(AssemblyDefinition CM) {
+            logger_.LogStartPatching();
+            var cm = CM.MainModule;
+            var type = cm.GetType("ColossalFramework.Packaging.PackageManager");
+            var mTarget = type.Methods.Single(
+                _m => _m.Name == "LoadPackages" && _m.HasParameter("path"));
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            var instructions = mTarget.Body.Instructions;
+            var ret = instructions.Last();
+
+            var loadPath = mTarget.GetLDArg("path");
+            var mIsExcluded = GetType().GetMethod(nameof(IsDirExcluded));
+            var callIsExcluded = Instruction.Create(OpCodes.Call, cm.ImportReference(mIsExcluded));
+            var skipIfExcluded = Instruction.Create(OpCodes.Brtrue, ret);
+            ilProcessor.Prefix(loadPath, callIsExcluded, skipIfExcluded);
+            logger_.LogSucessfull();
+        }
+
+        public static bool IsDirExcluded(string path) {
+            return string.IsNullOrEmpty(path) || path[0] == '_';
+        }
 
 #if DEBUG
         // get the stack trace for debugging purposes.
