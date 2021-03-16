@@ -44,8 +44,7 @@ namespace GameState {
                 return Path.GetFileNameWithoutExtension(pathName);
             }
             set {
-                // TODO: make portable.
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string path = GameStateUtil.localAppDataPath;
                 path = Path.Combine(path, value);
                 if (!path.EndsWith(extension))
                     path += extension;
