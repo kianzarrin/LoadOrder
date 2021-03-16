@@ -100,7 +100,7 @@
       <DeployDir Condition="'$(DeployDir)'==''">$(LOCALAPPDATA)/Colossal Order/Cities_Skylines/Addons/Mods/$(SolutionName)/</DeployDir>
       <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
       <pdb2mdb>$(PkgMono_Unofficial_pdb2mdb)/tools/pdb2mdb.exe</pdb2mdb>
-      <ZipFileName>$(ProjectName)-V@(VersionNumber)-$(GitCommit)-$(Configuration).zip</ZipFileName>
+      <ZipFileName>$(SolutionName)-V@(VersionNumber)-$(GitCommit)-$(Configuration).zip</ZipFileName>
       <ZipFile>$(DeployDir)/../$(ZipFileName)</ZipFile>
     </PropertyGroup>
     <ItemGroup>
