@@ -24,6 +24,10 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
+            GameState.GameStateUtil.logger = logger;
+            var enabled = GameState.GameStateUtil.IsModEnabled(workingPath_);
+            logger.Info("is enabled:" + enabled?.ToString() ?? "null");
+            
             assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
             assemblyDefinition = BindEnableDisableAllPatch(assemblyDefinition);
             //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition); // handled by harmony patch
