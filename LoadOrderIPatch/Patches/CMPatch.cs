@@ -90,6 +90,10 @@ namespace LoadOrderIPatch.Patches {
             logger_.LogSucessfull();
         }
 
+        /// <summary>
+        /// Load dependant dll even if the version does not match.
+        /// </summary>
+        /// <param name="CM"></param>
         public void FindAssemblySoftPatch(AssemblyDefinition CM) {
             logger_.LogStartPatching();
             var cm = CM.MainModule;
