@@ -64,18 +64,18 @@
     </ItemGroup>
     <PropertyGroup>
       <DeployDir Condition="'$(DeployDir)'==''">$(LOCALAPPDATA)/Colossal Order/Cities_Skylines/Addons/Mods/$(SolutionName)/</DeployDir>
-      <DeployTargetFile>$(DeployDir)$(SolutionName).ipatch</DeployTargetFile>
+      <DeployTargetPath>$(DeployDir)$(SolutionName).ipatch</DeployTargetPath>
       <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
       <pdb2mdb>$(PkgMono_Unofficial_pdb2mdb)/tools/pdb2mdb.exe</pdb2mdb>
     </PropertyGroup>
 
     <Delete Files="$(TargetPath).mdb" />
     <Exec Command="&quot;$(pdb2mdb)&quot; &quot;$(TargetPath)&quot;" />
-    <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
+    <Copy SourceFiles="$(TargetPath).mdb" DestinationFiles="$(DeployTargetPath).mdb" />
 
     <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" />
-    <Delete Files="$(DeployTargetFile)" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(DeployTargetFile)" />
+    <Delete Files="$(DeployTargetPath)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(DeployTargetPath)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
   </Target>
 </Project>
