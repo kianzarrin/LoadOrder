@@ -43,7 +43,6 @@ namespace LoadOrderMod.Util {
                         break;
                     }
                 }
-                SaveConfig();
             } catch(Exception ex) {
                 Log.Exception(ex);
             }
