@@ -3,7 +3,7 @@
     <TargetFramework>net35</TargetFramework>
     <Deterministic>false</Deterministic>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>0.3.0.*</AssemblyVersion>
+    <AssemblyVersion>0.4.0.*</AssemblyVersion>
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
@@ -59,11 +59,12 @@
       <Output TaskParameter="Assemblies" ItemName="Targets" />
     </GetAssemblyIdentity>
     <ItemGroup>
-      <AuxiliaryFiles Include="$(TargetDir)Mono.Cecil.dll;$(TargetDir)Patch.API.dll" />
+      <AuxiliaryFiles Include="$(TargetDir)Mono.Cecil.dll;" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
     <PropertyGroup>
       <DeployDir Condition="'$(DeployDir)'==''">$(LOCALAPPDATA)/Colossal Order/Cities_Skylines/Addons/Mods/$(SolutionName)/</DeployDir>
+      <DeployTargetFile>$(DeployDir)$(SolutionName).ipatch</DeployTargetFile>
       <Now>$([System.DateTime]::Now.ToString("HH:mm:ss"))</Now>
       <pdb2mdb>$(PkgMono_Unofficial_pdb2mdb)/tools/pdb2mdb.exe</pdb2mdb>
     </PropertyGroup>
@@ -73,8 +74,8 @@
     <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
 
     <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" />
-    <Delete Files="$(DeployDir)$(TargetFileName)" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />
+    <Delete Files="$(DeployTargetFile)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(DeployTargetFile)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
   </Target>
 </Project>

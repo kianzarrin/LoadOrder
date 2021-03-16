@@ -1,17 +1,6 @@
 ﻿namespace LoadOrderInjections.Injections {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using ColossalFramework.Plugins;
-    using static ColossalFramework.Plugins.PluginManager;
-    using KianCommons;
-    using static KianCommons.ReflectionHelpers;
-    using System.Runtime.CompilerServices;
-    using ICities;
     using static LoadOrderInjections.Util.LoadOrderUtil;
-    using Mono.Cecil;
-    using LoadOrderInjections.Util;
     public static class Packages {
         static HashSet<string> excludedPaths_;
         static HashSet<string> Create() {
