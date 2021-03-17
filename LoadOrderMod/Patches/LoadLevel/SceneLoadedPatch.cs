@@ -13,7 +13,8 @@ namespace LoadOrderMod.Patches {
             yield return GetCoroutineMoveNext(typeof(LoadingManager), "LoadLevelCoroutine");
             var tLevelLoader = Type.GetType("LoadingScreenMod.LevelLoader, LoadingScreenMod", throwOnError: false);
             if (tLevelLoader != null) {
-                yield return GetCoroutineMoveNext(tLevelLoader, "LoadLevelCoroutine");
+                var ret = GetCoroutineMoveNext(tLevelLoader, "LoadLevelCoroutine");
+                if(ret != null) yield return ret;
             }
         }
 
@@ -22,12 +23,11 @@ namespace LoadOrderMod.Patches {
             Log.Flush();
         }
 
-        static MethodInfo mLogSceneEnded = GetMethod(
-            typeof(SceneLoadedPatch),
-            nameof(LogSceneEnded));
-        static MethodInfo mEndLoading = GetMethod(
-            typeof(LoadingProfiler),
-            nameof(LoadingProfiler.EndLoading));
+        static MethodInfo mLogSceneEnded =
+            typeof(SceneLoadedPatch).GetMethod(nameof(LogSceneEnded), true);
+        static MethodInfo mEndLoading = 
+            typeof(LoadingProfiler).
+            GetMethod(nameof(LoadingProfiler.EndLoading));
 
         public static IEnumerable<CodeInstruction> Transpiler(
             IEnumerable<CodeInstruction> instructions, MethodBase original) {

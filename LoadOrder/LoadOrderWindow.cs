@@ -384,13 +384,15 @@ namespace LoadOrderTool {
                     string id = asset.publishedFileID.AsUInt64.ToString();
                     if (id == "0" || asset.publishedFileID == PublishedFileId.invalid)
                         id = "";
+                    var tags = asset.ConfigAssetInfo.Tags;
+                    var strTags = tags != null ? string.Join(", ", tags) : "";
                     int row = dataGridAssets.Rows.Add(
                         asset.IsIncludedPending,
                         id,
                         asset.AssetName,
                         asset.ConfigAssetInfo.Author,
                         asset.ConfigAssetInfo.Date,
-                        string.Join(", ",asset.ConfigAssetInfo.Tags),
+                        strTags,
                         asset);
                     dataGridAssets.Rows[row].Cells[cName.Index].ToolTipText = 
                         asset.ConfigAssetInfo.description;

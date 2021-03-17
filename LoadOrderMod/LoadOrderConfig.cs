@@ -26,6 +26,12 @@ namespace LoadOrderShared {
 
         public string WorkShopContentPath;
         public string GamePath;
+
+        public bool TurnOffSteamPanels = true;
+        public bool ImproveContentManager = true;
+        public bool SoftDLLDependancy = true;
+
+
         public ModInfo[] Mods = new ModInfo[0];
         public AssetInfo[] Assets = new AssetInfo[0];
 

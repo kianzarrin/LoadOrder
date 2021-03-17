@@ -9,13 +9,12 @@ using System.Reflection;
 using System.Diagnostics;
 using ColossalFramework.Plugins;
 using System.Linq;
-using LoadOrderMod.Util;
+using LoadOrderMod.Settings;
 
 namespace LoadOrderMod.Patches._LoadingWrapper {
     [HarmonyPatch(typeof(LoadingWrapper))]
     [HarmonyPatch("OnLevelLoaded")]
     public static class OnLevelLoadedpatch {
-        public delegate void Handler();
         static Stopwatch sw = new Stopwatch();
         static Stopwatch sw_total = new Stopwatch();
 

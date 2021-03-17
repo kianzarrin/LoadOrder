@@ -23,7 +23,10 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
-            FindAssemblySoftPatch(assemblyDefinition);
+            if (!poke) {
+                // disable when testing.
+                FindAssemblySoftPatch(assemblyDefinition);
+            }
             
             // TODO uncomment after understanding how CS prevents double loading during hot reload
             // NoDoubleLoadPatch(assemblyDefinition);

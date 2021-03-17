@@ -19,7 +19,8 @@ namespace LoadOrderInjections.Injections {
             AfterUserModCtor(p);
         }
         public static void BeforeUserModCtor(PluginInfo p) {
-            Log.Info($"adding plugin {p} loadOrder={p.GetLoadOrder()} ...", true);
+            Log.Info($"adding(instanciating) plugin {p} loadOrder={p.GetLoadOrder()} ");
+        
         }
         public static void AfterUserModCtor(PluginInfo p) {
             string modName = (p.userModInstance as IUserMod)?.Name;

@@ -42,7 +42,7 @@ namespace LoadOrderMod {
 
                 HarmonyHelper.DoOnHarmonyReady(() => {
                     //HarmonyLib.Harmony.DEBUG = true;
-                    HarmonyUtil.InstallHarmony(HARMONY_ID);
+                    HarmonyUtil.InstallHarmony(HARMONY_ID, null, null); // continue on error.
                 });
                 SceneManager.sceneLoaded += OnSceneLoaded;
                 SceneManager.activeSceneChanged += OnActiveSceneChanged;
@@ -50,9 +50,9 @@ namespace LoadOrderMod {
                 LoadingManager.instance.m_introLoaded += LoadOrderUtil.TurnOffSteamPanels;
                 LoadOrderUtil.TurnOffSteamPanels();
 
-                LoadingManager.instance.m_introLoaded += LoadOrderUtil.StoreConifgDetails;
+                LoadingManager.instance.m_introLoaded += Settings.ConfigUtil.StoreConfigDetails;
                 if(SceneManager.GetActiveScene().name == "IntroScreen")
-                    LoadOrderUtil.StoreConifgDetails();
+                    Settings.ConfigUtil.StoreConfigDetails();
 
                 Log.Flush();
             } catch(Exception ex) {
@@ -65,10 +65,10 @@ namespace LoadOrderMod {
             try {
 
                 LoadingManager.instance.m_introLoaded -= LoadOrderUtil.TurnOffSteamPanels;
-                LoadingManager.instance.m_introLoaded -= LoadOrderUtil.StoreConifgDetails;
+                LoadingManager.instance.m_introLoaded -= Settings.ConfigUtil.StoreConfigDetails;
                 Log.Buffered = false;
                 HarmonyUtil.UninstallHarmony(HARMONY_ID);
-                LoadOrderUtil.config_ = null;
+                Settings.ConfigUtil.config_ = null;
             } catch(Exception ex) {
                 Log.Exception(ex);
             }
