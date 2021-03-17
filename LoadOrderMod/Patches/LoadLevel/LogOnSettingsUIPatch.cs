@@ -7,7 +7,7 @@ namespace LoadOrderMod.Patches.LoadLevel {
     using System.Diagnostics;
     using System.Reflection;
     using System.Reflection.Emit;
-    using static KianCommons.Patches.TranspilerUtils;
+    using KianCommons.Patches;
 
     [HarmonyPatch(typeof(OptionsMainPanel), "AddUserMods")]
     public static class LogOnSettingsUIPatch {
@@ -15,7 +15,7 @@ namespace LoadOrderMod.Patches.LoadLevel {
         static Stopwatch sw_total = new Stopwatch();
 
         static IUserMod BeforeSettingsUI(IUserMod userMod) {
-            Log.Info("calling OnSettingsUI() for " + userMod.Name, true);
+            Log.Info("calling OnSettingsUI() for " + userMod.Name);
             sw.Reset();
             sw.Start();
             return userMod;
@@ -23,7 +23,7 @@ namespace LoadOrderMod.Patches.LoadLevel {
         static void AfterSettingsUI() {
             sw.Stop();
             var ms = sw.ElapsedMilliseconds;
-            Log.Info($"OnSettingsUI() successful. duration = {ms:#,0}ms", true);
+            Log.Info($"OnSettingsUI() successful. duration = {ms:#,0}ms");
         }
 
         static MethodInfo mBeforeSettingsUI =
@@ -37,7 +37,7 @@ namespace LoadOrderMod.Patches.LoadLevel {
                 throwOnError: true);
 
         static void Prefix() {
-            Log.Info("LoadingWrapper.OnLevelLoaded() started", true);
+            Log.Info("OptionsMainPanel.AddUserMods() started (calls OnSettingsUI for all mods)", true);
             Log.Flush();
             sw_total.Reset();
             sw_total.Start();
@@ -50,8 +50,11 @@ namespace LoadOrderMod.Patches.LoadLevel {
                 var Call_AfterSettingsUI = new CodeInstruction(OpCodes.Call, mAfterSettingsUI);
 
                 int index = codes.Search(c => c.Calls(mInvoke));
-                InsertInstructions(codes, new[] { Call_AfterSettingsUI }, index + 1); // insert after.
-                InsertInstructions(codes, new[] { Call_BeforeSettingsUI }, index); // insert before
+                codes.InsertInstructions(index + 1, new[] { Call_AfterSettingsUI }); // insert after.
+
+                // insert after instances[0]
+                index = codes.Search(c => c.opcode == OpCodes.Ldelem_Ref, startIndex: index, count: -1);
+                codes.InsertInstructions(index+1, new[] { Call_BeforeSettingsUI }); 
 
                 return codes;
             } catch(Exception e) {
@@ -63,7 +66,7 @@ namespace LoadOrderMod.Patches.LoadLevel {
         public static void Postfix() {
             sw_total.Stop();
             var ms = sw_total.ElapsedMilliseconds;
-            Log.Info($"LoadingWrapper.OnLevelLoaded() finished. total duration = {ms:#,0}ms ", true);
+            Log.Info($"OptionsMainPanel.AddUserMods() finished. total duration = {ms:#,0}ms ", true);
             Log.Flush();
         }
     }
