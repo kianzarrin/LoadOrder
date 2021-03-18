@@ -80,10 +80,10 @@ namespace LoadOrderMod.Patches {
         }
 
         [HarmonyPriority(Priority.Last)]
-        static Exception Finalizer(Exception ex) {
+        static Exception Finalizer(Exception __exception) {
             LoadingManager.instance.QueueLoadingAction(OnLoadingFinished());
-            if(ex != null) {
-                Log.Exception(ex);
+            if(__exception != null) {
+                Log.Exception(__exception);
             } else {
                 Log.Info("LoadLevelComplete() finalized.", true);
             }

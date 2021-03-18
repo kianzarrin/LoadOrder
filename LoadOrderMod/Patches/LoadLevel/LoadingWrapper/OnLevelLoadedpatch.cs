@@ -90,9 +90,9 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
         }
 
         [HarmonyPriority(Priority.Last)]
-        static Exception Finalizer(Exception ex) {
-            if(ex != null) {
-                Log.Exception(ex, "a mod caused error in postfix of OnLevelLoaded");
+        static Exception Finalizer(Exception __exception) {
+            if(__exception != null) {
+                Log.Exception(__exception, "a mod caused error in postfix of OnLevelLoaded");
             } else {
                 Log.Info("LoadingWrapper.OnLevelLoaded() finalized (after postfixes)", true);
             }
