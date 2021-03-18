@@ -28,9 +28,12 @@ namespace LoadOrderShared {
         public string GamePath;
 
         public bool TurnOffSteamPanels = true;
-        public bool ImproveContentManager = true;
+        public bool FastContentManager = true;
         public bool SoftDLLDependancy = true;
-
+        public bool DeleteUnsubscribedItemsOnLoad = false;
+        public bool AddHarmonyResolver = true;
+        public bool LogAssetLoadingTimes = true;
+        public bool LogPerModAssetLoadingTimes = false;
 
         public ModInfo[] Mods = new ModInfo[0];
         public AssetInfo[] Assets = new AssetInfo[0];

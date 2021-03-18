@@ -2,9 +2,11 @@ using ICities;
 using KianCommons;
 using LoadOrderInjections.Util;
 using System;
+using System.Linq;
 using System.Reflection;
 using static ColossalFramework.Plugins.PluginManager;
 using static KianCommons.ReflectionHelpers;
+
 
 namespace LoadOrderInjections.Injections {
     public static class Logs {
@@ -14,8 +16,11 @@ namespace LoadOrderInjections.Injections {
                 return; // too late. already instanciated.
 
             BeforeUserModCtor(p);
-            if (p.userModInstance == null)
-                return; // failed to instanciate.
+            if (p.userModInstance == null) {
+                var asms = p.GetAssemblies().Select(_a => _a.Name()).Join(",");
+                Log.Exception(new Exception($"Mod caused error: [ {asms} ]"));
+            }
+                
             AfterUserModCtor(p);
         }
         public static void BeforeUserModCtor(PluginInfo p) {

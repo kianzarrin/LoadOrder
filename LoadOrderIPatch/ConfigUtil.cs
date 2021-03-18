@@ -2,6 +2,7 @@ namespace LoadOrderIPatch {
     using ColossalFramework.IO;
     using LoadOrderShared;
     using System;
+    using System.Linq;
 
     public static class ConfigUtil {
         internal static LoadOrderConfig config_;

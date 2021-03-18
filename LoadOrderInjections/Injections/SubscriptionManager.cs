@@ -15,7 +15,7 @@ namespace LoadOrderInjections {
             if (GUILayout.Button("Check Installed"))
                 SteamUtilities.EnsureAll();
             if (GUILayout.Button("Delete UnInstalled"))
-                SteamUtilities.DeleteExtra();
+                SteamUtilities.DeleteUnsubbed();
         }
     }
 
@@ -195,7 +195,7 @@ namespace LoadOrderInjections {
             //    $"ioError:{ioError})");
             bool good = IsUGCUpToDate(result, out string reason);
             if (!good) {
-                Log.Info($"[WARNING!] subscribed item not installed properly:{result.publishedFileId} {result.title} " +
+                Log.Warning($"subscribed item not installed properly:{result.publishedFileId} {result.title} " +
                     $"reason={reason}. " +
                     $"try resintalling the item.",
                     true);
@@ -394,8 +394,8 @@ namespace LoadOrderInjections {
             }
         }
 
-        public static void DeleteExtra() {
-            Log.Info("DeleteExtra called ...");
+        public static void DeleteUnsubbed() {
+            Log.Info("DeleteUnsubbed called ...");
             var items = PlatformService.workshop.GetSubscribedItems();
             if (items == null || items.Length == 0)
                 return;
@@ -412,7 +412,7 @@ namespace LoadOrderInjections {
                     continue;
                 bool deleted = !items.Any(item => item.AsUInt64 == id);
                 if (deleted) {
-                    Log.Info("[Warning!] unsubbed mod will be deleted: " + dir);
+                    Log.Warning("unsubbed mod will be deleted: " + dir);
                     Directory.Delete(dir, true);
                 }
             }

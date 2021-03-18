@@ -1,31 +1,39 @@
-using HarmonyLib;
-using ICities;
-using KianCommons;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
-using System.Reflection.Emit;
-using static KianCommons.Patches.TranspilerUtils;
-using System;
-
 namespace LoadOrderMod.Patches._AssetDataWrapper {
+    using HarmonyLib;
+    using ICities;
+    using KianCommons;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Reflection;
+    using System.Reflection.Emit;
+    using static KianCommons.Patches.TranspilerUtils;
+    using System;
+
     [HarmonyPatch(typeof(AssetDataWrapper))]
     [HarmonyPatch(nameof(AssetDataWrapper.OnAssetLoaded))]
     public static class OnAssetLoadedPatch {
         static Stopwatch sw = new Stopwatch();
         static Stopwatch sw_total = new Stopwatch();
+        static LoadOrderShared.LoadOrderConfig Config =>
+            LoadOrderMod.Settings.ConfigUtil.Config;
 
         public static IAssetDataExtension BeforeOnAssetLoaded(IAssetDataExtension extension) {
-            Assertion.Assert(extension is IAssetDataExtension);
-            Log.Info($"calling {extension}.OnAssetLoaded()", copyToGameLog: false);
-            sw.Reset();
-            sw.Start();
+            if(Config.LogAssetLoadingTimes &&
+                Config.LogPerModAssetLoadingTimes) {
+                Assertion.Assert(extension is IAssetDataExtension);
+                Log.Info($"calling {extension}.OnAssetLoaded()", copyToGameLog: false);
+                sw.Reset();
+                sw.Start();
+            }
             return extension;
         }
         public static void AfterOnAssetLoaded() {
-            sw.Stop();
-            var ms = sw.ElapsedMilliseconds;
-            Log.Info($"OnAssetLoaded() successful! duration = {ms:#,0}ms", copyToGameLog: false);
+            if(Config.LogAssetLoadingTimes &&
+                Config.LogPerModAssetLoadingTimes) {
+                sw.Stop();
+                var ms = sw.ElapsedMilliseconds;
+                Log.Info($"OnAssetLoaded() successful! duration = {ms:#,0}ms", copyToGameLog: false);
+            }
         }
 
         static MethodInfo mBeforeOnAssetLoaded_ =
@@ -57,11 +65,13 @@ namespace LoadOrderMod.Patches._AssetDataWrapper {
             }
         }
         public static void Prefix(string name) {
+            if(!Config.LogAssetLoadingTimes)return;
             Log.Info("AssetDataWrapper.OnAssetLoaded() started for " + name, false);
             sw_total.Reset();
             sw_total.Start();
         }
         public static void Postfix() {
+            if(!Config.LogAssetLoadingTimes)return;
             sw_total.Stop();
             var ms = sw_total.ElapsedMilliseconds;
             Log.Info($"AssetDataWrapper.OnAssetLoaded() finished. total duration = {ms:#,0}ms", false);
