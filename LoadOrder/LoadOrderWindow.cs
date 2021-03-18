@@ -410,7 +410,6 @@ namespace LoadOrderTool {
         }
 
         public void FilterAssetRows() {
-            Log.Debug("cAsset.Index="+cAsset.Index);
             foreach (DataGridViewRow row in dataGridAssets.Rows) {
                 var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
                 row.Visible = AssetPredicate(asset);

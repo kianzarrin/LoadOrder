@@ -50,6 +50,7 @@ namespace LoadOrderMod.Settings {
         public static void AquireModsDetails() {
             foreach(var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
                 try {
+                    if(pluginInfo.userModInstance == null) continue;
                     var modInfo = pluginInfo.GetModConfig();
                     if(modInfo == null) {
                         modInfo = new LoadOrderShared.ModInfo {
@@ -58,7 +59,7 @@ namespace LoadOrderMod.Settings {
                         };
                         Config.Mods = Config.Mods.AddToArray(modInfo);
                     }
-                    modInfo.Description = pluginInfo.GetUserModInstance().Description;
+                    modInfo.Description = pluginInfo.GetUserModInstance()?.Description;
                     modInfo.ModName = pluginInfo.GetModName();
                 } catch(Exception ex) {
                     Log.Exception(ex);
