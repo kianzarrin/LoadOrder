@@ -15,6 +15,9 @@ namespace LoadOrderIPatch.Patches {
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("ColossalManaged", new Version(0, 3, 0, 0));
         private ILogger logger_;
         private string workingPath_;
+        static LoadOrderShared.LoadOrderConfig Config => ConfigUtil.Config;
+
+
 
         public AssemblyDefinition Execute(
             AssemblyDefinition assemblyDefinition, 
@@ -24,7 +27,7 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
-            if (!poke) {
+            if (!poke || Config.SoftDLLDependancy) {
                 // disable when testing.
                 FindAssemblySoftPatch(assemblyDefinition);
             }

@@ -8,6 +8,8 @@ using static KianCommons.ReflectionHelpers;
 
 namespace LoadOrderMod.Util {
     internal static class LoadOrderUtil {
+        static LoadOrderShared.LoadOrderConfig Config =>
+            Settings.ConfigUtil.Config;
         internal static string DllName(this PluginInfo p) =>
             p.userModInstance?.GetType()?.Assembly?.GetName()?.Name;
         internal static bool IsHarmonyMod(this PluginInfo p) =>
@@ -29,6 +31,7 @@ namespace LoadOrderMod.Util {
         }
 
         public static void TurnOffSteamPanels() {
+            if(!Config.TurnOffSteamPanels) return;
             SetFieldValue<WorkshopAdPanel>("dontInitialize", true);
             Log.Info("Turning off steam panels", true);
             var news = GameObject.FindObjectOfType<NewsFeedPanel>();

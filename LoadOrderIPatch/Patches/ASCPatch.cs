@@ -33,7 +33,8 @@ namespace LoadOrderIPatch.Patches {
             //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition); // handled by harmony patch
             LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
             InstallResolverLog();
-            InstallHarmonyResolver();
+            if(ConfigUtil.Config.AddHarmonyResolver)
+                InstallHarmonyResolver();
 
             bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
             //if (sman) 
@@ -41,7 +42,8 @@ namespace LoadOrderIPatch.Patches {
                 assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
             }
 
-            assemblyDefinition = NoQueryPatch(assemblyDefinition); // handled by harmony patch
+            if(ConfigUtil.Config.TurnOffSteamPanels)
+                NoQueryPatch(assemblyDefinition); // handled by harmony patch
 
             return assemblyDefinition;
         }
@@ -106,7 +108,7 @@ namespace LoadOrderIPatch.Patches {
         /// <summary>
         /// removes call to query which causes steam related errors and puts CollossalManged in an unstable state.
         /// </summary>
-        public AssemblyDefinition NoQueryPatch(AssemblyDefinition ASC)
+        public void NoQueryPatch(AssemblyDefinition ASC)
         {
             logger_.LogStartPatching();
             var module = ASC.Modules.First();
@@ -116,7 +118,6 @@ namespace LoadOrderIPatch.Patches {
             Instruction callQuery = instructions.First(_c => _c.Calls("QueryItems"));
             ilProcessor.Remove(callQuery); // the pop instruction after cancels out the load instruction before.
             logger_.LogSucessfull();
-            return ASC;
         }
 
         public AssemblyDefinition ImproveLoggingPatch(AssemblyDefinition ASC)

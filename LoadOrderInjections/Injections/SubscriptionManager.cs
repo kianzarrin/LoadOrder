@@ -130,6 +130,8 @@ namespace LoadOrderInjections {
     }
 
     public static class SteamUtilities {
+        static LoadOrderShared.LoadOrderConfig Config =>
+            LoadOrderInjections.Util.LoadOrderUtil.Config;
         // steam manager is already initialized at this point.
         public static void RegisterEvents() {
             Log.Debug(Environment.StackTrace);
@@ -148,8 +150,12 @@ namespace LoadOrderInjections {
             bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
             if (sman)
                 EnsureAll();
-            else foreach (var id in PlatformService.workshop.GetSubscribedItems())
-                EnsureIncludedOrExcluded(id);
+            else {
+                foreach (var id in PlatformService.workshop.GetSubscribedItems())
+                    EnsureIncludedOrExcluded(id);
+                if (Config.DeleteUnsubscribedItemsOnLoad)
+                    DeleteUnsubbed();
+            }
         }
 
         public static void OnRequestItemDetailsClicked() {
