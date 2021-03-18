@@ -525,6 +525,7 @@
             this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridAssets.Size = new System.Drawing.Size(712, 540);
             this.dataGridAssets.TabIndex = 6;
+            this.dataGridAssets.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             // 
             // cIncluded
             // 

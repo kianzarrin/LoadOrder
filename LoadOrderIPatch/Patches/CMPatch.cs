@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using static LoadOrderIPatch.Commons;
+using static LoadOrderIPatch.ConfigUtil;
 using ILogger = Patch.API.ILogger;
 
 namespace LoadOrderIPatch.Patches {

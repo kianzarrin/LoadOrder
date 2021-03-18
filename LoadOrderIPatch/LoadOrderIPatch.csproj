@@ -50,6 +50,7 @@
     <Compile Remove="Settings\**" />
     <EmbeddedResource Remove="Settings\**" />
     <None Remove="Settings\**" />
+    <Compile Include="..\LoadOrderMod\LoadOrderConfig.cs" Link="LoadOrderConfig.cs" />
     <EditorConfigFiles Include="..\LoadOrder\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
