@@ -1,17 +1,17 @@
-using HarmonyLib;
-using System;
-using System.Reflection.Emit;
-using System.Collections.Generic;
-using KianCommons;
-using static KianCommons.Patches.TranspilerUtils;
-using ICities;
-using System.Reflection;
-using System.Diagnostics;
-using ColossalFramework.Plugins;
-using System.Linq;
-using LoadOrderMod.Settings;
-
 namespace LoadOrderMod.Patches._LoadingWrapper {
+    using HarmonyLib;
+    using System;
+    using System.Reflection.Emit;
+    using System.Collections.Generic;
+    using KianCommons;
+    using static KianCommons.Patches.TranspilerUtils;
+    using ICities;
+    using System.Reflection;
+    using System.Diagnostics;
+    using ColossalFramework.Plugins;
+    using System.Linq;
+    using LoadOrderMod.Settings;
+
     [HarmonyPatch(typeof(LoadingWrapper))]
     [HarmonyPatch("OnLevelLoaded")]
     public static class OnLevelLoadedpatch {
@@ -37,20 +37,31 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
             Log.Info($"OnLevelLoaded() successful. duration = {ms:#,0}ms", copyToGameLog: true);
         }
 
-        static MethodInfo mBeforeOnLevelLoaded_ = typeof(OnLevelLoadedpatch).GetMethod(nameof(BeforeOnLevelLoaded))
-            ?? throw new Exception("mBeforeOnLevelLoaded_ is null");
-        static MethodInfo mAfterOnLevelLoaded_ = typeof(OnLevelLoadedpatch).GetMethod(nameof(AfterOnLevelLoaded))
-            ?? throw new Exception("mAfterOnLevelLoaded_ is null");
-        static MethodInfo mOnLevelLoaded_ = typeof(ILoadingExtension).GetMethod(nameof(ILoadingExtension.OnLevelLoaded))
-            ?? throw new Exception("mAfterOnLevelLoaded_ is null");
+        static MethodInfo mBeforeOnLevelLoaded_ =
+            typeof(OnLevelLoadedpatch).GetMethod(nameof(BeforeOnLevelLoaded), throwOnError: true);
+        static MethodInfo mAfterOnLevelLoaded_ =
+            typeof(OnLevelLoadedpatch).GetMethod(nameof(AfterOnLevelLoaded), throwOnError: true);
+        static MethodInfo mOnLevelLoaded_ =
+            typeof(ILoadingExtension).GetMethod(nameof(ILoadingExtension.OnLevelLoaded), throwOnError: true);
 
+        [HarmonyPriority(Priority.First)]
+        [HarmonyPrefix]
+        public static void Prefix0() {
+            Log.Info("LoadingWrapper.OnLevelLoaded() started (before other prefixes)", true);
+            Log.Flush();
+        }
+
+
+        [HarmonyPriority(Priority.Last)]
         public static void Prefix() {
-            Log.Info("LoadingWrapper.OnLevelLoaded() started", true);
+            Log.Info("LoadingWrapper.OnLevelLoaded() started (after other prefixes)", true);
             Log.Flush();
             sw_total.Reset();
             sw_total.Start();
         }
-        public static IEnumerable<CodeInstruction> Transpiler(ILGenerator il, IEnumerable<CodeInstruction> instructions) {
+
+        [HarmonyPriority(Priority.First)]
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
             try {
                 List<CodeInstruction> codes = instructions.ToCodeList();
                 var Call_BeforeOnLevelLoaded = new CodeInstruction(OpCodes.Call, mBeforeOnLevelLoaded_);
@@ -70,11 +81,22 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
             }
         }
 
+        [HarmonyPriority(Priority.First)]
         public static void Postfix() {
             sw_total.Stop();
             var ms = sw_total.ElapsedMilliseconds;
-            Log.Info($"LoadingWrapper.OnLevelLoaded() finished. total duration = {ms:#,0}ms ", true);
+            Log.Info($"LoadingWrapper.OnLevelLoaded() finished (before other postfixes). total duration = {ms:#,0}ms ", true);
             Log.Flush();
+        }
+
+        [HarmonyPriority(Priority.Last)]
+        static Exception Finalizer(Exception ex) {
+            if(ex != null) {
+                Log.Exception(ex, "a mod caused error in postfix of OnLevelLoaded");
+            } else {
+                Log.Info("LoadingWrapper.OnLevelLoaded() finalized (after postfixes)", true);
+            }
+            return null;
         }
     }
 }

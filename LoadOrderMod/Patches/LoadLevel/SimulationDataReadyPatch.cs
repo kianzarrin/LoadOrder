@@ -19,7 +19,6 @@ namespace LoadOrderMod.Patches {
             }
         }
 
-        public delegate void Handler();
         static Stopwatch sw = new Stopwatch();
         static Stopwatch sw_total = new Stopwatch();
 
