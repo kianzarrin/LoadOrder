@@ -173,6 +173,7 @@
             // AutoSave
             // 
             this.AutoSave.AutoSize = true;
+            this.Save.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.AutoSave.Location = new System.Drawing.Point(392, 3);
             this.AutoSave.Name = "AutoSave";
             this.AutoSave.Size = new System.Drawing.Size(86, 21);
