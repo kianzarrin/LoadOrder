@@ -474,11 +474,11 @@
             this.ComboBoxAssetWS.Size = new System.Drawing.Size(121, 25);
             this.ComboBoxAssetWS.TabIndex = 3;
             // 
-            // ComboBoxAssetCategory
+            // ComboBoxAssetTags
             // 
             this.ComboBoxAssetTags.FormattingEnabled = true;
             this.ComboBoxAssetTags.Location = new System.Drawing.Point(257, 3);
-            this.ComboBoxAssetTags.Name = "ComboBoxAssetCategory";
+            this.ComboBoxAssetTags.Name = "ComboBoxAssetTags";
             this.ComboBoxAssetTags.Size = new System.Drawing.Size(121, 25);
             this.ComboBoxAssetTags.TabIndex = 4;
             // 
@@ -507,7 +507,8 @@
             this.dataGridAssets.AllowUserToDeleteRows = false;
             this.dataGridAssets.AllowUserToOrderColumns = true;
             this.dataGridAssets.AllowUserToResizeRows = false;
-            this.dataGridAssets.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.dataGridAssets.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.dataGridAssets.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridAssets.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridAssets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridAssets.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -525,42 +526,47 @@
             this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridAssets.Size = new System.Drawing.Size(712, 540);
             this.dataGridAssets.TabIndex = 6;
-            this.dataGridAssets.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             // 
             // cIncluded
             // 
             this.cIncluded.HeaderText = "Included";
             this.cIncluded.Name = "cIncluded";
+            this.cIncluded.Width = 63;
             // 
             // cID
             // 
             this.cID.HeaderText = "ID";
             this.cID.Name = "cID";
             this.cID.ReadOnly = true;
+            this.cID.Width = 45;
             // 
             // cName
             // 
             this.cName.HeaderText = "Name";
             this.cName.Name = "cName";
             this.cName.ReadOnly = true;
+            this.cName.Width = 68;
             // 
             // cAuthor
             // 
             this.cAuthor.HeaderText = "Author";
             this.cAuthor.Name = "cAuthor";
             this.cAuthor.ReadOnly = true;
+            this.cAuthor.Width = 72;
             // 
             // cDate
             // 
             this.cDate.HeaderText = "Date";
             this.cDate.Name = "cDate";
             this.cDate.ReadOnly = true;
+            this.cDate.Width = 60;
             // 
             // cTags
             // 
             this.cTags.HeaderText = "Tags";
             this.cTags.Name = "cTags";
             this.cTags.ReadOnly = true;
+            this.cTags.Width = 60;
             // 
             // AssetsActionsPanel
             // 

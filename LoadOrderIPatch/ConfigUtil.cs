@@ -5,10 +5,12 @@ namespace LoadOrderIPatch {
     using System.Linq;
 
     public static class ConfigUtil {
+        internal static string LocalApplicationPath;
+        
         internal static LoadOrderConfig config_;
         public static LoadOrderConfig Config =>
             config_ ??=
-                LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+                LoadOrderConfig.Deserialize(LocalApplicationPath)
                 ?? new LoadOrderConfig();
         
         public static bool HasArg(string arg) =>

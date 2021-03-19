@@ -1,4 +1,7 @@
 namespace LoadOrderMod.Settings {
+    extern alias Injections;
+    using Inject = Injections.LoadOrderInjections.Injections;
+    using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
     using ColossalFramework.PlatformServices;
     using KianCommons;
 
@@ -11,7 +14,7 @@ namespace LoadOrderMod.Settings {
         public static void EnsureAll() {
             RegisterEvent();
             Log.Info("EnsureAll called ...", true);
-            LoadOrderInjections.SteamUtilities.EnsureAll();
+            SteamUtilities.EnsureAll();
         }
 
         public static void OnUGCRequestUGCDetailsCompleted(UGCDetails result, bool ioError) {
@@ -19,7 +22,7 @@ namespace LoadOrderMod.Settings {
             //Log.Debug($"OnUGCRequestUGCDetailsCompleted(" +
             //    $"result:{result.ToSTR2()}, " +
             //    $"ioError:{ioError})");
-            bool good = LoadOrderInjections.SteamUtilities.IsUGCUpToDate(result, out string reason);
+            bool good = SteamUtilities.IsUGCUpToDate(result, out string reason);
             if(!good) {
                 Log.Info($"[WARNING!] subscribed item not installed properly:" +
                     $"{result.publishedFileId} {result.title}\n" +

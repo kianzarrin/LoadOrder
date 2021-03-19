@@ -10,14 +10,15 @@ using static LoadOrderIPatch.ConfigUtil;
 using ILogger = Patch.API.ILogger;
 
 namespace LoadOrderIPatch.Patches {
+    extern alias Injections;
+    using Inject = Injections.LoadOrderInjections.Injections;
+    using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
+
     public class CMPatch : IPatch {
         public int PatchOrderAsc { get; } = 100;
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("ColossalManaged", new Version(0, 3, 0, 0));
         private ILogger logger_;
         private string workingPath_;
-        static LoadOrderShared.LoadOrderConfig Config => ConfigUtil.Config;
-
-
 
         public AssemblyDefinition Execute(
             AssemblyDefinition assemblyDefinition, 
@@ -27,6 +28,7 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
+            ConfigUtil.LocalApplicationPath = gamePaths.AppDataPath;
             if (!poke || Config.SoftDLLDependancy) {
                 // disable when testing.
                 FindAssemblySoftPatch(assemblyDefinition);
@@ -243,7 +245,7 @@ namespace LoadOrderIPatch.Patches {
         }
 
         public static string CheckFiles(string path) {
-            LoadOrderInjections.SteamUtilities.EnsureIncludedOrExcludedFiles(path);
+            SteamUtilities.EnsureIncludedOrExcludedFiles(path);
             return path;
         }
 
@@ -283,7 +285,7 @@ namespace LoadOrderIPatch.Patches {
         public static bool IsFileExcluded(string path) {
             if (string.IsNullOrEmpty(path) || path[0] == '_')
                 return true;
-            return LoadOrderInjections.Injections.Packages.IsPathExcluded(path);
+            return Inject.Packages.IsPathExcluded(path);
         }
 
         public void ExcludeAssetDirPatch(AssemblyDefinition CM) {

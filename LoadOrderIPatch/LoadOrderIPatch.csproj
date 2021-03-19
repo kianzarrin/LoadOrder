@@ -36,7 +36,9 @@
     <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LoadOrderInjections\LoadOrderInjections.csproj" />
+    <ProjectReference Include="..\LoadOrderInjections\LoadOrderInjections.csproj">
+      <Aliases>Injections</Aliases>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ColossalManaged" />

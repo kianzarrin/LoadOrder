@@ -9,7 +9,11 @@ using UnityEngine;
 using static LoadOrderIPatch.Commons;
 using ILogger = Patch.API.ILogger;
 
+
 namespace LoadOrderIPatch.Patches {
+    extern alias Injections;
+    using Inject = Injections.LoadOrderInjections.Injections;
+
     public class ASCPatch : IPatch {
         public int PatchOrderAsc { get; } = 99;
         public AssemblyToPatch PatchTarget { get; } = new AssemblyToPatch("Assembly-CSharp", new Version());
@@ -23,6 +27,7 @@ namespace LoadOrderIPatch.Patches {
             IPaths gamePaths) {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
+            ConfigUtil.LocalApplicationPath = gamePaths.AppDataPath;
 
             //GameState.GameStateUtil.logger = logger;
             //var enabled = GameState.GameStateUtil.IsModEnabled(workingPath_);
@@ -33,7 +38,7 @@ namespace LoadOrderIPatch.Patches {
             //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition); // handled by harmony patch
             LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
             InstallResolverLog();
-            if(ConfigUtil.Config.AddHarmonyResolver)
+            if (ConfigUtil.Config.AddHarmonyResolver)
                 InstallHarmonyResolver();
 
             bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
@@ -207,7 +212,7 @@ namespace LoadOrderIPatch.Patches {
 
         public void InstallResolverLog() {
             logger_.LogStartPatching();
-            ResolveEventHandler resolver = LoadOrderInjections.Injections.Logs.ResolverLog;
+            ResolveEventHandler resolver = Inject.Logs.ResolverLog;
             AppDomain.CurrentDomain.AssemblyResolve += resolver;
             AppDomain.CurrentDomain.TypeResolve += resolver;
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
