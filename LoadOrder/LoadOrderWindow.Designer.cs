@@ -42,6 +42,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.TextFilterMods = new System.Windows.Forms.TextBox();
             this.ModsButtons = new System.Windows.Forms.Panel();
+            this.ResetOrder = new System.Windows.Forms.Button();
             this.SortByHarmony = new System.Windows.Forms.Button();
             this.ReverseOrder = new System.Windows.Forms.Button();
             this.ExcludeAllMods = new System.Windows.Forms.Button();
@@ -250,6 +251,7 @@
             // ModsButtons
             // 
             this.ModsButtons.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ModsButtons.Controls.Add(this.ResetOrder);
             this.ModsButtons.Controls.Add(this.SortByHarmony);
             this.ModsButtons.Controls.Add(this.ReverseOrder);
             this.ModsButtons.Controls.Add(this.ExcludeAllMods);
@@ -262,6 +264,17 @@
             this.ModsButtons.Name = "ModsButtons";
             this.ModsButtons.Size = new System.Drawing.Size(138, 539);
             this.ModsButtons.TabIndex = 3;
+            // 
+            // ResetOrder
+            // 
+            this.ResetOrder.AutoSize = true;
+            this.ResetOrder.Location = new System.Drawing.Point(9, 85);
+            this.ResetOrder.Margin = new System.Windows.Forms.Padding(2);
+            this.ResetOrder.Name = "ResetOrder";
+            this.ResetOrder.Size = new System.Drawing.Size(122, 27);
+            this.ResetOrder.TabIndex = 2;
+            this.ResetOrder.Text = "Reset Order";
+            this.ResetOrder.UseVisualStyleBackColor = true;
             // 
             // SortByHarmony
             // 
@@ -288,7 +301,7 @@
             // ExcludeAllMods
             // 
             this.ExcludeAllMods.AutoSize = true;
-            this.ExcludeAllMods.Location = new System.Drawing.Point(9, 180);
+            this.ExcludeAllMods.Location = new System.Drawing.Point(9, 227);
             this.ExcludeAllMods.Margin = new System.Windows.Forms.Padding(2);
             this.ExcludeAllMods.Name = "ExcludeAllMods";
             this.ExcludeAllMods.Size = new System.Drawing.Size(122, 27);
@@ -299,7 +312,7 @@
             // EnableAllMods
             // 
             this.EnableAllMods.AutoSize = true;
-            this.EnableAllMods.Location = new System.Drawing.Point(9, 96);
+            this.EnableAllMods.Location = new System.Drawing.Point(9, 143);
             this.EnableAllMods.Margin = new System.Windows.Forms.Padding(2);
             this.EnableAllMods.Name = "EnableAllMods";
             this.EnableAllMods.Size = new System.Drawing.Size(122, 27);
@@ -321,7 +334,7 @@
             // DisableAllMods
             // 
             this.DisableAllMods.AutoSize = true;
-            this.DisableAllMods.Location = new System.Drawing.Point(9, 124);
+            this.DisableAllMods.Location = new System.Drawing.Point(9, 171);
             this.DisableAllMods.Margin = new System.Windows.Forms.Padding(2);
             this.DisableAllMods.Name = "DisableAllMods";
             this.DisableAllMods.Size = new System.Drawing.Size(122, 27);
@@ -332,7 +345,7 @@
             // IncludeAllMods
             // 
             this.IncludeAllMods.AutoSize = true;
-            this.IncludeAllMods.Location = new System.Drawing.Point(9, 152);
+            this.IncludeAllMods.Location = new System.Drawing.Point(9, 199);
             this.IncludeAllMods.Margin = new System.Windows.Forms.Padding(2);
             this.IncludeAllMods.Name = "IncludeAllMods";
             this.IncludeAllMods.Size = new System.Drawing.Size(122, 27);
@@ -532,6 +545,7 @@
             this.cIncluded.HeaderText = "Included";
             this.cIncluded.Name = "cIncluded";
             this.cIncluded.Width = 63;
+            this.cIncluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             // 
             // cID
             // 
@@ -670,7 +684,7 @@
             this.MinimumSize = new System.Drawing.Size(524, 334);
             this.Name = "LoadOrderWindow";
             this.Text = "LoadOrder";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoadOrder_FormClosing);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoadOrderWindow_FormClosing);
             this.splitContainerTopLevel.Panel1.ResumeLayout(false);
             this.splitContainerTopLevel.Panel2.ResumeLayout(false);
             this.splitContainerTopLevel.Panel2.PerformLayout();
@@ -708,7 +722,6 @@
             this.AssetsActionsPanel.ResumeLayout(false);
             this.AssetsActionsPanel.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -760,5 +773,6 @@
         private DataGridViewTextBoxColumn cAuthor;
         private DataGridViewTextBoxColumn cDate;
         private DataGridViewTextBoxColumn cTags;
+        private Button ResetOrder;
     }
 }

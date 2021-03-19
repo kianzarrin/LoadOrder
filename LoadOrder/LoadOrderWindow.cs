@@ -57,6 +57,7 @@ namespace LoadOrderTool {
             this.SortByHarmony.Click += SortByHarmony_Click;
             this.ReverseOrder.Click += ReverseOrder_Click;
             this.RandomizeOrder.Click += RandomizeOrder_Click;
+            this.ResetOrder.Click += ResetOrder_Click;
             this.IncludeAllMods.Click += IncludeAllMods_Click;
             this.ExcludeAllMods.Click += ExcludeAllMods_Click;
             this.EnableAllMods.Click += EnableAllMods_Click;
@@ -157,8 +158,29 @@ namespace LoadOrderTool {
 
         private void RefreshModList(object sender, EventArgs e) => RefreshModList();
 
-        private void LoadOrder_FormClosing(object sender, FormClosingEventArgs e) {
-            GameSettings.SaveAll();
+        private void LoadOrderWindow_FormClosing(object sender, FormClosingEventArgs e) {
+            var configWrapper = PackageManager.instance.ConfigWrapper;
+            if (!configWrapper.AutoSave && configWrapper.Dirty) {
+                var result = MessageBox.Show(
+                    caption: "Unsaved changes",
+                    text: 
+                    "There are changes that are not saved to to game and will not take effect. " +
+                    "Save changes to game?",
+                    buttons:MessageBoxButtons.YesNoCancel);
+                switch (result) {
+                    case DialogResult.Cancel:
+                        e.Cancel = true;
+                        break;
+                    case DialogResult.Yes:
+                        configWrapper.SaveConfig();
+                        break;
+                    case DialogResult.No:
+                        break;
+                    default:
+                        Log.Exception(new Exception("FormClosing: Unknown choice"));
+                        break;
+                }
+            }
         }
 
         private void dataGridViewMods_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e) {
@@ -455,5 +477,11 @@ namespace LoadOrderTool {
             }
         }
         #endregion
+
+        private void ResetOrder_Click(object sender, EventArgs e) {
+            foreach (var mod in ModList)
+                mod.ResetLoadOrder();
+            RefreshModList(sort:true);
+        }
     }
 }
