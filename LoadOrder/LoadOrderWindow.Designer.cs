@@ -38,11 +38,17 @@
             this.AutoSave = new System.Windows.Forms.CheckBox();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanelModFilters = new System.Windows.Forms.TableLayoutPanel();
             this.ComboBoxIncluded = new System.Windows.Forms.ComboBox();
             this.ComboBoxEnabled = new System.Windows.Forms.ComboBox();
             this.ComboBoxWS = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.TextFilterMods = new System.Windows.Forms.TextBox();
+            this.dataGridViewMods = new System.Windows.Forms.DataGridView();
+            this.LoadIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.IsIncluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ModEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ModsButtons = new System.Windows.Forms.Panel();
             this.ResetOrder = new System.Windows.Forms.Button();
             this.SortByHarmony = new System.Windows.Forms.Button();
@@ -52,13 +58,7 @@
             this.RandomizeOrder = new System.Windows.Forms.Button();
             this.DisableAllMods = new System.Windows.Forms.Button();
             this.IncludeAllMods = new System.Windows.Forms.Button();
-            this.dataGridViewMods = new System.Windows.Forms.DataGridView();
-            this.LoadIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.IsIncluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.ModEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AssetsTab = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanelModFilters = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanelAssetFilters = new System.Windows.Forms.TableLayoutPanel();
             this.ComboBoxAssetIncluded = new System.Windows.Forms.ComboBox();
             this.ComboBoxAssetWS = new System.Windows.Forms.ComboBox();
@@ -79,10 +79,9 @@
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
             this.tableLayoutPanelModFilters.SuspendLayout();
-            this.ModsButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).BeginInit();
+            this.ModsButtons.SuspendLayout();
             this.AssetsTab.SuspendLayout();
-
             this.tableLayoutPanelAssetFilters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAssets)).BeginInit();
             this.AssetsActionsPanel.SuspendLayout();
@@ -154,7 +153,6 @@
             // AutoSave
             // 
             this.AutoSave.AutoSize = true;
-            this.Save.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.AutoSave.Location = new System.Drawing.Point(392, 3);
             this.AutoSave.Name = "AutoSave";
             this.AutoSave.Size = new System.Drawing.Size(86, 21);
@@ -185,18 +183,12 @@
             this.ModsTab.Size = new System.Drawing.Size(798, 585);
             this.ModsTab.TabIndex = 0;
             this.ModsTab.Text = "Mods";
-
             // 
             // tableLayoutPanelModFilters
             // 
-            this.tableLayoutPanelModFilters.Name = "tableLayoutPanel";
-            this.tableLayoutPanelModFilters.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanelModFilters.AutoSize = true;
             this.tableLayoutPanelModFilters.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanelModFilters.RowCount = 1;
             this.tableLayoutPanelModFilters.ColumnCount = 5;
-            this.tableLayoutPanelModFilters.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
-            this.tableLayoutPanelModFilters.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelModFilters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelModFilters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelModFilters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -207,34 +199,113 @@
             this.tableLayoutPanelModFilters.Controls.Add(this.ComboBoxWS);
             this.tableLayoutPanelModFilters.Controls.Add(this.label1);
             this.tableLayoutPanelModFilters.Controls.Add(this.TextFilterMods);
+            this.tableLayoutPanelModFilters.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tableLayoutPanelModFilters.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
+            this.tableLayoutPanelModFilters.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanelModFilters.Name = "tableLayoutPanelModFilters";
+            this.tableLayoutPanelModFilters.RowCount = 1;
+            this.tableLayoutPanelModFilters.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelModFilters.Size = new System.Drawing.Size(654, 31);
+            this.tableLayoutPanelModFilters.TabIndex = 0;
             // 
             // ComboBoxIncluded
             // 
             this.ComboBoxIncluded.FormattingEnabled = true;
+            this.ComboBoxIncluded.Location = new System.Drawing.Point(3, 3);
             this.ComboBoxIncluded.Name = "ComboBoxIncluded";
+            this.ComboBoxIncluded.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxIncluded.TabIndex = 0;
             // 
             // ComboBoxEnabled
             // 
             this.ComboBoxEnabled.FormattingEnabled = true;
+            this.ComboBoxEnabled.Location = new System.Drawing.Point(130, 3);
             this.ComboBoxEnabled.Name = "ComboBoxEnabled";
-
+            this.ComboBoxEnabled.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxEnabled.TabIndex = 1;
             // 
             // ComboBoxWS
             // 
             this.ComboBoxWS.FormattingEnabled = true;
+            this.ComboBoxWS.Location = new System.Drawing.Point(257, 3);
             this.ComboBoxWS.Name = "ComboBoxWS";
+            this.ComboBoxWS.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxWS.TabIndex = 2;
             // 
             // label1
             // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(384, 7);
             this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(39, 17);
+            this.label1.TabIndex = 3;
             this.label1.Text = "Filter:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // TextFilterMods
             // 
             this.TextFilterMods.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TextFilterMods.Location = new System.Drawing.Point(429, 3);
             this.TextFilterMods.Name = "TextFilterMods";
+            this.TextFilterMods.Size = new System.Drawing.Size(222, 25);
+            this.TextFilterMods.TabIndex = 4;
+            // 
+            // dataGridViewMods
+            // 
+            this.dataGridViewMods.AllowUserToAddRows = false;
+            this.dataGridViewMods.AllowUserToDeleteRows = false;
+            this.dataGridViewMods.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
+            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.dataGridViewMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.dataGridViewMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewMods.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.LoadIndex,
+            this.IsIncluded,
+            this.ModEnabled,
+            this.Description});
+            this.dataGridViewMods.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewMods.Location = new System.Drawing.Point(3, 3);
+            this.dataGridViewMods.MultiSelect = false;
+            this.dataGridViewMods.Name = "dataGridViewMods";
+            this.dataGridViewMods.RowHeadersVisible = false;
+            this.dataGridViewMods.Size = new System.Drawing.Size(654, 579);
+            this.dataGridViewMods.TabIndex = 1;
+            this.dataGridViewMods.Text = "Mods";
+            // 
+            // LoadIndex
+            // 
+            this.LoadIndex.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.LoadIndex.HeaderText = "Index";
+            this.LoadIndex.Name = "LoadIndex";
+            this.LoadIndex.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.LoadIndex.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.LoadIndex.Width = 45;
+            // 
+            // IsIncluded
+            // 
+            this.IsIncluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.IsIncluded.HeaderText = "Include";
+            this.IsIncluded.Name = "IsIncluded";
+            this.IsIncluded.Width = 55;
+            // 
+            // ModEnabled
+            // 
+            this.ModEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ModEnabled.HeaderText = "Enabled";
+            this.ModEnabled.Name = "ModEnabled";
+            this.ModEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.ModEnabled.Width = 61;
+            // 
+            // Description
+            // 
+            this.Description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Description.HeaderText = "Description";
+            this.Description.Name = "Description";
+            this.Description.ReadOnly = true;
+            this.Description.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Description.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // ModsButtons
             // 
@@ -248,9 +319,9 @@
             this.ModsButtons.Controls.Add(this.DisableAllMods);
             this.ModsButtons.Controls.Add(this.IncludeAllMods);
             this.ModsButtons.Dock = System.Windows.Forms.DockStyle.Right;
-            this.ModsButtons.Location = new System.Drawing.Point(654, 0);
+            this.ModsButtons.Location = new System.Drawing.Point(657, 3);
             this.ModsButtons.Name = "ModsButtons";
-            this.ModsButtons.Size = new System.Drawing.Size(138, 544);
+            this.ModsButtons.Size = new System.Drawing.Size(138, 579);
             this.ModsButtons.TabIndex = 0;
             // 
             // ResetOrder
@@ -341,62 +412,6 @@
             this.IncludeAllMods.Text = "Include All";
             this.IncludeAllMods.UseVisualStyleBackColor = true;
             // 
-            // dataGridViewMods
-            // 
-            this.dataGridViewMods.AllowUserToAddRows = false;
-            this.dataGridViewMods.AllowUserToDeleteRows = false;
-            this.dataGridViewMods.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
-            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridViewMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.dataGridViewMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewMods.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.LoadIndex,
-            this.IsIncluded,
-            this.ModEnabled,
-            this.Description});
-            this.dataGridViewMods.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridViewMods.Location = new System.Drawing.Point(0, 0);
-            this.dataGridViewMods.MultiSelect = false;
-            this.dataGridViewMods.Name = "dataGridViewMods";
-            this.dataGridViewMods.RowHeadersVisible = false;
-            this.dataGridViewMods.Size = new System.Drawing.Size(792, 544);
-            this.dataGridViewMods.TabIndex = 1;
-            this.dataGridViewMods.Text = "Mods";
-            // 
-            // LoadIndex
-            // 
-            this.LoadIndex.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.LoadIndex.HeaderText = "Index";
-            this.LoadIndex.Name = "LoadIndex";
-            this.LoadIndex.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.LoadIndex.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.LoadIndex.Width = 45;
-            // 
-            // IsIncluded
-            // 
-            this.IsIncluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.IsIncluded.HeaderText = "Include";
-            this.IsIncluded.Name = "IsIncluded";
-            this.IsIncluded.Width = 55;
-            // 
-            // ModEnabled
-            // 
-            this.ModEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.ModEnabled.HeaderText = "Enabled";
-            this.ModEnabled.Name = "ModEnabled";
-            this.ModEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.ModEnabled.Width = 61;
-            // 
-            // Description
-            // 
-            this.Description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Description.HeaderText = "Description";
-            this.Description.Name = "Description";
-            this.Description.ReadOnly = true;
-            this.Description.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Description.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
             // AssetsTab
             // 
             this.AssetsTab.BackColor = System.Drawing.SystemColors.Control;
@@ -406,20 +421,15 @@
             this.AssetsTab.Location = new System.Drawing.Point(4, 26);
             this.AssetsTab.Name = "AssetsTab";
             this.AssetsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AssetsTab.Size = new System.Drawing.Size(798, 580);
+            this.AssetsTab.Size = new System.Drawing.Size(798, 585);
             this.AssetsTab.TabIndex = 1;
             this.AssetsTab.Text = "Assets";
             // 
             // tableLayoutPanelAssetFilters
             // 
-            this.tableLayoutPanelAssetFilters.Name = "tableLayoutPanel";
-            this.tableLayoutPanelAssetFilters.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanelAssetFilters.AutoSize = true;
             this.tableLayoutPanelAssetFilters.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanelAssetFilters.RowCount = 1;
             this.tableLayoutPanelAssetFilters.ColumnCount = 5;
-            this.tableLayoutPanelAssetFilters.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
-            this.tableLayoutPanelAssetFilters.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelAssetFilters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelAssetFilters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelAssetFilters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -430,33 +440,56 @@
             this.tableLayoutPanelAssetFilters.Controls.Add(this.ComboBoxAssetTags);
             this.tableLayoutPanelAssetFilters.Controls.Add(this.label2);
             this.tableLayoutPanelAssetFilters.Controls.Add(this.TextFilterAsset);
+            this.tableLayoutPanelAssetFilters.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tableLayoutPanelAssetFilters.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
+            this.tableLayoutPanelAssetFilters.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanelAssetFilters.Name = "tableLayoutPanelAssetFilters";
+            this.tableLayoutPanelAssetFilters.RowCount = 1;
+            this.tableLayoutPanelAssetFilters.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelAssetFilters.Size = new System.Drawing.Size(712, 31);
+            this.tableLayoutPanelAssetFilters.TabIndex = 0;
             // 
             // ComboBoxAssetIncluded
             // 
             this.ComboBoxAssetIncluded.FormattingEnabled = true;
+            this.ComboBoxAssetIncluded.Location = new System.Drawing.Point(3, 3);
             this.ComboBoxAssetIncluded.Name = "ComboBoxAssetIncluded";
+            this.ComboBoxAssetIncluded.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetIncluded.TabIndex = 0;
             // 
             // ComboBoxAssetWS
             // 
             this.ComboBoxAssetWS.FormattingEnabled = true;
+            this.ComboBoxAssetWS.Location = new System.Drawing.Point(130, 3);
             this.ComboBoxAssetWS.Name = "ComboBoxAssetWS";
+            this.ComboBoxAssetWS.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetWS.TabIndex = 1;
             // 
             // ComboBoxAssetTags
             // 
             this.ComboBoxAssetTags.FormattingEnabled = true;
+            this.ComboBoxAssetTags.Location = new System.Drawing.Point(257, 3);
             this.ComboBoxAssetTags.Name = "ComboBoxAssetTags";
+            this.ComboBoxAssetTags.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetTags.TabIndex = 2;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(384, 0);
             this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 17);
+            this.label2.TabIndex = 3;
             this.label2.Text = "Filter:";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // TextFilterAsset
             // 
             this.TextFilterAsset.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TextFilterAsset.Location = new System.Drawing.Point(429, 3);
             this.TextFilterAsset.Name = "TextFilterAsset";
+            this.TextFilterAsset.Size = new System.Drawing.Size(280, 25);
+            this.TextFilterAsset.TabIndex = 4;
             // 
             // dataGridAssets
             // 
@@ -476,12 +509,12 @@
             this.cDate,
             this.cTags});
             this.dataGridAssets.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridAssets.Location = new System.Drawing.Point(0, 0);
+            this.dataGridAssets.Location = new System.Drawing.Point(3, 3);
             this.dataGridAssets.Name = "dataGridAssets";
             this.dataGridAssets.RowHeadersVisible = false;
             this.dataGridAssets.RowTemplate.Height = 27;
             this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridAssets.Size = new System.Drawing.Size(712, 540);
+            this.dataGridAssets.Size = new System.Drawing.Size(712, 579);
             this.dataGridAssets.TabIndex = 0;
             // 
             // cIncluded
@@ -532,9 +565,9 @@
             this.AssetsActionsPanel.Controls.Add(this.ExcludeAllAssets);
             this.AssetsActionsPanel.Controls.Add(this.IncludeAllAssets);
             this.AssetsActionsPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.AssetsActionsPanel.Location = new System.Drawing.Point(712, 0);
+            this.AssetsActionsPanel.Location = new System.Drawing.Point(715, 3);
             this.AssetsActionsPanel.Name = "AssetsActionsPanel";
-            this.AssetsActionsPanel.Size = new System.Drawing.Size(80, 540);
+            this.AssetsActionsPanel.Size = new System.Drawing.Size(80, 579);
             this.AssetsActionsPanel.TabIndex = 1;
             // 
             // ExcludeAllAssets
@@ -576,12 +609,16 @@
             this.FilePanel.PerformLayout();
             this.TabContainer.ResumeLayout(false);
             this.ModsTab.ResumeLayout(false);
-            tableLayoutPanelModFilters.ResumeLayout(true);
+            this.ModsTab.PerformLayout();
+            this.tableLayoutPanelModFilters.ResumeLayout(false);
+            this.tableLayoutPanelModFilters.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).EndInit();
             this.ModsButtons.ResumeLayout(false);
             this.ModsButtons.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).EndInit();
             this.AssetsTab.ResumeLayout(false);
-            tableLayoutPanelAssetFilters.ResumeLayout(true);
+            this.AssetsTab.PerformLayout();
+            this.tableLayoutPanelAssetFilters.ResumeLayout(false);
+            this.tableLayoutPanelAssetFilters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAssets)).EndInit();
             this.AssetsActionsPanel.ResumeLayout(false);
             this.AssetsActionsPanel.PerformLayout();
