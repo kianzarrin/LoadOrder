@@ -190,6 +190,7 @@
             this.dataGridMods.AllowUserToAddRows = false;
             this.dataGridMods.AllowUserToDeleteRows = false;
             this.dataGridMods.AllowUserToResizeRows = false;
+            this.dataGridMods.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
             this.dataGridMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
@@ -442,6 +443,7 @@
             this.dataGridAssets.AllowUserToDeleteRows = false;
             this.dataGridAssets.AllowUserToOrderColumns = true;
             this.dataGridAssets.AllowUserToResizeRows = false;
+            this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridAssets.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dataGridAssets.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridAssets.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
@@ -457,7 +459,6 @@
             this.dataGridAssets.Location = new System.Drawing.Point(3, 34);
             this.dataGridAssets.Name = "dataGridAssets";
             this.dataGridAssets.RowHeadersVisible = false;
-            this.dataGridAssets.RowTemplate.Height = 27;
             this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridAssets.Size = new System.Drawing.Size(708, 548);
             this.dataGridAssets.TabIndex = 0;
