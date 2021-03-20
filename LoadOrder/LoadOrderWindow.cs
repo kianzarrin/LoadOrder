@@ -63,7 +63,7 @@ namespace LoadOrderTool {
             this.EnableAllMods.Click += EnableAllMods_Click;
             this.DisableAllMods.Click += DisableAllMods_Click;
 
-            var buttons = ModsButtons.Controls.OfType<Button>();
+            var buttons = ModActionPanel.Controls.OfType<Button>();
             var maxwidth = buttons.Max(b => b.Width);
             foreach (var b in buttons)
                 b.MinimumSize = new Size(maxwidth, 0);
@@ -344,7 +344,7 @@ namespace LoadOrderTool {
             this.IncludeAllAssets.Click += IncludeAllAssets_Click;
             this.ExcludeAllAssets.Click += ExcludeAllAssets_Click;
 
-            var buttons = AssetsActionsPanel.Controls.OfType<Button>();
+            var buttons = AssetsActionPanel.Controls.OfType<Button>();
             var maxwidth = buttons.Max(b => b.Width);
             foreach (var b in buttons)
                 b.MinimumSize = new Size(maxwidth, 0);

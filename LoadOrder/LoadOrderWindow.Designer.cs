@@ -49,7 +49,7 @@
             this.IsIncluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ModEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ModsButtons = new System.Windows.Forms.Panel();
+            this.ModActionPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.ResetOrder = new System.Windows.Forms.Button();
             this.SortByHarmony = new System.Windows.Forms.Button();
             this.ReverseOrder = new System.Windows.Forms.Button();
@@ -72,7 +72,7 @@
             this.cAuthor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cTags = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.AssetsActionsPanel = new System.Windows.Forms.Panel();
+            this.AssetsActionPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.ExcludeAllAssets = new System.Windows.Forms.Button();
             this.IncludeAllAssets = new System.Windows.Forms.Button();
             this.FilePanel.SuspendLayout();
@@ -80,11 +80,11 @@
             this.ModsTab.SuspendLayout();
             this.tableLayoutPanelModFilters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).BeginInit();
-            this.ModsButtons.SuspendLayout();
+            this.ModActionPanel.SuspendLayout();
             this.AssetsTab.SuspendLayout();
             this.tableLayoutPanelAssetFilters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAssets)).BeginInit();
-            this.AssetsActionsPanel.SuspendLayout();
+            this.AssetsActionPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // FilePanel
@@ -125,7 +125,7 @@
             this.SaveProfile.TabIndex = 1;
             this.SaveProfile.Text = "Export Profile";
             this.SaveProfile.UseVisualStyleBackColor = true;
-            // 
+           // 
             // LoadProfile
             // 
             this.LoadProfile.AutoSize = true;
@@ -174,9 +174,9 @@
             // ModsTab
             // 
             this.ModsTab.BackColor = System.Drawing.SystemColors.Control;
-            this.ModsTab.Controls.Add(this.tableLayoutPanelModFilters);
             this.ModsTab.Controls.Add(this.dataGridViewMods);
-            this.ModsTab.Controls.Add(this.ModsButtons);
+            this.ModsTab.Controls.Add(this.ModActionPanel);
+            this.ModsTab.Controls.Add(this.tableLayoutPanelModFilters);
             this.ModsTab.Location = new System.Drawing.Point(4, 26);
             this.ModsTab.Name = "ModsTab";
             this.ModsTab.Padding = new System.Windows.Forms.Padding(3);
@@ -307,22 +307,21 @@
             this.Description.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.Description.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // ModsButtons
+            // ModActionPanel
             // 
-            this.ModsButtons.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ModsButtons.Controls.Add(this.ResetOrder);
-            this.ModsButtons.Controls.Add(this.SortByHarmony);
-            this.ModsButtons.Controls.Add(this.ReverseOrder);
-            this.ModsButtons.Controls.Add(this.ExcludeAllMods);
-            this.ModsButtons.Controls.Add(this.EnableAllMods);
-            this.ModsButtons.Controls.Add(this.RandomizeOrder);
-            this.ModsButtons.Controls.Add(this.DisableAllMods);
-            this.ModsButtons.Controls.Add(this.IncludeAllMods);
-            this.ModsButtons.Dock = System.Windows.Forms.DockStyle.Right;
-            this.ModsButtons.Location = new System.Drawing.Point(657, 3);
-            this.ModsButtons.Name = "ModsButtons";
-            this.ModsButtons.Size = new System.Drawing.Size(138, 579);
-            this.ModsButtons.TabIndex = 0;
+            this.ModActionPanel.FlowDirection = FlowDirection.TopDown;
+            this.ModActionPanel.AutoSize = true;
+            this.ModActionPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ModActionPanel.Controls.Add(this.ResetOrder);
+            this.ModActionPanel.Controls.Add(this.SortByHarmony);
+            this.ModActionPanel.Controls.Add(this.ReverseOrder);
+            this.ModActionPanel.Controls.Add(this.RandomizeOrder);
+            this.ModActionPanel.Controls.Add(this.IncludeAllMods);
+            this.ModActionPanel.Controls.Add(this.ExcludeAllMods);
+            this.ModActionPanel.Controls.Add(this.EnableAllMods);
+            this.ModActionPanel.Controls.Add(this.DisableAllMods);
+            this.ModActionPanel.Dock = System.Windows.Forms.DockStyle.Right;
+            this.ModActionPanel.Name = "ModActionPanel";
             // 
             // ResetOrder
             // 
@@ -411,13 +410,14 @@
             this.IncludeAllMods.TabIndex = 7;
             this.IncludeAllMods.Text = "Include All";
             this.IncludeAllMods.UseVisualStyleBackColor = true;
+            IncludeAllMods.Padding += new Padding(0, 20, 0, 0);
             // 
             // AssetsTab
             // 
             this.AssetsTab.BackColor = System.Drawing.SystemColors.Control;
-            this.AssetsTab.Controls.Add(this.tableLayoutPanelAssetFilters);
             this.AssetsTab.Controls.Add(this.dataGridAssets);
-            this.AssetsTab.Controls.Add(this.AssetsActionsPanel);
+            this.AssetsTab.Controls.Add(this.AssetsActionPanel);
+            this.AssetsTab.Controls.Add(this.tableLayoutPanelAssetFilters);
             this.AssetsTab.Location = new System.Drawing.Point(4, 26);
             this.AssetsTab.Name = "AssetsTab";
             this.AssetsTab.Padding = new System.Windows.Forms.Padding(3);
@@ -559,16 +559,15 @@
             this.cTags.ReadOnly = true;
             this.cTags.Width = 60;
             // 
-            // AssetsActionsPanel
+            // AssetsActionPanel
             // 
-            this.AssetsActionsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.AssetsActionsPanel.Controls.Add(this.ExcludeAllAssets);
-            this.AssetsActionsPanel.Controls.Add(this.IncludeAllAssets);
-            this.AssetsActionsPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.AssetsActionsPanel.Location = new System.Drawing.Point(715, 3);
-            this.AssetsActionsPanel.Name = "AssetsActionsPanel";
-            this.AssetsActionsPanel.Size = new System.Drawing.Size(80, 579);
-            this.AssetsActionsPanel.TabIndex = 1;
+            this.AssetsActionPanel.FlowDirection = FlowDirection.TopDown;
+            this.AssetsActionPanel.AutoSize = true;
+            this.AssetsActionPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AssetsActionPanel.Controls.Add(this.IncludeAllAssets);
+            this.AssetsActionPanel.Controls.Add(this.ExcludeAllAssets);
+            this.AssetsActionPanel.Dock = System.Windows.Forms.DockStyle.Right;
+            this.AssetsActionPanel.Name = "AssetsActionPanel";
             // 
             // ExcludeAllAssets
             // 
@@ -613,15 +612,15 @@
             this.tableLayoutPanelModFilters.ResumeLayout(false);
             this.tableLayoutPanelModFilters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).EndInit();
-            this.ModsButtons.ResumeLayout(false);
-            this.ModsButtons.PerformLayout();
+            this.ModActionPanel.ResumeLayout(false);
+            this.ModActionPanel.PerformLayout();
             this.AssetsTab.ResumeLayout(false);
             this.AssetsTab.PerformLayout();
             this.tableLayoutPanelAssetFilters.ResumeLayout(false);
             this.tableLayoutPanelAssetFilters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAssets)).EndInit();
-            this.AssetsActionsPanel.ResumeLayout(false);
-            this.AssetsActionsPanel.PerformLayout();
+            this.AssetsActionPanel.ResumeLayout(false);
+            this.AssetsActionPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -639,7 +638,7 @@
         private Button Save;
         private Button LoadProfile;
         private Button SaveProfile;
-        private Panel ModsButtons;
+        private FlowLayoutPanel ModActionPanel;
         private Button SortByHarmony;
         private Button ReverseOrder;
         private Button ExcludeAllMods;
@@ -652,7 +651,7 @@
         private DataGridViewCheckBoxColumn IsIncluded;
         private DataGridViewCheckBoxColumn ModEnabled;
         private DataGridViewTextBoxColumn Description;
-        private Panel AssetsActionsPanel;
+        private FlowLayoutPanel AssetsActionPanel;
         private Button ExcludeAllAssets;
         private Button IncludeAllAssets;
         private ComboBox ComboBoxIncluded;
