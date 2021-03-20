@@ -263,10 +263,11 @@
             // ResetOrder
             // 
             this.ResetOrder.AutoSize = true;
+            this.ResetOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ResetOrder.Location = new System.Drawing.Point(2, 2);
             this.ResetOrder.Margin = new System.Windows.Forms.Padding(2);
             this.ResetOrder.Name = "ResetOrder";
-            this.ResetOrder.Size = new System.Drawing.Size(122, 27);
+            this.ResetOrder.Size = new System.Drawing.Size(89, 27);
             this.ResetOrder.TabIndex = 0;
             this.ResetOrder.Text = "Reset Order";
             this.ResetOrder.UseVisualStyleBackColor = true;
@@ -274,10 +275,11 @@
             // SortByHarmony
             // 
             this.SortByHarmony.AutoSize = true;
+            this.SortByHarmony.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.SortByHarmony.Location = new System.Drawing.Point(2, 33);
             this.SortByHarmony.Margin = new System.Windows.Forms.Padding(2);
             this.SortByHarmony.Name = "SortByHarmony";
-            this.SortByHarmony.Size = new System.Drawing.Size(122, 27);
+            this.SortByHarmony.Size = new System.Drawing.Size(116, 27);
             this.SortByHarmony.TabIndex = 1;
             this.SortByHarmony.Text = "Sort By Harmony";
             this.SortByHarmony.UseVisualStyleBackColor = true;
@@ -285,10 +287,11 @@
             // ReverseOrder
             // 
             this.ReverseOrder.AutoSize = true;
+            this.ReverseOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ReverseOrder.Location = new System.Drawing.Point(2, 64);
             this.ReverseOrder.Margin = new System.Windows.Forms.Padding(2);
             this.ReverseOrder.Name = "ReverseOrder";
-            this.ReverseOrder.Size = new System.Drawing.Size(122, 27);
+            this.ReverseOrder.Size = new System.Drawing.Size(103, 27);
             this.ReverseOrder.TabIndex = 2;
             this.ReverseOrder.Text = "Reverse Order";
             this.ReverseOrder.UseVisualStyleBackColor = true;
@@ -296,6 +299,7 @@
             // RandomizeOrder
             // 
             this.RandomizeOrder.AutoSize = true;
+            this.RandomizeOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.RandomizeOrder.Location = new System.Drawing.Point(2, 95);
             this.RandomizeOrder.Margin = new System.Windows.Forms.Padding(2);
             this.RandomizeOrder.Name = "RandomizeOrder";
@@ -307,10 +311,11 @@
             // IncludeAllMods
             // 
             this.IncludeAllMods.AutoSize = true;
+            this.IncludeAllMods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.IncludeAllMods.Location = new System.Drawing.Point(2, 134);
             this.IncludeAllMods.Margin = new System.Windows.Forms.Padding(2, 10, 2, 2);
             this.IncludeAllMods.Name = "IncludeAllMods";
-            this.IncludeAllMods.Size = new System.Drawing.Size(122, 27);
+            this.IncludeAllMods.Size = new System.Drawing.Size(77, 27);
             this.IncludeAllMods.TabIndex = 7;
             this.IncludeAllMods.Text = "Include All";
             this.IncludeAllMods.UseVisualStyleBackColor = true;
@@ -318,10 +323,11 @@
             // ExcludeAllMods
             // 
             this.ExcludeAllMods.AutoSize = true;
+            this.ExcludeAllMods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ExcludeAllMods.Location = new System.Drawing.Point(2, 165);
             this.ExcludeAllMods.Margin = new System.Windows.Forms.Padding(2);
             this.ExcludeAllMods.Name = "ExcludeAllMods";
-            this.ExcludeAllMods.Size = new System.Drawing.Size(122, 27);
+            this.ExcludeAllMods.Size = new System.Drawing.Size(80, 27);
             this.ExcludeAllMods.TabIndex = 3;
             this.ExcludeAllMods.Text = "Exclude All";
             this.ExcludeAllMods.UseVisualStyleBackColor = true;
@@ -329,10 +335,11 @@
             // EnableAllMods
             // 
             this.EnableAllMods.AutoSize = true;
+            this.EnableAllMods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.EnableAllMods.Location = new System.Drawing.Point(2, 196);
             this.EnableAllMods.Margin = new System.Windows.Forms.Padding(2);
             this.EnableAllMods.Name = "EnableAllMods";
-            this.EnableAllMods.Size = new System.Drawing.Size(122, 27);
+            this.EnableAllMods.Size = new System.Drawing.Size(75, 27);
             this.EnableAllMods.TabIndex = 4;
             this.EnableAllMods.Text = "Enable All";
             this.EnableAllMods.UseVisualStyleBackColor = true;
@@ -340,10 +347,11 @@
             // DisableAllMods
             // 
             this.DisableAllMods.AutoSize = true;
+            this.DisableAllMods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.DisableAllMods.Location = new System.Drawing.Point(2, 227);
             this.DisableAllMods.Margin = new System.Windows.Forms.Padding(2);
             this.DisableAllMods.Name = "DisableAllMods";
-            this.DisableAllMods.Size = new System.Drawing.Size(122, 27);
+            this.DisableAllMods.Size = new System.Drawing.Size(79, 27);
             this.DisableAllMods.TabIndex = 6;
             this.DisableAllMods.Text = "Disable All";
             this.DisableAllMods.UseVisualStyleBackColor = true;
