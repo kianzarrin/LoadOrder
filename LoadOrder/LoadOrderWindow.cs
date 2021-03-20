@@ -34,7 +34,7 @@ namespace LoadOrderTool {
         public LoadOrderWindow() {
             Instance = this;
             InitializeComponent();
-            dataGridViewMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
+            dataGridMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
 
             ComboBoxIncluded.SetItems<IncludedFilter>();
             ComboBoxIncluded.SelectedIndex = 0;
@@ -68,10 +68,10 @@ namespace LoadOrderTool {
             foreach (var b in buttons)
                 b.MinimumSize = new Size(maxwidth, 0);
 
-            dataGridViewMods.CellFormatting += dataGridViewMods_CellFormatting;
-            dataGridViewMods.CellValueChanged += dataGridViewMods_CellValueChanged;
-            dataGridViewMods.CurrentCellDirtyStateChanged += dataGridViewMods_CurrentCellDirtyStateChanged;
-            dataGridViewMods.EditingControlShowing += dataGridViewMods_EditingControlShowing;
+            dataGridMods.CellFormatting += dataGridMods_CellFormatting;
+            dataGridMods.CellValueChanged += dataGridMods_CellValueChanged;
+            dataGridMods.CurrentCellDirtyStateChanged += dataGridMods_CurrentCellDirtyStateChanged;
+            dataGridMods.EditingControlShowing += dataGridMods_EditingControlShowing;
 
             LoadMods();
             InitializeAssetTab();
@@ -129,7 +129,7 @@ namespace LoadOrderTool {
 
         public void PopulateMods() {
             SuspendLayout();
-            var rows = this.dataGridViewMods.Rows;
+            var rows = this.dataGridMods.Rows;
             rows.Clear();
             Log.Info("Populating");
             foreach (var p in ModList.Filtered) {
@@ -188,8 +188,8 @@ namespace LoadOrderTool {
             }
         }
 
-        private void dataGridViewMods_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e) {
-            if (dataGridViewMods.CurrentCell.ColumnIndex == 0 && e.Control is TextBox tb) // Desired Column
+        private void dataGridMods_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e) {
+            if (dataGridMods.CurrentCell.ColumnIndex == 0 && e.Control is TextBox tb) // Desired Column
             {
                 tb.KeyPress -= U32TextBox_KeyPress;
                 tb.Leave -= U32TextBox_Submit;
@@ -198,10 +198,10 @@ namespace LoadOrderTool {
             }
         }
 
-        private void dataGridViewMods_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
-            Log.Debug("dataGridViewMods_CellValueChanged() called");
+        private void dataGridMods_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
+            Log.Debug("dataGridMods_CellValueChanged() called");
             var plugin = ModList.Filtered[e.RowIndex];
-            var cell = dataGridViewMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
             var col = cell.OwningColumn;
 
             if (col == LoadIndex) {
@@ -217,9 +217,9 @@ namespace LoadOrderTool {
             }
         }
 
-        private void dataGridViewMods_CurrentCellDirtyStateChanged(object sender, EventArgs e) {
-            if (dataGridViewMods.CurrentCell is DataGridViewCheckBoxCell) {
-                dataGridViewMods.EndEdit();
+        private void dataGridMods_CurrentCellDirtyStateChanged(object sender, EventArgs e) {
+            if (dataGridMods.CurrentCell is DataGridViewCheckBoxCell) {
+                dataGridMods.EndEdit();
             }
         }
 
@@ -298,10 +298,10 @@ namespace LoadOrderTool {
             LoadAsssets();
         }
 
-        private void dataGridViewMods_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
+        private void dataGridMods_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
             //Log.Info($"e.ColumnIndex={e.ColumnIndex} Description.Index={Description.Index}");
             if (e.ColumnIndex == Description.Index && e.Value != null) {
-                var cell = dataGridViewMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
                 cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
             }
         }

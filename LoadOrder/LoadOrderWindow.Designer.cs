@@ -38,7 +38,7 @@
             this.AutoSave = new System.Windows.Forms.CheckBox();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
-            this.dataGridViewMods = new System.Windows.Forms.DataGridView();
+            this.dataGridMods = new System.Windows.Forms.DataGridView();
             this.LoadIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IsIncluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ModEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -78,7 +78,7 @@
             this.FilePanel.SuspendLayout();
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridMods)).BeginInit();
             this.ModActionPanel.SuspendLayout();
             this.tableLayoutPanelModFilters.SuspendLayout();
             this.AssetsTab.SuspendLayout();
@@ -175,7 +175,7 @@
             // ModsTab
             // 
             this.ModsTab.BackColor = System.Drawing.SystemColors.Control;
-            this.ModsTab.Controls.Add(this.dataGridViewMods);
+            this.ModsTab.Controls.Add(this.dataGridMods);
             this.ModsTab.Controls.Add(this.ModActionPanel);
             this.ModsTab.Controls.Add(this.tableLayoutPanelModFilters);
             this.ModsTab.Location = new System.Drawing.Point(4, 26);
@@ -185,28 +185,28 @@
             this.ModsTab.TabIndex = 0;
             this.ModsTab.Text = "Mods";
             // 
-            // dataGridViewMods
+            // dataGridMods
             // 
-            this.dataGridViewMods.AllowUserToAddRows = false;
-            this.dataGridViewMods.AllowUserToDeleteRows = false;
-            this.dataGridViewMods.AllowUserToResizeRows = false;
+            this.dataGridMods.AllowUserToAddRows = false;
+            this.dataGridMods.AllowUserToDeleteRows = false;
+            this.dataGridMods.AllowUserToResizeRows = false;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
-            this.dataGridViewMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridViewMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.dataGridViewMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewMods.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.dataGridMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.dataGridMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridMods.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.LoadIndex,
             this.IsIncluded,
             this.ModEnabled,
             this.Description});
-            this.dataGridViewMods.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridViewMods.Location = new System.Drawing.Point(3, 34);
-            this.dataGridViewMods.MultiSelect = false;
-            this.dataGridViewMods.Name = "dataGridViewMods";
-            this.dataGridViewMods.RowHeadersVisible = false;
-            this.dataGridViewMods.Size = new System.Drawing.Size(666, 548);
-            this.dataGridViewMods.TabIndex = 1;
-            this.dataGridViewMods.Text = "Mods";
+            this.dataGridMods.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridMods.Location = new System.Drawing.Point(3, 34);
+            this.dataGridMods.MultiSelect = false;
+            this.dataGridMods.Name = "dataGridMods";
+            this.dataGridMods.RowHeadersVisible = false;
+            this.dataGridMods.Size = new System.Drawing.Size(666, 548);
+            this.dataGridMods.TabIndex = 1;
+            this.dataGridMods.Text = "Mods";
             // 
             // LoadIndex
             // 
@@ -624,7 +624,7 @@
             this.TabContainer.ResumeLayout(false);
             this.ModsTab.ResumeLayout(false);
             this.ModsTab.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMods)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridMods)).EndInit();
             this.ModActionPanel.ResumeLayout(false);
             this.ModActionPanel.PerformLayout();
             this.tableLayoutPanelModFilters.ResumeLayout(false);
@@ -661,7 +661,7 @@
         private Button RandomizeOrder;
         private Button DisableAllMods;
         private Button IncludeAllMods;
-        public DataGridView dataGridViewMods;
+        public DataGridView dataGridMods;
         private DataGridViewTextBoxColumn LoadIndex;
         private DataGridViewCheckBoxColumn IsIncluded;
         private DataGridViewCheckBoxColumn ModEnabled;
