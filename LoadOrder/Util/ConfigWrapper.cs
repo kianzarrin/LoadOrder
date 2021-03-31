@@ -1,18 +1,9 @@
 ﻿namespace LoadOrderTool.Util {
     using CO.IO;
-    using CO.Plugins;
     using CO.Packaging;
+    using CO.Plugins;
     using LoadOrderTool;
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Runtime.CompilerServices;
-    using System.Runtime.ConstrainedExecution;
-    using LoadOrderTool.Util;
-    using Mono.Cecil;
     using System.Threading;
 
     public class ConfigWrapper {
@@ -38,6 +29,9 @@
         }
 
         public bool AutoSave { get; set; } = false;
+
+        public void Suspend() => m_SaveThread.Suspend();
+        public void Resume() => m_SaveThread.Resume();
 
         public void SaveConfig() {
             if (!AutoSave) {
@@ -66,7 +60,7 @@
         private void MonitorSave() {
             try {
                 while (m_Run) {
-                    if(AutoSave && Dirty)
+                    if (AutoSave && Dirty)
                         SaveConfigImpl();
                     lock (m_LockObject) {
                         Monitor.Wait(m_LockObject, 100);

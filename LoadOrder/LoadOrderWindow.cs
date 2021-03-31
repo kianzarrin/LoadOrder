@@ -29,6 +29,8 @@ namespace LoadOrderTool {
 
         public static LoadOrderWindow Instance;
 
+        static ConfigWrapper ConfigWrapper => PluginManager.instance.ConfigWrapper;
+
         ModList ModList;
 
         public LoadOrderWindow() {
