@@ -180,7 +180,7 @@ namespace LoadOrderTool {
             int newIndex = this.FindIndex(item => DefaultComparison(item, p) >= 0);
             this.Remove(p);
             this.Insert(newIndex, p);
-            Log.Debug($"newIndex={newIndex} newLoadOrder={p.LoadOrder}");
+            //Log.Debug($"newIndex={newIndex} newLoadOrder={p.LoadOrder}");
             for (int i = 1; i < Count; ++i) {
                 if (this[i].HasLoadOrder() && this[i].LoadOrder <= this[i - 1].LoadOrder) {
                     this[i].LoadOrder = this[i - 1].LoadOrder+1;

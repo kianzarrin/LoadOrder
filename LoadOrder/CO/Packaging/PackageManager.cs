@@ -179,10 +179,10 @@ namespace CO.Packaging {
                 foreach (var id in subscribedItems) {
                     string subscribedItemPath = ContentUtil.GetSubscribedItemPath(id);
                     if (subscribedItemPath != null && Directory.Exists(subscribedItemPath)) {
-                        Log.Debug("scanned: " + subscribedItemPath);
+                        //Log.Debug("scanned: " + subscribedItemPath);
                         LoadPackages(subscribedItemPath, id);
                     } else {
-                        Log.Debug("direcotry does not exist: " + subscribedItemPath);
+                        //Log.Debug("direcotry does not exist: " + subscribedItemPath);
                     }
                 }
             }
@@ -245,7 +245,7 @@ namespace CO.Packaging {
                 if (assetProfile != null) {
                     assetProfile.Write(assetInfo);
                 } else if (excludeExtras) {
-                    Log.Debug("asset profile with path not found: " + assetInfo.AssetPath);
+                    //Log.Debug("asset profile with path not found: " + assetInfo.AssetPath);
                     assetInfo.IsIncluded = false;
                 }
             }

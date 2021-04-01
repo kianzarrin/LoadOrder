@@ -153,12 +153,12 @@ namespace LoadOrderTool {
             Log.Info("Populating");
             foreach (var p in ModList.Filtered) {
                 string savedKey = p.savedEnabledKey_;
-                Log.Debug($"plugin info: dllName={p.dllName} harmonyVersion={ ModList.GetHarmonyOrder(p)} " +
-                     $"savedKey={savedKey} modPath={p.ModPath}");
+                //Log.Debug($"plugin info: dllName={p.dllName} harmonyVersion={ ModList.GetHarmonyOrder(p)} " +
+                //     $"savedKey={savedKey} modPath={p.ModPath}");
             }
             foreach (var mod in ModList.Filtered) {
                 rows.Add(mod.LoadOrder, mod.IsIncludedPending, mod.IsEnabledPending, mod.DisplayText);
-                Log.Debug("row added: " + mod.ToString());
+                //Log.Debug("row added: " + mod.ToString());
             }
             ResumeLayout();
         }
@@ -218,7 +218,7 @@ namespace LoadOrderTool {
         }
 
         private void dataGridMods_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
-            Log.Debug("dataGridMods_CellValueChanged() called");
+            //Log.Debug("dataGridMods_CellValueChanged() called");
             var plugin = ModList.Filtered[e.RowIndex];
             var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
             var col = cell.OwningColumn;
@@ -515,14 +515,14 @@ namespace LoadOrderTool {
         }
 
         private void dataGridAssets_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
-            Log.Debug("dataGridAssets_CellValueChanged() called");
+            //Log.Debug("dataGridAssets_CellValueChanged() called");
             var row = dataGridAssets.Rows[e.RowIndex];
             var assetInfo = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
             var cell = row.Cells[e.ColumnIndex];
             var col = cell.OwningColumn;
             if (col == cIncluded) {
                 assetInfo.IsIncludedPending = (bool)cell.Value;
-                Log.Debug($"{assetInfo} | IsIncludedPending changes to {cell.Value}");
+                //Log.Debug($"{assetInfo} | IsIncludedPending changes to {cell.Value}");
             } else {
                 Log.Error("unexpected column changed: " + col.Name);
             }

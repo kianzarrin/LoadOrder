@@ -423,7 +423,7 @@ namespace CO.Plugins {
                 foreach (var id in subscribedItems) {
                     string subscribedItemPath = ContentUtil.GetSubscribedItemPath(id);
                     if (subscribedItemPath != null && Directory.Exists(subscribedItemPath)) {
-                        Log.Debug("scanned: " + subscribedItemPath);
+                        //Log.Debug("scanned: " + subscribedItemPath);
                         m_Plugins.Add(new PluginInfo(subscribedItemPath, false, id));
                     } else {
                         Log.Debug("direcotry does not exist: " + subscribedItemPath);
