@@ -68,12 +68,12 @@ namespace CO
 		internal SettingsFile InternalFindSettingsFileByName(string name)
 		{
 			SettingsFile result;
-			if (this.m_SettingsFiles.TryGetValue(name, out result))
-			{
-				return result;
-			}
-			Log.Info($"WARNING: GameSettings: '{name}' is not found or cannot be loaded. Make sure to call GameSettings.AddSettingsFile() to register a settings file before using SavedValue().");
-			return null;
+            if (!m_SettingsFiles.TryGetValue(name, out result)) {
+                // auto add missing setting files.
+                result = new SettingsFile() { fileName = name };
+                InternalAddSettingsFile(result);
+            }
+            return result;
 		}
 
 		public static void SaveAll()

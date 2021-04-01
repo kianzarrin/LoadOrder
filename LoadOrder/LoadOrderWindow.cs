@@ -77,6 +77,23 @@ namespace LoadOrderTool {
 
             LoadMods();
             InitializeAssetTab();
+
+            AutoSave.Checked = ConfigWrapper.AutoSave;
+            Dirty = ConfigWrapper.Dirty;
+            ConfigWrapper.SaveConfig();
+        }
+
+        public bool Dirty {
+            get => Text.Contains("*");
+            set {
+                if (Dirty == value)
+                    return;
+                if (value) {
+                    Text += "*";
+                } else {
+                    Text = Text[0..^1]; // drop dirty
+                }
+            }
         }
 
         public bool ModPredicate(PluginManager.PluginInfo p) {
@@ -451,10 +468,23 @@ namespace LoadOrderTool {
         }
 
         public void IncludeExcludeVisibleAssets(bool value) {
-            foreach (DataGridViewRow row in dataGridAssets.Rows) {
-                if (!row.Visible) continue;
-                var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
-                row.Cells[cIncluded.Index].Value = asset.IsIncludedPending = value;
+            try {
+                Log.Debug("IncludeExcludeVisibleAssets() Called.");
+                dataGridAssets.SuspendLayout();
+                ConfigWrapper.Suspend();
+                Log.Debug("IncludeExcludeVisibleAssets() Start");
+                foreach (DataGridViewRow row in dataGridAssets.Rows) {
+                    if (!row.Visible) continue;
+                    var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
+                    row.Cells[cIncluded.Index].Value = asset.IsIncludedPending = value;
+                }
+                Log.Debug("IncludeExcludeVisibleAssets() End");
+            }catch (Exception ex) {
+                Log.Exception(ex);
+            } finally {
+                ConfigWrapper.Resume();
+                dataGridAssets.ResumeLayout();
+                Log.Debug("IncludeExcludeVisibleAssets() Finished!");
             }
         }
 

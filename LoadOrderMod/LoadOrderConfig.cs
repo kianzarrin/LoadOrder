@@ -20,6 +20,10 @@ namespace LoadOrderShared {
         public string Author;
     }
 
+    public class ToolSettingsT {
+        public bool AutoSave;
+    }
+
     public class LoadOrderConfig {
         public const int DefaultLoadOrder = 1000;
         public const string FILE_NAME = "LoadOrderConfig.xml";
@@ -35,8 +39,11 @@ namespace LoadOrderShared {
         public bool LogAssetLoadingTimes = true;
         public bool LogPerModAssetLoadingTimes = false;
 
+        public ToolSettingsT ToolSettings = new ToolSettingsT();
         public ModInfo[] Mods = new ModInfo[0];
         public AssetInfo[] Assets = new AssetInfo[0];
+
+
 
         public void Serialize(string dir) {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));

@@ -8,7 +8,16 @@
 
     public class ConfigWrapper {
         public LoadOrderShared.LoadOrderConfig Config;
-        public bool Dirty = false;
+
+        bool dirty_;
+        public bool Dirty {
+            get => dirty_;
+            set {
+                dirty_ = value;
+                if (LoadOrderWindow.Instance != null)
+                    LoadOrderWindow.Instance.Dirty = value;
+            }
+        }
 
         Thread m_SaveThread;
         bool m_Run = true;
@@ -17,8 +26,8 @@
         public ConfigWrapper() {
             Config = LoadOrderShared.LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
                 ?? new LoadOrderShared.LoadOrderConfig();
-
             StartSaveThread();
+
         }
         ~ConfigWrapper() {
             m_Run = false;
@@ -28,10 +37,14 @@
             Log.Info("LoadOrderConfig terminated");
         }
 
-        public bool AutoSave { get; set; } = false;
+        public bool AutoSave {
+            get => Config.ToolSettings.AutoSave;
+            set => Config.ToolSettings.AutoSave = value;
+        }
 
-        public void Suspend() => m_SaveThread.Suspend();
-        public void Resume() => m_SaveThread.Resume();
+        public bool Paused { get; set; } = false;
+        public void Suspend() => Paused = true;
+        public void Resume() => Paused = false;
 
         public void SaveConfig() {
             if (!AutoSave) {
@@ -43,9 +56,9 @@
 
         private void SaveConfigImpl() {
             Dirty = false;
-            Config.Serialize(DataLocation.localApplicationData);
             PluginManager.instance.ApplyPendingValues();
             PackageManager.instance.ApplyPendingValues();
+            Config.Serialize(DataLocation.localApplicationData);
             Log.Info($"SaveConfigImpl() done. (Dirty={Dirty})");
         }
 
@@ -60,6 +73,8 @@
         private void MonitorSave() {
             try {
                 while (m_Run) {
+                    while (m_Run && Paused)
+                        Monitor.Wait(m_LockObject, 100); // wait here while paused
                     if (AutoSave && Dirty)
                         SaveConfigImpl();
                     lock (m_LockObject) {

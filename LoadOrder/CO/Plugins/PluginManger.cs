@@ -14,10 +14,11 @@ namespace CO.Plugins {
     using LoadOrderTool.Util;
     using Mono.Cecil;
     using System.Threading;
+    using LoadOrderShared;
 
     public class PluginManager : SingletonLite<PluginManager> {
-        public ConfigWrapper ConfigWrapper;
-        LoadOrderShared.LoadOrderConfig Config => ConfigWrapper.Config;
+        public ConfigWrapper ConfigWrapper = new ConfigWrapper();
+        LoadOrderConfig Config => ConfigWrapper.Config;
 
         public enum MessageType {
             Error,
@@ -394,7 +395,7 @@ namespace CO.Plugins {
                         mods.Add(plugin.ModInfo);
                 }
                 Config.Mods = mods.ToArray();
-                ConfigWrapper.Dirty = true;
+                ConfigWrapper.SaveConfig();
 
             } catch (Exception ex) {
                 Log.Exception(ex);
@@ -592,14 +593,5 @@ namespace CO.Plugins {
         //    DirectoryUtils.DeleteDirectory(text2);
         //    return !compilerResults.Errors.HasErrors;
         //}
-
-        public PluginManager() => ConfigWrapper = new ConfigWrapper();
-
-        static PluginManager()
-        {
-            if (GameSettings.FindSettingsFileByName(assetStateSettingsFile) == null) {
-                GameSettings.AddSettingsFile(new SettingsFile[] { new SettingsFile() { fileName = assetStateSettingsFile } });
-            }
-        }
     }
 }
