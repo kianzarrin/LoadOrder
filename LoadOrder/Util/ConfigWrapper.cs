@@ -31,9 +31,9 @@
         }
         ~ConfigWrapper() {
             m_Run = false;
-            lock (m_LockObject) {
+            lock (m_LockObject)
                 Monitor.Pulse(m_LockObject);
-            }
+            
             Log.Info("LoadOrderConfig terminated");
         }
 
@@ -73,12 +73,13 @@
         private void MonitorSave() {
             try {
                 while (m_Run) {
-                    while (m_Run && Paused)
-                        Monitor.Wait(m_LockObject, 100); // wait here while paused
                     if (AutoSave && Dirty)
                         SaveConfigImpl();
-                    lock (m_LockObject) {
+                    lock (m_LockObject)
                         Monitor.Wait(m_LockObject, 100);
+                    while (m_Run && Paused) {
+                        lock (m_LockObject)
+                            Monitor.Wait(m_LockObject, 100); // wait here while paused
                     }
                 }
 

@@ -288,7 +288,10 @@ namespace LoadOrderTool {
             diaglog.Filter = "xml files (*.xml)|*.xml";
             diaglog.InitialDirectory = LoadOrderProfile.DIR;
             if (diaglog.ShowDialog() == DialogResult.OK) {
-                ModList.SaveProfile(diaglog.FileName);
+                LoadOrderProfile profile = new LoadOrderProfile();
+                ModList.SaveToProfile(profile);
+                PackageManager.instance.SaveToProfile(profile);
+                profile.Serialize(diaglog.FileName);
             }
         }
 
@@ -297,9 +300,11 @@ namespace LoadOrderTool {
                 diaglog.Filter = "xml files (*.xml)|*.xml";
                 diaglog.InitialDirectory = LoadOrderProfile.DIR;
                 if (diaglog.ShowDialog() == DialogResult.OK) {
-                    ModList.LoadProfile(diaglog.FileName);
-                    ModList.DefaultSort();
+                    var profile = LoadOrderProfile.Deserialize(diaglog.FileName);
+                    ModList.LoadFromProfile(profile);
+                    PackageManager.instance.LoadFromProfile(profile);
                     RefreshModList(true);
+                    RefreshAssetTable();
                 }
             }
         }
@@ -464,6 +469,19 @@ namespace LoadOrderTool {
             foreach (DataGridViewRow row in dataGridAssets.Rows) {
                 var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
                 row.Visible = AssetPredicate(asset);
+            }
+        }
+
+        public void RefreshAssetTable() {
+            //Log.Debug("RefreshAssetTable() called");
+            //Log.Debug("RefreshAssetTable() GetAssets().Count(a=>a.IsIncluded) = " 
+            //    + PackageManager.instance.GetAssets().Count(a=>a.IsIncluded));
+            foreach (DataGridViewRow row in dataGridAssets.Rows) {
+                var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
+                var cellIncluded = row.Cells[cIncluded.Index];
+                cellIncluded.Value = asset.IsIncludedPending;
+                //if (asset.IsIncluded)
+                //    Log.Debug("RefreshAssetTable: cellIncluded.Value=" + cellIncluded.Value);
             }
         }
 

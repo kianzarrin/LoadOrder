@@ -190,14 +190,10 @@ namespace LoadOrderTool {
             }
         }
 
-
-
-
         public PluginManager.PluginInfo GetPluginInfo(string path) =>
             this.FirstOrDefault(p => p.ModIncludedPath == path);
 
-        public void LoadProfile(string file, bool excludeExtras=true) {
-            var profile = LoadOrderProfile.Deserialize(file);
+        public void LoadFromProfile(LoadOrderProfile profile, bool excludeExtras=true) {
             foreach (var modInfo in this) {
                 var modProfile = profile.GetMod(modInfo.ModIncludedPath);
                 if (modProfile != null) {
@@ -216,14 +212,13 @@ namespace LoadOrderTool {
             }
         }
 
-        public void SaveProfile(string file) {
+        public void SaveToProfile(LoadOrderProfile profile) {
             var list = new List<LoadOrderProfile.Mod>(this.Count);
             foreach (var pluginInfo in this) {
                 var modProfile = new LoadOrderProfile.Mod(pluginInfo);
                 list.Add(modProfile);
             }
-            var profile = new LoadOrderProfile { Mods = list.ToArray() };
-            profile.Serialize(file);
+            profile.Mods = list.ToArray();
         }
     }
 }

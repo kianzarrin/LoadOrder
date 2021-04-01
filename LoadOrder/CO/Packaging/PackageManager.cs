@@ -14,6 +14,7 @@ namespace CO.Packaging {
     using System.Runtime.CompilerServices;
     using System.Runtime.ConstrainedExecution;
     using System.Threading;
+    using System.Windows.Forms;
 
     public class PackageManager : SingletonLite<PackageManager> {
         public ConfigWrapper ConfigWrapper => Plugins.PluginManager.instance.ConfigWrapper;
@@ -141,7 +142,6 @@ namespace CO.Packaging {
 
         public static readonly string packageExtension = ".crp";
 
-        //private Dictionary<string, AssetInfo> m_Plugins = new Dictionary<string, AssetInfo>();
         private List<AssetInfo> m_Assets = new List<AssetInfo>();
 
         public IEnumerable<AssetInfo> GetAssets() => m_Assets;
@@ -234,6 +234,36 @@ namespace CO.Packaging {
         public void ApplyPendingValues() {
             foreach (var p in GetAssets())
                 p.ApplyPendingValues();
+        }
+
+        public AssetInfo GetAssetInfo(string path) =>
+            this.GetAssets().FirstOrDefault(p => p.AssetPath == path);
+
+        public void LoadFromProfile(LoadOrderProfile profile, bool excludeExtras = true) {
+            foreach (var assetInfo in this.GetAssets()) {
+                var assetProfile = profile.GetAsset(assetInfo.AssetPath);
+                if (assetProfile != null) {
+                    assetProfile.Write(assetInfo);
+                } else if (excludeExtras) {
+                    Log.Debug("asset profile with path not found: " + assetInfo.AssetPath);
+                    assetInfo.IsIncluded = false;
+                }
+            }
+
+            var missing = profile.Assets.Where(m => GetAssetInfo(m.IncludedPath) == null);
+            if (missing.Any()) {
+                var strMissing = string.Join('\n', missing.Select(p => p.DisplayText).ToArray());
+                MessageBox.Show(strMissing, "Warning! Missing Assets", MessageBoxButtons.OK);
+            }
+        }
+
+        public void SaveToProfile(LoadOrderProfile profile) {
+            var list = new List<LoadOrderProfile.Asset>(m_Assets.Count);
+            foreach (var assetInfo in m_Assets) {
+                var assetProfile = new LoadOrderProfile.Asset(assetInfo);
+                list.Add(assetProfile);
+            }
+            profile.Assets = list.ToArray();
         }
     }
 }

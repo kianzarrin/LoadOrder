@@ -26,12 +26,27 @@
                 pluginInfo.IsEnabledPending = IsEnabled;
                 pluginInfo.LoadOrder = LoadOrder;
             }
-
-
-
         }
 
-        const int DefaultLoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
+        public class Asset {
+            public string IncludedPath;
+            public bool IsIncluded;
+            public string DisplayText;
+
+            public Asset() { }
+
+            public Asset(CO.Packaging.PackageManager.AssetInfo assetInfo) {
+                IncludedPath = assetInfo.AssetPath;
+                IsIncluded = assetInfo.IsIncludedPending;
+                DisplayText = assetInfo.DisplayText;
+            }
+
+            public void Write(CO.Packaging.PackageManager.AssetInfo assetInfo) {
+                assetInfo.IsIncludedPending = IsIncluded;
+            }
+        }
+
+
         public static string DIR {
             get {
                 var dir = Path.Combine(DataLocation.localApplicationData, "LOMProfiles");
@@ -42,8 +57,10 @@
         }
 
         public Mod[] Mods = new Mod[0];
+        public Asset[] Assets = new Asset[0];
 
         public Mod GetMod(string includedPath) => Mods.FirstOrDefault(m => m.IncludedPath == includedPath);
+        public Asset GetAsset(string includedPath) => Assets.FirstOrDefault(m => m.IncludedPath == includedPath);
 
         public void Serialize(string path) {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderProfile));
