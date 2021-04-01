@@ -183,7 +183,7 @@ namespace LoadOrderTool {
         private void RefreshModList(object sender, EventArgs e) => RefreshModList();
 
         private void LoadOrderWindow_FormClosing(object sender, FormClosingEventArgs e) {
-            var configWrapper = PackageManager.instance.ConfigWrapper;
+            var configWrapper = ConfigWrapper;
             if (!configWrapper.AutoSave && configWrapper.Dirty) {
                 var result = MessageBox.Show(
                     caption: "Unsaved changes",

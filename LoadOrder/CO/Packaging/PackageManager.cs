@@ -15,10 +15,11 @@ namespace CO.Packaging {
     using System.Runtime.ConstrainedExecution;
     using System.Threading;
     using System.Windows.Forms;
+    using LoadOrderShared;
 
     public class PackageManager : SingletonLite<PackageManager> {
-        public ConfigWrapper ConfigWrapper => Plugins.PluginManager.instance.ConfigWrapper;
-        LoadOrderShared.LoadOrderConfig Config => ConfigWrapper.Config;
+        static ConfigWrapper ConfigWrapper => Plugins.PluginManager.instance.ConfigWrapper;
+        static LoadOrderConfig Config => ConfigWrapper.Config;
 
         public class AssetInfo {
             private string m_Path;
@@ -60,7 +61,7 @@ namespace CO.Packaging {
                 set {
                     if (isIncludedPending_ != value) {
                         isIncludedPending_ = value;
-                        PackageManager.instance.ConfigWrapper.Dirty = true;
+                        ConfigWrapper.Dirty = true;
                     }
                 }
             }
@@ -117,7 +118,7 @@ namespace CO.Packaging {
                 this.m_Path = includedPath;
                 //this.m_IsBuiltin = builtin;
                 this.m_PublishedFileID = id;
-                this.ConfigAssetInfo = PackageManager.instance.Config.Assets.FirstOrDefault(
+                this.ConfigAssetInfo = Config.Assets.FirstOrDefault(
                     item => item.Path == includedPath);
                 this.ConfigAssetInfo ??= new LoadOrderShared.AssetInfo {
                     Path = includedPath,
