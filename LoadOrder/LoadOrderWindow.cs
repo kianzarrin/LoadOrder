@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace LoadOrderTool {
     public partial class LoadOrderWindow : Form {
@@ -83,11 +84,12 @@ namespace LoadOrderTool {
             ConfigWrapper.SaveConfig();
         }
 
+        public bool dirty_;
         public bool Dirty {
-            get => Text.Contains("*");
+            get => dirty_; //fast access.
             set {
-                if (Dirty == value)
-                    return;
+                if (dirty_ == value) return;
+                dirty_ = value;
                 if (value) {
                     Text += "*";
                 } else {
@@ -304,7 +306,7 @@ namespace LoadOrderTool {
                     ModList.LoadFromProfile(profile);
                     PackageManager.instance.LoadFromProfile(profile);
                     RefreshModList(true);
-                    RefreshAssetTable();
+                    UpdateAssetTable();
                 }
             }
         }
@@ -426,7 +428,13 @@ namespace LoadOrderTool {
 
         public void LoadAsssets() {
             PackageManager.instance.LoadPackages();
+            RefreshAssets();
+        }
+
+        public void RefreshAssets() {
+            var timer = Stopwatch.StartNew();
             PopulateAssets();
+            Log.Debug($"PopulateAssets:{timer.ElapsedMilliseconds}ms");
             FilterAssetRows();
         }
 
@@ -466,44 +474,39 @@ namespace LoadOrderTool {
         }
 
         public void FilterAssetRows() {
+            dataGridAssets.SuspendLayout();
             foreach (DataGridViewRow row in dataGridAssets.Rows) {
                 var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
                 row.Visible = AssetPredicate(asset);
             }
+            dataGridAssets.ResumeLayout();
         }
 
-        public void RefreshAssetTable() {
-            //Log.Debug("RefreshAssetTable() called");
-            //Log.Debug("RefreshAssetTable() GetAssets().Count(a=>a.IsIncluded) = " 
-            //    + PackageManager.instance.GetAssets().Count(a=>a.IsIncluded));
-            foreach (DataGridViewRow row in dataGridAssets.Rows) {
-                var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
-                var cellIncluded = row.Cells[cIncluded.Index];
-                cellIncluded.Value = asset.IsIncludedPending;
-                //if (asset.IsIncluded)
-                //    Log.Debug("RefreshAssetTable: cellIncluded.Value=" + cellIncluded.Value);
-            }
+        /// <summary>
+        /// Update asset table values based on its cAsset column
+        /// </summary>
+        public void UpdateAssetTable() {
+            // cell.set_Value  is slow. better to reload the table.
+            RefreshAssets();
         }
 
         public void IncludeExcludeVisibleAssets(bool value) {
             try {
                 Log.Debug("IncludeExcludeVisibleAssets() Called.");
-                dataGridAssets.SuspendLayout();
                 ConfigWrapper.Suspend();
-                Log.Debug("IncludeExcludeVisibleAssets() Start");
                 foreach (DataGridViewRow row in dataGridAssets.Rows) {
                     if (!row.Visible) continue;
                     var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
-                    row.Cells[cIncluded.Index].Value = asset.IsIncludedPending = value;
+                    asset.IsIncludedPending = value;
                 }
-                Log.Debug("IncludeExcludeVisibleAssets() End");
+                UpdateAssetTable();
             }catch (Exception ex) {
                 Log.Exception(ex);
             } finally {
                 ConfigWrapper.Resume();
-                dataGridAssets.ResumeLayout();
                 Log.Debug("IncludeExcludeVisibleAssets() Finished!");
             }
+
         }
 
         private void IncludeAllAssets_Click(object sender, EventArgs e) {
