@@ -38,9 +38,13 @@
         }
 
         public bool AutoSave {
-            get => Config.ToolSettings.AutoSave;
-            set => Config.ToolSettings.AutoSave = value;
+            get => LoadOrderToolSettings.Instace.AutoSave;
+            set {
+                LoadOrderToolSettings.Instace.AutoSave = value;
+                LoadOrderToolSettings.Instace.Serialize();
+            }
         }
+        
 
         public bool Paused { get; set; } = false;
         public void Suspend() => Paused = true;
