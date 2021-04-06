@@ -83,7 +83,7 @@ namespace LoadOrderTool {
             var savedOrder1 = p1.LoadOrder;
             var savedOrder2 = p2.LoadOrder;
 
-            if (!p1.HasLoadOrder() && savedOrder2 == DefaultLoadOrder) {
+            if (!p1.HasLoadOrder() && !p2.HasLoadOrder()) {
                 // if neither have saved order,
                 {
                     // 1st: harmony mod 
@@ -118,9 +118,7 @@ namespace LoadOrderTool {
                 p.ResetLoadOrder();
         }
 
-        public void DefaultSort() {
-            Sort(HarmonyComparison);
-        }
+        public void DefaultSort() => Sort(DefaultComparison);
 
         public void SortBy(Comparison<PluginInfo> comparison)
         {
@@ -177,15 +175,22 @@ namespace LoadOrderTool {
                 return;
             }
 
+            // work around: hyarmony without load order comes first:
+            if(newLoadOrder < DefaultLoadOrder) {
+                foreach(var p2 in this) {
+                    if (p2 != p && p2.IsHarmonyMod() && !p2.HasLoadOrder())
+                        p2.LoadOrder = 0;
+                }
+            }
+
             int newIndex = this.FindIndex(item => DefaultComparison(item, p) >= 0);
+            if (newIndex ==  -1) newIndex = this.Count -1; // this is the biggest value;
             this.Remove(p);
             this.Insert(newIndex, p);
-            //Log.Debug($"newIndex={newIndex} newLoadOrder={p.LoadOrder}");
+            Log.Debug($"newIndex={newIndex} newLoadOrder={p.LoadOrder}");
             for (int i = 1; i < Count; ++i) {
                 if (this[i].HasLoadOrder() && this[i].LoadOrder <= this[i - 1].LoadOrder) {
-                    this[i].LoadOrder = this[i - 1].LoadOrder+1;
-                    if (!this[i].HasLoadOrder())
-                        this[i].LoadOrder++;
+                    this[i].LoadOrder = this[i - 1].LoadOrder + 1;
                 }
             }
         }

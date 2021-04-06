@@ -231,7 +231,8 @@ namespace LoadOrderTool {
 
             if (col == LoadIndex) {
                 int newVal = Int32.Parse(cell.Value as string);
-                ModList.MoveItem(ModList.Filtered[e.RowIndex], newVal);
+                var p = ModList.Filtered[e.RowIndex];
+                ModList.MoveItem(p, newVal);
                 RefreshModList();
             } else if (col == ModEnabled) {
                 plugin.IsEnabledPending = (bool)cell.Value;
@@ -316,11 +317,11 @@ namespace LoadOrderTool {
         }
 
         private void Save_Click(object sender, EventArgs e) {
-            PluginManager.instance.ConfigWrapper.SaveConfig();
+            ConfigWrapper.SaveConfig();
         }
 
         private void AutoSave_CheckedChanged(object sender, EventArgs e) {
-            PluginManager.instance.ConfigWrapper.AutoSave = AutoSave.Checked;
+            ConfigWrapper.AutoSave = AutoSave.Checked;
         }
 
         private void ReloadAll_Click(object sender, EventArgs e) {
