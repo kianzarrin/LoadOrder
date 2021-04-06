@@ -30,7 +30,7 @@ namespace LoadOrderTool {
 
         public static LoadOrderWindow Instance;
 
-        static ConfigWrapper ConfigWrapper => PluginManager.instance.ConfigWrapper;
+        static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
 
         ModList ModList;
 
@@ -196,7 +196,7 @@ namespace LoadOrderTool {
                 switch (result) {
                     case DialogResult.Cancel:
                         e.Cancel = true;
-                        break;
+                        return;
                     case DialogResult.Yes:
                         configWrapper.SaveConfig();
                         break;
@@ -205,6 +205,10 @@ namespace LoadOrderTool {
                     default:
                         Log.Exception(new Exception("FormClosing: Unknown choice"));
                         break;
+                }
+                if (!e.Cancel) {
+                    ConfigWrapper.Terminate();
+                    GameSettings.instance.Terminate();
                 }
             }
         }

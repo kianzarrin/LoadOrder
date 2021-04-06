@@ -42,8 +42,9 @@ namespace CO.IO {
         static DataLocation()
         {
             try {
-
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var data = LoadOrderShared.LoadOrderConfig.Deserialize(localApplicationData);
+                Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
                 if (Directory.Exists(data?.GamePath)) { 
                     GamePath = data.GamePath;
                 } else { 

@@ -17,7 +17,7 @@ namespace CO.Plugins {
     using LoadOrderShared;
 
     public class PluginManager : SingletonLite<PluginManager> {
-        public ConfigWrapper ConfigWrapper = new ConfigWrapper();
+        public ConfigWrapper ConfigWrapper = ConfigWrapper.instance;
         LoadOrderConfig Config => ConfigWrapper.Config;
 
         public enum MessageType {

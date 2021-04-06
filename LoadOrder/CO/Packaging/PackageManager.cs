@@ -18,7 +18,7 @@ namespace CO.Packaging {
     using LoadOrderShared;
 
     public class PackageManager : SingletonLite<PackageManager> {
-        static ConfigWrapper ConfigWrapper => Plugins.PluginManager.instance.ConfigWrapper;
+        static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
         static LoadOrderConfig Config => ConfigWrapper.Config;
 
         public class AssetInfo {

@@ -2,11 +2,12 @@
     using CO.IO;
     using CO.Packaging;
     using CO.Plugins;
+    using CO;
     using LoadOrderTool;
     using System;
     using System.Threading;
 
-    public class ConfigWrapper {
+    public class ConfigWrapper : SingletonLite<ConfigWrapper> {
         public LoadOrderShared.LoadOrderConfig Config;
 
         bool dirty_;
@@ -24,16 +25,19 @@
         object m_LockObject = new object();
 
         public ConfigWrapper() {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             Config = LoadOrderShared.LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
                 ?? new LoadOrderShared.LoadOrderConfig();
+            Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
             StartSaveThread();
-
         }
-        ~ConfigWrapper() {
+
+        ~ConfigWrapper() => Terminate();
+
+        public void Terminate() {
             m_Run = false;
             lock (m_LockObject)
                 Monitor.Pulse(m_LockObject);
-            
             Log.Info("LoadOrderConfig terminated");
         }
 

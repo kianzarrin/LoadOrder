@@ -147,13 +147,13 @@ namespace CO
 			GameSettings.m_SaveThread.Start();
 		}
 
-		~GameSettings()
+        ~GameSettings() => Terminate();
+
+        public void Terminate()
 		{
 			GameSettings.m_Run = false;
 			lock (GameSettings.m_LockObject)
-			{
 				Monitor.Pulse(GameSettings.m_LockObject);
-			}
 			Log.Info("GameSettings terminated");
 		}
 	}
