@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" DefaultTargets="Build;Publish">
   <PropertyGroup>
     <Deterministic>false</Deterministic>
-    <AssemblyVersion>0.3.3.*</AssemblyVersion>
+    <AssemblyVersion>0.3.4.*</AssemblyVersion>
     <OutputType>WinExe</OutputType> 
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
