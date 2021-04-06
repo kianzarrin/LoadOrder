@@ -8,6 +8,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PathMap>$(MSBuildProjectDirectory)\=$(ProjectName)\</PathMap>
     <StartupObject>LoadOrderTool.Program</StartupObject>
+    <ApplicationIcon>Resources\LoadOrder.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
