@@ -17,8 +17,8 @@ namespace CO.Plugins {
     using LoadOrderShared;
 
     public class PluginManager : SingletonLite<PluginManager> {
-        public ConfigWrapper ConfigWrapper = ConfigWrapper.instance;
-        LoadOrderConfig Config => ConfigWrapper.Config;
+        public static ConfigWrapper ConfigWrapper = ConfigWrapper.instance;
+        static LoadOrderConfig Config => ConfigWrapper.Config;
 
         public enum MessageType {
             Error,
@@ -119,7 +119,7 @@ namespace CO.Plugins {
                 set {
                     if (isIncludedPending_ != value) {
                         isIncludedPending_ = value;
-                        PluginManager.instance.ConfigWrapper.Dirty = true;
+                        ConfigWrapper.Dirty = true;
                     }
                 }
             }
@@ -173,11 +173,11 @@ namespace CO.Plugins {
                 //this.m_Assemblies = new List<Assembly>();
                 this.m_IsBuiltin = builtin;
                 this.m_PublishedFileID = id;
-                this.ModInfo = PluginManager.instance.Config.Mods.FirstOrDefault(
+                this.ModInfo = Config.Mods.FirstOrDefault(
                     _mod => _mod.Path == ModIncludedPath);
                 this.ModInfo ??= new LoadOrderShared.ModInfo {
                     Path = ModIncludedPath,
-                    LoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder,
+                    LoadOrder = LoadOrderConfig.DefaultLoadOrder,
                 };
                 isIncludedPending_ = IsIncluded;
                 isEnabledPending_ = isEnabled;
@@ -228,7 +228,7 @@ namespace CO.Plugins {
                 set {
                     if (isEnabledPending_ != value) {
                         isEnabledPending_ = value;
-                        PluginManager.instance.ConfigWrapper.Dirty = true;
+                        ConfigWrapper.Dirty = true;
                     }
                 }
             }
@@ -251,7 +251,7 @@ namespace CO.Plugins {
                 get => ModInfo.LoadOrder;
                 set {
                     ModInfo.LoadOrder = value;
-                    PluginManager.instance.ConfigWrapper.Dirty = true;
+                    ConfigWrapper.Dirty = true;
                 }
 
             }
