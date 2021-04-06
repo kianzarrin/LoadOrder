@@ -85,12 +85,19 @@ namespace CO.Plugins {
 
             public string DisplayText {
                 get {
-                    string ret = ModInfo.ModName;
-                    if(string.IsNullOrEmpty(ret))
-                        ret = dllName;
-                    if (publishedFileID != PublishedFileId.invalid)
-                        ret = $"{publishedFileID.AsUInt64}: " + ret;
-                    return ret;
+                    string modName = ModInfo.ModName;
+
+                    if (string.IsNullOrEmpty(modName)) {
+                        if (publishedFileID != PublishedFileId.invalid)
+                            return $"{publishedFileID.AsUInt64}: {dllName}.dll";
+                        else
+                            return $"{m_CachedName}\\{dllName}.dll";
+                    } else {
+                        if (publishedFileID != PublishedFileId.invalid)
+                            return $"{publishedFileID.AsUInt64}: {modName} ({dllName}.dll)";
+                        else
+                            return $"{modName} ({m_CachedName}\\{dllName}.dll)";
+                    }
                 }
             }
 
