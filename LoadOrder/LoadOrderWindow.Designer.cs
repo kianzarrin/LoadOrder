@@ -212,7 +212,7 @@
             // LoadIndex
             // 
             this.LoadIndex.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.LoadIndex.HeaderText = "Index";
+            this.LoadIndex.HeaderText = "Order";
             this.LoadIndex.Name = "LoadIndex";
             this.LoadIndex.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.LoadIndex.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
