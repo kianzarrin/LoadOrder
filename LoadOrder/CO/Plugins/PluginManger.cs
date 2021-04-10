@@ -144,11 +144,15 @@ namespace CO.Plugins {
                         ? dirName.Substring(1)  // drop _ prefix
                         : "_" + dirName; // add _ prefix
                     string targetPath = Path.Combine(parentPath, targetDirname);
-                    MoveToPath(targetPath);
+                    bool success = MoveToPath(targetPath);
+                    if (!success) {
+                        LoadOrderWindow.Instance.PopulateMods();
+                    }
                 }
             }
 
-            public void MoveToPath(string targetPath) {
+            /// <returns>true on success</returns>
+            public bool MoveToPath(string targetPath) {
                 try {
                     Log.Debug($"moving mod from {m_Path} to {targetPath}");
                     if (Directory.Exists(targetPath))
@@ -168,7 +172,9 @@ namespace CO.Plugins {
                         Log.Error("Cannot move Load Order because LoadOrderTool is in use");
                     else
                         Log.Exception(ex);
+                    return false;
                 }
+                return true;
             }
 
             private PublishedFileId m_PublishedFileID = PublishedFileId.invalid;

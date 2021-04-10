@@ -163,7 +163,10 @@ namespace LoadOrderTool {
                         t.Text = message;
                 }
 
-                prompt.ShowDialog();
+                var res = prompt.ShowDialog();
+                if(res == DialogResult.Abort) {
+                    Process.GetCurrentProcess().Kill();
+                }
             }
         }
 
