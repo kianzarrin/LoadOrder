@@ -151,6 +151,10 @@ namespace CO.Plugins {
             public void MoveToPath(string targetPath) {
                 try {
                     Log.Debug($"moving mod from {m_Path} to {targetPath}");
+                    if (Directory.Exists(targetPath))
+                        throw new Exception($"cannot move because targetPath alreadty exists ({targetPath})");
+                    if (!Directory.Exists(m_Path))
+                        throw new Exception($"cannot move because source path does not exists ({m_Path})");
                     Directory.Move(m_Path, targetPath);
                     if (Directory.Exists(targetPath))
                         Log.Debug($"move successful!");
