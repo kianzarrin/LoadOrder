@@ -29,7 +29,7 @@
                 var readInMemory = new ReaderParameters {
                     ReadWrite = false,
                     InMemory = true,
-                    AssemblyResolver = r,
+                    // AssemblyResolver = r,
                 };
                 var asm = AssemblyDefinition.ReadAssembly(dllpath, readInMemory);
 
