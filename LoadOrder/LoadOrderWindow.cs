@@ -13,20 +13,25 @@ using System.Diagnostics;
 namespace LoadOrderTool {
     public partial class LoadOrderWindow : Form {
         enum EnabledFilter {
+            [Text("<Enabled/Disabled>")]
             None = 0,
             Enabled,
             Disabled,
         }
         enum IncludedFilter {
+            [Text("<Included/Excluded>")]
             None = 0,
             Included,
             Excluded,
         }
         enum WSFilter {
+            [Text("<Workshop/Local>")]
             None = 0,
             Workshop,
             Local,
         }
+
+        const string NO_TAGS = "<Tags>";
 
         public static LoadOrderWindow Instance;
 
@@ -124,7 +129,7 @@ namespace LoadOrderTool {
                 }
             }
             {
-                var words = TextFilterMods.Text?.Split("");
+                var words = TextFilterMods.Text?.Split(" ");
                 if (words != null && words.Length > 0) {
                     bool match = words.Any(word => p.DisplayText.Contains(word, StringComparison.OrdinalIgnoreCase));
                     if (!match)
@@ -407,16 +412,19 @@ namespace LoadOrderTool {
             }
             {
                 var filter = ComboBoxAssetTags.SelectedItem as string;
-                if(filter != "None" && !a.GetTags().Contains(filter)) {
+                if(filter != NO_TAGS && !a.GetTags().Contains(filter)) {
                     return false;
                 }
             }
             {
                 var words = TextFilterAsset.Text?.Split(" ");
-                if (ContainsWords(a.DisplayText, words))
-                    return true;
-                if (ContainsWords(a.ConfigAssetInfo.Author, words))
-                    return true;
+                if (words != null && words.Length > 0) {
+                    if (ContainsWords(a.DisplayText, words))
+                        return true;
+                    if (ContainsWords(a.ConfigAssetInfo.Author, words))
+                        return true;
+                    return false;
+                }
             }
             return true;
         }
@@ -468,7 +476,7 @@ namespace LoadOrderTool {
                 }
 
                 ComboBoxAssetTags.Items.Clear();
-                ComboBoxAssetTags.Items.Add("None");
+                ComboBoxAssetTags.Items.Add(NO_TAGS);
                 ComboBoxAssetTags.Items.AddRange(PackageManager.instance.GetAllTags());
                 ComboBoxAssetTags.SelectedIndex = 0;
             } catch (Exception ex) {

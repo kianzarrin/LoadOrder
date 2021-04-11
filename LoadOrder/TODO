@@ -12,11 +12,8 @@ Mod:
 	dump profiler resutls to a file and view externally using GUI created by unity editor.
 
 Tool:
-	fix enable/disable excluded items
-	fix fast clicking.
+	add mod tag
 	auto luncher
-	load/save-as
-	list asets
 	auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 
 * high Prioirty

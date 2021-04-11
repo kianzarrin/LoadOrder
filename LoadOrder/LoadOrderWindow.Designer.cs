@@ -386,7 +386,7 @@
             this.ComboBoxIncluded.FormattingEnabled = true;
             this.ComboBoxIncluded.Location = new System.Drawing.Point(3, 3);
             this.ComboBoxIncluded.Name = "ComboBoxIncluded";
-            this.ComboBoxIncluded.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxIncluded.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxIncluded.TabIndex = 0;
             // 
             // ComboBoxEnabled
@@ -394,7 +394,7 @@
             this.ComboBoxEnabled.FormattingEnabled = true;
             this.ComboBoxEnabled.Location = new System.Drawing.Point(130, 3);
             this.ComboBoxEnabled.Name = "ComboBoxEnabled";
-            this.ComboBoxEnabled.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxEnabled.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxEnabled.TabIndex = 1;
             // 
             // ComboBoxWS
@@ -402,7 +402,7 @@
             this.ComboBoxWS.FormattingEnabled = true;
             this.ComboBoxWS.Location = new System.Drawing.Point(257, 3);
             this.ComboBoxWS.Name = "ComboBoxWS";
-            this.ComboBoxWS.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxWS.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxWS.TabIndex = 2;
             // 
             // label1
@@ -571,7 +571,7 @@
             this.ComboBoxAssetIncluded.FormattingEnabled = true;
             this.ComboBoxAssetIncluded.Location = new System.Drawing.Point(3, 3);
             this.ComboBoxAssetIncluded.Name = "ComboBoxAssetIncluded";
-            this.ComboBoxAssetIncluded.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetIncluded.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxAssetIncluded.TabIndex = 0;
             // 
             // ComboBoxAssetWS
@@ -579,7 +579,7 @@
             this.ComboBoxAssetWS.FormattingEnabled = true;
             this.ComboBoxAssetWS.Location = new System.Drawing.Point(130, 3);
             this.ComboBoxAssetWS.Name = "ComboBoxAssetWS";
-            this.ComboBoxAssetWS.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetWS.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxAssetWS.TabIndex = 1;
             // 
             // ComboBoxAssetTags
@@ -587,7 +587,7 @@
             this.ComboBoxAssetTags.FormattingEnabled = true;
             this.ComboBoxAssetTags.Location = new System.Drawing.Point(257, 3);
             this.ComboBoxAssetTags.Name = "ComboBoxAssetTags";
-            this.ComboBoxAssetTags.Size = new System.Drawing.Size(121, 25);
+            this.ComboBoxAssetTags.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxAssetTags.TabIndex = 2;
             // 
             // label2
