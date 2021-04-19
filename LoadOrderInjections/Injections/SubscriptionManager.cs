@@ -337,7 +337,7 @@ namespace LoadOrderInjections {
             string p2 = Path.GetFileName(includedPath);
             if (string.IsNullOrEmpty(p1) || string.IsNullOrEmpty(p2)) {
                 Log.Error("LoadOrderInjections.ToExcludedPath()\n" +
-                    $"includedPath={includedPath}" +
+                    $"includedPath={includedPath}\n" +
                     $"p1={p1}\n" +
                     $"p2={p2}\n");
             }

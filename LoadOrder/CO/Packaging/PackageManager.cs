@@ -42,14 +42,18 @@ namespace CO.Packaging {
             public string AssetName => Path.GetFileNameWithoutExtension(AssetPath);
             public string FileName => Path.GetFileName(AssetPath);
 
+            string displayText_;
             public string DisplayText {
                 get {
-                    string ret = ConfigAssetInfo.AssetName;
-                    if (string.IsNullOrEmpty(ret))
-                        ret = AssetName;
-                    if (publishedFileID != PublishedFileId.invalid)
-                        ret = $"{publishedFileID.AsUInt64}: " + ret;
-                    return ret;
+                    if (string.IsNullOrEmpty(displayText_)) {
+                        string text = ConfigAssetInfo.AssetName;
+                        if (string.IsNullOrEmpty(text))
+                            text = AssetName;
+                        if (publishedFileID != PublishedFileId.invalid)
+                            text = $"{publishedFileID.AsUInt64}: " + text;
+                        displayText_ = text;
+                    }
+                    return displayText_;
                 }
             }
 
