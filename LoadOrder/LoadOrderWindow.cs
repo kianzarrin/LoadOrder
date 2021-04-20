@@ -9,6 +9,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
+using LoadOrderTool.Data;
+using System.Threading.Tasks;
 
 namespace LoadOrderTool {
     public partial class LoadOrderWindow : Form {
@@ -131,8 +133,7 @@ namespace LoadOrderTool {
             {
                 var words = TextFilterMods.Text?.Split(" ");
                 if (words != null && words.Length > 0) {
-                    bool match = words.Any(word => p.DisplayText.Contains(word, StringComparison.OrdinalIgnoreCase));
-                    if (!match)
+                    if (!ContainsWords(p.DisplayText, words))
                         return false;
                 }
             }
@@ -254,6 +255,12 @@ namespace LoadOrderTool {
             }
         }
 
+        private void ResetOrder_Click(object sender, EventArgs e) {
+            foreach (var mod in ModList)
+                mod.ResetLoadOrder();
+            RefreshModList(sort: true);
+        }
+
         private void SortByHarmony_Click(object sender, EventArgs e) {
             ModList.ResetLoadOrders();
             ModList.SortBy(ModList.HarmonyComparison);
@@ -316,7 +323,7 @@ namespace LoadOrderTool {
                     ModList.LoadFromProfile(profile);
                     PackageManager.instance.LoadFromProfile(profile);
                     RefreshModList(true);
-                    UpdateAssetTable();
+                    PopulateAssets();
                 }
             }
         }
@@ -343,6 +350,10 @@ namespace LoadOrderTool {
         }
 
         #region AssetTab
+        int prevAssetSortCol_ = -1;
+        bool assetSortAssending_ = false;
+
+        public AssetList AssetList;
         class ObjectCell : DataGridViewCell {
             object value_;
             protected override object GetValue(int rowIndex) => value_;
@@ -355,27 +366,16 @@ namespace LoadOrderTool {
             public override object Clone() => new ObjectCell { value_ = value_ };
         }
 
-
-        DataGridViewColumn cAsset;
-
         void InitializeAssetTab() {
-            cAsset = new DataGridViewColumn(new ObjectCell()) {
-                Name = "AssetColumn",
-                HeaderText = "AssetColumn",
-                Visible = false,
-                ReadOnly = true,
-            };
-            dataGridAssets.Columns.Add(cAsset);
-
             ComboBoxAssetIncluded.SetItems<IncludedFilter>();
             ComboBoxAssetIncluded.SelectedIndex = 0;
             ComboBoxAssetWS.SetItems<WSFilter>();
             ComboBoxAssetWS.SelectedIndex = 0;
 
-            ComboBoxAssetIncluded.SelectedIndexChanged += FilterAssetRows;
-            ComboBoxAssetWS.SelectedIndexChanged += FilterAssetRows;
-            ComboBoxAssetTags.SelectedIndexChanged += FilterAssetRows;
-            TextFilterAsset.TextChanged += FilterAssetRows;
+            ComboBoxAssetIncluded.SelectedIndexChanged += ApplyAssetFilter;
+            ComboBoxAssetWS.SelectedIndexChanged += ApplyAssetFilter;
+            ComboBoxAssetTags.SelectedIndexChanged += ApplyAssetFilter;
+            TextFilterAsset.TextChanged += ApplyAssetFilter;
 
             this.IncludeAllAssets.Click += IncludeAllAssets_Click;
             this.ExcludeAllAssets.Click += ExcludeAllAssets_Click;
@@ -387,69 +387,33 @@ namespace LoadOrderTool {
 
             LoadAsssets();
 
-            dataGridAssets.CellValueChanged += dataGridAssets_CellValueChanged;
+            dataGridAssets.DataError += DataGridAssets_DataError;
+
+
+            dataGridAssets.VirtualMode = true;
+            foreach(DataGridViewColumn col in dataGridAssets.Columns) {
+                col.SortMode = DataGridViewColumnSortMode.Programmatic;
+                col.Width += 1; // workaround : show hyphon
+            }
+
+            dataGridAssets.CellValueNeeded += DataGridAssets_CellValueNeeded; ;
+            dataGridAssets.CellValuePushed += dataGridAssets_CellValuePushed;
             dataGridAssets.CurrentCellDirtyStateChanged += dataGridAssets_CurrentCellDirtyStateChanged;
+
+            dataGridAssets.ColumnHeaderMouseClick += DataGridAssets_ColumnHeaderMouseClick;
         }
 
-        private void FilterAssetRows(object sender, EventArgs e) => FilterAssetRows();
-
-        public bool AssetPredicate(PackageManager.AssetInfo a) {
-            {
-                var filter = ComboBoxAssetIncluded.GetSelectedItem<IncludedFilter>();
-                if (filter != IncludedFilter.None) {
-                    bool b = filter == IncludedFilter.Included;
-                    if (a.IsIncludedPending != b)
-                        return false;
-                }
-            }
-            {
-                var filter = ComboBoxAssetWS.GetSelectedItem<WSFilter>();
-                if (filter != WSFilter.None) {
-                    bool b = filter == WSFilter.Workshop;
-                    if (a.IsWorkshop != b)
-                        return false;
-                }
-            }
-            {
-                var filter = ComboBoxAssetTags.SelectedItem as string;
-                if(filter != NO_TAGS && !a.GetTags().Contains(filter)) {
-                    return false;
-                }
-            }
-            {
-                var words = TextFilterAsset.Text?.Split(" ");
-                if (words != null && words.Length > 0) {
-                    if (ContainsWords(a.DisplayText, words))
-                        return true;
-                    if (ContainsWords(a.ConfigAssetInfo.Author, words))
-                        return true;
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public static bool ContainsWords(string text, IEnumerable<string> words) {
-            if (string.IsNullOrWhiteSpace(text) || words == null || !words.Any())
-                return false;
-            foreach (var word in words) {
-                if (text.Contains(word, StringComparison.OrdinalIgnoreCase))
-                    return true;
-            }
-            return false;
+        // override error report.
+        private void DataGridAssets_DataError(object sender, DataGridViewDataErrorEventArgs e) {
+            Log.Exception(e.Exception);
+            e.Cancel = true;
         }
 
         public void LoadAsssets() {
             PackageManager.instance.LoadPackages();
-            RefreshAssets();
+            PopulateAssets();
         }
 
-        public void RefreshAssets() {
-            var timer = Stopwatch.StartNew();
-            PopulateAssets();
-            Log.Debug($"PopulateAssets:{timer.ElapsedMilliseconds}ms");
-            FilterAssetRows();
-        }
 
         public void PopulateAssets() {
             Log.Info("Populating assets");
@@ -457,23 +421,9 @@ namespace LoadOrderTool {
             try {
                 dataGridAssets.Rows.Clear();
 
-                foreach (var asset in PackageManager.instance.GetAssets()) {
-                    string id = asset.publishedFileID.AsUInt64.ToString();
-                    if (id == "0" || asset.publishedFileID == PublishedFileId.invalid)
-                        id = "";
-                    var tags = asset.ConfigAssetInfo.Tags;
-                    var strTags = tags != null ? string.Join(", ", tags) : "";
-                    int row = dataGridAssets.Rows.Add(
-                        asset.IsIncludedPending,
-                        id,
-                        asset.AssetName,
-                        asset.ConfigAssetInfo.Author,
-                        asset.ConfigAssetInfo.Date,
-                        strTags,
-                        asset);
-                    dataGridAssets.Rows[row].Cells[cName.Index].ToolTipText = 
-                        asset.ConfigAssetInfo.description;
-                }
+                AssetList = new AssetList(PackageManager.instance.GetAssets());
+                FilterAssets();
+                dataGridAssets.RowCount = AssetList.Filtered.Count;
 
                 ComboBoxAssetTags.Items.Clear();
                 ComboBoxAssetTags.Items.Add(NO_TAGS);
@@ -483,36 +433,101 @@ namespace LoadOrderTool {
                 Log.Exception(ex);
             } finally {
                 dataGridAssets.ResumeLayout();
+                dataGridAssets.Refresh();
             }
         }
+        #region Filter
+        private void ApplyAssetFilter(object sender, EventArgs e) {
+            ApplyAssetFilter();
+        }
 
-        public void FilterAssetRows() {
-            dataGridAssets.SuspendLayout();
-            foreach (DataGridViewRow row in dataGridAssets.Rows) {
-                var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
-                row.Visible = AssetPredicate(asset);
+#if ASYNC_FILTER // modify this line to switch to async
+        private void ApplyAssetFilter() {
+            // TODO: this fails when modifying text box too fast
+            dataGridAssets.Rows.Clear(); // work around : removing rows is slow.
+            Task.Run(ApplyAssetFilterTask);
+        }
+
+        object changeRowsLockObject_ = new object();
+        async void ApplyAssetFilterTask() {
+            Log.Debug("ApplyAssetFilterTask");
+            FilterAssets();
+            lock (changeRowsLockObject_) {
+                dataGridAssets.RowCount = AssetList.Filtered.Count;
+                dataGridAssets.Refresh();
             }
-            dataGridAssets.ResumeLayout();
+        }
+#else
+        private void ApplyAssetFilter() {
+            Log.Debug("ApplyAssetFilterTask");
+            FilterAssets();
+            if(dataGridAssets.RowCount > AssetList.Filtered.Count)
+                dataGridAssets.Rows.Clear(); // work around : removing rows is slow.
+            dataGridAssets.RowCount = AssetList.Filtered.Count;
+            dataGridAssets.Refresh();
+        }
+#endif
+        public void FilterAssets() {
+            var includedFilter = ComboBoxAssetIncluded.GetSelectedItem<IncludedFilter>();
+            var wsFilter = ComboBoxAssetWS.GetSelectedItem<WSFilter>();
+            var tagFilter = ComboBoxAssetTags.SelectedItem as string;
+            if (tagFilter == NO_TAGS) tagFilter = null;
+            var words = TextFilterAsset.Text?.Split(" ");
+            AssetList.FilterItems(item => AssetPredicateFast(item, includedFilter, wsFilter, tagFilter, words));
         }
 
-        /// <summary>
-        /// Update asset table values based on its cAsset column
-        /// </summary>
-        public void UpdateAssetTable() {
-            // cell.set_Value  is slow. better to reload the table.
-            RefreshAssets();
+        bool AssetPredicateFast(
+            PackageManager.AssetInfo a,
+            IncludedFilter includedFilter,
+            WSFilter wSFilter,
+            string tagFilter,
+            string[] words) {
+            if (includedFilter != IncludedFilter.None) {
+                bool b = includedFilter == IncludedFilter.Included;
+                if (a.IsIncludedPending != b)
+                    return false;
+            }
+            if (wSFilter != WSFilter.None) {
+                bool b = wSFilter == WSFilter.Workshop;
+                if (a.IsWorkshop != b)
+                    return false;
+            }
+            if (tagFilter != null && !a.GetTags().Contains(tagFilter)) {
+                return false;
+            }
+            if (words != null && words.Length > 0) {
+                if (
+                    !ContainsWords(a.DisplayText, words) &&
+                    !ContainsWords(a.ConfigAssetInfo.Author, words)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
-        public void IncludeExcludeVisibleAssets(bool value) {
+        // checks if the text contains all of the following words
+        public static bool ContainsWords(string text, IEnumerable<string> words) {
+            if (words is null || !words.Any())
+                return true;
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+            foreach (var word in words) {
+                if (!text.Contains(word, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+            return true;
+        }
+
+#endregion
+
+        public void IncludeExcludeFilteredAssets(bool value) {
             try {
                 Log.Debug("IncludeExcludeVisibleAssets() Called.");
                 ConfigWrapper.Suspend();
-                foreach (DataGridViewRow row in dataGridAssets.Rows) {
-                    if (!row.Visible) continue;
-                    var asset = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
+                foreach (var asset in AssetList.Filtered) {
                     asset.IsIncludedPending = value;
                 }
-                UpdateAssetTable();
+                dataGridAssets.Refresh();
             }catch (Exception ex) {
                 Log.Exception(ex);
             } finally {
@@ -523,41 +538,93 @@ namespace LoadOrderTool {
         }
 
         private void IncludeAllAssets_Click(object sender, EventArgs e) {
-            IncludeExcludeVisibleAssets(true);
+            IncludeExcludeFilteredAssets(true);
         }
 
         private void ExcludeAllAssets_Click(object sender, EventArgs e) {
-            IncludeExcludeVisibleAssets(false);
+            IncludeExcludeFilteredAssets(false);
         }
 
-        private void dataGridAssets_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
-            //Log.Debug("dataGridAssets_CellValueChanged() called");
-            var row = dataGridAssets.Rows[e.RowIndex];
-            var assetInfo = row.Cells[cAsset.Index].Value as PackageManager.AssetInfo;
-            var cell = row.Cells[e.ColumnIndex];
-            var col = cell.OwningColumn;
-            if (col == cIncluded) {
-                assetInfo.IsIncludedPending = (bool)cell.Value;
-                //Log.Debug($"{assetInfo} | IsIncludedPending changes to {cell.Value}");
-            } else {
-                Log.Error("unexpected column changed: " + col.Name);
+        // sort
+        private void DataGridAssets_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+            try {
+                if (e.ColumnIndex == prevAssetSortCol_) {
+                    assetSortAssending_ = !assetSortAssending_;
+                } else {
+                    assetSortAssending_ = true;
+                    foreach (DataGridViewColumn col in dataGridAssets.Columns)
+                        col.HeaderCell.SortGlyphDirection = SortOrder.None;
+                }
+                var sortOrder = assetSortAssending_ ? SortOrder.Ascending : SortOrder.Descending;
+                dataGridAssets.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = sortOrder;
+                prevAssetSortCol_ = e.ColumnIndex;
+
+
+                if (e.ColumnIndex == cIncluded.Index) {
+                    AssetList.SortItemsBy(item => item.IsIncludedPending, assetSortAssending_);
+                } else if (e.ColumnIndex == cID.Index) {
+                    AssetList.SortItemsBy(item => item.publishedFileID.AsUInt64, assetSortAssending_);
+                } else if (e.ColumnIndex == cName.Index) {
+                    AssetList.SortItemsBy(item => item.DisplayText, assetSortAssending_);
+                } else if (e.ColumnIndex == cAuthor.Index) {
+                    AssetList.SortItemsBy(item => item.ConfigAssetInfo.Author, assetSortAssending_);
+                } else if (e.ColumnIndex == cDate.Index) {
+                    AssetList.SortItemsBy(item => item.ConfigAssetInfo.Date, assetSortAssending_);
+                } else if (e.ColumnIndex == cTags.Index) {
+                    AssetList.SortItemsBy(item => item.StrTags, assetSortAssending_);
+                }
+
+                ApplyAssetFilter();
+            } catch (Exception ex) {
+                Log.Exception(ex);
             }
         }
 
-        /// <summary>
-        /// makes clicking checkbox to immidiately takes effect without the need for user to press enter.
-        /// </summary>
+        //read
+        private void DataGridAssets_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
+            try {
+                if (e.RowIndex >= AssetList.Filtered.Count) return;
+                var asset = AssetList.Filtered[e.RowIndex];
+                if (e.ColumnIndex == cIncluded.Index) {
+                    e.Value = asset.IsIncludedPending;
+                } else if (e.ColumnIndex == cID.Index) {
+                    string id = asset.publishedFileID.AsUInt64.ToString();
+                    if (id == "0" || asset.publishedFileID == PublishedFileId.invalid)
+                        id = "";
+                    e.Value = id;
+                } else if (e.ColumnIndex == cName.Index) {
+                    e.Value = asset.DisplayText ?? "";
+                } else if (e.ColumnIndex == cAuthor.Index) {
+                    e.Value = asset.ConfigAssetInfo.Author ?? "";
+                } else if (e.ColumnIndex == cDate.Index) {
+                    e.Value = asset.ConfigAssetInfo.Date ?? "";
+                } else if (e.ColumnIndex == cTags.Index) {
+                    e.Value = asset.StrTags;
+                }
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
+        }
+
+        //write
+        private void dataGridAssets_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
+            //Log.Debug("dataGridAssets_CellValueChanged() called");
+            var assetInfo = AssetList.Filtered[e.RowIndex];
+
+            if (e.ColumnIndex == cIncluded.Index) {
+                assetInfo.IsIncludedPending = (bool)e.Value;
+                //Log.Debug($"{assetInfo} | IsIncludedPending changes to {cell.Value}");
+            } else {
+                Log.Error("unexpected column changed: " + dataGridAssets.Columns[e.ColumnIndex]?.Name);
+            }
+        }
+
+        // instant modify.
         private void dataGridAssets_CurrentCellDirtyStateChanged(object sender, EventArgs e) {
             if (dataGridAssets.CurrentCell is DataGridViewCheckBoxCell) {
                 dataGridAssets.EndEdit();
             }
         }
-        #endregion
-
-        private void ResetOrder_Click(object sender, EventArgs e) {
-            foreach (var mod in ModList)
-                mod.ResetLoadOrder();
-            RefreshModList(sort:true);
-        }
+#endregion
     }
 }

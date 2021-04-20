@@ -57,6 +57,12 @@ namespace CO.Packaging {
                 }
             }
 
+            string strTags_;
+            public string StrTags => strTags_ ??= 
+                ConfigAssetInfo.Tags != null 
+                ? string.Join(", ", ConfigAssetInfo.Tags) 
+                : "";
+
             public PublishedFileId publishedFileID => this.m_PublishedFileID;
 
             bool isIncludedPending_;

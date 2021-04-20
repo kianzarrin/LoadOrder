@@ -443,6 +443,7 @@
             this.dataGridAssets.AllowUserToDeleteRows = false;
             this.dataGridAssets.AllowUserToOrderColumns = true;
             this.dataGridAssets.AllowUserToResizeRows = false;
+            this.dataGridAssets.AllowUserToResizeColumns = true;
             this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridAssets.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dataGridAssets.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
@@ -459,13 +460,12 @@
             this.dataGridAssets.Location = new System.Drawing.Point(3, 34);
             this.dataGridAssets.Name = "dataGridAssets";
             this.dataGridAssets.RowHeadersVisible = false;
-            this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridAssets.Size = new System.Drawing.Size(708, 548);
             this.dataGridAssets.TabIndex = 0;
             // 
             // cIncluded
             // 
-            this.cIncluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.cIncluded.HeaderText = "Included";
             this.cIncluded.Name = "cIncluded";
             this.cIncluded.Width = 63;
