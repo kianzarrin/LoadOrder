@@ -15,9 +15,18 @@
 
         public void SortItemsBy<TKey>(Func<AssetInfo, TKey> selector, bool assending) where TKey : IComparable {
             if (assending)
-                Original.Sort((a, b) => selector(a).CompareTo(selector(b)));
+                Original.Sort((a, b) => Compare(selector(a), selector(b)));
             else
-                Original.Sort((a, b) => selector(b).CompareTo(selector(a)));
+                Original.Sort((a, b) => Compare(selector(b), selector(a)));
+
+        }
+        static int Compare<T>(T a, T b) where T : IComparable {
+            bool aIsNull = a is null;
+            bool bIsNull = b is null;
+            if (aIsNull | bIsNull)
+                return aIsNull.CompareTo(bIsNull);
+            else
+                return a.CompareTo(b);
         }
 
         public void FilterItems(Func<AssetInfo, bool> predicate) {

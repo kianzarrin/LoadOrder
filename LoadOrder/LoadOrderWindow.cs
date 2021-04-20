@@ -567,7 +567,8 @@ namespace LoadOrderTool {
                 } else if (e.ColumnIndex == cName.Index) {
                     AssetList.SortItemsBy(item => item.DisplayText, assetSortAssending_);
                 } else if (e.ColumnIndex == cAuthor.Index) {
-                    AssetList.SortItemsBy(item => item.ConfigAssetInfo.Author, assetSortAssending_);
+                    // "[unknown" is before "[unknown]"
+                    AssetList.SortItemsBy(item => item.ConfigAssetInfo.Author ?? "[unknown", assetSortAssending_);
                 } else if (e.ColumnIndex == cDate.Index) {
                     AssetList.SortItemsBy(item => item.ConfigAssetInfo.Date, assetSortAssending_);
                 } else if (e.ColumnIndex == cTags.Index) {
