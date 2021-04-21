@@ -231,21 +231,25 @@ namespace LoadOrderTool {
 
         private void dataGridMods_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
             //Log.Debug("dataGridMods_CellValueChanged() called");
-            var plugin = ModList.Filtered[e.RowIndex];
-            var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            var col = cell.OwningColumn;
+            try {
+                var plugin = ModList.Filtered[e.RowIndex];
+                var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                var col = cell.OwningColumn;
 
-            if (col == LoadIndex) {
-                int newVal = Int32.Parse(cell.Value as string);
-                var p = ModList.Filtered[e.RowIndex];
-                ModList.MoveItem(p, newVal);
-                RefreshModList();
-            } else if (col == ModEnabled) {
-                plugin.IsEnabledPending = (bool)cell.Value;
-            } else if (col == IsIncluded) {
-                plugin.IsIncludedPending = (bool)cell.Value;
-            } else {
-                return;
+                if (col == LoadIndex) {
+                    int newVal = Int32.Parse(cell.Value as string);
+                    var p = ModList.Filtered[e.RowIndex];
+                    ModList.MoveItem(p, newVal);
+                    RefreshModList();
+                } else if (col == ModEnabled) {
+                    plugin.IsEnabledPending = (bool)cell.Value;
+                } else if (col == IsIncluded) {
+                    plugin.IsIncludedPending = (bool)cell.Value;
+                } else {
+                    return;
+                }
+            } catch(Exception ex) {
+                Log.Exception(ex);
             }
         }
 
@@ -342,10 +346,16 @@ namespace LoadOrderTool {
         }
 
         private void dataGridMods_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
-            //Log.Info($"e.ColumnIndex={e.ColumnIndex} Description.Index={Description.Index}");
-            if (e.ColumnIndex == Description.Index && e.Value != null) {
-                var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
+            try {
+                //Log.Info($"e.ColumnIndex={e.ColumnIndex} Description.Index={Description.Index}");
+                if (e.RowIndex >= ModList.Filtered.Count || e.RowIndex >= dataGridMods.Rows.Count)
+                    return;
+                if (e.ColumnIndex == Description.Index && e.Value != null) {
+                    var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                    cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
+                }
+            } catch (Exception ex) {
+                Log.Exception(ex);
             }
         }
 
@@ -620,7 +630,6 @@ namespace LoadOrderTool {
 
         //write
         private void dataGridAssets_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
-            //Log.Debug("dataGridAssets_CellValueChanged() called");
             var assetInfo = AssetList.Filtered[e.RowIndex];
 
             if (e.ColumnIndex == cIncluded.Index) {
