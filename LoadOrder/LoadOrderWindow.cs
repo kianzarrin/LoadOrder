@@ -401,6 +401,15 @@ namespace LoadOrderTool {
             dataGridAssets.CurrentCellDirtyStateChanged += dataGridAssets_CurrentCellDirtyStateChanged;
 
             dataGridAssets.ColumnHeaderMouseClick += DataGridAssets_ColumnHeaderMouseClick;
+            dataGridAssets.VisibleChanged += DataGridAssets_VisibleChanged;
+        }
+        
+        bool firstTime_ = true;
+        private void DataGridAssets_VisibleChanged(object sender, EventArgs e) {
+            if (dataGridAssets.Visible && firstTime_) {
+                dataGridAssets.AutoResizeColumns();
+                firstTime_ = false;
+            }
         }
 
         // override error report.
@@ -413,7 +422,6 @@ namespace LoadOrderTool {
             PackageManager.instance.LoadPackages();
             PopulateAssets();
         }
-
 
         public void PopulateAssets() {
             Log.Info("Populating assets");
@@ -429,6 +437,8 @@ namespace LoadOrderTool {
                 ComboBoxAssetTags.Items.Add(NO_TAGS);
                 ComboBoxAssetTags.Items.AddRange(PackageManager.instance.GetAllTags());
                 ComboBoxAssetTags.SelectedIndex = 0;
+
+                
             } catch (Exception ex) {
                 Log.Exception(ex);
             } finally {
@@ -439,6 +449,7 @@ namespace LoadOrderTool {
         #region Filter
         private void ApplyAssetFilter(object sender, EventArgs e) {
             ApplyAssetFilter();
+            dataGridAssets.AllowUserToResizeColumns = true;
         }
 
 #if ASYNC_FILTER // modify this line to switch to async
@@ -567,7 +578,7 @@ namespace LoadOrderTool {
                 } else if (e.ColumnIndex == cName.Index) {
                     AssetList.SortItemsBy(item => item.DisplayText, assetSortAssending_);
                 } else if (e.ColumnIndex == cAuthor.Index) {
-                    // "[unknown" is before "[unknown]"
+                    // "[unknown" is sorted before "[unknown]". This puts empty before unknown author.
                     AssetList.SortItemsBy(item => item.ConfigAssetInfo.Author ?? "[unknown", assetSortAssending_);
                 } else if (e.ColumnIndex == cDate.Index) {
                     AssetList.SortItemsBy(item => item.ConfigAssetInfo.Date, assetSortAssending_);

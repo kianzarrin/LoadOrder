@@ -445,7 +445,6 @@
             this.dataGridAssets.AllowUserToResizeRows = false;
             this.dataGridAssets.AllowUserToResizeColumns = true;
             this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridAssets.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dataGridAssets.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridAssets.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridAssets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
