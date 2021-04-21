@@ -43,6 +43,7 @@ namespace LoadOrderTool {
 
         public LoadOrderWindow() {
             Instance = this;
+            ConfigWrapper.Suspend();
             InitializeComponent();
             dataGridMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
 
@@ -88,10 +89,11 @@ namespace LoadOrderTool {
 
             AutoSave.Checked = ConfigWrapper.AutoSave;
             Dirty = ConfigWrapper.Dirty;
+            ConfigWrapper.Resume();
             ConfigWrapper.SaveConfig();
         }
 
-        public bool dirty_;
+        bool dirty_;
         public bool Dirty {
             get => dirty_; //fast access.
             set {
