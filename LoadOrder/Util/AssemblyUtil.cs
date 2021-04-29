@@ -75,7 +75,7 @@
                 try {
                     type = type.BaseType?.Resolve();
                 } catch (Exception ex) {
-                    Log.Exception(ex); 
+                    ex.Log(false);
                     type = null;
                 }
             }

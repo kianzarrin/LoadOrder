@@ -234,8 +234,12 @@ namespace LoadOrderTool {
         /// TYPE inlinefunctionname(...) => expression.LogRet("messege");
         /// </summary>
         internal static T LogRet<T>(this T a, string m) {
-            Log.Debug(m + a);
+            LoadOrderTool.Log.Debug(m + a);
             return a;
+        }
+
+        public static void Log(this Exception ex, bool showInPanel = true) {
+            LoadOrderTool.Log.Exception(ex, showInPanel: showInPanel);
         }
     }
 }
