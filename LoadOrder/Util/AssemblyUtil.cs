@@ -23,15 +23,16 @@
 
         public static AssemblyDefinition ReadAssemblyDefinition(string dllpath) {
             try {
-                var r = new DefaultAssemblyResolver();
+                var r = new MyAssemblyResolver();
                 r.AddSearchDirectory(DataLocation.ManagedDLL);
                 r.AddSearchDirectory(Path.GetDirectoryName(dllpath));
-                var readInMemory = new ReaderParameters {
+                var readerParameters = new ReaderParameters {
                     ReadWrite = false,
                     InMemory = true,
-                    // AssemblyResolver = r,
+                    AssemblyResolver = r,
                 };
-                var asm = AssemblyDefinition.ReadAssembly(dllpath, readInMemory);
+                r.ReaderParameters = readerParameters;
+                var asm = AssemblyDefinition.ReadAssembly(dllpath, readerParameters);
 
                 if (asm != null)
                     Log.Info("Assembly Definition loaded: " + asm);
@@ -71,7 +72,12 @@
             while (type != null) {
                 foreach (var i in type.Interfaces)
                     yield return i.InterfaceType;
-                try { type = type.BaseType?.Resolve(); } catch { type = null; }
+                try {
+                    type = type.BaseType?.Resolve();
+                } catch (Exception ex) {
+                    Log.Exception(ex); 
+                    type = null;
+                }
             }
         }
     }

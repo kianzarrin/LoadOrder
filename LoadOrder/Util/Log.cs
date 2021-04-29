@@ -36,7 +36,7 @@ namespace LoadOrderTool {
         /// <summary>
         /// Full path and file name of log file.
         /// </summary>
-        internal static readonly string LogFilePath; 
+        internal static readonly string LogFilePath;
 
         /// <summary>
         /// Stopwatch used if <see cref="ShowTimestamp"/> is <c>true</c>.
@@ -48,8 +48,7 @@ namespace LoadOrderTool {
         /// Resets log file on startup.
         /// </summary>
         static Log() {
-            try
-            {
+            try {
                 LogFilePath = Path.Combine(DataLocation.DataPath, "Logs");
                 LogFilePath = Path.Combine(LogFilePath, LogFileName);
                 if (File.Exists(LogFilePath)) {
@@ -65,8 +64,7 @@ namespace LoadOrderTool {
 
                 DataLocation.RealPath(DataLocation.WorkshopContentPath);
                 DataLocation.DisplayStatus();
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 Log.Exception(ex);
             }
 
@@ -141,13 +139,12 @@ namespace LoadOrderTool {
 
         }
 
-        internal static void Exception(Exception e, string m = "", bool showInPanel=true) {
+        internal static void Exception(Exception e, string m = "", bool showInPanel = true) {
             string message = e.ToString() + $"\n\t-- {assemblyName_}:end of inner stack trace --";
             if (!string.IsNullOrEmpty(m))
                 message = m + " -> \n" + message;
             LogImpl(message, LogLevel.Exception, true);
-            if (showInPanel)
-            {
+            if (showInPanel) {
                 var prompt = new ThreadExceptionDialog(e);
                 prompt.Text = e.GetType().Name;
                 var label = typeof(ThreadExceptionDialog)
@@ -164,7 +161,7 @@ namespace LoadOrderTool {
                 }
 
                 var res = prompt.ShowDialog();
-                if(res == DialogResult.Abort) {
+                if (res == DialogResult.Abort) {
                     Process.GetCurrentProcess().Kill();
                 }
             }
@@ -215,8 +212,7 @@ namespace LoadOrderTool {
                             break;
                     }
                 }
-            }
-            catch {
+            } catch {
                 // ignore
             }
         }
