@@ -83,23 +83,18 @@ namespace CO.Plugins {
             /// <summary> dir name without prefix. </summary>
             public string name => m_CachedName;
 
-            public string DisplayText {
-                get {
-                    string modName = ModInfo.ModName;
+            private string dispalyPath_;
 
-                    if (string.IsNullOrEmpty(modName)) {
-                        if (publishedFileID != PublishedFileId.invalid)
-                            return $"{publishedFileID.AsUInt64}: {dllName}.dll";
-                        else
-                            return $"{m_CachedName}\\{dllName}.dll";
-                    } else {
-                        if (publishedFileID != PublishedFileId.invalid)
-                            return $"{publishedFileID.AsUInt64}: {modName} ({dllName}.dll)";
-                        else
-                            return $"{modName} ({m_CachedName}\\{dllName}.dll)";
-                    }
-                }
-            }
+            public string DispalyPath =>
+                dispalyPath_ ??= IsWorkshop ? $"{dllName}.dll" : $"{m_CachedName}\\{dllName}.dll";
+
+            string displayText_;
+            public string DisplayText => 
+                displayText_ ??= (DispalyPath + " " + ModInfo.ModName).Trim();
+
+            string searchText_;
+            public string SearchText => searchText_ ??=
+                $"{DisplayText} {publishedFileID} {ModInfo.Author}".Trim();
 
             public string[] DllPaths =>
                 Directory.GetFiles(ModPath, "*.dll", SearchOption.AllDirectories);

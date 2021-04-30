@@ -83,6 +83,7 @@ namespace LoadOrderTool {
             dataGridMods.CellValueChanged += dataGridMods_CellValueChanged;
             dataGridMods.CurrentCellDirtyStateChanged += dataGridMods_CurrentCellDirtyStateChanged;
             dataGridMods.EditingControlShowing += dataGridMods_EditingControlShowing;
+            dataGridMods.CellContentClick += DataGridMods_CellContentClick;
 
             LoadMods();
             InitializeAssetTab();
@@ -135,7 +136,7 @@ namespace LoadOrderTool {
             {
                 var words = TextFilterMods.Text?.Split(" ");
                 if (words != null && words.Length > 0) {
-                    if (!ContainsWords(p.DisplayText, words))
+                    if (!ContainsWords(p.SearchText, words))
                         return false;
                 }
             }
@@ -167,7 +168,10 @@ namespace LoadOrderTool {
                 //     $"savedKey={savedKey} modPath={p.ModPath}");
             }
             foreach (var mod in ModList.Filtered) {
-                rows.Add(mod.LoadOrder, mod.IsIncludedPending, mod.IsEnabledPending, mod.DisplayText);
+                string id = mod.publishedFileID.AsUInt64.ToString();
+                if (id == "0" || mod.publishedFileID == PublishedFileId.invalid)
+                    id = "";
+                rows.Add(mod.LoadOrder, mod.IsIncludedPending, mod.IsEnabledPending, id, mod.DisplayText);
                 //Log.Debug("row added: " + mod.ToString());
             }
             ResumeLayout();
@@ -187,8 +191,6 @@ namespace LoadOrderTool {
                     tb.Text = UInt32.Parse(tb.Text).ToString();
             }
         }
-
-
 
         private void RefreshModList(object sender, EventArgs e) => RefreshModList();
 
@@ -232,7 +234,6 @@ namespace LoadOrderTool {
         }
 
         private void dataGridMods_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
-            //Log.Debug("dataGridMods_CellValueChanged() called");
             try {
                 var plugin = ModList.Filtered[e.RowIndex];
                 var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
@@ -251,6 +252,38 @@ namespace LoadOrderTool {
                     return;
                 }
             } catch(Exception ex) {
+                Log.Exception(ex);
+            }
+        }
+
+        private void DataGridMods_CellContentClick(object sender, DataGridViewCellEventArgs e) {
+            try {
+                if (e.RowIndex < 0 || e.RowIndex >= ModList.Filtered.Count) return;
+                var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                if (e.ColumnIndex == cModID.Index) {
+                    string url = ContentUtil.GetItemURL((string)cell.Value);
+                    if (url != null)
+                        ContentUtil.OpenURL(url);
+                }
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
+        }
+
+
+        private void dataGridMods_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
+            try {
+                //Log.Info($"e.ColumnIndex={e.ColumnIndex} Description.Index={Description.Index}");
+                if (e.RowIndex >= ModList.Filtered.Count || e.RowIndex >= dataGridMods.Rows.Count)
+                    return;
+                var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                if (e.ColumnIndex == Description.Index && e.Value != null) {
+                    cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
+                } else if (e.ColumnIndex == cModID.Index) {
+                    cell.ToolTipText = ContentUtil.GetItemURL((string)cell.Value);
+                }
+
+            } catch (Exception ex) {
                 Log.Exception(ex);
             }
         }
@@ -347,20 +380,6 @@ namespace LoadOrderTool {
             LoadAsssets();
         }
 
-        private void dataGridMods_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
-            try {
-                //Log.Info($"e.ColumnIndex={e.ColumnIndex} Description.Index={Description.Index}");
-                if (e.RowIndex >= ModList.Filtered.Count || e.RowIndex >= dataGridMods.Rows.Count)
-                    return;
-                if (e.ColumnIndex == Description.Index && e.Value != null) {
-                    var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                    cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
-                }
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
         #region AssetTab
         int prevAssetSortCol_ = -1;
         bool assetSortAssending_ = false;
@@ -409,13 +428,15 @@ namespace LoadOrderTool {
             }
 
             dataGridAssets.CellValueNeeded += DataGridAssets_CellValueNeeded; ;
+            dataGridAssets.CellToolTipTextNeeded += DataGridAssets_CellToolTipTextNeeded;
+            dataGridAssets.CellContentClick += DataGridAssets_CellContentClick;
             dataGridAssets.CellValuePushed += dataGridAssets_CellValuePushed;
             dataGridAssets.CurrentCellDirtyStateChanged += dataGridAssets_CurrentCellDirtyStateChanged;
 
             dataGridAssets.ColumnHeaderMouseClick += DataGridAssets_ColumnHeaderMouseClick;
             dataGridAssets.VisibleChanged += DataGridAssets_VisibleChanged;
         }
-        
+
         bool firstTime_ = true;
         private void DataGridAssets_VisibleChanged(object sender, EventArgs e) {
             if (dataGridAssets.Visible && firstTime_) {
@@ -519,9 +540,7 @@ namespace LoadOrderTool {
                 return false;
             }
             if (words != null && words.Length > 0) {
-                if (
-                    !ContainsWords(a.DisplayText, words) &&
-                    !ContainsWords(a.ConfigAssetInfo.Author, words)) {
+                if (!ContainsWords(a.SearchText, words)){
                     return false;
                 }
             }
@@ -540,8 +559,7 @@ namespace LoadOrderTool {
             }
             return true;
         }
-
-#endregion
+        #endregion
 
         public void IncludeExcludeFilteredAssets(bool value) {
             try {
@@ -557,7 +575,6 @@ namespace LoadOrderTool {
                 ConfigWrapper.Resume();
                 Log.Debug("IncludeExcludeVisibleAssets() Finished!");
             }
-
         }
 
         private void IncludeAllAssets_Click(object sender, EventArgs e) {
@@ -585,7 +602,7 @@ namespace LoadOrderTool {
 
                 if (e.ColumnIndex == cIncluded.Index) {
                     AssetList.SortItemsBy(item => item.IsIncludedPending, assetSortAssending_);
-                } else if (e.ColumnIndex == cID.Index) {
+                } else if (e.ColumnIndex == cAssetID.Index) {
                     AssetList.SortItemsBy(item => item.publishedFileID.AsUInt64, assetSortAssending_);
                 } else if (e.ColumnIndex == cName.Index) {
                     AssetList.SortItemsBy(item => item.DisplayText, assetSortAssending_);
@@ -611,7 +628,7 @@ namespace LoadOrderTool {
                 var asset = AssetList.Filtered[e.RowIndex];
                 if (e.ColumnIndex == cIncluded.Index) {
                     e.Value = asset.IsIncludedPending;
-                } else if (e.ColumnIndex == cID.Index) {
+                } else if (e.ColumnIndex == cAssetID.Index) {
                     string id = asset.publishedFileID.AsUInt64.ToString();
                     if (id == "0" || asset.publishedFileID == PublishedFileId.invalid)
                         id = "";
@@ -625,6 +642,38 @@ namespace LoadOrderTool {
                 } else if (e.ColumnIndex == cTags.Index) {
                     e.Value = asset.StrTags;
                 }
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
+        }
+
+        // tooltip
+        private void DataGridAssets_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e) {
+            try {
+                if (e.RowIndex < 0 || e.RowIndex >= AssetList.Filtered.Count) return;
+                var asset = AssetList.Filtered[e.RowIndex];
+                if (e.ColumnIndex == cAssetID.Index) {
+                    var id = asset.publishedFileID;
+                    string url = ContentUtil.GetItemURL(asset.publishedFileID);
+                    e.ToolTipText = url ?? "local";
+                }
+            } catch (Exception ex) {
+                Log.Exception(ex, $"rowIndex={e.RowIndex}");
+            }
+        }
+
+        // click
+        private void DataGridAssets_CellContentClick(object sender, DataGridViewCellEventArgs e) {
+            try {
+                if (e.RowIndex < 0 || e.RowIndex >= AssetList.Filtered.Count) return;
+                var asset = AssetList.Filtered[e.RowIndex];
+
+                if (e.ColumnIndex == cAssetID.Index) {
+                    var id = asset.publishedFileID;
+                    string url = ContentUtil.GetItemURL(asset.publishedFileID);
+                    if (url != null)
+                        ContentUtil.OpenURL(url);
+                }   
             } catch (Exception ex) {
                 Log.Exception(ex);
             }

@@ -7,6 +7,7 @@ namespace LoadOrderTool {
     using System.Reflection;
     using System.Windows.Forms;
     using System.Threading;
+    using System.Diagnostics;
 
     static class Program {
         /// <summary>

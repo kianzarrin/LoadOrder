@@ -46,12 +46,9 @@ namespace CO.Packaging {
             public string DisplayText {
                 get {
                     if (string.IsNullOrEmpty(displayText_)) {
-                        string text = ConfigAssetInfo.AssetName;
-                        if (string.IsNullOrEmpty(text))
-                            text = AssetName;
-                        if (publishedFileID != PublishedFileId.invalid)
-                            text = $"{publishedFileID.AsUInt64}: " + text;
-                        displayText_ = text;
+                        displayText_ = ConfigAssetInfo.AssetName;
+                        if (string.IsNullOrEmpty(displayText_))
+                            displayText_ = AssetName;
                     }
                     return displayText_;
                 }
@@ -62,6 +59,10 @@ namespace CO.Packaging {
                 ConfigAssetInfo.Tags != null 
                 ? string.Join(", ", ConfigAssetInfo.Tags) 
                 : "";
+
+            string searchText_;
+            public string SearchText => searchText_ ??=
+                $"{DisplayText} {publishedFileID} {ConfigAssetInfo.Author}".Trim();
 
             public PublishedFileId publishedFileID => this.m_PublishedFileID;
 

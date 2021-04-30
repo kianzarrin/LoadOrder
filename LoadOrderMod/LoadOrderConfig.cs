@@ -8,6 +8,7 @@ namespace LoadOrderShared {
         public string AssemblyName;
         public string ModName;
         public string Description;
+        public string Author;
     }
 
     public class AssetInfo {

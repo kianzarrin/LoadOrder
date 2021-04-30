@@ -3,10 +3,39 @@
     using CO.PlatformServices;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
 
     public static class ContentUtil {
+        public const string WS_URL_PREFIX = @"https://steamcommunity.com/sharedfiles/filedetails/?id=";
+
+        public static string GetItemURL(PublishedFileId id) {
+            if (id == PublishedFileId.invalid || id.AsUInt64 == 0)
+                return null;
+            return WS_URL_PREFIX + id.AsUInt64;
+        }
+        public static string GetItemURL(string id) {
+            if (string.IsNullOrEmpty(id)) 
+                return null;
+            return WS_URL_PREFIX + id;
+        }
+
+        public static Process OpenURL(string url) {
+            try {
+                var ps = new ProcessStartInfo(url) {
+                    UseShellExecute = true,
+                    Verb = "open"
+                };
+                return Process.Start(ps);
+            } catch (Exception ex2) {
+                Log.Exception(
+                    new Exception("could not open url: " + url, ex2),
+                    "could not open url");
+                return null;
+            }
+        }
+
         public static bool IsPathIncluded(string fullPath) {
             return Path.GetFileName(fullPath).StartsWith("_");
         }

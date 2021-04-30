@@ -1,19 +1,14 @@
-IPatch:
-	-poke option
-	-breadth option
-	- print assembly/type resolve stack trace for debugging.
-
-files:
-	readable Load Order file. 
-	Cache Mod names once the game is loaded.
-
-Mod:
-	Load only the latest version of shared dlls. (*.API *.Integration)
-	dump profiler resutls to a file and view externally using GUI created by unity editor.
-
 Tool:
-	add mod tag
+	- IDs as links
+		- no need to repeat IDs in display text.
+	- mods author column.
+	- search terms property
+
 	auto luncher
+		- parameters as checkboxes (autosave to tool settings xml)
+	
+
+
 	auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 
 * high Prioirty
