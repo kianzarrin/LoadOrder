@@ -44,6 +44,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="KianCommons\KianCommons\Backport\**" />
     <Compile Remove="KianCommons\KianCommons\Math\**" />
     <Compile Remove="KianCommons\KianCommons\ObjUnity3D\**" />
     <Compile Remove="KianCommons\KianCommons\obj\**" />
@@ -54,6 +55,7 @@
     <Compile Remove="KianCommons\KianCommons\Util\**" />
     <Compile Remove="KianCommons\libs\**" />
     <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="KianCommons\KianCommons\Backport\**" />
     <EmbeddedResource Remove="KianCommons\KianCommons\Math\**" />
     <EmbeddedResource Remove="KianCommons\KianCommons\ObjUnity3D\**" />
     <EmbeddedResource Remove="KianCommons\KianCommons\obj\**" />
@@ -64,6 +66,7 @@
     <EmbeddedResource Remove="KianCommons\KianCommons\Util\**" />
     <EmbeddedResource Remove="KianCommons\libs\**" />
     <EmbeddedResource Remove="Resources\**" />
+    <None Remove="KianCommons\KianCommons\Backport\**" />
     <None Remove="KianCommons\KianCommons\Math\**" />
     <None Remove="KianCommons\KianCommons\ObjUnity3D\**" />
     <None Remove="KianCommons\KianCommons\obj\**" />
@@ -74,7 +77,9 @@
     <None Remove="KianCommons\KianCommons\Util\**" />
     <None Remove="KianCommons\libs\**" />
     <None Remove="Resources\**" />
+    <Compile Remove="KianCommons\KianCommons\LifeCycleBase.cs" />
     <Compile Remove="KianCommons\KianCommons\Plugins\AdaptiveRoadsUtil.cs" />
+    <Compile Remove="KianCommons\KianCommons\Plugins\CSURUtil.cs" />
     <Compile Remove="Patches\ContentManager\DebugStackTime.cs" />
     <Compile Remove="Patches\LoadingProfiler_NewEventPatch.cs" />
     <Compile Remove="Patches\SetSceneProgressPatch.cs" />
