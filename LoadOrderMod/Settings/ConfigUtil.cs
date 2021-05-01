@@ -33,9 +33,12 @@ namespace LoadOrderMod.Settings {
         }
 
         public static void SaveConfig() {
+            LogCalled();
             if (config_ == null) return;
-            lock(SaveThread.LockObject)
+            lock (SaveThread.LockObject) {
+                SaveThread.Dirty = false;
                 config_.Serialize(DataLocation.localApplicationData);
+            }
         }
 
 
@@ -46,7 +49,7 @@ namespace LoadOrderMod.Settings {
             private static Thread thread_;
 
             public static bool Dirty = false;
-            public static object LockObject = new object();
+            public readonly static object LockObject = new object();
 
             static SaveThread() => Init();
 
@@ -76,10 +79,8 @@ namespace LoadOrderMod.Settings {
                 }
             }
             public static void Flush() {
-                if (Dirty) {
-                    Dirty = false;
+                if (Dirty)
                     SaveConfig();
-                }
             }
         }
 
@@ -191,7 +192,6 @@ namespace LoadOrderMod.Settings {
                 assetInfo.Author = author;
                 SaveThread.Dirty = true;
             }
-            LogSucceeded();
         }
 
         internal static void SetAuthor(this PluginInfo p, string author) {
@@ -199,7 +199,6 @@ namespace LoadOrderMod.Settings {
                 modInfo.Author = author;
                 SaveThread.Dirty = true;
             }
-            LogSucceeded();
         }
     }
 }
