@@ -141,7 +141,7 @@ namespace CO.Plugins {
                     string targetPath = Path.Combine(parentPath, targetDirname);
                     bool success = MoveToPath(targetPath);
                     if (!success) {
-                        LoadOrderWindow.Instance.PopulateMods();
+                        LoadOrderWindow.Instance.dataGridMods.PopulateMods();
                     }
                 }
             }

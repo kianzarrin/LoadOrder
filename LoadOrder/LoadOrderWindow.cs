@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using LoadOrderTool.Data;
 using System.Threading.Tasks;
+using LoadOrderTool.UI;
 
 namespace LoadOrderTool {
     public partial class LoadOrderWindow : Form {
@@ -39,14 +40,21 @@ namespace LoadOrderTool {
 
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
 
-        ModList ModList;
-
         public LoadOrderWindow() {
             Instance = this;
             ConfigWrapper.Suspend();
             InitializeComponent();
-            dataGridMods.AlternatingRowsDefaultCellStyle.BackColor = Color.Beige;
 
+            InitializeModTab();
+            InitializeAssetTab();
+
+            AutoSave.Checked = ConfigWrapper.AutoSave;
+            Dirty = ConfigWrapper.Dirty;
+            ConfigWrapper.Resume();
+            ConfigWrapper.SaveConfig();
+        }
+
+        void InitializeModTab() {
             ComboBoxIncluded.SetItems<IncludedFilter>();
             ComboBoxIncluded.SelectedIndex = 0;
             ComboBoxEnabled.SetItems<EnabledFilter>();
@@ -59,39 +67,27 @@ namespace LoadOrderTool {
             ComboBoxWS.SelectedIndexChanged += RefreshModList;
             TextFilterMods.TextChanged += RefreshModList;
 
-            this.SaveProfile.Click += SaveProfile_Click;
-            this.LoadProfile.Click += LoadProfile_Click;
-            this.Save.Click += Save_Click;
-            this.AutoSave.CheckedChanged += AutoSave_CheckedChanged;
-            this.ReloadAll.Click += ReloadAll_Click;
+            SaveProfile.Click += SaveProfile_Click;
+            LoadProfile.Click += LoadProfile_Click;
+            Save.Click += Save_Click;
+            AutoSave.CheckedChanged += AutoSave_CheckedChanged;
+            ReloadAll.Click += ReloadAll_Click;
 
-            this.SortByHarmony.Click += SortByHarmony_Click;
-            this.ReverseOrder.Click += ReverseOrder_Click;
-            this.RandomizeOrder.Click += RandomizeOrder_Click;
-            this.ResetOrder.Click += ResetOrder_Click;
-            this.IncludeAllMods.Click += IncludeAllMods_Click;
-            this.ExcludeAllMods.Click += ExcludeAllMods_Click;
-            this.EnableAllMods.Click += EnableAllMods_Click;
-            this.DisableAllMods.Click += DisableAllMods_Click;
+            SortByHarmony.Click += SortByHarmony_Click;
+            ReverseOrder.Click += ReverseOrder_Click;
+            RandomizeOrder.Click += RandomizeOrder_Click;
+            ResetOrder.Click += ResetOrder_Click;
+            IncludeAllMods.Click += IncludeAllMods_Click;
+            ExcludeAllMods.Click += ExcludeAllMods_Click;
+            EnableAllMods.Click += EnableAllMods_Click;
+            DisableAllMods.Click += DisableAllMods_Click;
 
             var buttons = ModActionPanel.Controls.OfType<Button>();
             var maxwidth = buttons.Max(b => b.Width);
             foreach (var b in buttons)
                 b.MinimumSize = new Size(maxwidth, 0);
 
-            dataGridMods.CellFormatting += dataGridMods_CellFormatting;
-            dataGridMods.CellValueChanged += dataGridMods_CellValueChanged;
-            dataGridMods.CurrentCellDirtyStateChanged += dataGridMods_CurrentCellDirtyStateChanged;
-            dataGridMods.EditingControlShowing += dataGridMods_EditingControlShowing;
-            dataGridMods.CellContentClick += DataGridMods_CellContentClick;
-
-            LoadMods();
-            InitializeAssetTab();
-
-            AutoSave.Checked = ConfigWrapper.AutoSave;
-            Dirty = ConfigWrapper.Dirty;
-            ConfigWrapper.Resume();
-            ConfigWrapper.SaveConfig();
+            dataGridMods.LoadMods(ModPredicate);
         }
 
         bool dirty_;
@@ -107,6 +103,8 @@ namespace LoadOrderTool {
                 }
             }
         }
+
+        private void RefreshModList(object sender, EventArgs e) => dataGridMods.RefreshModList();
 
         public bool ModPredicate(PluginManager.PluginInfo p) {
             {
@@ -144,56 +142,6 @@ namespace LoadOrderTool {
             return true;
         }
 
-        public void LoadMods() {
-            PluginManager.instance.LoadPlugins();
-            ModList = ModList.GetAllMods();
-            RefreshModList(true);
-        }
-
-        public void RefreshModList(bool sort = false) {
-            if (sort)
-                ModList.DefaultSort();
-            ModList.FilterIn(ModPredicate);
-            PopulateMods();
-        }
-
-        public void PopulateMods() {
-            SuspendLayout();
-            var rows = this.dataGridMods.Rows;
-            rows.Clear();
-            Log.Info("Populating");
-            foreach (var p in ModList.Filtered) {
-                string savedKey = p.savedEnabledKey_;
-                //Log.Debug($"plugin info: dllName={p.dllName} harmonyVersion={ ModList.GetHarmonyOrder(p)} " +
-                //     $"savedKey={savedKey} modPath={p.ModPath}");
-            }
-            foreach (var mod in ModList.Filtered) {
-                string id = mod.publishedFileID.AsUInt64.ToString();
-                if (id == "0" || mod.publishedFileID == PublishedFileId.invalid)
-                    id = "";
-                rows.Add(mod.LoadOrder, mod.IsIncludedPending, mod.IsEnabledPending, id, mod.DisplayText);
-                //Log.Debug("row added: " + mod.ToString());
-            }
-            ResumeLayout();
-        }
-
-        private void U32TextBox_KeyPress(object sender, KeyPressEventArgs e) {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) {
-                e.Handled = true;
-            }
-        }
-
-        private void U32TextBox_Submit(object? sender, EventArgs e) {
-            if (sender is TextBox tb) {
-                if (tb.Text == "")
-                    tb.Text = "0";
-                else
-                    tb.Text = UInt32.Parse(tb.Text).ToString();
-            }
-        }
-
-        private void RefreshModList(object sender, EventArgs e) => RefreshModList();
-
         private void LoadOrderWindow_FormClosing(object sender, FormClosingEventArgs e) {
             var configWrapper = ConfigWrapper;
             if (!configWrapper.AutoSave && configWrapper.Dirty) {
@@ -223,121 +171,50 @@ namespace LoadOrderTool {
             }
         }
 
-        private void dataGridMods_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e) {
-            if (dataGridMods.CurrentCell.ColumnIndex == 0 && e.Control is TextBox tb) // Desired Column
-            {
-                tb.KeyPress -= U32TextBox_KeyPress;
-                tb.Leave -= U32TextBox_Submit;
-                tb.KeyPress += U32TextBox_KeyPress;
-                tb.Leave += U32TextBox_Submit;
-            }
-        }
-
-        private void dataGridMods_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
-            try {
-                var plugin = ModList.Filtered[e.RowIndex];
-                var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                var col = cell.OwningColumn;
-
-                if (col == LoadIndex) {
-                    int newVal = Int32.Parse(cell.Value as string);
-                    var p = ModList.Filtered[e.RowIndex];
-                    ModList.MoveItem(p, newVal);
-                    RefreshModList();
-                } else if (col == ModEnabled) {
-                    plugin.IsEnabledPending = (bool)cell.Value;
-                } else if (col == IsIncluded) {
-                    plugin.IsIncludedPending = (bool)cell.Value;
-                } else {
-                    return;
-                }
-            } catch(Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
-        private void DataGridMods_CellContentClick(object sender, DataGridViewCellEventArgs e) {
-            try {
-                if (e.RowIndex < 0 || e.RowIndex >= ModList.Filtered.Count) return;
-                var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                if (e.ColumnIndex == cModID.Index) {
-                    string url = ContentUtil.GetItemURL((string)cell.Value);
-                    if (url != null)
-                        ContentUtil.OpenURL(url);
-                }
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
-
-        private void dataGridMods_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
-            try {
-                //Log.Info($"e.ColumnIndex={e.ColumnIndex} Description.Index={Description.Index}");
-                if (e.RowIndex >= ModList.Filtered.Count || e.RowIndex >= dataGridMods.Rows.Count)
-                    return;
-                var cell = dataGridMods.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                if (e.ColumnIndex == Description.Index && e.Value != null) {
-                    cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
-                } else if (e.ColumnIndex == cModID.Index) {
-                    cell.ToolTipText = ContentUtil.GetItemURL((string)cell.Value);
-                }
-
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
-        private void dataGridMods_CurrentCellDirtyStateChanged(object sender, EventArgs e) {
-            if (dataGridMods.CurrentCell is DataGridViewCheckBoxCell) {
-                dataGridMods.EndEdit();
-            }
-        }
-
         private void ResetOrder_Click(object sender, EventArgs e) {
-            foreach (var mod in ModList)
+            foreach (var mod in dataGridMods.ModList)
                 mod.ResetLoadOrder();
-            RefreshModList(sort: true);
+            dataGridMods.RefreshModList(sort: true);
         }
 
         private void SortByHarmony_Click(object sender, EventArgs e) {
-            ModList.ResetLoadOrders();
-            ModList.SortBy(ModList.HarmonyComparison);
-            RefreshModList();
+            dataGridMods.ModList.ResetLoadOrders();
+            dataGridMods.ModList.SortBy(ModList.HarmonyComparison);
+            dataGridMods.RefreshModList();
         }
 
         private void EnableAllMods_Click(object sender, EventArgs e) {
-            foreach (var p in ModList.Filtered)
+            foreach (var p in dataGridMods.ModList.Filtered)
                 p.IsEnabledPending = true;
-            PopulateMods();
+            dataGridMods.PopulateMods();
         }
 
         private void DisableAllMods_Click(object sender, EventArgs e) {
-            foreach (var p in ModList.Filtered)
+            foreach (var p in dataGridMods.ModList.Filtered)
                 p.IsEnabledPending = false;
-            PopulateMods();
+            dataGridMods.PopulateMods();
         }
 
         private void IncludeAllMods_Click(object sender, EventArgs e) {
-            foreach (var p in ModList.Filtered)
+            foreach (var p in dataGridMods.ModList.Filtered)
                 p.IsIncludedPending = true;
-            PopulateMods();
+            dataGridMods.PopulateMods();
         }
 
         private void ExcludeAllMods_Click(object sender, EventArgs e) {
-            foreach (var p in ModList.Filtered)
+            foreach (var p in dataGridMods.ModList.Filtered)
                 p.IsIncludedPending = false;
-            PopulateMods();
+            dataGridMods.PopulateMods();
         }
 
         private void ReverseOrder_Click(object sender, EventArgs e) {
-            ModList.ReverseOrder();
-            RefreshModList();
+            dataGridMods.ModList.ReverseOrder();
+            dataGridMods.RefreshModList();
         }
 
         private void RandomizeOrder_Click(object sender, EventArgs e) {
-            ModList.RandomizeOrder();
-            RefreshModList();
+            dataGridMods.ModList.RandomizeOrder();
+            dataGridMods.RefreshModList();
         }
 
 
@@ -347,7 +224,7 @@ namespace LoadOrderTool {
             diaglog.InitialDirectory = LoadOrderProfile.DIR;
             if (diaglog.ShowDialog() == DialogResult.OK) {
                 LoadOrderProfile profile = new LoadOrderProfile();
-                ModList.SaveToProfile(profile);
+                dataGridMods.ModList.SaveToProfile(profile);
                 PackageManager.instance.SaveToProfile(profile);
                 profile.Serialize(diaglog.FileName);
             }
@@ -359,9 +236,9 @@ namespace LoadOrderTool {
                 diaglog.InitialDirectory = LoadOrderProfile.DIR;
                 if (diaglog.ShowDialog() == DialogResult.OK) {
                     var profile = LoadOrderProfile.Deserialize(diaglog.FileName);
-                    ModList.LoadFromProfile(profile);
+                    dataGridMods.ModList.LoadFromProfile(profile);
                     PackageManager.instance.LoadFromProfile(profile);
-                    RefreshModList(true);
+                    dataGridMods.RefreshModList(true);
                     PopulateAssets();
                 }
             }
@@ -376,7 +253,7 @@ namespace LoadOrderTool {
         }
 
         private void ReloadAll_Click(object sender, EventArgs e) {
-            LoadMods();
+            dataGridMods.LoadMods(ModPredicate);
             LoadAsssets();
         }
 
@@ -385,17 +262,8 @@ namespace LoadOrderTool {
         bool assetSortAssending_ = false;
 
         public AssetList AssetList;
-        class ObjectCell : DataGridViewCell {
-            object value_;
-            protected override object GetValue(int rowIndex) => value_;
-            protected override bool SetValue(int rowIndex, object value) {
-                value_ = value;
-                return true;
-            }
-            public override bool Visible => false;
 
-            public override object Clone() => new ObjectCell { value_ = value_ };
-        }
+
 
         void InitializeAssetTab() {
             ComboBoxAssetIncluded.SetItems<IncludedFilter>();

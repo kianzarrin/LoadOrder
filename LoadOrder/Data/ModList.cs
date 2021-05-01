@@ -14,18 +14,26 @@ namespace LoadOrderTool {
         const int DefaultLoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
         public List<PluginInfo> Filtered;
 
-        public ModList(IEnumerable<PluginManager.PluginInfo> list) : base(list)
+        public delegate bool PredicateHandler(PluginInfo p);
+        public Func<PluginInfo,bool> PredicateCallback { get; set; }
+
+
+        public ModList(IEnumerable<PluginInfo> list, Func<PluginInfo, bool> predicateCallback) : base(list)
         {
-            Filtered = list.ToList();
+            PredicateCallback = predicateCallback;
+            FilterIn();
         }
 
-        public static ModList GetAllMods()
+        public static ModList GetAllMods(Func<PluginInfo, bool> predicateCallback)
         {
-            return new ModList(PluginManager.instance.GetPluginsInfo());
+            return new ModList(PluginManager.instance.GetPluginsInfo(), predicateCallback);
         }
 
-        public void FilterIn(Func<PluginInfo, bool> predicate) {
-            Filtered = this.Where(predicate).ToList();
+        public void FilterIn() {
+            if (PredicateCallback != null)
+                Filtered = this.Where(PredicateCallback).ToList();
+            else 
+                Filtered = this.ToList();
         }
 
         public static int LoadOrderComparison(PluginInfo p1, PluginInfo p2) =>

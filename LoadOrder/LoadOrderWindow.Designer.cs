@@ -38,7 +38,7 @@
             this.AutoSave = new System.Windows.Forms.CheckBox();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
-            this.dataGridMods = new System.Windows.Forms.DataGridView();
+            this.dataGridMods = new UI.ModDataGrid();
             this.ModActionPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.ResetOrder = new System.Windows.Forms.Button();
             this.SortByHarmony = new System.Windows.Forms.Button();
@@ -71,11 +71,6 @@
             this.ComboBoxAssetTags = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.TextFilterAsset = new System.Windows.Forms.TextBox();
-            this.LoadIndex = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.IsIncluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.ModEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.cModID = new System.Windows.Forms.DataGridViewLinkColumn();
-            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.FilePanel.SuspendLayout();
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
@@ -188,25 +183,9 @@
             // 
             // dataGridMods
             // 
-            this.dataGridMods.AllowUserToAddRows = false;
-            this.dataGridMods.AllowUserToDeleteRows = false;
-            this.dataGridMods.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
-            this.dataGridMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridMods.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
-            this.dataGridMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.dataGridMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridMods.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.LoadIndex,
-            this.IsIncluded,
-            this.ModEnabled,
-            this.cModID,
-            this.Description});
             this.dataGridMods.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridMods.Location = new System.Drawing.Point(3, 34);
-            this.dataGridMods.MultiSelect = false;
             this.dataGridMods.Name = "dataGridMods";
-            this.dataGridMods.RowHeadersVisible = false;
             this.dataGridMods.Size = new System.Drawing.Size(816, 527);
             this.dataGridMods.TabIndex = 1;
             this.dataGridMods.Text = "Mods";
@@ -579,48 +558,6 @@
             this.TextFilterAsset.Size = new System.Drawing.Size(360, 25);
             this.TextFilterAsset.TabIndex = 4;
             // 
-            // LoadIndex
-            // 
-            this.LoadIndex.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.LoadIndex.HeaderText = "Order";
-            this.LoadIndex.Name = "LoadIndex";
-            this.LoadIndex.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.LoadIndex.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.LoadIndex.Width = 49;
-            // 
-            // IsIncluded
-            // 
-            this.IsIncluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.IsIncluded.HeaderText = "Include";
-            this.IsIncluded.Name = "IsIncluded";
-            this.IsIncluded.Width = 55;
-            // 
-            // ModEnabled
-            // 
-            this.ModEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.ModEnabled.HeaderText = "Enabled";
-            this.ModEnabled.Name = "ModEnabled";
-            this.ModEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.ModEnabled.Width = 61;
-            // 
-            // cModID
-            // 
-            this.cModID.HeaderText = "ID";
-            this.cModID.Name = "cModID";
-            this.cModID.ReadOnly = true;
-            this.ModEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.ModEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.cModID.TrackVisitedState = false;
-            // 
-            // Description
-            // 
-            this.Description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Description.HeaderText = "Description";
-            this.Description.Name = "Description";
-            this.Description.ReadOnly = true;
-            this.Description.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Description.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
             // LoadOrderWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -674,7 +611,7 @@
         private Button RandomizeOrder;
         private Button DisableAllMods;
         private Button IncludeAllMods;
-        public DataGridView dataGridMods;
+        public UI.ModDataGrid dataGridMods;
         private FlowLayoutPanel AssetsActionPanel;
         private Button ExcludeAllAssets;
         private Button IncludeAllAssets;
@@ -696,10 +633,5 @@
         private DataGridViewTextBoxColumn cAuthor;
         private DataGridViewTextBoxColumn cDate;
         private DataGridViewTextBoxColumn cTags;
-        private DataGridViewTextBoxColumn LoadIndex;
-        private DataGridViewCheckBoxColumn IsIncluded;
-        private DataGridViewCheckBoxColumn ModEnabled;
-        private DataGridViewLinkColumn cModID;
-        private DataGridViewTextBoxColumn Description;
     }
 }
