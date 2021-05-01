@@ -55,7 +55,6 @@ namespace LoadOrderMod.Util {
         /// falls back to getting name from file</param>
         public static string GetAuthor(this Package.Asset a, bool fallback) {
             string ret = a.GetEntryData()?.authorName;
-            Log.Debug($"entry.author={ret} for asset:{a.name}");
             if (ret.IsAuthorNameValid())
                 return ret;
             else if(fallback)

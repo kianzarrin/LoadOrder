@@ -96,7 +96,5 @@
                 Log.Exception(ex);
             }
         }
-
-
     }
 }

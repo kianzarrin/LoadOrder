@@ -13,6 +13,7 @@ namespace LoadOrderMod.Settings {
     using System;
     using System.IO;
     using System.Linq;
+    using System.Threading;
     using static ColossalFramework.Plugins.PluginManager;
     using static KianCommons.ReflectionHelpers;
 
@@ -31,8 +32,58 @@ namespace LoadOrderMod.Settings {
             }
         }
 
-        public static void SaveConfig() =>
-            config_?.Serialize(DataLocation.localApplicationData);
+        public static void SaveConfig() {
+            if (config_ == null) return;
+            lock(SaveThread.LockObject)
+                config_.Serialize(DataLocation.localApplicationData);
+        }
+
+
+        // this is useful to store author details after call back.
+        internal static class SaveThread {
+            const int INTERVAL_MS = 1000;
+            static bool isRunning_;
+            private static Thread thread_;
+
+            public static bool Dirty = false;
+            public static object LockObject = new object();
+
+            static SaveThread() => Init();
+
+            internal static void Init() {
+                thread_ = new Thread(RunThread);
+                thread_.Name = "SaveThread";
+                thread_.IsBackground = true;
+                isRunning_ = true;
+                thread_.Start();
+            }
+
+            internal static void Terminate() {
+                isRunning_ = false;
+                LogCalled();
+            }
+
+            private static void RunThread() {
+                try {
+                    while (isRunning_) {
+                        Thread.Sleep(INTERVAL_MS);
+                        Flush();
+                    }
+                    Flush();
+                    Log.Info("Save Thread Exiting...");
+                } catch (Exception ex) {
+                    Log.Exception(ex);
+                }
+            }
+            public static void Flush() {
+                if (Dirty) {
+                    Dirty = false;
+                    SaveConfig();
+                }
+            }
+        }
+
+
 
         public static void AquirePathDetails() {
             try {
@@ -138,7 +189,7 @@ namespace LoadOrderMod.Settings {
         internal static void SetAuthor(this Package.Asset a, string author) {
             if(a.GetAssetConfig() is AssetInfo assetInfo) {
                 assetInfo.Author = author;
-                SaveConfig();
+                SaveThread.Dirty = true;
             }
             LogSucceeded();
         }
@@ -146,7 +197,7 @@ namespace LoadOrderMod.Settings {
         internal static void SetAuthor(this PluginInfo p, string author) {
             if (p.GetModConfig() is ModInfo modInfo) {
                 modInfo.Author = author;
-                SaveConfig();
+                SaveThread.Dirty = true;
             }
             LogSucceeded();
         }

@@ -63,13 +63,15 @@ namespace LoadOrderMod {
 
         public void OnDisabled() {
             try {
-
                 LoadingManager.instance.m_introLoaded -= LoadOrderUtil.TurnOffSteamPanels;
                 LoadingManager.instance.m_introLoaded -= Settings.ConfigUtil.StoreConfigDetails;
-                Log.Buffered = false;
                 HarmonyUtil.UninstallHarmony(HARMONY_ID);
+                
+                Settings.ConfigUtil.SaveThread.Terminate();
                 Settings.ConfigUtil.config_ = null;
-            } catch(Exception ex) {
+                Log.FlushTread.Terminate();
+                Log.Buffered = false;
+            } catch (Exception ex) {
                 Log.Exception(ex);
             }
         }
