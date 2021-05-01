@@ -30,15 +30,10 @@
         private void InitializeComponent()
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.FilePanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.ReloadAll = new System.Windows.Forms.Button();
-            this.SaveProfile = new System.Windows.Forms.Button();
-            this.LoadProfile = new System.Windows.Forms.Button();
-            this.Save = new System.Windows.Forms.Button();
-            this.AutoSave = new System.Windows.Forms.CheckBox();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
-            this.dataGridMods = new UI.ModDataGrid();
+            this.dataGridMods = new LoadOrderTool.UI.ModDataGrid();
             this.ModActionPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.ResetOrder = new System.Windows.Forms.Button();
             this.SortByHarmony = new System.Windows.Forms.Button();
@@ -55,7 +50,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.TextFilterMods = new System.Windows.Forms.TextBox();
             this.AssetsTab = new System.Windows.Forms.TabPage();
-            this.dataGridAssets = new UI.AssetDataGrid();
+            this.dataGridAssets = new LoadOrderTool.UI.AssetDataGrid();
             this.AssetsActionPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.IncludeAllAssets = new System.Windows.Forms.Button();
             this.ExcludeAllAssets = new System.Windows.Forms.Button();
@@ -65,7 +60,15 @@
             this.ComboBoxAssetTags = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.TextFilterAsset = new System.Windows.Forms.TextBox();
-            this.FilePanel.SuspendLayout();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiReload = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiAutoSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiExport = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiImport = new System.Windows.Forms.ToolStripMenuItem();
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMods)).BeginInit();
@@ -75,91 +78,18 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAssets)).BeginInit();
             this.AssetsActionPanel.SuspendLayout();
             this.tableLayoutPanelAssetFilters.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // FilePanel
-            // 
-            this.FilePanel.AutoSize = true;
-            this.FilePanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.FilePanel.Controls.Add(this.ReloadAll);
-            this.FilePanel.Controls.Add(this.SaveProfile);
-            this.FilePanel.Controls.Add(this.LoadProfile);
-            this.FilePanel.Controls.Add(this.Save);
-            this.FilePanel.Controls.Add(this.AutoSave);
-            this.FilePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.FilePanel.Location = new System.Drawing.Point(0, 594);
-            this.FilePanel.Name = "FilePanel";
-            this.FilePanel.Size = new System.Drawing.Size(956, 31);
-            this.FilePanel.TabIndex = 1;
-            // 
-            // ReloadAll
-            // 
-            this.ReloadAll.AutoSize = true;
-            this.ReloadAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ReloadAll.Location = new System.Drawing.Point(2, 2);
-            this.ReloadAll.Margin = new System.Windows.Forms.Padding(2);
-            this.ReloadAll.Name = "ReloadAll";
-            this.ReloadAll.Size = new System.Drawing.Size(77, 27);
-            this.ReloadAll.TabIndex = 0;
-            this.ReloadAll.Text = "Reload All";
-            this.ReloadAll.UseVisualStyleBackColor = true;
-            // 
-            // SaveProfile
-            // 
-            this.SaveProfile.AutoSize = true;
-            this.SaveProfile.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.SaveProfile.Location = new System.Drawing.Point(93, 2);
-            this.SaveProfile.Margin = new System.Windows.Forms.Padding(12, 2, 2, 2);
-            this.SaveProfile.Name = "SaveProfile";
-            this.SaveProfile.Size = new System.Drawing.Size(97, 27);
-            this.SaveProfile.TabIndex = 1;
-            this.SaveProfile.Text = "Export Profile";
-            this.SaveProfile.UseVisualStyleBackColor = true;
-            // 
-            // LoadProfile
-            // 
-            this.LoadProfile.AutoSize = true;
-            this.LoadProfile.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.LoadProfile.Location = new System.Drawing.Point(194, 2);
-            this.LoadProfile.Margin = new System.Windows.Forms.Padding(2);
-            this.LoadProfile.Name = "LoadProfile";
-            this.LoadProfile.Size = new System.Drawing.Size(98, 27);
-            this.LoadProfile.TabIndex = 2;
-            this.LoadProfile.Text = "Import Profile";
-            this.LoadProfile.UseVisualStyleBackColor = true;
-            // 
-            // Save
-            // 
-            this.Save.AutoSize = true;
-            this.Save.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.Save.Location = new System.Drawing.Point(306, 2);
-            this.Save.Margin = new System.Windows.Forms.Padding(12, 2, 2, 2);
-            this.Save.Name = "Save";
-            this.Save.Size = new System.Drawing.Size(101, 27);
-            this.Save.TabIndex = 3;
-            this.Save.Text = "Save To Game";
-            this.Save.UseVisualStyleBackColor = true;
-            // 
-            // AutoSave
-            // 
-            this.AutoSave.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.AutoSave.AutoSize = true;
-            this.AutoSave.Location = new System.Drawing.Point(412, 5);
-            this.AutoSave.Name = "AutoSave";
-            this.AutoSave.Size = new System.Drawing.Size(86, 21);
-            this.AutoSave.TabIndex = 4;
-            this.AutoSave.Text = "Auto-Save";
-            this.AutoSave.UseVisualStyleBackColor = true;
             // 
             // TabContainer
             // 
             this.TabContainer.Controls.Add(this.ModsTab);
             this.TabContainer.Controls.Add(this.AssetsTab);
             this.TabContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TabContainer.Location = new System.Drawing.Point(0, 0);
+            this.TabContainer.Location = new System.Drawing.Point(0, 25);
             this.TabContainer.Name = "TabContainer";
             this.TabContainer.SelectedIndex = 0;
-            this.TabContainer.Size = new System.Drawing.Size(956, 594);
+            this.TabContainer.Size = new System.Drawing.Size(956, 600);
             this.TabContainer.TabIndex = 0;
             // 
             // ModsTab
@@ -171,16 +101,26 @@
             this.ModsTab.Location = new System.Drawing.Point(4, 26);
             this.ModsTab.Name = "ModsTab";
             this.ModsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.ModsTab.Size = new System.Drawing.Size(948, 564);
+            this.ModsTab.Size = new System.Drawing.Size(948, 570);
             this.ModsTab.TabIndex = 0;
             this.ModsTab.Text = "Mods";
             // 
             // dataGridMods
             // 
+            this.dataGridMods.AllowUserToAddRows = false;
+            this.dataGridMods.AllowUserToDeleteRows = false;
+            this.dataGridMods.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
+            this.dataGridMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.dataGridMods.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
+            this.dataGridMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.dataGridMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridMods.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridMods.Location = new System.Drawing.Point(3, 34);
+            this.dataGridMods.MultiSelect = false;
             this.dataGridMods.Name = "dataGridMods";
-            this.dataGridMods.Size = new System.Drawing.Size(816, 527);
+            this.dataGridMods.RowHeadersVisible = false;
+            this.dataGridMods.Size = new System.Drawing.Size(816, 533);
             this.dataGridMods.TabIndex = 1;
             this.dataGridMods.Text = "Mods";
             // 
@@ -200,7 +140,7 @@
             this.ModActionPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.ModActionPanel.Location = new System.Drawing.Point(819, 34);
             this.ModActionPanel.Name = "ModActionPanel";
-            this.ModActionPanel.Size = new System.Drawing.Size(126, 527);
+            this.ModActionPanel.Size = new System.Drawing.Size(126, 533);
             this.ModActionPanel.TabIndex = 2;
             // 
             // ResetOrder
@@ -375,17 +315,30 @@
             this.AssetsTab.Location = new System.Drawing.Point(4, 26);
             this.AssetsTab.Name = "AssetsTab";
             this.AssetsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AssetsTab.Size = new System.Drawing.Size(798, 585);
+            this.AssetsTab.Size = new System.Drawing.Size(948, 539);
             this.AssetsTab.TabIndex = 1;
             this.AssetsTab.Text = "Assets";
             // 
             // dataGridAssets
             // 
+            this.dataGridAssets.AllowUserToAddRows = false;
+            this.dataGridAssets.AllowUserToDeleteRows = false;
+            this.dataGridAssets.AllowUserToOrderColumns = true;
+            this.dataGridAssets.AllowUserToResizeRows = false;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Beige;
+            this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridAssets.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
+            this.dataGridAssets.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.dataGridAssets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridAssets.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridAssets.Location = new System.Drawing.Point(3, 34);
+            this.dataGridAssets.MultiSelect = false;
             this.dataGridAssets.Name = "dataGridAssets";
-            this.dataGridAssets.Size = new System.Drawing.Size(708, 548);
+            this.dataGridAssets.RowHeadersVisible = false;
+            this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.dataGridAssets.Size = new System.Drawing.Size(858, 502);
             this.dataGridAssets.TabIndex = 0;
+            this.dataGridAssets.VirtualMode = true;
             // 
             // AssetsActionPanel
             // 
@@ -395,9 +348,9 @@
             this.AssetsActionPanel.Controls.Add(this.ExcludeAllAssets);
             this.AssetsActionPanel.Dock = System.Windows.Forms.DockStyle.Right;
             this.AssetsActionPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.AssetsActionPanel.Location = new System.Drawing.Point(711, 34);
+            this.AssetsActionPanel.Location = new System.Drawing.Point(861, 34);
             this.AssetsActionPanel.Name = "AssetsActionPanel";
-            this.AssetsActionPanel.Size = new System.Drawing.Size(84, 548);
+            this.AssetsActionPanel.Size = new System.Drawing.Size(84, 502);
             this.AssetsActionPanel.TabIndex = 1;
             // 
             // IncludeAllAssets
@@ -445,7 +398,7 @@
             this.tableLayoutPanelAssetFilters.Name = "tableLayoutPanelAssetFilters";
             this.tableLayoutPanelAssetFilters.RowCount = 1;
             this.tableLayoutPanelAssetFilters.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelAssetFilters.Size = new System.Drawing.Size(792, 31);
+            this.tableLayoutPanelAssetFilters.Size = new System.Drawing.Size(942, 31);
             this.tableLayoutPanelAssetFilters.TabIndex = 0;
             // 
             // ComboBoxAssetIncluded
@@ -488,8 +441,74 @@
             this.TextFilterAsset.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TextFilterAsset.Location = new System.Drawing.Point(516, 3);
             this.TextFilterAsset.Name = "TextFilterAsset";
-            this.TextFilterAsset.Size = new System.Drawing.Size(360, 25);
+            this.TextFilterAsset.Size = new System.Drawing.Size(423, 25);
             this.TextFilterAsset.TabIndex = 4;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiFile});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(956, 25);
+            this.menuStrip1.TabIndex = 2;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // tsmiFile
+            // 
+            this.tsmiFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiReload,
+            this.toolStripSeparator1,
+            this.tsmiSave,
+            this.tsmiAutoSave,
+            this.toolStripSeparator2,
+            this.tsmiExport,
+            this.tsmiImport});
+            this.tsmiFile.Name = "tsmiFile";
+            this.tsmiFile.Size = new System.Drawing.Size(39, 21);
+            this.tsmiFile.Text = "&File";
+            // 
+            // tsmiReload
+            // 
+            this.tsmiReload.Name = "tsmiReload";
+            this.tsmiReload.Size = new System.Drawing.Size(147, 22);
+            this.tsmiReload.Text = "&Reload";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(144, 6);
+            // 
+            // tsmiSave
+            // 
+            this.tsmiSave.Name = "tsmiSave";
+            this.tsmiSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.tsmiSave.Size = new System.Drawing.Size(147, 22);
+            this.tsmiSave.Text = "&Save";
+            // 
+            // tsmiAutoSave
+            // 
+            this.tsmiAutoSave.CheckOnClick = true;
+            this.tsmiAutoSave.Name = "tsmiAutoSave";
+            this.tsmiAutoSave.Size = new System.Drawing.Size(147, 22);
+            this.tsmiAutoSave.Text = "&Auto-save";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(144, 6);
+            // 
+            // tsmiExport
+            // 
+            this.tsmiExport.Name = "tsmiExport";
+            this.tsmiExport.Size = new System.Drawing.Size(147, 22);
+            this.tsmiExport.Text = "&Export ...";
+            // 
+            // tsmiImport
+            // 
+            this.tsmiImport.Name = "tsmiImport";
+            this.tsmiImport.Size = new System.Drawing.Size(147, 22);
+            this.tsmiImport.Text = "&Import ...";
             // 
             // LoadOrderWindow
             // 
@@ -497,13 +516,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(956, 625);
             this.Controls.Add(this.TabContainer);
-            this.Controls.Add(this.FilePanel);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(524, 334);
             this.Name = "LoadOrderWindow";
             this.Text = "LoadOrder";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoadOrderWindow_FormClosing);
-            this.FilePanel.ResumeLayout(false);
-            this.FilePanel.PerformLayout();
             this.TabContainer.ResumeLayout(false);
             this.ModsTab.ResumeLayout(false);
             this.ModsTab.PerformLayout();
@@ -519,23 +537,19 @@
             this.AssetsActionPanel.PerformLayout();
             this.tableLayoutPanelAssetFilters.ResumeLayout(false);
             this.tableLayoutPanelAssetFilters.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private FlowLayoutPanel FilePanel;
         private TabControl TabContainer;
         private TabPage ModsTab;
         private TabPage AssetsTab;
         private TableLayoutPanel tableLayoutPanelModFilters;
         private TableLayoutPanel tableLayoutPanelAssetFilters;
-        private CheckBox AutoSave;
-        private Button ReloadAll;
-        private Button Save;
-        private Button LoadProfile;
-        private Button SaveProfile;
         private FlowLayoutPanel ModActionPanel;
         private Button SortByHarmony;
         private Button ReverseOrder;
@@ -560,5 +574,14 @@
         private TextBox TextFilterAsset;
         private UI.AssetDataGrid dataGridAssets;
         private Button ResetOrder;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem tsmiFile;
+        private ToolStripMenuItem tsmiReload;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem tsmiSave;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripMenuItem tsmiExport;
+        private ToolStripMenuItem tsmiImport;
+        public ToolStripMenuItem tsmiAutoSave;
     }
 }

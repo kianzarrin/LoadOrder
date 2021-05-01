@@ -1,16 +1,13 @@
 ﻿using CO;
 using CO.Packaging;
 using CO.Plugins;
-using CO.PlatformServices;
 using LoadOrderTool.Util;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
 using LoadOrderTool.Data;
-using System.Threading.Tasks;
 using LoadOrderTool.UI;
 
 namespace LoadOrderTool {
@@ -40,20 +37,120 @@ namespace LoadOrderTool {
 
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
 
+        bool dirty_;
+        public bool Dirty {
+            get => dirty_; //fast access.
+            set {
+                if (dirty_ == value) return;
+                dirty_ = value;
+                if (value) {
+                    Text += "*";
+                } else {
+                    Text = Text[0..^1]; // drop dirty
+                }
+            }
+        }
+
         public LoadOrderWindow() {
-            Instance = this;
-            ConfigWrapper.Suspend();
-            InitializeComponent();
+            try {
+                Instance = this;
+                ConfigWrapper.Suspend();
+                InitializeComponent();
 
-            InitializeModTab();
-            InitializeAssetTab();
+                InitializeModTab();
+                InitializeAssetTab();
 
-            AutoSave.Checked = ConfigWrapper.AutoSave;
-            Dirty = ConfigWrapper.Dirty;
-            ConfigWrapper.Resume();
+                Dirty = ConfigWrapper.Dirty;
+                ConfigWrapper.Resume();
+                ConfigWrapper.SaveConfig();
+
+                tsmiAutoSave.Checked = ConfigWrapper.AutoSave;
+                tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
+                tsmiAutoSave.Click += TsmiAutoSave_Click;
+
+                tsmiReload.Click += ReloadAll_Click;
+                tsmiSave.Click += Save_Click;
+                tsmiExport.Click += Export_Click;
+                tsmiImport.Click += Import_Click;
+            } catch (Exception ex){
+                ex.Log();
+            }
+        }
+
+        private void LoadOrderWindow_FormClosing(object sender, FormClosingEventArgs e) {
+            var configWrapper = ConfigWrapper;
+            if (!configWrapper.AutoSave && configWrapper.Dirty) {
+                var result = MessageBox.Show(
+                    caption: "Unsaved changes",
+                    text:
+                    "There are changes that are not saved to to game and will not take effect. " +
+                    "Save changes to game?",
+                    buttons: MessageBoxButtons.YesNoCancel);
+                switch (result) {
+                    case DialogResult.Cancel:
+                        e.Cancel = true;
+                        return;
+                    case DialogResult.Yes:
+                        configWrapper.SaveConfig();
+                        break;
+                    case DialogResult.No:
+                        break;
+                    default:
+                        Log.Exception(new Exception("FormClosing: Unknown choice"));
+                        break;
+                }
+                if (!e.Cancel) {
+                    ConfigWrapper.Terminate();
+                    GameSettings.instance.Terminate();
+                }
+            }
+        }
+
+        #region MenuBar
+        private void TsmiAutoSave_CheckedChanged(object sender, EventArgs e) {
+            ConfigWrapper.AutoSave = tsmiAutoSave.Checked;
+        }
+
+        private void TsmiAutoSave_Click(object sender, EventArgs e) =>
+            tsmiFile.ShowDropDown(); // prevent hiding menu when clicking auto-save
+        
+        private void Export_Click(object sender, EventArgs e) {
+            SaveFileDialog diaglog = new SaveFileDialog();
+            diaglog.Filter = "xml files (*.xml)|*.xml";
+            diaglog.InitialDirectory = LoadOrderProfile.DIR;
+            if (diaglog.ShowDialog() == DialogResult.OK) {
+                LoadOrderProfile profile = new LoadOrderProfile();
+                dataGridMods.ModList.SaveToProfile(profile);
+                PackageManager.instance.SaveToProfile(profile);
+                profile.Serialize(diaglog.FileName);
+            }
+        }
+
+        private void Import_Click(object sender, EventArgs e) {
+            using (OpenFileDialog diaglog = new OpenFileDialog()) {
+                diaglog.Filter = "xml files (*.xml)|*.xml";
+                diaglog.InitialDirectory = LoadOrderProfile.DIR;
+                if (diaglog.ShowDialog() == DialogResult.OK) {
+                    var profile = LoadOrderProfile.Deserialize(diaglog.FileName);
+                    dataGridMods.ModList.LoadFromProfile(profile);
+                    PackageManager.instance.LoadFromProfile(profile);
+                    dataGridMods.RefreshModList(true);
+                    PopulateAssets();
+                }
+            }
+        }
+
+        private void Save_Click(object sender, EventArgs e) {
             ConfigWrapper.SaveConfig();
         }
 
+        private void ReloadAll_Click(object sender, EventArgs e) {
+            dataGridMods.LoadMods(ModPredicate);
+            LoadAsssets();
+        }
+        #endregion
+
+        #region Mod tab
         void InitializeModTab() {
             ComboBoxIncluded.SetItems<IncludedFilter>();
             ComboBoxIncluded.SelectedIndex = 0;
@@ -67,11 +164,7 @@ namespace LoadOrderTool {
             ComboBoxWS.SelectedIndexChanged += RefreshModList;
             TextFilterMods.TextChanged += RefreshModList;
 
-            SaveProfile.Click += SaveProfile_Click;
-            LoadProfile.Click += LoadProfile_Click;
-            Save.Click += Save_Click;
-            AutoSave.CheckedChanged += AutoSave_CheckedChanged;
-            ReloadAll.Click += ReloadAll_Click;
+
 
             SortByHarmony.Click += SortByHarmony_Click;
             ReverseOrder.Click += ReverseOrder_Click;
@@ -88,20 +181,6 @@ namespace LoadOrderTool {
                 b.MinimumSize = new Size(maxwidth, 0);
 
             dataGridMods.LoadMods(ModPredicate);
-        }
-
-        bool dirty_;
-        public bool Dirty {
-            get => dirty_; //fast access.
-            set {
-                if (dirty_ == value) return;
-                dirty_ = value;
-                if (value) {
-                    Text += "*";
-                } else {
-                    Text = Text[0..^1]; // drop dirty
-                }
-            }
         }
 
         private void RefreshModList(object sender, EventArgs e) => dataGridMods.RefreshModList();
@@ -142,34 +221,7 @@ namespace LoadOrderTool {
             return true;
         }
 
-        private void LoadOrderWindow_FormClosing(object sender, FormClosingEventArgs e) {
-            var configWrapper = ConfigWrapper;
-            if (!configWrapper.AutoSave && configWrapper.Dirty) {
-                var result = MessageBox.Show(
-                    caption: "Unsaved changes",
-                    text: 
-                    "There are changes that are not saved to to game and will not take effect. " +
-                    "Save changes to game?",
-                    buttons:MessageBoxButtons.YesNoCancel);
-                switch (result) {
-                    case DialogResult.Cancel:
-                        e.Cancel = true;
-                        return;
-                    case DialogResult.Yes:
-                        configWrapper.SaveConfig();
-                        break;
-                    case DialogResult.No:
-                        break;
-                    default:
-                        Log.Exception(new Exception("FormClosing: Unknown choice"));
-                        break;
-                }
-                if (!e.Cancel) {
-                    ConfigWrapper.Terminate();
-                    GameSettings.instance.Terminate();
-                }
-            }
-        }
+
 
         private void ResetOrder_Click(object sender, EventArgs e) {
             foreach (var mod in dataGridMods.ModList)
@@ -216,46 +268,7 @@ namespace LoadOrderTool {
             dataGridMods.ModList.RandomizeOrder();
             dataGridMods.RefreshModList();
         }
-
-
-        private void SaveProfile_Click(object sender, EventArgs e) {
-            SaveFileDialog diaglog = new SaveFileDialog();
-            diaglog.Filter = "xml files (*.xml)|*.xml";
-            diaglog.InitialDirectory = LoadOrderProfile.DIR;
-            if (diaglog.ShowDialog() == DialogResult.OK) {
-                LoadOrderProfile profile = new LoadOrderProfile();
-                dataGridMods.ModList.SaveToProfile(profile);
-                PackageManager.instance.SaveToProfile(profile);
-                profile.Serialize(diaglog.FileName);
-            }
-        }
-
-        private void LoadProfile_Click(object sender, EventArgs e) {
-            using (OpenFileDialog diaglog = new OpenFileDialog()) {
-                diaglog.Filter = "xml files (*.xml)|*.xml";
-                diaglog.InitialDirectory = LoadOrderProfile.DIR;
-                if (diaglog.ShowDialog() == DialogResult.OK) {
-                    var profile = LoadOrderProfile.Deserialize(diaglog.FileName);
-                    dataGridMods.ModList.LoadFromProfile(profile);
-                    PackageManager.instance.LoadFromProfile(profile);
-                    dataGridMods.RefreshModList(true);
-                    PopulateAssets();
-                }
-            }
-        }
-
-        private void Save_Click(object sender, EventArgs e) {
-            ConfigWrapper.SaveConfig();
-        }
-
-        private void AutoSave_CheckedChanged(object sender, EventArgs e) {
-            ConfigWrapper.AutoSave = AutoSave.Checked;
-        }
-
-        private void ReloadAll_Click(object sender, EventArgs e) {
-            dataGridMods.LoadMods(ModPredicate);
-            LoadAsssets();
-        }
+        #endregion Mod tab
 
         #region AssetTab
         void InitializeAssetTab() {

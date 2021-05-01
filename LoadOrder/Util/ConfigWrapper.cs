@@ -46,6 +46,7 @@
             set {
                 LoadOrderToolSettings.Instace.AutoSave = value;
                 LoadOrderToolSettings.Instace.Serialize();
+                LoadOrderWindow.Instance.tsmiAutoSave.Checked = value;
             }
         }
 
