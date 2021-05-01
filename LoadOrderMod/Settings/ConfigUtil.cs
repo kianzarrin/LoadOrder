@@ -1,6 +1,4 @@
 namespace LoadOrderMod.Settings {
-    using ColossalFramework;
-    using ColossalFramework.Globalization;
     using ColossalFramework.IO;
     using ColossalFramework.Packaging;
     using ColossalFramework.PlatformServices;
@@ -18,13 +16,12 @@ namespace LoadOrderMod.Settings {
     using static KianCommons.ReflectionHelpers;
 
     public static class ConfigUtil {
-        internal static LoadOrderConfig config_;
+        private static LoadOrderConfig config_;
         public static LoadOrderConfig Config {
             get {
                 try {
-                    return config_ ??=
-                        LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
-                        ?? new LoadOrderConfig();
+                    Init();
+                    return config_;
                 } catch (Exception ex) {
                     Log.Exception(ex);
                     return null;
@@ -32,12 +29,30 @@ namespace LoadOrderMod.Settings {
             }
         }
 
-        public static void SaveConfig() {
+        private static void Init() {
+            if (config_ != null) return; //already initialized.
             LogCalled();
-            if (config_ == null) return;
-            lock (SaveThread.LockObject) {
+            config_ =
+                LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+                ?? new LoadOrderConfig();
+            SaveThread.Init();
+        }
+
+        public static void Terminate() {
+            LogCalled();
+            SaveThread.Terminate();
+            config_ = null;
+        }
+
+        public static void SaveConfig() {
+            try {
+                LogCalled();
                 SaveThread.Dirty = false;
-                config_.Serialize(DataLocation.localApplicationData);
+                if (config_ == null) return;
+                lock (SaveThread.LockObject)
+                    config_.Serialize(DataLocation.localApplicationData);
+            } catch (Exception ex) {
+                Log.Exception(ex);
             }
         }
 
@@ -54,6 +69,7 @@ namespace LoadOrderMod.Settings {
             static SaveThread() => Init();
 
             internal static void Init() {
+                if (isRunning_ != null) return; // already running.
                 thread_ = new Thread(RunThread);
                 thread_.Name = "SaveThread";
                 thread_.IsBackground = true;
@@ -62,8 +78,9 @@ namespace LoadOrderMod.Settings {
             }
 
             internal static void Terminate() {
+                Flush();
                 isRunning_ = false;
-                LogCalled();
+                thread_ = null;
             }
 
             private static void RunThread() {
@@ -72,7 +89,6 @@ namespace LoadOrderMod.Settings {
                         Thread.Sleep(INTERVAL_MS);
                         Flush();
                     }
-                    Flush();
                     Log.Info("Save Thread Exiting...");
                 } catch (Exception ex) {
                     Log.Exception(ex);
@@ -188,7 +204,7 @@ namespace LoadOrderMod.Settings {
         internal static string GetPath(this Package.Asset a) => a.package.packagePath;
 
         internal static void SetAuthor(this Package.Asset a, string author) {
-            if(a.GetAssetConfig() is AssetInfo assetInfo) {
+            if (a.GetAssetConfig() is AssetInfo assetInfo) {
                 assetInfo.Author = author;
                 SaveThread.Dirty = true;
             }

@@ -67,9 +67,7 @@ namespace LoadOrderMod {
                 LoadingManager.instance.m_introLoaded -= Settings.ConfigUtil.StoreConfigDetails;
                 HarmonyUtil.UninstallHarmony(HARMONY_ID);
                 
-                Settings.ConfigUtil.SaveThread.Terminate();
-                Settings.ConfigUtil.config_ = null;
-                Log.FlushTread.Terminate();
+                Settings.ConfigUtil.Terminate();
                 Log.Buffered = false;
             } catch (Exception ex) {
                 Log.Exception(ex);
