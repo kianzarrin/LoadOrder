@@ -93,6 +93,13 @@
             CDescription.SortMode = DataGridViewColumnSortMode.NotSortable;
         }
 
+        // override data error
+        protected override void OnDataError(bool displayErrorDialogIfNoHandler, DataGridViewDataErrorEventArgs e) {
+            base.OnDataError(displayErrorDialogIfNoHandler, e);
+            Log.Exception(e.Exception);
+            e.Cancel = true;
+        }
+
         // numeric textbox 
         protected override void OnEditingControlShowing(DataGridViewEditingControlShowingEventArgs e) {
             base.OnEditingControlShowing(e);
@@ -105,7 +112,7 @@
             }
         }
 
-        // edit
+        // write
         protected override void OnCellValueChanged(DataGridViewCellEventArgs e) {
             base.OnCellContentClick(e);
             try {
@@ -132,7 +139,7 @@
         }
         
 
-        // instant edit
+        // instant update
         protected override void OnCurrentCellDirtyStateChanged(EventArgs e) {
             base.OnCurrentCellDirtyStateChanged(e);
             if (CurrentCell is DataGridViewCheckBoxCell) {

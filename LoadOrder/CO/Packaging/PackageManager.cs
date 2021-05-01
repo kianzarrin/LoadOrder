@@ -55,10 +55,25 @@ namespace CO.Packaging {
             }
 
             string strTags_;
-            public string StrTags => strTags_ ??= 
-                ConfigAssetInfo.Tags != null 
-                ? string.Join(", ", ConfigAssetInfo.Tags) 
+            public string StrTags => strTags_ ??=
+                ConfigAssetInfo.Tags != null
+                ? string.Join(", ", ConfigAssetInfo.Tags)
                 : "";
+
+            DateTime ?date_;
+            public DateTime Date {
+                get {
+                    if (date_ == null) {
+                        if (string.IsNullOrWhiteSpace(ConfigAssetInfo.Date))
+                            date_ = default(DateTime);
+                        else if (DateTime.TryParse(ConfigAssetInfo.Date, out var date))
+                            date_ = date;
+                        else
+                            date_ = default(DateTime);
+                    }
+                    return date_.Value;
+                }
+            }
 
             string searchText_;
             public string SearchText => searchText_ ??=
@@ -77,22 +92,6 @@ namespace CO.Packaging {
                 }
             }
 
-            //public bool IsIncluded {
-            //    get => !FileName.StartsWith("_");
-            //    set {
-            //        isIncludedPending_ = value;
-            //        if (value == IsIncluded) return;
-            //        Log.Debug($"set_IsIncluded current value = {IsIncluded} | target value = {value}");
-            //        string parentPath = Directory.GetParent(m_Path).FullName;
-            //        string targetFilename =
-            //            value
-            //            ? FileName.Substring(1)  // drop _ prefix
-            //            : "_" + FileName; // add _ prefix
-            //        string targetPath = Path.Combine(parentPath, targetFilename);
-            //        MoveFileToPath(targetPath);
-            //    }
-            //}
-
             public bool IsIncluded {
                 get => !ConfigAssetInfo.Excluded;
                 set {
@@ -100,22 +99,6 @@ namespace CO.Packaging {
                     ConfigAssetInfo.Excluded = !value;
                 }
             }
-
-            //public void MoveFileToPath(string targetPath) {
-            //    try {
-            //        Log.Debug($"moving asset from {m_Path} to {targetPath}");
-            //        File.Move(m_Path, targetPath);
-            //        if (File.Exists(targetPath))
-            //            Log.Debug($"move successful!");
-            //        else {
-            //            Log.Debug($"FAILED!");
-            //            throw new Exception($"failed to move asset from {m_Path} to {targetPath}");
-            //        }
-            //        m_Path = targetPath;
-            //    } catch (Exception ex) {
-            //        Log.Exception(ex);
-            //    }
-            //}
 
             private PublishedFileId m_PublishedFileID = PublishedFileId.invalid;
 

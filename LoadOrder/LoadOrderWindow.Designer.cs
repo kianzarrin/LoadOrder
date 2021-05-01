@@ -55,13 +55,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.TextFilterMods = new System.Windows.Forms.TextBox();
             this.AssetsTab = new System.Windows.Forms.TabPage();
-            this.dataGridAssets = new System.Windows.Forms.DataGridView();
-            this.cIncluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.cAssetID = new System.Windows.Forms.DataGridViewLinkColumn();
-            this.cName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cAuthor = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cTags = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridAssets = new UI.AssetDataGrid();
             this.AssetsActionPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.IncludeAllAssets = new System.Windows.Forms.Button();
             this.ExcludeAllAssets = new System.Windows.Forms.Button();
@@ -387,72 +381,11 @@
             // 
             // dataGridAssets
             // 
-            this.dataGridAssets.AllowUserToAddRows = false;
-            this.dataGridAssets.AllowUserToDeleteRows = false;
-            this.dataGridAssets.AllowUserToOrderColumns = true;
-            this.dataGridAssets.AllowUserToResizeRows = false;
-            this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridAssets.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
-            this.dataGridAssets.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.dataGridAssets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridAssets.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.cIncluded,
-            this.cAssetID,
-            this.cName,
-            this.cAuthor,
-            this.cDate,
-            this.cTags});
             this.dataGridAssets.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridAssets.Location = new System.Drawing.Point(3, 34);
             this.dataGridAssets.Name = "dataGridAssets";
-            this.dataGridAssets.RowHeadersVisible = false;
-            this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridAssets.Size = new System.Drawing.Size(708, 548);
             this.dataGridAssets.TabIndex = 0;
-            // 
-            // cIncluded
-            // 
-            this.cIncluded.HeaderText = "Included";
-            this.cIncluded.Name = "cIncluded";
-            this.cIncluded.Width = 63;
-            // 
-            // cAssetID
-            // 
-            this.cAssetID.HeaderText = "ID";
-            this.cAssetID.Name = "cAssetID";
-            this.cAssetID.ReadOnly = true;
-            this.cAssetID.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.cAssetID.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.cAssetID.TrackVisitedState = false;
-            this.cAssetID.Width = 45;
-            // 
-            // cName
-            // 
-            this.cName.HeaderText = "Name";
-            this.cName.Name = "cName";
-            this.cName.ReadOnly = true;
-            this.cName.Width = 68;
-            // 
-            // cAuthor
-            // 
-            this.cAuthor.HeaderText = "Author";
-            this.cAuthor.Name = "cAuthor";
-            this.cAuthor.ReadOnly = true;
-            this.cAuthor.Width = 72;
-            // 
-            // cDate
-            // 
-            this.cDate.HeaderText = "Date";
-            this.cDate.Name = "cDate";
-            this.cDate.ReadOnly = true;
-            this.cDate.Width = 60;
-            // 
-            // cTags
-            // 
-            this.cTags.HeaderText = "Tags";
-            this.cTags.Name = "cTags";
-            this.cTags.ReadOnly = true;
-            this.cTags.Width = 60;
             // 
             // AssetsActionPanel
             // 
@@ -625,13 +558,7 @@
         private ComboBox ComboBoxAssetTags;
         private Label label2;
         private TextBox TextFilterAsset;
-        private DataGridView dataGridAssets;
+        private UI.AssetDataGrid dataGridAssets;
         private Button ResetOrder;
-        private DataGridViewCheckBoxColumn cIncluded;
-        private DataGridViewLinkColumn cAssetID;
-        private DataGridViewTextBoxColumn cName;
-        private DataGridViewTextBoxColumn cAuthor;
-        private DataGridViewTextBoxColumn cDate;
-        private DataGridViewTextBoxColumn cTags;
     }
 }

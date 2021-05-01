@@ -258,13 +258,6 @@ namespace LoadOrderTool {
         }
 
         #region AssetTab
-        int prevAssetSortCol_ = -1;
-        bool assetSortAssending_ = false;
-
-        public AssetList AssetList;
-
-
-
         void InitializeAssetTab() {
             ComboBoxAssetIncluded.SetItems<IncludedFilter>();
             ComboBoxAssetIncluded.SelectedIndex = 0;
@@ -285,41 +278,10 @@ namespace LoadOrderTool {
                 b.MinimumSize = new Size(maxwidth, 0);
 
             LoadAsssets();
-
-            dataGridAssets.DataError += DataGridAssets_DataError;
-
-
-            dataGridAssets.VirtualMode = true;
-            foreach(DataGridViewColumn col in dataGridAssets.Columns) {
-                col.SortMode = DataGridViewColumnSortMode.Programmatic;
-                col.Width += 1; // workaround : show hyphon
-            }
-
-            dataGridAssets.CellValueNeeded += DataGridAssets_CellValueNeeded; ;
-            dataGridAssets.CellToolTipTextNeeded += DataGridAssets_CellToolTipTextNeeded;
-            dataGridAssets.CellContentClick += DataGridAssets_CellContentClick;
-            dataGridAssets.CellValuePushed += dataGridAssets_CellValuePushed;
-            dataGridAssets.CurrentCellDirtyStateChanged += dataGridAssets_CurrentCellDirtyStateChanged;
-
-            dataGridAssets.ColumnHeaderMouseClick += DataGridAssets_ColumnHeaderMouseClick;
-            dataGridAssets.VisibleChanged += DataGridAssets_VisibleChanged;
-        }
-
-        bool firstTime_ = true;
-        private void DataGridAssets_VisibleChanged(object sender, EventArgs e) {
-            if (dataGridAssets.Visible && firstTime_) {
-                dataGridAssets.AutoResizeColumns();
-                firstTime_ = false;
-            }
-        }
-
-        // override error report.
-        private void DataGridAssets_DataError(object sender, DataGridViewDataErrorEventArgs e) {
-            Log.Exception(e.Exception);
-            e.Cancel = true;
         }
 
         public void LoadAsssets() {
+
             PackageManager.instance.LoadPackages();
             PopulateAssets();
         }
@@ -330,16 +292,12 @@ namespace LoadOrderTool {
             try {
                 dataGridAssets.Rows.Clear();
 
-                AssetList = new AssetList(PackageManager.instance.GetAssets());
-                FilterAssets();
-                dataGridAssets.RowCount = AssetList.Filtered.Count;
-
                 ComboBoxAssetTags.Items.Clear();
                 ComboBoxAssetTags.Items.Add(NO_TAGS);
                 ComboBoxAssetTags.Items.AddRange(PackageManager.instance.GetAllTags());
                 ComboBoxAssetTags.SelectedIndex = 0;
 
-                
+                dataGridAssets.AssetList = new AssetList(PackageManager.instance.GetAssets(), FilterAssets);
             } catch (Exception ex) {
                 Log.Exception(ex);
             } finally {
@@ -365,7 +323,7 @@ namespace LoadOrderTool {
             Log.Debug("ApplyAssetFilterTask");
             FilterAssets();
             lock (changeRowsLockObject_) {
-                dataGridAssets.RowCount = AssetList.Filtered.Count;
+                dataGridAssets.RowCount = dataGridAssets.AssetList.Filtered.Count;
                 dataGridAssets.Refresh();
             }
         }
@@ -373,19 +331,18 @@ namespace LoadOrderTool {
         private void ApplyAssetFilter() {
             Log.Debug("ApplyAssetFilterTask");
             FilterAssets();
-            if(dataGridAssets.RowCount > AssetList.Filtered.Count)
-                dataGridAssets.Rows.Clear(); // work around : removing rows is slow.
-            dataGridAssets.RowCount = AssetList.Filtered.Count;
             dataGridAssets.Refresh();
         }
 #endif
-        public void FilterAssets() {
+        public void FilterAssets() => dataGridAssets.AssetList?.FilterItems();
+
+        public void FilterAssets(AssetList assetList) {
             var includedFilter = ComboBoxAssetIncluded.GetSelectedItem<IncludedFilter>();
             var wsFilter = ComboBoxAssetWS.GetSelectedItem<WSFilter>();
             var tagFilter = ComboBoxAssetTags.SelectedItem as string;
             if (tagFilter == NO_TAGS) tagFilter = null;
             var words = TextFilterAsset.Text?.Split(" ");
-            AssetList.FilterItems(item => AssetPredicateFast(item, includedFilter, wsFilter, tagFilter, words));
+            assetList.FilterItems(item => AssetPredicateFast(item, includedFilter, wsFilter, tagFilter, words));
         }
 
         bool AssetPredicateFast(
@@ -433,7 +390,7 @@ namespace LoadOrderTool {
             try {
                 Log.Debug("IncludeExcludeVisibleAssets() Called.");
                 ConfigWrapper.Suspend();
-                foreach (var asset in AssetList.Filtered) {
+                foreach (var asset in dataGridAssets.AssetList.Filtered) {
                     asset.IsIncludedPending = value;
                 }
                 dataGridAssets.Refresh();
@@ -453,118 +410,7 @@ namespace LoadOrderTool {
             IncludeExcludeFilteredAssets(false);
         }
 
-        // sort
-        private void DataGridAssets_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
-            try {
-                if (e.ColumnIndex == prevAssetSortCol_) {
-                    assetSortAssending_ = !assetSortAssending_;
-                } else {
-                    assetSortAssending_ = true;
-                    foreach (DataGridViewColumn col in dataGridAssets.Columns)
-                        col.HeaderCell.SortGlyphDirection = SortOrder.None;
-                }
-                var sortOrder = assetSortAssending_ ? SortOrder.Ascending : SortOrder.Descending;
-                dataGridAssets.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = sortOrder;
-                prevAssetSortCol_ = e.ColumnIndex;
 
-
-                if (e.ColumnIndex == cIncluded.Index) {
-                    AssetList.SortItemsBy(item => item.IsIncludedPending, assetSortAssending_);
-                } else if (e.ColumnIndex == cAssetID.Index) {
-                    AssetList.SortItemsBy(item => item.publishedFileID.AsUInt64, assetSortAssending_);
-                } else if (e.ColumnIndex == cName.Index) {
-                    AssetList.SortItemsBy(item => item.DisplayText, assetSortAssending_);
-                } else if (e.ColumnIndex == cAuthor.Index) {
-                    // "[unknown" is sorted before "[unknown]". This puts empty before unknown author.
-                    AssetList.SortItemsBy(item => item.ConfigAssetInfo.Author ?? "[unknown", assetSortAssending_);
-                } else if (e.ColumnIndex == cDate.Index) {
-                    AssetList.SortItemsBy(item => item.ConfigAssetInfo.Date, assetSortAssending_);
-                } else if (e.ColumnIndex == cTags.Index) {
-                    AssetList.SortItemsBy(item => item.StrTags, assetSortAssending_);
-                }
-
-                ApplyAssetFilter();
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
-        //read
-        private void DataGridAssets_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
-            try {
-                if (e.RowIndex >= AssetList.Filtered.Count) return;
-                var asset = AssetList.Filtered[e.RowIndex];
-                if (e.ColumnIndex == cIncluded.Index) {
-                    e.Value = asset.IsIncludedPending;
-                } else if (e.ColumnIndex == cAssetID.Index) {
-                    string id = asset.publishedFileID.AsUInt64.ToString();
-                    if (id == "0" || asset.publishedFileID == PublishedFileId.invalid)
-                        id = "";
-                    e.Value = id;
-                } else if (e.ColumnIndex == cName.Index) {
-                    e.Value = asset.DisplayText ?? "";
-                } else if (e.ColumnIndex == cAuthor.Index) {
-                    e.Value = asset.ConfigAssetInfo.Author ?? "";
-                } else if (e.ColumnIndex == cDate.Index) {
-                    e.Value = asset.ConfigAssetInfo.Date ?? "";
-                } else if (e.ColumnIndex == cTags.Index) {
-                    e.Value = asset.StrTags;
-                }
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
-        // tooltip
-        private void DataGridAssets_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e) {
-            try {
-                if (e.RowIndex < 0 || e.RowIndex >= AssetList.Filtered.Count) return;
-                var asset = AssetList.Filtered[e.RowIndex];
-                if (e.ColumnIndex == cAssetID.Index) {
-                    var id = asset.publishedFileID;
-                    string url = ContentUtil.GetItemURL(asset.publishedFileID);
-                    e.ToolTipText = url ?? "local";
-                }
-            } catch (Exception ex) {
-                Log.Exception(ex, $"rowIndex={e.RowIndex}");
-            }
-        }
-
-        // click
-        private void DataGridAssets_CellContentClick(object sender, DataGridViewCellEventArgs e) {
-            try {
-                if (e.RowIndex < 0 || e.RowIndex >= AssetList.Filtered.Count) return;
-                var asset = AssetList.Filtered[e.RowIndex];
-
-                if (e.ColumnIndex == cAssetID.Index) {
-                    var id = asset.publishedFileID;
-                    string url = ContentUtil.GetItemURL(asset.publishedFileID);
-                    if (url != null)
-                        ContentUtil.OpenURL(url);
-                }   
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
-        //write
-        private void dataGridAssets_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
-            var assetInfo = AssetList.Filtered[e.RowIndex];
-
-            if (e.ColumnIndex == cIncluded.Index) {
-                assetInfo.IsIncludedPending = (bool)e.Value;
-                //Log.Debug($"{assetInfo} | IsIncludedPending changes to {cell.Value}");
-            } else {
-                Log.Error("unexpected column changed: " + dataGridAssets.Columns[e.ColumnIndex]?.Name);
-            }
-        }
-
-        // instant modify.
-        private void dataGridAssets_CurrentCellDirtyStateChanged(object sender, EventArgs e) {
-            if (dataGridAssets.CurrentCell is DataGridViewCheckBoxCell) {
-                dataGridAssets.EndEdit();
-            }
-        }
 #endregion
     }
 }
