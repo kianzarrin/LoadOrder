@@ -48,7 +48,6 @@
                 LoadOrderToolSettings.Instace.Serialize();
             }
         }
-        
 
         public bool Paused { get; set; } = false;
         public void Suspend() => Paused = true;
