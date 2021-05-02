@@ -8,6 +8,7 @@ namespace LoadOrderTool {
     using System.Windows.Forms;
     using LoadOrderTool.Util;
     using System.ComponentModel;
+    using LoadOrderTool.UI;
 
     /// <summary>
     /// A simple logging class.
@@ -145,23 +146,12 @@ namespace LoadOrderTool {
                 message = m + " -> \n" + message;
             LogImpl(message, LogLevel.Exception, true);
             if (showInPanel) {
-                var prompt = new ThreadExceptionDialog(e);
-                prompt.Text = e.GetType().Name;
-                var label = typeof(ThreadExceptionDialog)
-                    .GetField("message", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .GetValue(prompt)
-                    as Label;
-                label.Text = e.Message;
                 message += "\n" + new StackTrace(1, true).ToString();
                 message = message.Replace("\r", ""); // avoid /r/r/n 
                 message = message.Replace("\n", Environment.NewLine);
-                foreach (Control c in prompt.Controls) {
-                    if (c is TextBox t)
-                        t.Text = message;
-                }
-
+                var prompt = ThreadExceptionDialogUtil.Create(e, message);
                 var res = prompt.ShowDialog();
-                if (res == DialogResult.Abort) {
+                if (res == DialogResult.Abort || res == DialogResult.Cancel) {
                     Process.GetCurrentProcess().Kill();
                 }
             }

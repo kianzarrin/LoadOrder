@@ -29,8 +29,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
             this.dataGridMods = new LoadOrderTool.UI.ModDataGrid();
@@ -110,8 +110,8 @@
             this.dataGridMods.AllowUserToAddRows = false;
             this.dataGridMods.AllowUserToDeleteRows = false;
             this.dataGridMods.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
-            this.dataGridMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Beige;
+            this.dataGridMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridMods.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -315,7 +315,7 @@
             this.AssetsTab.Location = new System.Drawing.Point(4, 26);
             this.AssetsTab.Name = "AssetsTab";
             this.AssetsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AssetsTab.Size = new System.Drawing.Size(948, 539);
+            this.AssetsTab.Size = new System.Drawing.Size(948, 570);
             this.AssetsTab.TabIndex = 1;
             this.AssetsTab.Text = "Assets";
             // 
@@ -325,8 +325,8 @@
             this.dataGridAssets.AllowUserToDeleteRows = false;
             this.dataGridAssets.AllowUserToOrderColumns = true;
             this.dataGridAssets.AllowUserToResizeRows = false;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Beige;
-            this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Beige;
+            this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridAssets.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridAssets.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridAssets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -336,7 +336,7 @@
             this.dataGridAssets.Name = "dataGridAssets";
             this.dataGridAssets.RowHeadersVisible = false;
             this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridAssets.Size = new System.Drawing.Size(858, 502);
+            this.dataGridAssets.Size = new System.Drawing.Size(858, 533);
             this.dataGridAssets.TabIndex = 0;
             this.dataGridAssets.VirtualMode = true;
             // 
@@ -350,7 +350,7 @@
             this.AssetsActionPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.AssetsActionPanel.Location = new System.Drawing.Point(861, 34);
             this.AssetsActionPanel.Name = "AssetsActionPanel";
-            this.AssetsActionPanel.Size = new System.Drawing.Size(84, 502);
+            this.AssetsActionPanel.Size = new System.Drawing.Size(84, 533);
             this.AssetsActionPanel.TabIndex = 1;
             // 
             // IncludeAllAssets
