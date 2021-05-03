@@ -24,16 +24,24 @@
         public DataGridViewCheckBoxColumn CIsIncluded;
         public DataGridViewCheckBoxColumn CEnabled;
         public DataGridViewLinkColumn CModID;
-        public DataGridViewTextBoxColumn CDescription;
         public DataGridViewTextBoxColumn CAuthor;
+        public DataGridViewLinkColumn CDescription;
 
         public ModDataGrid() {
             CLoadIndex = new DataGridViewTextBoxColumn();
             CIsIncluded = new DataGridViewCheckBoxColumn();
             CEnabled = new DataGridViewCheckBoxColumn();
             CModID = new DataGridViewLinkColumn();
-            CDescription = new DataGridViewTextBoxColumn();
+            CDescription = new DataGridViewLinkColumn();
             CAuthor = new DataGridViewTextBoxColumn();
+
+            Columns.AddRange(new DataGridViewColumn[] {
+            CLoadIndex,
+            CIsIncluded,
+            CEnabled,
+            CModID,
+            CAuthor,
+            CDescription});
 
             AllowUserToAddRows = false;
             AllowUserToDeleteRows = false;
@@ -44,14 +52,6 @@
             ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             MultiSelect = false;
             RowHeadersVisible = false;
-
-            Columns.AddRange(new DataGridViewColumn[] {
-            CLoadIndex,
-            CIsIncluded,
-            CEnabled,
-            CModID,
-            CAuthor,
-            CDescription});
 
             // 
             // CLoadIndex
@@ -102,6 +102,7 @@
             CDescription.Name = "CDescription";
             CDescription.ReadOnly = true;
             CDescription.SortMode = DataGridViewColumnSortMode.NotSortable;
+            CDescription.TrackVisitedState = false;
         }
 
         // override data error

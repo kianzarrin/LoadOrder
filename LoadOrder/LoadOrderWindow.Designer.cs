@@ -265,31 +265,30 @@
             // 
             // ComboBoxIncluded
             // 
+            this.ComboBoxIncluded.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxIncluded.FormattingEnabled = true;
             this.ComboBoxIncluded.Location = new System.Drawing.Point(3, 3);
             this.ComboBoxIncluded.Name = "ComboBoxIncluded";
             this.ComboBoxIncluded.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxIncluded.TabIndex = 0;
-            this.ComboBoxIncluded.DropDownStyle = ComboBoxStyle.DropDownList;
             // 
             // ComboBoxEnabled
             // 
+            this.ComboBoxEnabled.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxEnabled.FormattingEnabled = true;
             this.ComboBoxEnabled.Location = new System.Drawing.Point(159, 3);
             this.ComboBoxEnabled.Name = "ComboBoxEnabled";
             this.ComboBoxEnabled.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxEnabled.TabIndex = 1;
-            this.ComboBoxEnabled.DropDownStyle = ComboBoxStyle.DropDownList;
-
             // 
             // ComboBoxWS
             // 
+            this.ComboBoxWS.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxWS.FormattingEnabled = true;
             this.ComboBoxWS.Location = new System.Drawing.Point(315, 3);
             this.ComboBoxWS.Name = "ComboBoxWS";
             this.ComboBoxWS.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxWS.TabIndex = 2;
-            this.ComboBoxWS.DropDownStyle = ComboBoxStyle.DropDownList;
             // 
             // label1
             // 
@@ -407,30 +406,30 @@
             // 
             // ComboBoxAssetIncluded
             // 
+            this.ComboBoxAssetIncluded.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxAssetIncluded.FormattingEnabled = true;
             this.ComboBoxAssetIncluded.Location = new System.Drawing.Point(3, 3);
             this.ComboBoxAssetIncluded.Name = "ComboBoxAssetIncluded";
             this.ComboBoxAssetIncluded.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxAssetIncluded.TabIndex = 0;
-            this.ComboBoxAssetIncluded.DropDownStyle = ComboBoxStyle.DropDownList;
             // 
             // ComboBoxAssetWS
             // 
+            this.ComboBoxAssetWS.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxAssetWS.FormattingEnabled = true;
             this.ComboBoxAssetWS.Location = new System.Drawing.Point(159, 3);
             this.ComboBoxAssetWS.Name = "ComboBoxAssetWS";
             this.ComboBoxAssetWS.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxAssetWS.TabIndex = 1;
-            this.ComboBoxAssetWS.DropDownStyle = ComboBoxStyle.DropDownList;
             // 
             // ComboBoxAssetTags
             // 
+            this.ComboBoxAssetTags.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxAssetTags.FormattingEnabled = true;
             this.ComboBoxAssetTags.Location = new System.Drawing.Point(315, 3);
             this.ComboBoxAssetTags.Name = "ComboBoxAssetTags";
             this.ComboBoxAssetTags.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxAssetTags.TabIndex = 2;
-            this.ComboBoxAssetTags.DropDownStyle = ComboBoxStyle.DropDownList;
             // 
             // label2
             // 
