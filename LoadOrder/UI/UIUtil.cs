@@ -37,7 +37,25 @@
 
             combo.Items.Clear();
             combo.Items.AddRange(items.ToArray());
+            combo.AutoSize();
         }
+
+        public static void AutoSize(this ComboBox combo) {
+            combo.Width = combo.MeasureMaxItemWidth() + SystemInformation.VerticalScrollBarWidth;
+            combo.DropDownWidth = combo.MeasureMaxItemWidth();
+            if (combo.Items.Count > combo.MaxDropDownItems)
+                combo.DropDownWidth += SystemInformation.VerticalScrollBarWidth;
+        }
+
+        public static int MeasureMaxItemWidth(this ComboBox combo) {
+            int maxWidth = 0;
+            foreach (var obj in combo.Items) {
+                int w = TextRenderer.MeasureText(obj.ToString(), combo.Font).Width;
+                maxWidth = Math.Max(w, maxWidth);
+            }
+            return maxWidth;
+        }
+
         public static T GetSelectedItem<T>(this ComboBox combo) where T : Enum {
             T[] values = typeof(T).GetEnumValues() as T[];
             if (combo.SelectedIndex < 0)

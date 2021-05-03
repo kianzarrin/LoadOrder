@@ -238,7 +238,11 @@ namespace CO.Packaging {
             foreach (var assetInfo in this.GetAssets()) {
                 var assetProfile = profile.GetAsset(assetInfo.AssetPath);
                 if (assetProfile != null) {
-                    assetProfile.WriteTo(assetInfo);
+                    bool included0 = assetInfo.IsIncludedPending;
+                    assetProfile.WriteTo(assetInfo); // wite load order.
+                    if (!replace) {
+                        assetInfo.IsIncludedPending |= included0;
+                    }
                 } else if (replace) {
                     //Log.Debug("asset profile with path not found: " + assetInfo.AssetPath);
                     assetInfo.IsIncluded = false;

@@ -330,6 +330,7 @@ namespace LoadOrderTool {
                 ComboBoxAssetTags.Items.Add(NO_TAGS);
                 ComboBoxAssetTags.Items.AddRange(PackageManager.instance.GetAllTags());
                 ComboBoxAssetTags.SelectedIndex = 0;
+                ComboBoxAssetTags.AutoSize();
 
                 dataGridAssets.AssetList = new AssetList(PackageManager.instance.GetAssets(), FilterAssets);
             } catch (Exception ex) {

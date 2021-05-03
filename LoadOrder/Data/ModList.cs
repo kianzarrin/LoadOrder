@@ -210,7 +210,13 @@ namespace LoadOrderTool {
             foreach (var pluginInfo in this) {
                 var modProfile = profile.GetMod(pluginInfo.IncludedPath);
                 if (modProfile != null) {
-                    modProfile.WriteTo(pluginInfo);
+                    bool included0 = pluginInfo.IsIncludedPending;
+                    bool enabled0 = pluginInfo.IsEnabledPending;
+                    modProfile.WriteTo(pluginInfo); // wite load order.
+                    if (!replace) {
+                        pluginInfo.IsIncludedPending |= included0;
+                        pluginInfo.IsEnabledPending |= enabled0;
+                    }
                 } else if(replace) {
                     Log.Info("mod profile with path not found: " + pluginInfo.IncludedPath);
                     pluginInfo.LoadOrder = DefaultLoadOrder;
