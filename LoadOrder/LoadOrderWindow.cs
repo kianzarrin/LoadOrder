@@ -127,17 +127,31 @@ namespace LoadOrderTool {
         }
 
         private void Import_Click(object sender, EventArgs e) {
-            using (OpenFileDialog diaglog = new OpenFileDialog()) {
-                diaglog.Filter = "xml files (*.xml)|*.xml";
-                diaglog.InitialDirectory = LoadOrderProfile.DIR;
-                if (diaglog.ShowDialog() == DialogResult.OK) {
-                    var profile = LoadOrderProfile.Deserialize(diaglog.FileName);
-                    dataGridMods.ModList.LoadFromProfile(profile);
-                    PackageManager.instance.LoadFromProfile(profile);
-                    dataGridMods.RefreshModList(true);
-                    PopulateAssets();
+            using (OpenFileDialog ofd = new OpenFileDialog()) {
+                ofd.Filter = "xml files (*.xml)|*.xml";
+                ofd.InitialDirectory = LoadOrderProfile.DIR;
+                if (ofd.ShowDialog() == DialogResult.OK) {
+                    var profile = LoadOrderProfile.Deserialize(ofd.FileName);
+                    using(var opd = new OpenProfileDialog(profile)) {
+                        opd.ShowDialog();
+                        if (opd.DialogResult == DialogResult.Cancel)
+                            return;
+                        else if (opd.DialogResult == OpenProfileDialog.RESULT_REPLACE)
+                            ApplyProfile(profile, replace: true);
+                        else if (opd.DialogResult == OpenProfileDialog.RESULT_APPEND)
+                            ApplyProfile(profile, replace: false);
+
+                    }
                 }
             }
+        }
+
+        public void ApplyProfile(LoadOrderProfile profile, bool replace) {
+            dataGridMods.ModList.LoadFromProfile(profile, replace );
+            PackageManager.instance.LoadFromProfile(profile, replace);
+            dataGridMods.RefreshModList(true);
+            PopulateAssets();
+
         }
 
         private void Save_Click(object sender, EventArgs e) {
@@ -145,9 +159,14 @@ namespace LoadOrderTool {
         }
 
         private void ReloadAll_Click(object sender, EventArgs e) {
+            ReloadAll();
+        }
+
+        public void ReloadAll() {
             dataGridMods.LoadMods(ModPredicate);
             LoadAsssets();
         }
+
         #endregion
 
         #region Mod tab

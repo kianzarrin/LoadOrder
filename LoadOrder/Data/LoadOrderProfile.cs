@@ -11,17 +11,18 @@
             public bool IsIncluded;
             public int LoadOrder;
             public string DisplayText;
+
             public Mod() { }
 
             public Mod(CO.Plugins.PluginManager.PluginInfo pluginInfo) {
-                IncludedPath = pluginInfo.ModIncludedPath;
+                IncludedPath = pluginInfo.IncludedPath;
                 IsIncluded = pluginInfo.IsIncludedPending;
                 IsEnabled = pluginInfo.IsEnabledPending;
                 LoadOrder = pluginInfo.LoadOrder;
                 DisplayText = pluginInfo.DisplayText;
             }
 
-            public void Write(CO.Plugins.PluginManager.PluginInfo pluginInfo) {
+            public void WriteTo(CO.Plugins.PluginManager.PluginInfo pluginInfo) {
                 pluginInfo.IsIncludedPending = IsIncluded;
                 pluginInfo.IsEnabledPending = IsEnabled;
                 pluginInfo.LoadOrder = LoadOrder;
@@ -41,7 +42,7 @@
                 DisplayText = assetInfo.DisplayText;
             }
 
-            public void Write(CO.Packaging.PackageManager.AssetInfo assetInfo) {
+            public void WriteTo(CO.Packaging.PackageManager.AssetInfo assetInfo) {
                 assetInfo.IsIncludedPending = IsIncluded;
             }
         }

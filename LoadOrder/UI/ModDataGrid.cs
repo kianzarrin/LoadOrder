@@ -206,8 +206,8 @@
                 //     $"savedKey={savedKey} modPath={p.ModPath}");
             }
             foreach (var mod in ModList.Filtered) {
-                string id = mod.publishedFileID.AsUInt64.ToString();
-                if (id == "0" || mod.publishedFileID == PublishedFileId.invalid)
+                string id = mod.PublishedFileId.AsUInt64.ToString();
+                if (id == "0" || mod.PublishedFileId == PublishedFileId.invalid)
                     id = "";
                 rows.Add(mod.LoadOrder, mod.IsIncludedPending, mod.IsEnabledPending, id, mod.DisplayText);
                 //Log.Debug("row added: " + mod.ToString());

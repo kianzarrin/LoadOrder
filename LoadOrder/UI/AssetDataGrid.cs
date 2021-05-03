@@ -113,8 +113,8 @@
                 if (e.ColumnIndex == cIncluded.Index) {
                     e.Value = asset.IsIncludedPending;
                 } else if (e.ColumnIndex == cAssetID.Index) {
-                    string id = asset.publishedFileID.AsUInt64.ToString();
-                    if (id == "0" || asset.publishedFileID == PublishedFileId.invalid)
+                    string id = asset.PublishedFileId.AsUInt64.ToString();
+                    if (id == "0" || asset.PublishedFileId == PublishedFileId.invalid)
                         id = "";
                     e.Value = id;
                 } else if (e.ColumnIndex == cName.Index) {
@@ -138,8 +138,8 @@
                 if (e.RowIndex < 0 || e.RowIndex >= AssetList.Filtered.Count) return;
                 var asset = AssetList.Filtered[e.RowIndex];
                 if (e.ColumnIndex == cAssetID.Index) {
-                    var id = asset.publishedFileID;
-                    string url = ContentUtil.GetItemURL(asset.publishedFileID);
+                    var id = asset.PublishedFileId;
+                    string url = ContentUtil.GetItemURL(asset.PublishedFileId);
                     e.ToolTipText = url ?? "local";
                 }
             } catch (Exception ex) {
@@ -155,8 +155,8 @@
                 var asset = AssetList.Filtered[e.RowIndex];
 
                 if (e.ColumnIndex == cAssetID.Index) {
-                    var id = asset.publishedFileID;
-                    string url = ContentUtil.GetItemURL(asset.publishedFileID);
+                    var id = asset.PublishedFileId;
+                    string url = ContentUtil.GetItemURL(asset.PublishedFileId);
                     if (url != null)
                         ContentUtil.OpenURL(url);
                 }
@@ -205,7 +205,7 @@
                 if (e.ColumnIndex == cIncluded.Index) {
                     AssetList.SortItemsBy(item => item.IsIncludedPending, sortAssending_);
                 } else if (e.ColumnIndex == cAssetID.Index) {
-                    AssetList.SortItemsBy(item => item.publishedFileID.AsUInt64, sortAssending_);
+                    AssetList.SortItemsBy(item => item.PublishedFileId.AsUInt64, sortAssending_);
                 } else if (e.ColumnIndex == cName.Index) {
                     AssetList.SortItemsBy(item => item.DisplayText, sortAssending_);
                 } else if (e.ColumnIndex == cAuthor.Index) {

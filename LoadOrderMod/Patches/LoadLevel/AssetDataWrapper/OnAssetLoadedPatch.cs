@@ -74,7 +74,7 @@ namespace LoadOrderMod.Patches._AssetDataWrapper {
             if(!Config.LogAssetLoadingTimes)return;
             sw_total.Stop();
             var ms = sw_total.ElapsedMilliseconds;
-            Log.Info($"AssetDataWrapper.OnAssetLoaded() finished. total duration = {ms:#,0}ms", false);
+            Log.Info($"AssetDataWrapper.OnAssetLoaded() finished. total asset duration = {ms:#,0}ms", false);
         }
     }
 }

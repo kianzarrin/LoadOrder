@@ -56,7 +56,7 @@ namespace LoadOrderTool {
             if (!p1.HasLoadOrder() && !p2.HasLoadOrder()) {
                 int order(PluginInfo _p) =>
                     _p.isBuiltin ? 0 :
-                    (_p.publishedFileID != PublishedFileId.invalid ? 1 : 2);
+                    (_p.PublishedFileId != PublishedFileId.invalid ? 1 : 2);
                 if (order(p1) != order(p2))
                     return order(p1) - order(p2);
                 return p1.name.CompareTo(p2.name);
@@ -107,7 +107,7 @@ namespace LoadOrderTool {
                     // builin first, workshop second, local last
                     int order(PluginInfo _p) =>
                         _p.isBuiltin ? 0 :
-                        (_p.publishedFileID != PublishedFileId.invalid ? 1 : 2);
+                        (_p.PublishedFileId != PublishedFileId.invalid ? 1 : 2);
                     if (order(p1) != order(p2))
                         return order(p1) - order(p2);
                 }
@@ -204,24 +204,18 @@ namespace LoadOrderTool {
         }
 
         public PluginManager.PluginInfo GetPluginInfo(string path) =>
-            this.FirstOrDefault(p => p.ModIncludedPath == path);
+            this.FirstOrDefault(p => p.IncludedPath == path);
 
-        public void LoadFromProfile(LoadOrderProfile profile, bool excludeExtras=true) {
-            foreach (var modInfo in this) {
-                var modProfile = profile.GetMod(modInfo.ModIncludedPath);
+        public void LoadFromProfile(LoadOrderProfile profile, bool replace=true) {
+            foreach (var pluginInfo in this) {
+                var modProfile = profile.GetMod(pluginInfo.IncludedPath);
                 if (modProfile != null) {
-                    modProfile.Write(modInfo);
-                } else if(excludeExtras) {
-                    Log.Debug("mod profile with path not found: " + modInfo.ModIncludedPath);
-                    modInfo.LoadOrder = DefaultLoadOrder;
-                    modInfo.IsIncluded = false;
+                    modProfile.WriteTo(pluginInfo);
+                } else if(replace) {
+                    Log.Info("mod profile with path not found: " + pluginInfo.IncludedPath);
+                    pluginInfo.LoadOrder = DefaultLoadOrder;
+                    pluginInfo.IsIncluded = false;
                 }
-            }
-
-            var missing = profile.Mods.Where(m => GetPluginInfo(m.IncludedPath) == null);
-            if (missing.Any()) {
-                var strMissing = string.Join('\n', missing.Select(p => p.DisplayText).ToArray());
-                MessageBox.Show(strMissing, "Warning! Missing Mods", MessageBoxButtons.OK);
             }
         }
 

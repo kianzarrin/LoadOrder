@@ -29,8 +29,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
             this.dataGridMods = new LoadOrderTool.UI.ModDataGrid();
@@ -110,8 +110,8 @@
             this.dataGridMods.AllowUserToAddRows = false;
             this.dataGridMods.AllowUserToDeleteRows = false;
             this.dataGridMods.AllowUserToResizeRows = false;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Beige;
-            this.dataGridMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
+            this.dataGridMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridMods.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -270,6 +270,7 @@
             this.ComboBoxIncluded.Name = "ComboBoxIncluded";
             this.ComboBoxIncluded.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxIncluded.TabIndex = 0;
+            this.ComboBoxIncluded.DropDownStyle = ComboBoxStyle.DropDownList;
             // 
             // ComboBoxEnabled
             // 
@@ -278,6 +279,8 @@
             this.ComboBoxEnabled.Name = "ComboBoxEnabled";
             this.ComboBoxEnabled.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxEnabled.TabIndex = 1;
+            this.ComboBoxEnabled.DropDownStyle = ComboBoxStyle.DropDownList;
+
             // 
             // ComboBoxWS
             // 
@@ -286,6 +289,7 @@
             this.ComboBoxWS.Name = "ComboBoxWS";
             this.ComboBoxWS.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxWS.TabIndex = 2;
+            this.ComboBoxWS.DropDownStyle = ComboBoxStyle.DropDownList;
             // 
             // label1
             // 
@@ -325,8 +329,8 @@
             this.dataGridAssets.AllowUserToDeleteRows = false;
             this.dataGridAssets.AllowUserToOrderColumns = true;
             this.dataGridAssets.AllowUserToResizeRows = false;
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Beige;
-            this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Beige;
+            this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridAssets.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridAssets.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridAssets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -408,6 +412,7 @@
             this.ComboBoxAssetIncluded.Name = "ComboBoxAssetIncluded";
             this.ComboBoxAssetIncluded.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxAssetIncluded.TabIndex = 0;
+            this.ComboBoxAssetIncluded.DropDownStyle = ComboBoxStyle.DropDownList;
             // 
             // ComboBoxAssetWS
             // 
@@ -416,6 +421,7 @@
             this.ComboBoxAssetWS.Name = "ComboBoxAssetWS";
             this.ComboBoxAssetWS.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxAssetWS.TabIndex = 1;
+            this.ComboBoxAssetWS.DropDownStyle = ComboBoxStyle.DropDownList;
             // 
             // ComboBoxAssetTags
             // 
@@ -424,6 +430,7 @@
             this.ComboBoxAssetTags.Name = "ComboBoxAssetTags";
             this.ComboBoxAssetTags.Size = new System.Drawing.Size(150, 25);
             this.ComboBoxAssetTags.TabIndex = 2;
+            this.ComboBoxAssetTags.DropDownStyle = ComboBoxStyle.DropDownList;
             // 
             // label2
             // 

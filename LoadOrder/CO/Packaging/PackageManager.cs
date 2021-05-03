@@ -16,28 +16,28 @@ namespace CO.Packaging {
     using System.Threading;
     using System.Windows.Forms;
     using LoadOrderShared;
+    using LoadOrderTool.Data;
 
     public class PackageManager : SingletonLite<PackageManager> {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
         static LoadOrderConfig Config => ConfigWrapper.Config;
 
-        public class AssetInfo {
+        public AssetInfo GetAsset(string path) =>
+            m_Assets.FirstOrDefault(a => a.AssetPath == path);
+
+        public class AssetInfo : IWSItem {
             private string m_Path;
 
             //private bool m_IsBuiltin;
 
             //public bool isBuiltin => m_IsBuiltin;
 
-            public bool IsLocal => publishedFileID == PublishedFileId.invalid;
+            public bool IsLocal => PublishedFileId == PublishedFileId.invalid;
             public bool IsWorkshop => !IsLocal;
 
             public string AssetPath => m_Path;
 
-            //public string AssetIncludedPath {
-            //    get {
-            //        return ContentUtil.ToIncludedPath(m_Path);
-            //    }
-            //}
+            public string IncludedPath => m_Path;
 
             public string AssetName => Path.GetFileNameWithoutExtension(AssetPath);
             public string FileName => Path.GetFileName(AssetPath);
@@ -77,9 +77,9 @@ namespace CO.Packaging {
 
             string searchText_;
             public string SearchText => searchText_ ??=
-                $"{DisplayText} {publishedFileID} {ConfigAssetInfo.Author}".Trim();
+                $"{DisplayText} {PublishedFileId} {ConfigAssetInfo.Author}".Trim();
 
-            public PublishedFileId publishedFileID => this.m_PublishedFileID;
+            public PublishedFileId PublishedFileId => this.m_PublishedFileId;
 
             bool isIncludedPending_;
             public bool IsIncludedPending {
@@ -100,7 +100,7 @@ namespace CO.Packaging {
                 }
             }
 
-            private PublishedFileId m_PublishedFileID = PublishedFileId.invalid;
+            private PublishedFileId m_PublishedFileId = PublishedFileId.invalid;
 
             public IEnumerable<string> GetTags() => 
                 ConfigAssetInfo?.Tags ?? new string[] { };
@@ -111,7 +111,7 @@ namespace CO.Packaging {
                 string includedPath = ContentUtil.ToIncludedPathFull(path);
                 this.m_Path = includedPath;
                 //this.m_IsBuiltin = builtin;
-                this.m_PublishedFileID = id;
+                this.m_PublishedFileId = id;
                 this.ConfigAssetInfo = Config.Assets.FirstOrDefault(
                     item => item.Path == includedPath);
                 this.ConfigAssetInfo ??= new LoadOrderShared.AssetInfo {
@@ -234,21 +234,15 @@ namespace CO.Packaging {
         public AssetInfo GetAssetInfo(string path) =>
             this.GetAssets().FirstOrDefault(p => p.AssetPath == path);
 
-        public void LoadFromProfile(LoadOrderProfile profile, bool excludeExtras = true) {
+        public void LoadFromProfile(LoadOrderProfile profile, bool replace = true) {
             foreach (var assetInfo in this.GetAssets()) {
                 var assetProfile = profile.GetAsset(assetInfo.AssetPath);
                 if (assetProfile != null) {
-                    assetProfile.Write(assetInfo);
-                } else if (excludeExtras) {
+                    assetProfile.WriteTo(assetInfo);
+                } else if (replace) {
                     //Log.Debug("asset profile with path not found: " + assetInfo.AssetPath);
                     assetInfo.IsIncluded = false;
                 }
-            }
-
-            var missing = profile.Assets.Where(m => GetAssetInfo(m.IncludedPath) == null);
-            if (missing.Any()) {
-                var strMissing = string.Join('\n', missing.Select(p => p.DisplayText).ToArray());
-                MessageBox.Show(strMissing, "Warning! Missing Assets", MessageBoxButtons.OK);
             }
         }
 

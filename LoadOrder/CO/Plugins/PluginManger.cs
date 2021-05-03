@@ -15,6 +15,7 @@ namespace CO.Plugins {
     using Mono.Cecil;
     using System.Threading;
     using LoadOrderShared;
+    using LoadOrderTool.Data;
 
     public class PluginManager : SingletonLite<PluginManager> {
         public static ConfigWrapper ConfigWrapper = ConfigWrapper.instance;
@@ -36,7 +37,10 @@ namespace CO.Plugins {
 
         public delegate void PluginsChangedHandler();
 
-        public class PluginInfo {
+        public PluginInfo GetPlugin(string includedPath) =>
+            m_Plugins.FirstOrDefault(predicate => predicate.IncludedPath == includedPath);
+
+        public class PluginInfo :IWSItem {
             // private Type m_UserModImplementation;
             // public List<Assembly> m_Assemblies;
             // public int assemblyCount => m_Assemblies.Count;
@@ -56,12 +60,12 @@ namespace CO.Plugins {
 
             public bool isBuiltin => m_IsBuiltin;
 
-            public bool IsLocal => publishedFileID == PublishedFileId.invalid;
+            public bool IsLocal => PublishedFileId == PublishedFileId.invalid;
             public bool IsWorkshop => !IsLocal;
 
             public string ModPath => m_Path;
 
-            public string ModIncludedPath {
+            public string IncludedPath {
                 get {
                     if (dirName.StartsWith("_"))
                         return Path.Combine(parentDirPath, dirName.Substring(1));
@@ -94,7 +98,7 @@ namespace CO.Plugins {
 
             string searchText_;
             public string SearchText => searchText_ ??=
-                $"{DisplayText} {publishedFileID} {ModInfo.Author}".Trim();
+                $"{DisplayText} {PublishedFileId} {ModInfo.Author}".Trim();
 
             public string[] DllPaths =>
                 Directory.GetFiles(ModPath, "*.dll", SearchOption.AllDirectories);
@@ -113,7 +117,7 @@ namespace CO.Plugins {
             /// </summary>
             public bool HasUserMod => userModImplementation != null;
 
-            public PublishedFileId publishedFileID => this.m_PublishedFileID;
+            public PublishedFileId PublishedFileId => this.m_PublishedFileId;
 
             bool isIncludedPending_;
             public bool IsIncludedPending {
@@ -172,7 +176,7 @@ namespace CO.Plugins {
                 return true;
             }
 
-            private PublishedFileId m_PublishedFileID = PublishedFileId.invalid;
+            private PublishedFileId m_PublishedFileId = PublishedFileId.invalid;
 
             private PluginInfo() {
             }
@@ -184,11 +188,11 @@ namespace CO.Plugins {
                     m_CachedName = m_CachedName.Substring(1);
                 //this.m_Assemblies = new List<Assembly>();
                 this.m_IsBuiltin = builtin;
-                this.m_PublishedFileID = id;
+                this.m_PublishedFileId = id;
                 this.ModInfo = Config.Mods.FirstOrDefault(
-                    _mod => _mod.Path == ModIncludedPath);
+                    _mod => _mod.Path == IncludedPath);
                 this.ModInfo ??= new LoadOrderShared.ModInfo {
-                    Path = ModIncludedPath,
+                    Path = IncludedPath,
                     LoadOrder = LoadOrderConfig.DefaultLoadOrder,
                 };
                 isIncludedPending_ = IsIncluded;
@@ -245,7 +249,7 @@ namespace CO.Plugins {
                 }
             }
             public string savedEnabledKey_ =>
-                name + GetLegacyHashCode(ModIncludedPath).ToString() + ".enabled";
+                name + GetLegacyHashCode(IncludedPath).ToString() + ".enabled";
             public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, def: false, autoUpdate: true);
             public bool isEnabled {
                 get => SavedEnabled.value;
@@ -399,13 +403,16 @@ namespace CO.Plugins {
                 m_Plugins = m_Plugins.Where(p => p.HasUserMod).ToList();
                 Log.Debug($"{m_Plugins.Count} pluggins remained after purging non-cs or non-mods.");
 
-                var mods = Config.Mods.ToList();
+                //var mods = Config.Mods.ToList();
 
-                foreach (var plugin in m_Plugins) {
-                    plugin.ModInfo.AssemblyName = plugin.dllName;
-                    if (!mods.Any(_mod => _mod == plugin.ModInfo))
-                        mods.Add(plugin.ModInfo);
-                }
+                //foreach (var plugin in m_Plugins) {
+                //    plugin.ModInfo.AssemblyName = plugin.dllName;
+                //    if (!mods.Any(_mod => _mod == plugin.ModInfo))
+                //        mods.Add(plugin.ModInfo);
+                //}
+
+                var mods = Config.Mods.Union(
+                     m_Plugins.Select(item => item.ModInfo));
                 Config.Mods = mods.ToArray();
                 ConfigWrapper.SaveConfig();
 

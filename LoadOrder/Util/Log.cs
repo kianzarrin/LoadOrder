@@ -78,6 +78,7 @@ namespace LoadOrderTool {
         private enum LogLevel {
             Debug,
             Info,
+            Warning,
             Error,
             Exception,
         }
@@ -128,6 +129,17 @@ namespace LoadOrderTool {
         public static void Info(string message, bool copyToGameLog = false) {
             LogImpl(message, LogLevel.Info, copyToGameLog);
         }
+
+        /// <summary>
+        /// Logs info message.
+        /// </summary>
+        /// 
+        /// <param name="message">Log entry text.</param>
+        /// <param name="copyToGameLog">If <c>true</c> will copy to the main game log file.</param>
+        public static void Warning(string message, bool copyToGameLog = true) {
+            LogImpl(message, LogLevel.Warning, copyToGameLog);
+        }
+
 
         /// <summary>
         /// Logs error message and also outputs a stack trace.
@@ -192,15 +204,7 @@ namespace LoadOrderTool {
 
                 if (copyToGameLog) {
                     m = assemblyName_ + " | " + m;
-                    switch (level) {
-                        case LogLevel.Error:
-                        case LogLevel.Exception:
-                            Console.WriteLine(m);
-                            break;
-                        default:
-                            Console.WriteLine(m);
-                            break;
-                    }
+                    Console.WriteLine(m);
                 }
             } catch {
                 // ignore

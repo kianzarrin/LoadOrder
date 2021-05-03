@@ -12,3 +12,11 @@ Tool:
 	auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 
 * high Prioirty
+
+
+active task: open profile features (mods/assets only | merge/replace):
+	- package/plugin manager does not remove cached mod config data if mod is deleted.
+		- this can be used to provide more info about missing items that is not stored in load order profile.
+		- but maybe I should store extra data in profile.
+
+

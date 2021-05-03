@@ -34,6 +34,7 @@
             var items = typeof(T).GetEnumNames()
                 .Select(item => typeof(T).GetMember(item)[0])
                 .Select(item => item.GetMemberDisplayText());
+
             combo.Items.Clear();
             combo.Items.AddRange(items.ToArray());
         }
