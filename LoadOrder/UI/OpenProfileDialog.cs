@@ -34,6 +34,7 @@
             dataGridView1.VisibleChanged += DataGridView1_VisibleChanged;
             dataGridView1.DataError += DataGridView1_DataError;
             cbItemType.SetItems<ItemTypeT>();
+            cbItemType.SelectedIndex = 0;
 
             Populate();
 

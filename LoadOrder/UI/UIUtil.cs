@@ -40,7 +40,14 @@
         }
         public static T GetSelectedItem<T>(this ComboBox combo) where T : Enum {
             T[] values = typeof(T).GetEnumValues() as T[];
-            return values[combo.SelectedIndex];
+            if (combo.SelectedIndex < 0)
+                throw new IndexOutOfRangeException("combo.SelectedIndex=" + combo.SelectedIndex);
+            try {
+                return values[combo.SelectedIndex];
+            } catch(Exception ex) {
+                Log.Exception(ex, $"SelectedIndex={combo?.SelectedIndex} values={string.Join(", ", values)}");
+                throw ex;
+            }
         }
     }
 }
