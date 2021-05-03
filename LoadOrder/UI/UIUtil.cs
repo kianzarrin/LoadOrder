@@ -77,5 +77,7 @@
                 .OfType<Type>();
         }
 
+        public static void SetTooltip(this Control control, string tooltip) =>
+            new ToolTip().SetToolTip(control, tooltip);
     }
 }

@@ -29,8 +29,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
             this.dataGridMods = new LoadOrderTool.UI.ModDataGrid();
@@ -70,6 +70,7 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiExport = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiImport = new System.Windows.Forms.ToolStripMenuItem();
+            this.launchControl1 = new LoadOrderTool.UI.LaunchControl();
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMods)).BeginInit();
@@ -110,9 +111,19 @@
             // 
             // dataGridMods
             // 
+            this.dataGridMods.AllowUserToAddRows = false;
+            this.dataGridMods.AllowUserToDeleteRows = false;
+            this.dataGridMods.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
+            this.dataGridMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.dataGridMods.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
+            this.dataGridMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.dataGridMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridMods.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridMods.Location = new System.Drawing.Point(3, 34);
+            this.dataGridMods.MultiSelect = false;
             this.dataGridMods.Name = "dataGridMods";
+            this.dataGridMods.RowHeadersVisible = false;
             this.dataGridMods.Size = new System.Drawing.Size(816, 533);
             this.dataGridMods.TabIndex = 1;
             // 
@@ -316,11 +327,24 @@
             // 
             // dataGridAssets
             // 
+            this.dataGridAssets.AllowUserToAddRows = false;
+            this.dataGridAssets.AllowUserToDeleteRows = false;
+            this.dataGridAssets.AllowUserToOrderColumns = true;
+            this.dataGridAssets.AllowUserToResizeRows = false;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Beige;
+            this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridAssets.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
+            this.dataGridAssets.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.dataGridAssets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridAssets.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridAssets.Location = new System.Drawing.Point(3, 34);
+            this.dataGridAssets.MultiSelect = false;
             this.dataGridAssets.Name = "dataGridAssets";
+            this.dataGridAssets.RowHeadersVisible = false;
+            this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridAssets.Size = new System.Drawing.Size(858, 533);
             this.dataGridAssets.TabIndex = 0;
+            this.dataGridAssets.VirtualMode = true;
             // 
             // AssetsActionPanel
             // 
@@ -432,6 +456,7 @@
             // LaunchTab
             // 
             this.LaunchTab.BackColor = System.Drawing.Color.Transparent;
+            this.LaunchTab.Controls.Add(this.launchControl1);
             this.LaunchTab.Location = new System.Drawing.Point(4, 26);
             this.LaunchTab.Name = "LaunchTab";
             this.LaunchTab.Padding = new System.Windows.Forms.Padding(3);
@@ -504,6 +529,14 @@
             this.tsmiImport.Name = "tsmiImport";
             this.tsmiImport.Size = new System.Drawing.Size(147, 22);
             this.tsmiImport.Text = "&Import ...";
+            // 
+            // launchControl1
+            // 
+            this.launchControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.launchControl1.Location = new System.Drawing.Point(3, 3);
+            this.launchControl1.Name = "launchControl1";
+            this.launchControl1.Size = new System.Drawing.Size(942, 564);
+            this.launchControl1.TabIndex = 0;
             // 
             // LoadOrderWindow
             // 
@@ -580,5 +613,6 @@
         private ToolStripMenuItem tsmiImport;
         public ToolStripMenuItem tsmiAutoSave;
         private TabPage LaunchTab;
+        private UI.LaunchControl launchControl1;
     }
 }

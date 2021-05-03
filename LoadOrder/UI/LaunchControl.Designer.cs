@@ -1,4 +1,6 @@
-﻿namespace LoadOrderTool.UI {
+﻿using System.Windows.Forms;
+
+namespace LoadOrderTool.UI {
     partial class LaunchControl {
         /// <summary> 
         /// Required designer variable.
@@ -71,7 +73,7 @@
             this.flowLayoutPanelExclusions.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanelExclusions.Margin = new System.Windows.Forms.Padding(3, 3, 3, 15);
             this.flowLayoutPanelExclusions.Name = "flowLayoutPanelExclusions";
-            this.flowLayoutPanelExclusions.Size = new System.Drawing.Size(442, 27);
+            this.flowLayoutPanelExclusions.Size = new System.Drawing.Size(295, 27);
             this.flowLayoutPanelExclusions.TabIndex = 0;
             this.flowLayoutPanelExclusions.WrapContents = false;
             // 
@@ -80,29 +82,29 @@
             this.checkBoxNoAssets.AutoSize = true;
             this.checkBoxNoAssets.Location = new System.Drawing.Point(3, 3);
             this.checkBoxNoAssets.Name = "checkBoxNoAssets";
-            this.checkBoxNoAssets.Size = new System.Drawing.Size(135, 21);
+            this.checkBoxNoAssets.Size = new System.Drawing.Size(86, 21);
             this.checkBoxNoAssets.TabIndex = 0;
-            this.checkBoxNoAssets.Text = "checkBoxNoAssets";
+            this.checkBoxNoAssets.Text = "No Assets";
             this.checkBoxNoAssets.UseVisualStyleBackColor = true;
             // 
             // checkBoxNoMods
             // 
             this.checkBoxNoMods.AutoSize = true;
-            this.checkBoxNoMods.Location = new System.Drawing.Point(144, 3);
+            this.checkBoxNoMods.Location = new System.Drawing.Point(95, 3);
             this.checkBoxNoMods.Name = "checkBoxNoMods";
-            this.checkBoxNoMods.Size = new System.Drawing.Size(132, 21);
+            this.checkBoxNoMods.Size = new System.Drawing.Size(83, 21);
             this.checkBoxNoMods.TabIndex = 1;
-            this.checkBoxNoMods.Text = "checkBoxNoMods";
+            this.checkBoxNoMods.Text = "No Mods";
             this.checkBoxNoMods.UseVisualStyleBackColor = true;
             // 
             // checkBoxNoWorkshop
             // 
             this.checkBoxNoWorkshop.AutoSize = true;
-            this.checkBoxNoWorkshop.Location = new System.Drawing.Point(282, 3);
+            this.checkBoxNoWorkshop.Location = new System.Drawing.Point(184, 3);
             this.checkBoxNoWorkshop.Name = "checkBoxNoWorkshop";
-            this.checkBoxNoWorkshop.Size = new System.Drawing.Size(157, 21);
+            this.checkBoxNoWorkshop.Size = new System.Drawing.Size(108, 21);
             this.checkBoxNoWorkshop.TabIndex = 2;
-            this.checkBoxNoWorkshop.Text = "checkBoxNoWorkshop";
+            this.checkBoxNoWorkshop.Text = "No Workshop";
             this.checkBoxNoWorkshop.UseVisualStyleBackColor = true;
             // 
             // checkBoxLHT
@@ -112,9 +114,9 @@
             this.checkBoxLHT.Margin = new System.Windows.Forms.Padding(3, 3, 3, 15);
             this.checkBoxLHT.Name = "checkBoxLHT";
             this.checkBoxLHT.Padding = new System.Windows.Forms.Padding(3);
-            this.checkBoxLHT.Size = new System.Drawing.Size(108, 27);
+            this.checkBoxLHT.Size = new System.Drawing.Size(128, 27);
             this.checkBoxLHT.TabIndex = 1;
-            this.checkBoxLHT.Text = "checkBoxLHT";
+            this.checkBoxLHT.Text = "Left Hand Traffic";
             this.checkBoxLHT.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanelLunchMode
@@ -140,7 +142,7 @@
             this.tableLayoutPanelLunchMode.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelLunchMode.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelLunchMode.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelLunchMode.Size = new System.Drawing.Size(442, 99);
+            this.tableLayoutPanelLunchMode.Size = new System.Drawing.Size(414, 99);
             this.tableLayoutPanelLunchMode.TabIndex = 2;
             // 
             // textBoxSavePath
@@ -150,7 +152,6 @@
             this.textBoxSavePath.Name = "textBoxSavePath";
             this.textBoxSavePath.Size = new System.Drawing.Size(281, 25);
             this.textBoxSavePath.TabIndex = 0;
-            this.textBoxSavePath.Text = "textBoxSavePath";
             // 
             // textBoxMapPath
             // 
@@ -159,7 +160,6 @@
             this.textBoxMapPath.Name = "textBoxMapPath";
             this.textBoxMapPath.Size = new System.Drawing.Size(281, 25);
             this.textBoxMapPath.TabIndex = 0;
-            this.textBoxMapPath.Text = "textBoxMapPath";
             // 
             // buttonSavePath
             // 
@@ -171,6 +171,7 @@
             this.buttonSavePath.TabIndex = 3;
             this.buttonSavePath.Text = "…";
             this.buttonSavePath.UseVisualStyleBackColor = true;
+            this.buttonSavePath.Click += new System.EventHandler(this.buttonSavePath_Click);
             // 
             // buttonMapPath
             // 
@@ -182,46 +183,55 @@
             this.buttonMapPath.TabIndex = 4;
             this.buttonMapPath.Text = "…";
             this.buttonMapPath.UseVisualStyleBackColor = true;
+            this.buttonMapPath.Click += new System.EventHandler(this.buttonMapPath_Click);
             // 
             // buttonLoadSave
             // 
+            this.buttonLoadSave.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.buttonLoadSave.AutoSize = true;
             this.buttonLoadSave.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonLoadSave.Location = new System.Drawing.Point(323, 3);
+            this.buttonLoadSave.Location = new System.Drawing.Point(328, 3);
             this.buttonLoadSave.Name = "buttonLoadSave";
-            this.buttonLoadSave.Size = new System.Drawing.Size(112, 27);
+            this.buttonLoadSave.Size = new System.Drawing.Size(78, 27);
             this.buttonLoadSave.TabIndex = 6;
-            this.buttonLoadSave.Text = "buttonLoadSave";
+            this.buttonLoadSave.Text = "Load Save";
             this.buttonLoadSave.UseVisualStyleBackColor = true;
+            this.buttonLoadSave.Click += new System.EventHandler(this.buttonLoadSave_Click);
             // 
             // buttonNewGame
             // 
+            this.buttonNewGame.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.buttonNewGame.AutoSize = true;
             this.buttonNewGame.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonNewGame.Location = new System.Drawing.Point(323, 36);
+            this.buttonNewGame.Location = new System.Drawing.Point(326, 36);
             this.buttonNewGame.Name = "buttonNewGame";
-            this.buttonNewGame.Size = new System.Drawing.Size(116, 27);
+            this.buttonNewGame.Size = new System.Drawing.Size(82, 27);
             this.buttonNewGame.TabIndex = 7;
-            this.buttonNewGame.Text = "buttonNewGame";
+            this.buttonNewGame.Text = "New Game";
             this.buttonNewGame.UseVisualStyleBackColor = true;
+            this.buttonNewGame.Click += new System.EventHandler(this.buttonNewGame_Click);
             // 
             // buttonLoadAsset
             // 
+            this.buttonLoadAsset.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.buttonLoadAsset.AutoSize = true;
+            this.buttonLoadAsset.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.buttonLoadAsset.Location = new System.Drawing.Point(323, 69);
             this.buttonLoadAsset.Name = "buttonLoadAsset";
-            this.buttonLoadAsset.Size = new System.Drawing.Size(116, 27);
+            this.buttonLoadAsset.Size = new System.Drawing.Size(88, 27);
             this.buttonLoadAsset.TabIndex = 8;
-            this.buttonLoadAsset.Text = "buttonLoadAsset";
+            this.buttonLoadAsset.Text = "Asset Editor";
             this.buttonLoadAsset.UseVisualStyleBackColor = true;
+            this.buttonLoadAsset.Click += new System.EventHandler(this.buttonLoadAsset_Click);
             // 
             // checkBoxPoke
             // 
             this.checkBoxPoke.AutoSize = true;
             this.checkBoxPoke.Location = new System.Drawing.Point(3, 210);
             this.checkBoxPoke.Name = "checkBoxPoke";
-            this.checkBoxPoke.Size = new System.Drawing.Size(108, 21);
+            this.checkBoxPoke.Size = new System.Drawing.Size(55, 21);
             this.checkBoxPoke.TabIndex = 3;
-            this.checkBoxPoke.Text = "checkBoxPoke";
+            this.checkBoxPoke.Text = "Poke";
             this.checkBoxPoke.UseVisualStyleBackColor = true;
             // 
             // checkBoxPhased
@@ -229,9 +239,9 @@
             this.checkBoxPhased.AutoSize = true;
             this.checkBoxPhased.Location = new System.Drawing.Point(3, 237);
             this.checkBoxPhased.Name = "checkBoxPhased";
-            this.checkBoxPhased.Size = new System.Drawing.Size(122, 21);
+            this.checkBoxPhased.Size = new System.Drawing.Size(69, 21);
             this.checkBoxPhased.TabIndex = 4;
-            this.checkBoxPhased.Text = "checkBoxPhased";
+            this.checkBoxPhased.Text = "Phased";
             this.checkBoxPhased.UseVisualStyleBackColor = true;
             // 
             // labelCommand
