@@ -9,7 +9,7 @@
     using LoadOrderTool.Data;
     using CO.Packaging;
 
-    //[Designer(typeof(ControlDesigner))]
+    [Designer(typeof(ControlDesigner))]
     public class AssetDataGrid : DataGridView {
         int prevSortCol_ = -1;
         bool sortAssending_ = false;

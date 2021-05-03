@@ -16,7 +16,7 @@
     using System.Threading.Tasks;
     using LoadOrderTool.UI;
 
-    //[Designer(typeof(ControlDesigner))]
+    [Designer(typeof(ControlDesigner))]
     public class ModDataGrid : DataGridView {
         public ModList ModList;
 
