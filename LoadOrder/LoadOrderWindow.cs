@@ -134,24 +134,26 @@ namespace LoadOrderTool {
                     var profile = LoadOrderProfile.Deserialize(ofd.FileName);
                     using(var opd = new OpenProfileDialog(profile)) {
                         opd.ShowDialog();
-                        if (opd.DialogResult == DialogResult.Cancel)
-                            return;
-                        else if (opd.DialogResult == OpenProfileDialog.RESULT_REPLACE)
-                            ApplyProfile(profile, replace: true);
+                        bool mods = opd.ItemType != OpenProfileDialog.ItemTypeT.AssetsOnly;
+                        bool assets = opd.ItemType != OpenProfileDialog.ItemTypeT.ModsOnly;
+                        if (opd.DialogResult == OpenProfileDialog.RESULT_REPLACE)
+                            ApplyProfile(profile, mods:mods, assets: assets, replace: true);
                         else if (opd.DialogResult == OpenProfileDialog.RESULT_APPEND)
-                            ApplyProfile(profile, replace: false);
-
+                            ApplyProfile(profile, mods: mods, assets: assets, replace: false);
                     }
                 }
             }
         }
 
-        public void ApplyProfile(LoadOrderProfile profile, bool replace) {
-            dataGridMods.ModList.LoadFromProfile(profile, replace );
-            PackageManager.instance.LoadFromProfile(profile, replace);
-            dataGridMods.RefreshModList(true);
-            PopulateAssets();
-
+        public void ApplyProfile(LoadOrderProfile profile, bool mods, bool assets, bool replace) {
+            if (mods) {
+                dataGridMods.ModList.LoadFromProfile(profile, replace);
+                dataGridMods.RefreshModList(true);
+            }
+            if (assets) {
+                PackageManager.instance.LoadFromProfile(profile, replace);
+                PopulateAssets();
+            }
         }
 
         private void Save_Click(object sender, EventArgs e) {
