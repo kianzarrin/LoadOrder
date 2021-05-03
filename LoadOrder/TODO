@@ -1,15 +1,9 @@
-Tool:
-	- IDs as links
-		- no need to repeat IDs in display text.
-	- mods author column.
-	- search terms property
-
-	auto luncher
-		- parameters as checkboxes (autosave to tool settings xml)
-	
+- auto-luncher tab
+	- parameters as checkboxes (autosave to tool settings xml)
+- tool settings tab [?]
+- auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 
 
-	auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 
 * high Prioirty
 

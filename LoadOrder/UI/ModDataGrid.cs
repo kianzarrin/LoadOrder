@@ -25,6 +25,7 @@
         public DataGridViewCheckBoxColumn CEnabled;
         public DataGridViewLinkColumn CModID;
         public DataGridViewTextBoxColumn CDescription;
+        public DataGridViewTextBoxColumn CAuthor;
 
         public ModDataGrid() {
             CLoadIndex = new DataGridViewTextBoxColumn();
@@ -32,6 +33,7 @@
             CEnabled = new DataGridViewCheckBoxColumn();
             CModID = new DataGridViewLinkColumn();
             CDescription = new DataGridViewTextBoxColumn();
+            CAuthor = new DataGridViewTextBoxColumn();
 
             AllowUserToAddRows = false;
             AllowUserToDeleteRows = false;
@@ -48,6 +50,7 @@
             CIsIncluded,
             CEnabled,
             CModID,
+            CAuthor,
             CDescription});
 
             // 
@@ -83,6 +86,14 @@
             CModID.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             CModID.TrackVisitedState = false;
             CModID.SortMode = DataGridViewColumnSortMode.NotSortable;
+            // 
+            // CAuthor
+            // 
+            CAuthor.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            CAuthor.HeaderText = "Author";
+            CAuthor.Name = "CAuthor";
+            CAuthor.ReadOnly = true;
+            CAuthor.SortMode = DataGridViewColumnSortMode.NotSortable;
             // 
             // CDescription
             // 
@@ -211,8 +222,13 @@
                 string id = mod.PublishedFileId.AsUInt64.ToString();
                 if (id == "0" || mod.PublishedFileId == PublishedFileId.invalid)
                     id = "";
-                rows.Add(mod.LoadOrder, mod.IsIncludedPending, mod.IsEnabledPending, id, mod.DisplayText);
-                //Log.Debug("row added: " + mod.ToString());
+                rows.Add(
+                    mod.LoadOrder, 
+                    mod.IsIncludedPending, 
+                    mod.IsEnabledPending, 
+                    id, 
+                    mod.ModInfo.Author,
+                    mod.DisplayText);
             }
             ResumeLayout();
         }
