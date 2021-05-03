@@ -1,5 +1,6 @@
 ﻿namespace LoadOrderTool.UI {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
@@ -67,5 +68,14 @@
                 throw ex;
             }
         }
+
+        public static IEnumerable<Type> GetAll<Type>(this Control control) where Type : Control {
+            var controls = control.Controls.Cast<Control>();
+            return controls
+                .SelectMany(ctrl => GetAll<Type>(ctrl))
+                .Concat(controls)
+                .OfType<Type>();
+        }
+
     }
 }

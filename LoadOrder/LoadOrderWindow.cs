@@ -56,6 +56,10 @@ namespace LoadOrderTool {
                 Instance = this;
                 ConfigWrapper.Suspend();
                 InitializeComponent();
+                if (LoadOrderToolSettings.Instace.FormWidth > 0)
+                    Width = LoadOrderToolSettings.Instace.FormWidth;
+                if (LoadOrderToolSettings.Instace.FormHeight > 0)
+                    Height = LoadOrderToolSettings.Instace.FormHeight;
 
                 InitializeModTab();
                 InitializeAssetTab();
@@ -104,6 +108,13 @@ namespace LoadOrderTool {
                     GameSettings.instance.Terminate();
                 }
             }
+        }
+
+        protected override void OnSizeChanged(EventArgs e) {
+            base.OnSizeChanged(e);
+            if (!Visible) return; // skip during initialization.
+            LoadOrderToolSettings.Instace.FormWidth = Width;
+            LoadOrderToolSettings.Instace.FormHeight = Height;
         }
 
         #region MenuBar

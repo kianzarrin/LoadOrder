@@ -91,7 +91,7 @@
             this.cName.Name = "cName";
             this.cName.ReadOnly = true;
             // 
-            // flowLayoutPanel1
+            // flowLayoutPanelTopLevel
             // 
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
@@ -103,7 +103,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 578);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Name = "flowLayoutPanelTopLevel";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(712, 33);
             this.flowLayoutPanel1.TabIndex = 2;
             // 

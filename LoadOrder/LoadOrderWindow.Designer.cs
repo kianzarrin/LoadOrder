@@ -29,8 +29,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
             this.dataGridMods = new LoadOrderTool.UI.ModDataGrid();
@@ -60,6 +60,7 @@
             this.ComboBoxAssetTags = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.TextFilterAsset = new System.Windows.Forms.TextBox();
+            this.LaunchTab = new System.Windows.Forms.TabPage();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiReload = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,6 +79,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAssets)).BeginInit();
             this.AssetsActionPanel.SuspendLayout();
             this.tableLayoutPanelAssetFilters.SuspendLayout();
+            this.LaunchTab.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -85,6 +87,7 @@
             // 
             this.TabContainer.Controls.Add(this.ModsTab);
             this.TabContainer.Controls.Add(this.AssetsTab);
+            this.TabContainer.Controls.Add(this.LaunchTab);
             this.TabContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabContainer.Location = new System.Drawing.Point(0, 25);
             this.TabContainer.Name = "TabContainer";
@@ -426,6 +429,16 @@
             this.TextFilterAsset.Size = new System.Drawing.Size(423, 25);
             this.TextFilterAsset.TabIndex = 4;
             // 
+            // LaunchTab
+            // 
+            this.LaunchTab.BackColor = System.Drawing.Color.Transparent;
+            this.LaunchTab.Location = new System.Drawing.Point(4, 26);
+            this.LaunchTab.Name = "LaunchTab";
+            this.LaunchTab.Padding = new System.Windows.Forms.Padding(3);
+            this.LaunchTab.Size = new System.Drawing.Size(948, 570);
+            this.LaunchTab.TabIndex = 2;
+            this.LaunchTab.Text = "Launch";
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -519,6 +532,7 @@
             this.AssetsActionPanel.PerformLayout();
             this.tableLayoutPanelAssetFilters.ResumeLayout(false);
             this.tableLayoutPanelAssetFilters.PerformLayout();
+            this.LaunchTab.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -565,5 +579,6 @@
         private ToolStripMenuItem tsmiExport;
         private ToolStripMenuItem tsmiImport;
         public ToolStripMenuItem tsmiAutoSave;
+        private TabPage LaunchTab;
     }
 }

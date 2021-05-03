@@ -3,9 +3,14 @@
     using System.Xml.Serialization;
     using CO.IO;
     using System.Linq;
+    using System.Windows.Forms;
+    using System.Drawing;
 
     public class LoadOrderToolSettings {
         public bool AutoSave;
+        public int FormWidth = -1;
+        public int FormHeight = -1;
+
 
         const string FILE_NAME = "LoadOrderToolSettings.xml";
         static string PATH => Path.Combine(DataLocation.localApplicationData, FILE_NAME);
