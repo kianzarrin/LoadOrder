@@ -106,6 +106,7 @@
 
         //read
         protected override void OnCellValueNeeded(DataGridViewCellValueEventArgs e) {
+            base.OnCellValueNeeded(e);
             try {
                 if (AssetList == null) return;
                 if (e.RowIndex >= AssetList.Filtered.Count) return;
@@ -133,6 +134,7 @@
 
         // tooltip
         protected override void OnCellToolTipTextNeeded(DataGridViewCellToolTipTextNeededEventArgs e) {
+            base.OnCellToolTipTextNeeded(e);
             try {
                 if (AssetList == null) return;
                 if (e.RowIndex < 0 || e.RowIndex >= AssetList.Filtered.Count) return;
@@ -149,6 +151,7 @@
 
         // click link/button
         protected override void OnCellContentClick(DataGridViewCellEventArgs e) {
+            base.OnCellContentClick(e);
             try {
                 if (AssetList == null) return;
                 if (e.RowIndex < 0 || e.RowIndex >= AssetList.Filtered.Count) return;
@@ -167,6 +170,7 @@
 
         //write
         protected override void OnCellValuePushed(DataGridViewCellValueEventArgs e) {
+            base.OnCellValuePushed(e);
             if (AssetList == null) return;
             var assetInfo = AssetList.Filtered[e.RowIndex];
             if (e.ColumnIndex == cIncluded.Index) {
@@ -188,6 +192,7 @@
 
         // sort
         protected override void OnColumnHeaderMouseClick(DataGridViewCellMouseEventArgs e) {
+            base.OnColumnHeaderMouseClick(e);
             try {
                 if (AssetList == null) return;
                 if (e.ColumnIndex == prevSortCol_) {

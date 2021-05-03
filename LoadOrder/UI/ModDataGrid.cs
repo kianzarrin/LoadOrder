@@ -114,7 +114,7 @@
 
         // write
         protected override void OnCellValueChanged(DataGridViewCellEventArgs e) {
-            base.OnCellContentClick(e);
+            base.OnCellValueChanged(e);
             try {
                 if (ModList == null)return;
                 var plugin = ModList.Filtered[e.RowIndex];
@@ -168,7 +168,9 @@
 
         // click link/button
         protected override void OnCellContentClick(DataGridViewCellEventArgs e) {
+            base.OnCellContentClick(e);
             try {
+                Log.Info("OnCellContentClick");
                 if (ModList == null) return;
                 if (e.RowIndex < 0 || e.RowIndex >= ModList.Filtered.Count) return;
                 var cell = Rows[e.RowIndex].Cells[e.ColumnIndex];
