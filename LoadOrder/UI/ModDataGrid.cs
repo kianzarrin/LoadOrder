@@ -16,7 +16,7 @@
     using System.Threading.Tasks;
     using LoadOrderTool.UI;
 
-    [Designer(typeof(ControlDesigner))]
+    //[Designer(typeof(ControlDesigner))]
     public class ModDataGrid : DataGridView {
         public ModList ModList;
 
@@ -25,14 +25,14 @@
         public DataGridViewCheckBoxColumn CEnabled;
         public DataGridViewLinkColumn CModID;
         public DataGridViewTextBoxColumn CAuthor;
-        public DataGridViewLinkColumn CDescription;
+        public DataGridViewTextBoxColumn CDescription;
 
         public ModDataGrid() {
             CLoadIndex = new DataGridViewTextBoxColumn();
             CIsIncluded = new DataGridViewCheckBoxColumn();
             CEnabled = new DataGridViewCheckBoxColumn();
             CModID = new DataGridViewLinkColumn();
-            CDescription = new DataGridViewLinkColumn();
+            CDescription = new DataGridViewTextBoxColumn();
             CAuthor = new DataGridViewTextBoxColumn();
 
             Columns.AddRange(new DataGridViewColumn[] {
@@ -102,7 +102,6 @@
             CDescription.Name = "CDescription";
             CDescription.ReadOnly = true;
             CDescription.SortMode = DataGridViewColumnSortMode.NotSortable;
-            CDescription.TrackVisitedState = false;
         }
 
         // override data error
