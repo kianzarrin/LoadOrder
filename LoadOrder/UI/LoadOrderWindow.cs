@@ -70,6 +70,7 @@ namespace LoadOrderTool.UI {
                 tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
                 tsmiAutoSave.Click += TsmiAutoSave_Click;
 
+                tsmiResetSettings.Click += TsmiResetSettings_Click;
                 tsmiReload.Click += ReloadAll_Click;
                 tsmiSave.Click += Save_Click;
                 tsmiExport.Click += Export_Click;
@@ -80,12 +81,19 @@ namespace LoadOrderTool.UI {
             }
         }
 
+        private void TsmiResetSettings_Click(object sender, EventArgs e) {
+            ConfigWrapper.ResetAllConfig();
+            ReloadAll();
+            launchControl.LoadSettings();
+            ConfigWrapper.instance.SaveConfig();
+        }
+
         protected override void OnResizeEnd(EventArgs e) {
             base.OnResizeEnd(e);
             SaveSize();
         }
 
-        void LoadSize() {
+        public void LoadSize() {
             if (settings_.FormWidth > 0)
                 Width = settings_.FormWidth;
             if (settings_.FormHeight > 0)

@@ -33,7 +33,7 @@
 
         }
 
-        void LoadSettings() {
+        public void LoadSettings() {
             checkBoxNoAssets.Checked = settings_.NoAssets;
             checkBoxNoMods.Checked = settings_.NoMods;
             checkBoxNoWorkshop.Checked = settings_.NoWorkshop;

@@ -7,9 +7,10 @@
     using System;
     using System.Threading;
     using LoadOrderTool.UI;
+    using LoadOrderShared;
 
     public class ConfigWrapper : SingletonLite<ConfigWrapper> {
-        public LoadOrderShared.LoadOrderConfig Config;
+        public LoadOrderConfig Config;
 
         bool dirty_;
         public bool Dirty {
@@ -54,6 +55,30 @@
         public bool Paused { get; set; } = false;
         public void Suspend() => Paused = true;
         public void Resume() => Paused = false;
+
+        public void ResetAllConfig() {
+            AutoSave = false;
+
+            Config = new LoadOrderConfig {
+                WorkShopContentPath = DataLocation.WorkshopContentPath,
+                GamePath = DataLocation.GamePath,
+            };
+            Config.Serialize(DataLocation.localApplicationData);
+
+            foreach (var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
+                try {
+                    pluginInfo.IsIncluded = true;
+                } catch (Exception ex) {
+                    Log.Exception(ex, pluginInfo.ToString(), false);
+                }
+            }
+
+            LoadOrderToolSettings.Reset();
+            LoadOrderToolSettings.Instace.Serialize();
+            
+            Dirty = false;
+            AutoSave = LoadOrderToolSettings.Instace.AutoSave;
+        }
 
         public void SaveConfig() {
             if (!AutoSave) {

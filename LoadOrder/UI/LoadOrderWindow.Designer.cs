@@ -61,6 +61,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.TextFilterAsset = new System.Windows.Forms.TextBox();
             this.LaunchTab = new System.Windows.Forms.TabPage();
+            this.launchControl = new LoadOrderTool.UI.LaunchControl();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiReload = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,7 +71,7 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiExport = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiImport = new System.Windows.Forms.ToolStripMenuItem();
-            this.launchControl1 = new LoadOrderTool.UI.LaunchControl();
+            this.tsmiResetSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMods)).BeginInit();
@@ -456,13 +457,21 @@
             // LaunchTab
             // 
             this.LaunchTab.BackColor = System.Drawing.Color.Transparent;
-            this.LaunchTab.Controls.Add(this.launchControl1);
+            this.LaunchTab.Controls.Add(this.launchControl);
             this.LaunchTab.Location = new System.Drawing.Point(4, 26);
             this.LaunchTab.Name = "LaunchTab";
             this.LaunchTab.Padding = new System.Windows.Forms.Padding(3);
             this.LaunchTab.Size = new System.Drawing.Size(948, 570);
             this.LaunchTab.TabIndex = 2;
             this.LaunchTab.Text = "Launch";
+            // 
+            // launchControl
+            // 
+            this.launchControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.launchControl.Location = new System.Drawing.Point(3, 3);
+            this.launchControl.Name = "launchControl";
+            this.launchControl.Size = new System.Drawing.Size(942, 564);
+            this.launchControl.TabIndex = 0;
             // 
             // menuStrip1
             // 
@@ -477,6 +486,7 @@
             // tsmiFile
             // 
             this.tsmiFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiResetSettings,
             this.tsmiReload,
             this.toolStripSeparator1,
             this.tsmiSave,
@@ -491,52 +501,50 @@
             // tsmiReload
             // 
             this.tsmiReload.Name = "tsmiReload";
-            this.tsmiReload.Size = new System.Drawing.Size(147, 22);
-            this.tsmiReload.Text = "&Reload";
+            this.tsmiReload.Size = new System.Drawing.Size(176, 22);
+            this.tsmiReload.Text = "&Reload Items";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(144, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
             // 
             // tsmiSave
             // 
             this.tsmiSave.Name = "tsmiSave";
             this.tsmiSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.tsmiSave.Size = new System.Drawing.Size(147, 22);
+            this.tsmiSave.Size = new System.Drawing.Size(176, 22);
             this.tsmiSave.Text = "&Save";
             // 
             // tsmiAutoSave
             // 
             this.tsmiAutoSave.CheckOnClick = true;
             this.tsmiAutoSave.Name = "tsmiAutoSave";
-            this.tsmiAutoSave.Size = new System.Drawing.Size(147, 22);
+            this.tsmiAutoSave.Size = new System.Drawing.Size(176, 22);
             this.tsmiAutoSave.Text = "&Auto-save";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(144, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(173, 6);
             // 
             // tsmiExport
             // 
             this.tsmiExport.Name = "tsmiExport";
-            this.tsmiExport.Size = new System.Drawing.Size(147, 22);
+            this.tsmiExport.Size = new System.Drawing.Size(176, 22);
             this.tsmiExport.Text = "&Export ...";
             // 
             // tsmiImport
             // 
             this.tsmiImport.Name = "tsmiImport";
-            this.tsmiImport.Size = new System.Drawing.Size(147, 22);
+            this.tsmiImport.Size = new System.Drawing.Size(176, 22);
             this.tsmiImport.Text = "&Import ...";
             // 
-            // launchControl1
+            // tsmiResetSettings
             // 
-            this.launchControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.launchControl1.Location = new System.Drawing.Point(3, 3);
-            this.launchControl1.Name = "launchControl1";
-            this.launchControl1.Size = new System.Drawing.Size(942, 564);
-            this.launchControl1.TabIndex = 0;
+            this.tsmiResetSettings.Name = "tsmiResetSettings";
+            this.tsmiResetSettings.Size = new System.Drawing.Size(176, 22);
+            this.tsmiResetSettings.Text = "Reset &Settings";
             // 
             // LoadOrderWindow
             // 
@@ -613,6 +621,7 @@
         private ToolStripMenuItem tsmiImport;
         public ToolStripMenuItem tsmiAutoSave;
         private TabPage LaunchTab;
-        private UI.LaunchControl launchControl1;
+        private UI.LaunchControl launchControl;
+        private ToolStripMenuItem tsmiResetSettings;
     }
 }

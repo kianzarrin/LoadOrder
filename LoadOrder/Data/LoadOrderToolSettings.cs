@@ -27,6 +27,8 @@
         public static LoadOrderToolSettings Instace =>
             instance_ ??= Deserialize() ?? new LoadOrderToolSettings();
 
+        public static void Reset() => instance_ = new LoadOrderToolSettings();
+
         public void Serialize() {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderToolSettings));
             using (FileStream fs = new FileStream(PATH, FileMode.Create, FileAccess.Write)) {
