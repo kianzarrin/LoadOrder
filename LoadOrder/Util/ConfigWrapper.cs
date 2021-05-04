@@ -6,6 +6,7 @@
     using LoadOrderTool;
     using System;
     using System.Threading;
+    using LoadOrderTool.UI;
 
     public class ConfigWrapper : SingletonLite<ConfigWrapper> {
         public LoadOrderShared.LoadOrderConfig Config;

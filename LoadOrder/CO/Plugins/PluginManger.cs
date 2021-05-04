@@ -16,6 +16,7 @@ namespace CO.Plugins {
     using System.Threading;
     using LoadOrderShared;
     using LoadOrderTool.Data;
+    using LoadOrderTool.UI;
 
     public class PluginManager : SingletonLite<PluginManager> {
         public static ConfigWrapper ConfigWrapper = ConfigWrapper.instance;

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using LoadOrderTool.Data;
 using LoadOrderTool.UI;
 
-namespace LoadOrderTool {
+namespace LoadOrderTool.UI {
     public partial class LoadOrderWindow : Form {
         enum EnabledFilter {
             [Text("<Enabled/Disabled>")]

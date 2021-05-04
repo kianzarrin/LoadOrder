@@ -27,7 +27,7 @@ namespace LoadOrderTool {
                 AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
                 Application.ThreadException += UnhandledThreadExceptionHandler;
 
-                Application.Run(new LoadOrderWindow());
+                Application.Run(new UI.LoadOrderWindow());
             } catch (Exception ex) {
                 Log.Exception(ex);
             }

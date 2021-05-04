@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool
+﻿namespace LoadOrderTool.UI
 {
     using System.Windows.Forms;
     partial class LoadOrderWindow
