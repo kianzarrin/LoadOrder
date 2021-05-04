@@ -3,12 +3,15 @@ using LoadOrderShared;
 using LoadOrderTool;
 using Microsoft.Win32;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
+using LoadOrderShared;
 
 namespace CO.IO {
     public static class DataLocation {
@@ -43,9 +46,12 @@ namespace CO.IO {
         {
             try {
                 var sw = System.Diagnostics.Stopwatch.StartNew();
-                var data = LoadOrderShared.LoadOrderConfig.Deserialize(localApplicationData);
+                var data = LoadOrderConfig.Deserialize(localApplicationData);
                 Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
-                if (Directory.Exists(data?.GamePath)) { 
+
+                if (Directory.Exists(GamePath)) {
+                    // good :)
+                } else if (Directory.Exists(data?.GamePath)) { 
                     GamePath = data.GamePath;
                 } else { 
                     using (RegistryKey key = Registry.LocalMachine.OpenSubKey(installLocationSubKey_)) {
@@ -53,7 +59,10 @@ namespace CO.IO {
                         GamePath = RealPath(GamePath);
                     }
                 }
-                if (Directory.Exists(data?.WorkShopContentPath)) {
+
+                if (Directory.Exists(WorkshopContentPath)) {
+                    // good :)
+                } else if (Directory.Exists(data?.WorkShopContentPath)) {
                     WorkshopContentPath = data.WorkShopContentPath;
                 } else {
                     using (RegistryKey key = Registry.CurrentUser.OpenSubKey(SteamPathSubKey_)) {
@@ -62,10 +71,32 @@ namespace CO.IO {
                         WorkshopContentPath = RealPath(WorkshopContentPath);
                     }
                 }
+
+                bool bGame = Directory.Exists(GamePath);
+                bool bSteam = Directory.Exists(WorkshopContentPath);
+                if (bGame && bSteam) return;
+
+                using (var spd = new LoadOrderTool.UI.SelectPathsDialog()) {
+                    if (bGame) spd.GamePath = GamePath;
+                    if (bSteam) spd.WorkshopContentPath = WorkshopContentPath;
+                    if (spd.ShowDialog() == DialogResult.OK) {
+                        GamePath = spd.GamePath;
+                        WorkshopContentPath = spd.WorkshopContentPath;
+
+                        data ??= new LoadOrderConfig();
+                        data.GamePath = GamePath;
+                        data.WorkShopContentPath = WorkshopContentPath;
+                        data.Serialize(localApplicationData);
+                    } else {
+                        Process.GetCurrentProcess().Kill();
+                    }
+                }
+
+
                 if (!Directory.Exists(GamePath))
-                    throw new Exception("failed to get GamePath from registry: " + GamePath);
+                    throw new Exception("failed to get GamePath : " + GamePath);
                 if (!Directory.Exists(WorkshopContentPath))
-                    throw new Exception("failed to get SteamContentPath from registry: " + WorkshopContentPath);
+                    throw new Exception("failed to get SteamContentPath : " + WorkshopContentPath);
             } catch (Exception ex) {
                 Log.Exception(ex);
             }

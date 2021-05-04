@@ -1,2 +1,3 @@
+- auto launch cs to cache paths.
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 - tool-bar/status bar
