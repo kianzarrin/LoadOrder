@@ -5,38 +5,100 @@
     using CO.IO;
     using System.IO;
     using System.Diagnostics;
+    using LoadOrderTool.Data;
 
     public partial class LaunchControl : UserControl {
+        public LoadOrderToolSettings settings_ => LoadOrderToolSettings.Instace;
+
         public LaunchControl() {
             InitializeComponent();
+
+            LoadSettings();
+            UpdateCommand();
+
             foreach (var c in this.GetAll<TextBox>())
-                c.TextChanged += UpdateCommand;
+                c.TextChanged += Update;
 
             foreach (var c in this.GetAll<CheckBox>())
-                c.CheckedChanged += UpdateCommand;
+                c.CheckedChanged += Update;
 
             foreach (var c in this.GetAll<RadioButton>())
-                c.CheckedChanged += UpdateCommand;
+                c.CheckedChanged += Update;
 
             checkBoxLHT.SetTooltip("Traffic drives on left.");
             textBoxSavePath.SetTooltip("leave empty to continue last save. enter save name or its full path to load it.");
             textBoxMapPath.SetTooltip("leave empty to load the first map. enter map name or its full path to load it.");
             checkBoxPoke.SetTooltip("depth-first: poke mods to find potential type resultion problems.");
             checkBoxPhased.SetTooltip("breadth-frist: load mods in phases to avoid potential type resultion problems.");
-            
-            UpdateCommand(null, null);
+
         }
 
-        private void flowLayoutPanelTopLevel_SizeChanged(object sender, EventArgs e) =>
-            AutoSizeLaunchTable();
+        void LoadSettings() {
+              checkBoxNoAssets.Checked = settings_.NoAssets;
+            checkBoxNoMods.Checked = settings_.NoMods;
+            checkBoxNoWorkshop.Checked = settings_.NoWorkshop;
+            
+            checkBoxLHT.Checked = settings_.LHT;
 
-        private void flowLayoutPanelTopLevel_VisibleChanged(object sender, EventArgs e) =>
-            AutoSizeLaunchTable();
+            switch (settings_.AutoLoad) {
+                case 0:
+                    radioButtonMainMenu.Checked = true;
+                    break;
+                case 1:
+                    radioButtonAssetEditor.Checked = true;
+                    break;
+                case 2:
+                    radioButtonLoadSave.Checked = true;
+                    break;
+                case 3:
+                    radioButtonNewGame.Checked = true;
+                    break;
+                default:
+                    radioButtonMainMenu.Checked = true;
+                    Log.Error("Unexpected settings_.AutoLoad=" + settings_.AutoLoad);
+                    break;
+            }
 
-        private void AutoSizeLaunchTable() =>
-            tableLayoutPanelLunchMode.Width = flowLayoutPanelTopLevel.Width;
+            textBoxSavePath.Text = settings_.SavedGamePath;
+            textBoxMapPath.Text = settings_.MapPath;
 
-        private void UpdateCommand(object sender, EventArgs e) {
+            checkBoxPhased.Checked = settings_.Phased;
+            checkBoxPoke.Checked = settings_.Poke;
+        }
+
+        void SaveSettings() {
+            settings_.NoAssets = checkBoxNoAssets.Checked ;
+            settings_.NoMods = checkBoxNoMods.Checked;
+            settings_.NoWorkshop = checkBoxNoWorkshop.Checked;
+
+            settings_.LHT = checkBoxLHT.Checked;
+
+            if (radioButtonMainMenu.Checked)
+                settings_.AutoLoad = 0;
+            else if (radioButtonAssetEditor.Checked)
+                settings_.AutoLoad = 1;
+            else if (radioButtonLoadSave.Checked)
+                settings_.AutoLoad = 2;
+            else if (radioButtonNewGame.Checked)
+                settings_.AutoLoad = 3;
+            else
+                settings_.AutoLoad = 0;
+
+            settings_.SavedGamePath = textBoxSavePath.Text;
+            settings_.MapPath = textBoxMapPath.Text;
+
+            settings_.Phased = checkBoxPhased.Checked;
+            settings_.Poke = checkBoxPoke.Checked;
+
+            settings_.Serialize();
+        }
+
+        private void Update(object sender, EventArgs e) {
+            UpdateCommand();
+            SaveSettings();
+        }
+
+        private void UpdateCommand() {
             labelCommand.Text = "Cities.exe " + string.Join(" ", GetCommandArgs());
         }
 

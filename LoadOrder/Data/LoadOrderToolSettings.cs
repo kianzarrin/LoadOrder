@@ -7,9 +7,17 @@
     using System.Drawing;
 
     public class LoadOrderToolSettings {
-        public bool AutoSave;
         public int FormWidth = -1;
         public int FormHeight = -1;
+
+        public bool AutoSave;
+        public string SavedGamePath, MapPath;
+
+        public bool NoAssets, NoMods, NoWorkshop;
+        public bool LHT;
+        public int AutoLoad = 0;
+        public bool Phased, Poke;
+
 
 
         const string FILE_NAME = "LoadOrderToolSettings.xml";
@@ -27,13 +35,17 @@
         }
 
         public static LoadOrderToolSettings Deserialize() {
+            Log.Info("LoadOrderToolSettings Deserializing ...");
             try {
                 XmlSerializer ser = new XmlSerializer(typeof(LoadOrderToolSettings));
                 using (FileStream fs = new FileStream(PATH, FileMode.Open, FileAccess.Read)) {
                     return ser.Deserialize(fs) as LoadOrderToolSettings;
                 }
             } catch {
+                Log.Warning("Deserialize exception catched");
                 return null;
+            } finally {
+
             }
         }
     }

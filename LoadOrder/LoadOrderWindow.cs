@@ -34,6 +34,7 @@ namespace LoadOrderTool {
         const string NO_TAGS = "<Tags>";
 
         public static LoadOrderWindow Instance;
+        public LoadOrderToolSettings settings_ => LoadOrderToolSettings.Instace;
 
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
 
@@ -56,10 +57,7 @@ namespace LoadOrderTool {
                 Instance = this;
                 ConfigWrapper.Suspend();
                 InitializeComponent();
-                if (LoadOrderToolSettings.Instace.FormWidth > 0)
-                    Width = LoadOrderToolSettings.Instace.FormWidth;
-                if (LoadOrderToolSettings.Instace.FormHeight > 0)
-                    Height = LoadOrderToolSettings.Instace.FormHeight;
+                LoadSize();
 
                 InitializeModTab();
                 InitializeAssetTab();
@@ -76,9 +74,29 @@ namespace LoadOrderTool {
                 tsmiSave.Click += Save_Click;
                 tsmiExport.Click += Export_Click;
                 tsmiImport.Click += Import_Click;
+
             } catch (Exception ex){
                 ex.Log();
             }
+        }
+
+        protected override void OnResizeEnd(EventArgs e) {
+            base.OnResizeEnd(e);
+            SaveSize();
+        }
+
+        void LoadSize() {
+            if (settings_.FormWidth > 0)
+                Width = settings_.FormWidth;
+            if (settings_.FormHeight > 0)
+                Height = settings_.FormHeight;
+        }
+
+        void SaveSize() {
+            settings_.FormWidth = Width;
+            settings_.FormHeight = Height;
+
+            settings_.Serialize();
         }
 
         private void LoadOrderWindow_FormClosing(object sender, FormClosingEventArgs e) {

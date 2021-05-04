@@ -65,8 +65,6 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelTopLevel.Size = new System.Drawing.Size(599, 339);
             this.flowLayoutPanelTopLevel.TabIndex = 0;
             this.flowLayoutPanelTopLevel.WrapContents = false;
-            this.flowLayoutPanelTopLevel.SizeChanged += new System.EventHandler(this.flowLayoutPanelTopLevel_SizeChanged);
-            this.flowLayoutPanelTopLevel.VisibleChanged += new System.EventHandler(this.flowLayoutPanelTopLevel_VisibleChanged);
             // 
             // flowLayoutPanelExclusions
             // 
