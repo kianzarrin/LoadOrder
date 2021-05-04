@@ -15,11 +15,8 @@
             foreach (var c in this.GetAll<CheckBox>())
                 c.CheckedChanged += UpdateCommand;
 
-            foreach (var c in this.GetAll<Button>()) {
-                c.MouseEnter += UpdateCommand;
-                c.MouseLeave += UpdateCommand;
-                c.Click += UpdateCommand;
-            }
+            foreach (var c in this.GetAll<RadioButton>())
+                c.CheckedChanged += UpdateCommand;
 
             checkBoxLHT.SetTooltip("Traffic drives on left.");
             textBoxSavePath.SetTooltip("leave empty to continue last save. enter save name or its full path to load it.");
@@ -59,15 +56,17 @@
             if (checkBoxPoke.Checked)
                 args.Add("-poke");
 
-            if (launchButton == buttonLoadAsset) {
+            if (radioButtonMainMenu.Checked) {
+                ;
+            } else if (radioButtonAssetEditor.Checked) {
                 args.Add("-editor");
-            } else if (launchButton == buttonNewGame) {
+            } else if (radioButtonNewGame.Checked) {
                 string path = textBoxMapPath.Text;
                 if (string.IsNullOrEmpty(path))
                     args.Add("-newGame");
                 else
                     args.Add("--newGame=" + path);
-            } else if (launchButton == buttonLoadSave) {
+            } else if (radioButtonLoadSave.Checked) {
                 string path = textBoxSavePath.Text;
                 if (string.IsNullOrEmpty(path))
                     args.Add("-continuelastsave");
