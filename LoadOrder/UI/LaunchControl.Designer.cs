@@ -211,7 +211,7 @@ namespace LoadOrderTool.UI {
             this.radioButtonNewGame.Size = new System.Drawing.Size(96, 21);
             this.radioButtonNewGame.TabIndex = 5;
             this.radioButtonNewGame.TabStop = true;
-            this.radioButtonNewGame.Text = "Asset Editor";
+            this.radioButtonNewGame.Text = "New Game";
             this.radioButtonNewGame.UseVisualStyleBackColor = true;
             // 
             // textBoxMapPath
