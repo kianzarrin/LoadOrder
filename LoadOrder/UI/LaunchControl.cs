@@ -3,12 +3,12 @@
     using System.Collections.Generic;
     using System.Windows.Forms;
     using CO.IO;
-    using System.IO;
     using System.Diagnostics;
-    using LoadOrderTool.Data;
+    using LoadOrderTool.Util;
 
     public partial class LaunchControl : UserControl {
-        public LoadOrderToolSettings settings_ => LoadOrderToolSettings.Instace;
+        LoadOrderToolSettings settings_ => LoadOrderToolSettings.Instace;
+        static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
 
         public LaunchControl() {
             InitializeComponent();
@@ -34,10 +34,10 @@
         }
 
         void LoadSettings() {
-              checkBoxNoAssets.Checked = settings_.NoAssets;
+            checkBoxNoAssets.Checked = settings_.NoAssets;
             checkBoxNoMods.Checked = settings_.NoMods;
             checkBoxNoWorkshop.Checked = settings_.NoWorkshop;
-            
+
             checkBoxLHT.Checked = settings_.LHT;
 
             switch (settings_.AutoLoad) {
@@ -67,7 +67,7 @@
         }
 
         void SaveSettings() {
-            settings_.NoAssets = checkBoxNoAssets.Checked ;
+            settings_.NoAssets = checkBoxNoAssets.Checked;
             settings_.NoMods = checkBoxNoMods.Checked;
             settings_.NoWorkshop = checkBoxNoWorkshop.Checked;
 
@@ -175,6 +175,27 @@
         }
 
         private void Launch() {
+            if (!ConfigWrapper.AutoSave && ConfigWrapper.Dirty) {
+                var result = MessageBox.Show(
+                    caption: "Unsaved changes",
+                    text:
+                    "There are changes that are not saved to to game and will not take effect. " +
+                    "Save changes to game before launcing it?",
+                    buttons: MessageBoxButtons.YesNoCancel);
+                switch (result) {
+                    case DialogResult.Cancel:
+                        return;
+                    case DialogResult.Yes:
+                        ConfigWrapper.SaveConfig();
+                        CO.GameSettings.SaveAll();
+                        break;
+                    case DialogResult.No:
+                        break;
+                    default:
+                        Log.Exception(new Exception("FormClosing: Unknown choice" + result));
+                        break;
+                }
+            }
             var args = GetCommandArgs();
             Execute(DataLocation.GamePath, "Cities.exe", string.Join(" ", args));
         }
@@ -196,11 +217,11 @@
                     $"\tArguments={args}");
                 Process process = new Process { StartInfo = startInfo };
                 process.Start();
-                process.OutputDataReceived += (_,e)=> Log.Info(e.Data);
+                process.OutputDataReceived += (_, e) => Log.Info(e.Data);
                 process.ErrorDataReceived += (_, e) => Log.Warning(e.Data);
                 process.Exited += (_, e) => Log.Info("process exited with code " + process.ExitCode);
                 return process;
-            }catch(Exception ex) {
+            } catch (Exception ex) {
                 Log.Exception(ex);
                 return null;
             }

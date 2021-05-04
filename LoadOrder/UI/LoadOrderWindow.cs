@@ -100,8 +100,7 @@ namespace LoadOrderTool.UI {
         }
 
         private void LoadOrderWindow_FormClosing(object sender, FormClosingEventArgs e) {
-            var configWrapper = ConfigWrapper;
-            if (!configWrapper.AutoSave && configWrapper.Dirty) {
+            if (!ConfigWrapper.AutoSave && ConfigWrapper.Dirty) {
                 var result = MessageBox.Show(
                     caption: "Unsaved changes",
                     text:
@@ -113,7 +112,7 @@ namespace LoadOrderTool.UI {
                         e.Cancel = true;
                         return;
                     case DialogResult.Yes:
-                        configWrapper.SaveConfig();
+                        ConfigWrapper.SaveConfig();
                         break;
                     case DialogResult.No:
                         break;
@@ -121,11 +120,10 @@ namespace LoadOrderTool.UI {
                         Log.Exception(new Exception("FormClosing: Unknown choice"));
                         break;
                 }
-                if (!e.Cancel) {
-                    ConfigWrapper.Terminate();
-                    GameSettings.instance.Terminate();
-                }
             }
+
+            ConfigWrapper.Terminate();
+            GameSettings.instance.Terminate();
         }
 
         protected override void OnSizeChanged(EventArgs e) {

@@ -2,4 +2,3 @@
 - reset all config files.
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 - tool-bar/status bar
-- ask to save before launching game.
