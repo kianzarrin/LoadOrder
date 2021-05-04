@@ -37,10 +37,10 @@
             tableLayoutPanelLunchMode.Width = flowLayoutPanelTopLevel.Width;
 
         private void UpdateCommand(object sender, EventArgs e) {
-            labelCommand.Text = "Cities.exe " + string.Join(" ", GetCommandArgs(sender as Button));
+            labelCommand.Text = "Cities.exe " + string.Join(" ", GetCommandArgs());
         }
 
-        private string[] GetCommandArgs(Button launchButton) {
+        private string[] GetCommandArgs() {
             List<string> args = new List<string>();
 
             if (checkBoxNoWorkshop.Checked)
@@ -91,7 +91,7 @@
         }
         private static string OpenCRP(string InitialDirectory, string title) {
             using (var ofd = new OpenFileDialog()) {
-                ofd.Filter = "*.crp";
+                ofd.Filter = "crp file (*.crp)|*.crp";
                 ofd.Multiselect = false;
                 ofd.CheckPathExists = true;
                 ofd.AddExtension = true;
@@ -108,20 +108,12 @@
 
         }
 
-        private void buttonLoadSave_Click(object sender, EventArgs e) {
-            Lunch(sender);
+        private void buttonLaunch_Click(object sender, EventArgs e) {
+            Launch();
         }
 
-        private void buttonNewGame_Click(object sender, EventArgs e) {
-            Lunch(sender);
-        }
-
-        private void buttonLoadAsset_Click(object sender, EventArgs e) {
-            Lunch(sender);
-        }
-
-        private void Lunch(object sender) {
-            var args = GetCommandArgs(sender as Button);
+        private void Launch() {
+            var args = GetCommandArgs();
             Execute(DataLocation.GamePath, "Cities.exe", string.Join(" ", args));
         }
 
