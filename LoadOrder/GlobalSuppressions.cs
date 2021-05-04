@@ -7,3 +7,4 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Performance", "HAA0601:Value type to reference type conversion causing boxing allocation", Justification = "<Pending>", Scope = "member", Target = "~M:NodeController.GUI.HintBox.Start")]
 [assembly: SuppressMessage("Style", "IDE0003:Remove qualification", Justification = "<Pending>", Scope = "member", Target = "~M:NodeController.GUI.HintBox.Awake")]
+[assembly: SuppressMessage("Performance", "HAA0201:Implicit string concatenation allocation", Justification = "<Pending>", Scope = "member", Target = "~M:LoadOrderTool.UI.ModDataGrid.PopulateMods")]

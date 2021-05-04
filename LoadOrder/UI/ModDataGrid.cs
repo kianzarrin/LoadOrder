@@ -102,12 +102,12 @@
             CDescription.Name = "CDescription";
             CDescription.ReadOnly = true;
             CDescription.SortMode = DataGridViewColumnSortMode.NotSortable;
+
+            DataError += ModDataGrid_DataError;
         }
 
-        // override data error
-        protected override void OnDataError(bool displayErrorDialogIfNoHandler, DataGridViewDataErrorEventArgs e) {
-            base.OnDataError(displayErrorDialogIfNoHandler, e);
-            Log.Exception(e.Exception);
+        private void ModDataGrid_DataError(object sender, DataGridViewDataErrorEventArgs e) {
+            Log.Exception(e.Exception, $"at row:{e.RowIndex} col:{Columns[e.ColumnIndex]}");
             e.Cancel = true;
         }
 
@@ -208,6 +208,11 @@
             PopulateMods();
         }
 
+        public DataGridViewRow GetRow(PluginManager.PluginInfo pluginInfo) {
+            int rowIndex = ModList.Filtered.IndexOf(pluginInfo);
+            return Rows[rowIndex];
+        }
+
         public void PopulateMods() {
             SuspendLayout();
             var rows = Rows;
@@ -219,16 +224,29 @@
                 //     $"savedKey={savedKey} modPath={p.ModPath}");
             }
             foreach (var mod in ModList.Filtered) {
-                string id = mod.PublishedFileId.AsUInt64.ToString();
-                if (id == "0" || mod.PublishedFileId == PublishedFileId.invalid)
-                    id = "";
-                rows.Add(
-                    mod.LoadOrder, 
-                    mod.IsIncludedPending, 
-                    mod.IsEnabledPending, 
-                    id, 
-                    mod.ModInfo.Author,
-                    mod.DisplayText);
+                try {
+                    string id = mod.PublishedFileId.AsUInt64.ToString();
+                    if (id == "0" || mod.PublishedFileId == PublishedFileId.invalid)
+                        id = "";
+                    rows.Add(
+                        mod.LoadOrder,
+                        mod.IsIncludedPending,
+                        mod.IsEnabledPending,
+                        id,
+                        mod.ModInfo.Author ?? "",
+                        mod.DisplayText ?? "");
+                } catch(Exception ex) {
+                    Log.Exception(new Exception(
+                        $"failed to add mod to row: " +
+                        $"LoadOrder={mod.LoadOrder} " +
+                        $"IsIncludedPending={mod.IsIncludedPending} " +
+                        $"IsEnabledPending={mod.IsEnabledPending} " +
+                        $"id={mod.PublishedFileId} " +
+                        $"Author={mod.ModInfo.Author} " +
+                        $"DisplayText={mod.DisplayText}",
+                        innerException: ex
+                        ));
+                }
             }
             ResumeLayout();
         }

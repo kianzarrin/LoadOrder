@@ -146,7 +146,10 @@ namespace CO.Plugins {
                     string targetPath = Path.Combine(parentPath, targetDirname);
                     bool success = MoveToPath(targetPath);
                     if (!success) {
-                        LoadOrderWindow.Instance.dataGridMods.PopulateMods();
+                        // move failed. reverse value: 
+                        isIncludedPending_ = IsIncluded; 
+                        var modGrid = LoadOrderWindow.Instance.dataGridMods;
+                        modGrid.GetRow(this).Cells[modGrid.CIsIncluded.Index].Value = isIncludedPending_;
                     }
                 }
             }
@@ -168,10 +171,11 @@ namespace CO.Plugins {
                     }
                     m_Path = targetPath;
                 } catch (Exception ex) {
-                    if (userModImplementation.Name == "LoadOrderMod")
+                    //string assemblyName = userModImplementation.GetType().Assembly.GetName().Name;
+                    if ( dllName == "LoadOrderMod")
                         Log.Error("Cannot move Load Order because LoadOrderTool is in use");
                     else
-                        Log.Exception(ex);
+                        Log.Exception(ex, "dllName:" + dllName);
                     return false;
                 }
                 return true;
