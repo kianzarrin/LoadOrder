@@ -1,3 +1,10 @@
-- auto launch cs to cache paths.
+improve data-grid:
+	- copy to temp folder.
+	- propery display
+	- group items
+	- tool-bar
+	- status bar
+
+
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
-- tool-bar/status bar
+
