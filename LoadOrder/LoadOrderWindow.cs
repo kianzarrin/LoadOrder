@@ -271,8 +271,6 @@ namespace LoadOrderTool {
             return true;
         }
 
-
-
         private void ResetOrder_Click(object sender, EventArgs e) {
             foreach (var mod in dataGridMods.ModList)
                 mod.ResetLoadOrder();
