@@ -1,6 +1,7 @@
 ﻿namespace LoadOrderTool.UI {
     using System;
     using System.IO;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
 
     public partial class SelectPathsDialog : Form {
@@ -18,8 +19,7 @@
             OKButton.Click += OKButton_Click;
             ExitButton.Click += ExitButton_Click;
 
-            textBoxSteamPath.Text = GetSteamDir();
-            textBoxGamePath.Text = GetCitiesPath(textBoxSteamPath.Text);
+            textBoxSteamPath.Text = GetSteamPath(); // TextChanged will automatically assign cities path.
         }
 
         public string GamePath {
@@ -66,14 +66,18 @@
             }
         }
 
-        static string GetSteamDir() {
+
+        /// <param name="path">path to a file or directory inside Steam sub-directories.</param>
+        static string GetSteamPath(string path = null) {
             try {
-                string path = Environment.CurrentDirectory;
+                path ??= Environment.CurrentDirectory;
+                if (File.Exists(path))
+                    path = Path.GetDirectoryName(path);
                 for (int watchdog = 0; watchdog < 20 && Directory.Exists(path); ++watchdog) {
-                    path = Directory.GetParent(path).FullName;
                     string ret = Path.Combine(path, "Steam.exe");
                     if (File.Exists(ret))
                         return ret;
+                    path = Directory.GetParent(path)?.FullName;
                 }
             } catch (Exception ex) {
                 ex.Log(false);
@@ -81,6 +85,7 @@
             return "";
         }
 
+        /// <returns>path to steam.exe</returns>
         static string GetCitiesPath(string steamPath) {
             try {
                 if (File.Exists(steamPath)) {
@@ -145,7 +150,22 @@
             path.ToLower().EndsWith("steam.exe") && File.Exists(path);
 
         private void TextChanged(object sender, EventArgs e) {
+            Task.Run(() => TextChanged(sender));
+        }
+
+        async Task TextChanged(object sender) {
+            if(sender == textBoxGamePath && !IsSteamPath(textBoxSteamPath.Text)) {
+                string steam = GetSteamPath(textBoxGamePath.Text);
+                if (IsSteamPath(steam))
+                    textBoxSteamPath.Text = steam;
+            }
+            if (sender == textBoxSteamPath && !IsCitiesPath(textBoxGamePath.Text)) {
+                string cities = GetCitiesPath(textBoxSteamPath.Text);
+                if (IsCitiesPath(cities))
+                    textBoxGamePath.Text = cities;
+            }
             OKButton.Enabled = IsCitiesPath(textBoxGamePath.Text) && IsSteamPath(textBoxSteamPath.Text);
         }
+
     }
 }
