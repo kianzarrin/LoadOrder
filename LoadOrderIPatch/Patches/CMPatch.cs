@@ -29,8 +29,7 @@ namespace LoadOrderIPatch.Patches {
             workingPath_ = patcherWorkingPath;
 
             ConfigUtil.LocalApplicationPath = gamePaths.AppDataPath;
-            if (!poke || Config.SoftDLLDependancy) {
-                // disable when testing.
+            if (!poke && Config.SoftDLLDependancy) {
                 FindAssemblySoftPatch(assemblyDefinition);
             }
             
