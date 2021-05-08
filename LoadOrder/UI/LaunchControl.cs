@@ -30,7 +30,6 @@
             textBoxMapPath.SetTooltip("leave empty to load the first map. enter map name or its full path to load it.");
             checkBoxPoke.SetTooltip("depth-first: poke mods to find potential type resultion problems.");
             checkBoxPhased.SetTooltip("breadth-frist: load mods in phases to avoid potential type resultion problems.");
-
         }
 
         public void LoadSettings() {
@@ -102,6 +101,8 @@
             labelCommand.Text = "Cities.exe " + string.Join(" ", GetCommandArgs());
         }
 
+        private static string quote(string path) => '"' + path + '"';
+
         private string[] GetCommandArgs() {
             List<string> args = new List<string>();
 
@@ -127,13 +128,13 @@
                 if (string.IsNullOrEmpty(path))
                     args.Add("-newGame");
                 else
-                    args.Add("--newGame=" + path);
+                    args.Add("--newGame=" + quote(path));
             } else if (radioButtonLoadSave.Checked) {
                 string path = textBoxSavePath.Text;
                 if (string.IsNullOrEmpty(path))
                     args.Add("-continuelastsave");
                 else
-                    args.Add("--loadSave=" + path);
+                    args.Add("--loadSave=" + quote(path));
             }
 
             return args.ToArray();

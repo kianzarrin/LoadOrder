@@ -94,7 +94,8 @@ namespace LoadOrderMod.Util {
             LogCalled();
             var savedGame = IsCrp(fileName)
                 ? GetAssetByPath(fileName)
-                : GetSaveByName(fileName);
+                : GetSaveByName(fileName) ??
+                throw new Exception(fileName + "does not exists");
             LoadSavedGame2(savedGame);
         }
         public void LoadSavedGame2(Package.Asset savedGame) {
