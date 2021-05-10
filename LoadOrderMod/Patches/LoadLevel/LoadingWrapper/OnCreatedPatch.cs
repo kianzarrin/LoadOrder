@@ -7,6 +7,7 @@ using static KianCommons.Patches.TranspilerUtils;
 using ICities;
 using System.Reflection;
 using System.Diagnostics;
+using LoadOrderMod.Settings;
 
 namespace LoadOrderMod.Patches._LoadingWrapper {
     [HarmonyPatch(typeof(LoadingWrapper))]
@@ -16,15 +17,19 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
         static Stopwatch sw_total = new Stopwatch();
 
         public static ILoadingExtension BeforeOnCreated(ILoadingExtension loadingExtension) {
-            Log.Info($"calling {loadingExtension}.OnCreated()", copyToGameLog: false);
-            sw.Reset();
-            sw.Start();
+            if (ConfigUtil.Config.LogPerModOnCreatedTimes) {
+                Log.Info($"calling {loadingExtension}.OnCreated()", copyToGameLog: false);
+                sw.Reset();
+                sw.Start();
+            }
             return loadingExtension;
         }
         public static void AfterOnCreated() {
-            sw.Stop();
-            var ms = sw.ElapsedMilliseconds;
-            Log.Info($"OnCreated() successful. duration = {ms:#,0}ms", copyToGameLog: false);
+            if (ConfigUtil.Config.LogPerModOnCreatedTimes) {
+                sw.Stop();
+                var ms = sw.ElapsedMilliseconds;
+                Log.Info($"OnCreated() successful. duration = {ms:#,0}ms", copyToGameLog: false);
+            }
         }
 
         static MethodInfo mBeforeOnCreated_ = typeof(OnCreatedPatch).GetMethod(nameof(BeforeOnCreated))

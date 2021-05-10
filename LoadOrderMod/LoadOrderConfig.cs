@@ -35,6 +35,8 @@ namespace LoadOrderShared {
         public bool AddHarmonyResolver = true;
         public bool LogAssetLoadingTimes = true;
         public bool LogPerModAssetLoadingTimes = false;
+        public bool LogPerModOnCreatedTimes = false;
+
 
         public ModInfo[] Mods = new ModInfo[0];
         public AssetInfo[] Assets = new AssetInfo[0];

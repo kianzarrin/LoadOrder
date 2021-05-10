@@ -118,6 +118,14 @@ namespace LoadOrderMod.Settings {
                     ConfigUtil.SaveConfig();
                 }) as UIComponent;
             Indent(logAssetLoadingTimesToggle_);
+
+            logAssetLoadingTimesToggle_ = g.AddCheckbox(
+                "Log per mod OnCreated() times",
+                ConfigUtil.Config.LogPerModOnCreatedTimes,
+                val => {
+                    ConfigUtil.Config.LogPerModOnCreatedTimes = val;
+                    ConfigUtil.SaveConfig();
+                }) as UIComponent;
         }
 
         public static void Indent(UIComponent c, int n=1) {
