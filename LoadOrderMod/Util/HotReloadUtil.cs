@@ -12,6 +12,8 @@ namespace LoadOrderMod.Util {
     using System.Reflection;
     using HarmonyLib;
     using System.Reflection.Emit;
+    using ColossalFramework.Plugins;
+    using System.Linq;
 
     public static class HotReloadUtil {
         static OptionsMainPanel optionsMainPanel_ => Singleton<OptionsMainPanel>.instance;
@@ -32,13 +34,14 @@ namespace LoadOrderMod.Util {
             CreateDelegate<PropertyChangedEventHandler<int>>(optionsMainPanel_, "OnCategoryChanged");
 
 
-        public static void DropCategory(PluginInfo p) {
-            string name = p?.GetUserModInstance().Name;
-            if (name == null) return;
+        public static void DropCategory(string name) {
+            LogCalled();
+            if (name == null) throw new ArgumentNullException("name");
             int index = m_Categories.items.IndexOf(name);
             if (index < 0) return;
             int selectedIndex = m_Categories.selectedIndex;
 
+            Log.Info("Dropping category :" + name);
             var category = m_Dummies.Find(c => c.name == name);
             m_Dummies.Remove(category);
             GameObject.DestroyImmediate(category);
@@ -49,6 +52,7 @@ namespace LoadOrderMod.Util {
 
 
         public static void AddCategory(PluginInfo p) {
+            LogCalled();
             if (!p.isEnabled)
                 return;
             if (p?.GetUserModInstance() is not IUserMod userMod)
@@ -58,6 +62,7 @@ namespace LoadOrderMod.Util {
                 string name = p.name;
                 MethodInfo mOnSettingsUI = userMod.GetType().GetMethod("OnSettingsUI", BindingFlags.Instance | BindingFlags.Public);
                 if (mOnSettingsUI != null) {
+                    Log.Info("Adding category :" + name);
                     UIComponent category = m_CategoriesContainer.AttachUIComponent(UITemplateManager.GetAsGameObject("OptionsScrollPanelTemplate"));
                     category.name = userMod.Name;
                     m_Dummies.Add(category);

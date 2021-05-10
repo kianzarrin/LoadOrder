@@ -7,7 +7,6 @@ namespace LoadOrderMod.Patches.HotReload {
     using System.Reflection.Emit;
     using static ColossalFramework.Plugins.PluginManager;
     using System.Reflection;
-    using KianCommons.Patches;
     using System.Diagnostics;
     using KianCommons;
 
