@@ -90,6 +90,7 @@
     <None Remove="KianCommons\.gitattributes" />
     <None Remove="KianCommons\.gitignore" />
     <None Remove="KianCommons\KianCommons\.editorconfig" />
+    <None Remove="TODO" />
     <Compile Include="KianCommons\KianCommons\Patches\HarmonyUtil.cs" />
     <Compile Include="KianCommons\KianCommons\Patches\TranspilerUtils.cs" />
     <Compile Include="KianCommons\KianCommons\Util\Assertion.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="KianCommons\KianCommons\Util\Log.cs" />
     <Compile Include="KianCommons\KianCommons\Util\ReflectionHelpers.cs" />
     <Compile Include="KianCommons\KianCommons\Util\StringExtensions.cs" />
+    <Compile Include="TODO" />
     <Folder Include="KianCommons\KianCommons\Math\" />
   </ItemGroup>
 
