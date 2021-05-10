@@ -17,19 +17,20 @@ namespace LoadOrderMod.Patches.HotReload {
 
         static void Prefix(string path, Dictionary<string, PluginInfo> ___m_Plugins) {
             try {
-                LogCalled();
+                LogCalled(path);
                 if (___m_Plugins.TryGetValue(path, out var p) && p.isEnabled) {
                     name = p.name;
                 }
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
-
-            static void Finalizer(Exception __exception) {
-                LogCalled();
-                name = null;
-                if (__exception != null) Log.Exception(__exception);
-            }
         }
+
+        static void Finalizer(Exception __exception) {
+            LogCalled();
+            name = null;
+            if (__exception != null) Log.Exception(__exception);
+        }
+
     }
 }

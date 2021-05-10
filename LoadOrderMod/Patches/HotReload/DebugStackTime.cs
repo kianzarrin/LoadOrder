@@ -7,22 +7,33 @@ namespace LoadOrderMod.Patches.HotReload {
     using System.Reflection;
     using System.Diagnostics;
     using KianCommons;
+    using System.IO;
+    using ColossalFramework.IO;
 
 #if DEBUG
     [HarmonyPatch]
     public static class DebugStackTime {
         static IEnumerable<MethodBase> TargetMethods() {
-            //yield return GetMethod(typeof(PluginManager), "OnFileWatcherEventDeleted");
-            //yield return GetMethod(typeof(PluginManager), "OnFileWatcherEventCreated");
-            //yield return GetMethod(typeof(PluginManager), "OnFileWatcherEventChanged");
-
             yield return GetMethod(typeof(PluginManager), "OnPluginFolderRemoved");
             yield return GetMethod(typeof(PluginManager), "OnPluginAdded");
         }
 
         static void Prefix(string path) => Log.Debug($"{new StackFrame(1).GetMethod().Name}.Prefix({path}) "/* + Helper.STCulled()*/);
 
-        static void Postfix(string path) => Log.Debug($"{new StackFrame(1).GetMethod().Name}.Postfix({path})\n"/* + Helper.STCulled()*/);
+        static void Postfix(string path) => Log.Debug($"{new StackFrame(1).GetMethod().Name}.Postfix({path})"/* + Helper.STCulled()*/);
+    }
+
+    [HarmonyPatch]
+    public static class DebugStackTime2 {
+        static IEnumerable<MethodBase> TargetMethods() {
+            yield return GetMethod(typeof(PluginManager), "OnFileWatcherEventDeleted");
+            yield return GetMethod(typeof(PluginManager), "OnFileWatcherEventCreated");
+            yield return GetMethod(typeof(PluginManager), "OnFileWatcherEventChanged");
+        }
+
+        static void Prefix(ReporterEventArgs e) => Log.Debug($"{new StackFrame(1).GetMethod().Name}.Prefix({((FileSystemEventArgs)e.arguments).FullPath}) "/* + Helper.STCulled()*/);
+
+        static void Postfix(ReporterEventArgs e) => Log.Debug($"{new StackFrame(1).GetMethod().Name}.Postfix({((FileSystemEventArgs)e.arguments).FullPath})"/* + Helper.STCulled()*/);
     }
 
     static class Helper { 

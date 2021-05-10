@@ -15,7 +15,7 @@ namespace LoadOrderMod.Patches.HotReload {
         public static string name;
 
         static void Prefix(string path) {
-            LogCalled();
+            LogCalled(path);
             try {
                 name = Path.GetFileNameWithoutExtension(path);
             } catch (Exception ex) {
