@@ -22,24 +22,19 @@ namespace LoadOrderMod.Util {
         public static void Ensure() => _ = Instance;
 
         public static void Release() {
+            DestroyImmediate(GetStatuslabel());
             DestroyImmediate(_instance);
+            _instance = null;
         }
-
 
         public void Awake() {
             if (GetStatuslabel())
                 return;
-            if (Helpers.InStartupMenu) {
+            else if (Helpers.InStartupMenu) 
                 SetupStatusAboveChirper();
-            } else {
+            else 
                 SetupStatusInGame();
-            }
         }
-
-        public void OnDestroy() {
-            Destroy(GetStatuslabel());
-        }
-
         #endregion 
 
         const string LABEL_NAME = "LOMDebugLabel";
@@ -67,7 +62,7 @@ namespace LoadOrderMod.Util {
             return floatingStatus;
         }
 
-        public UILabel GetStatuslabel() {
+        public static UILabel GetStatuslabel() {
             return UIView.GetAView()?.FindUIComponent<UILabel>(LABEL_NAME);
         }
 
