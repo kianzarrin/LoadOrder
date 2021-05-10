@@ -11,11 +11,6 @@ namespace LoadOrderMod.Patches {
     using static Helpers;
     using static KianCommons.ReflectionHelpers;
 
-    //[HarmonyPatch(typeof(CategoryContentPanel), "RequestDetailsCoroutine")]
-    //public static class RequestDetailsCoroutine {
-    //    public static void Prefix() => Log.Debug(STCulled);
-    //}
-
     public static class Helpers {
         public static string STCulled {
             get {
@@ -31,6 +26,10 @@ namespace LoadOrderMod.Patches {
             }
         }
     }
+    //[HarmonyPatch(typeof(CategoryContentPanel), "RequestDetailsCoroutine")]
+    //public static class RequestDetailsCoroutine {
+    //    public static void Prefix() => Log.Debug(STCulled);
+    //}
 
     //[HarmonyPatch(typeof(CategoryContentPanel), "RefreshEntries")]
     //public static class RefreshEntries {
