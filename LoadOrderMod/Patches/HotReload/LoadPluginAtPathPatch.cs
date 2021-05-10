@@ -2,6 +2,9 @@ namespace LoadOrderMod.Patches.HotReload {
     using HarmonyLib;
     using ColossalFramework.Plugins;
     using System.IO;
+    using System;
+    using KianCommons;
+    using static KianCommons.ReflectionHelpers;
 
     [HarmonyPatch(typeof(PluginManager), "LoadPluginAtPath")]
     public static class LoadPluginAtPathPatch {
@@ -12,9 +15,17 @@ namespace LoadOrderMod.Patches.HotReload {
         public static string name;
 
         static void Prefix(string path) {
-            name = Path.GetFileNameWithoutExtension(path);
+            LogCalled();
+            try {
+                name = Path.GetFileNameWithoutExtension(path);
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
         }
-
-        static void Finalizer() => name = null;
+        static void Finalizer(Exception __exception) {
+            LogCalled();
+            name = null;
+            if (__exception != null) Log.Exception(__exception);
+        }
     }
 }

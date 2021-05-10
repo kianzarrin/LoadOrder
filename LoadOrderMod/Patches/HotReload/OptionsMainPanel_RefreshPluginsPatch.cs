@@ -19,18 +19,23 @@ namespace LoadOrderMod.Patches.HotReload {
     [HarmonyPatch(typeof(OptionsMainPanel), "RefreshPlugins")]
     public static class OptionsMainPanel_RefreshPluginsPatch {
 
-        static bool Prefix() {
-            if (RemovePluginAtPathPatch.name != null) {
-                HotReloadUtil.DropCategory(RemovePluginAtPathPatch.name);
-                return false;
-            } else if (LoadPluginAtPathPatch.name != null ) {
-                var p = PluginManager.instance.GetPluginsInfo().FirstOrDefault(
-                    item => item.isEnabled && item.name == LoadPluginAtPathPatch.name);
-                if (p != null)
-                    HotReloadUtil.AddCategory(p);
-                return false;
-            } else {
-                return true; //proceed as normal.
+        static bool Prefix(OptionsMainPanel __instance) {
+            try {
+                if (RemovePluginAtPathPatch.name != null) {
+                    __instance.DropCategory(RemovePluginAtPathPatch.name);
+                    return false;
+                } else if (LoadPluginAtPathPatch.name != null) {
+                    var p = PluginManager.instance.GetPluginsInfo().FirstOrDefault(
+                        item => item.isEnabled && item.name == LoadPluginAtPathPatch.name);
+                    if (p != null)
+                        __instance.AddCategory(p);
+                    return false;
+                } else {
+                    return true; //proceed as normal.
+                }
+            } catch (Exception ex) {
+                Log.Exception(ex);
+                return true;
             }
         }
     }

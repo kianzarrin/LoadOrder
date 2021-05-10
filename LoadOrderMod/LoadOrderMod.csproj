@@ -6,6 +6,7 @@
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <PathMap>$(MSBuildProjectDirectory)/=$(ProjectName)/</PathMap>
     <DefineConstants Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
@@ -81,6 +82,7 @@
     <Compile Remove="KianCommons\KianCommons\Plugins\AdaptiveRoadsUtil.cs" />
     <Compile Remove="KianCommons\KianCommons\Plugins\CSURUtil.cs" />
     <Compile Remove="Patches\ContentManager\DebugStackTime.cs" />
+    <Compile Remove="Patches\HotReload\DebugStackTime.cs" />
     <Compile Remove="Patches\LoadingProfiler_NewEventPatch.cs" />
     <Compile Remove="Patches\SetSceneProgressPatch.cs" />
     <Compile Remove="Util\Log.cs" />
