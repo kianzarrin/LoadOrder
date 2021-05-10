@@ -1,0 +1,112 @@
+namespace LoadOrderMod.Util {
+    using KianCommons;
+    using UnityEngine;
+    using ColossalFramework.UI;
+    using System.Collections;
+    using KianCommons.IImplict;
+    using System;
+    using System.Diagnostics;
+    using System.Runtime.CompilerServices;
+
+    internal class StatusUtil : MonoBehaviour, IAwakingObject, IDestroyableObject {
+        #region LifeCycle
+        static StatusUtil _instance;
+        public static StatusUtil Instance {
+            get {
+                if (!_instance)
+                    _instance = UIView.GetAView()?.gameObject.AddComponent<StatusUtil>();
+                return _instance;
+            }
+        }
+
+        public static void Ensure() => _ = Instance;
+
+        public static void Release() {
+            DestroyImmediate(_instance);
+        }
+
+
+        public void Awake() {
+            if (GetStatuslabel())
+                return;
+            if (Helpers.InStartupMenu) {
+                SetupStatusAboveChirper();
+            } else {
+                SetupStatusInGame();
+            }
+        }
+
+        public void OnDestroy() {
+            Destroy(GetStatuslabel());
+        }
+
+        #endregion 
+
+        const string LABEL_NAME = "LOMDebugLabel";
+
+        public UILabel SetupStatusAboveChirper() {
+            Log.Info("Setting up status text around the chirper logo");
+            var chirperSprite = UIView.GetAView().FindUIComponent<UISprite>("Chirper");
+            var LOMStatusLabel = chirperSprite.parent.AddUIComponent<UILabel>();
+            LOMStatusLabel.name = LABEL_NAME;
+            LOMStatusLabel.text = GetText();
+            LOMStatusLabel.textColor = new Color(0.97f, 1f, 0.69f);
+            LOMStatusLabel.bottomColor = new Color(1f, 0.2f, 0f);
+            LOMStatusLabel.useGradient = true;
+            LOMStatusLabel.relativePosition = new Vector3(150, 10);
+            LOMStatusLabel.zOrder = 0;
+            return LOMStatusLabel;
+        }
+
+        public UILabel SetupStatusInGame() {
+            Log.Info("Setting up status text around the chirper logo");
+            UILabel floatingStatus = UIView.GetAView().AddUIComponent(typeof(FloatingStatus)) as UILabel;
+            floatingStatus.name = LABEL_NAME;
+            floatingStatus.text = GetText();
+
+            return floatingStatus;
+        }
+
+        public UILabel GetStatuslabel() {
+            return UIView.GetAView()?.FindUIComponent<UILabel>(LABEL_NAME);
+        }
+
+        public void ModLoaded() => ShowText("Mod Loaded");
+
+        public void ModUnloaded() => ShowText("Mod Unloaded");
+        
+
+        public Coroutine ShowText(string text, float sec = 4) => StartCoroutine(ShowTextCoroutine(text, sec));
+
+        private IEnumerator ShowTextCoroutine(string text, float sec) {
+            ShowText(text, true);
+            yield return new WaitForSeconds(sec);
+            ShowText(text, false);
+            yield return null;
+        }
+
+        public void ShowText(string text, bool visible) {
+            var lbl = GetStatuslabel();
+            if (!lbl) return;
+            if (visible) {
+                if (Helpers.InStartupMenu) {
+                    lbl.text = text + "\n" + lbl.text;
+                } else {
+                    lbl.text = lbl.text + "\n" + text;
+                }
+            } else {
+                int index = lbl.text.IndexOf(text);
+                lbl.text = lbl.text.Remove(startIndex: index, count: text.Length);
+                lbl.text = lbl.text.RemoveEmptyLines();
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static bool IsDebugMono() {
+            string file = new StackFrame(true).GetFileName();
+            return file.EndsWith(".cs");
+        }
+
+        public static string GetText() => IsDebugMono() ? "Debug Mono" : "Release Mono";
+    }
+}

@@ -66,7 +66,8 @@ namespace LoadOrderMod {
                 LoadingManager.instance.m_introLoaded -= LoadOrderUtil.TurnOffSteamPanels;
                 LoadingManager.instance.m_introLoaded -= Settings.ConfigUtil.StoreConfigDetails;
                 HarmonyUtil.UninstallHarmony(HARMONY_ID);
-                
+                StatusUtil.Release();
+
                 Settings.ConfigUtil.Terminate();
                 Log.Buffered = false;
             } catch (Exception ex) {

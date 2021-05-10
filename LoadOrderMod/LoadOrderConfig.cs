@@ -37,6 +37,9 @@ namespace LoadOrderShared {
         public bool LogPerModAssetLoadingTimes = false;
         public bool LogPerModOnCreatedTimes = false;
 
+        public float StatusX = 1000;
+        public float StatusY = 10;
+
 
         public ModInfo[] Mods = new ModInfo[0];
         public AssetInfo[] Assets = new AssetInfo[0];

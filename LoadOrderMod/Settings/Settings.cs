@@ -8,12 +8,15 @@ namespace LoadOrderMod.Settings {
     using UnityEngine;
     using UnityEngine.UI;
     using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
+    using LoadOrderMod.Util;
 
     public static class Settings {
         static LoadOrderConfig Config => ConfigUtil.Config;
 
         public static void OnSettingsUI(UIHelper helper) {
             try {
+                StatusUtil.Ensure();
+
                 Subscriptions(helper);
                 StartupSettings(helper);
                 LogLoadingTimes(helper);

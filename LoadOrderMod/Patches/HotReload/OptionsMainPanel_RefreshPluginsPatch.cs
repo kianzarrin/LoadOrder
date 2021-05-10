@@ -23,12 +23,14 @@ namespace LoadOrderMod.Patches.HotReload {
             try {
                 if (RemovePluginAtPathPatch.name != null) {
                     __instance.DropCategory(RemovePluginAtPathPatch.name);
+                    StatusUtil.Instance?.ModUnloaded();
                     return false;
                 } else if (LoadPluginAtPathPatch.name != null) {
                     var p = PluginManager.instance.GetPluginsInfo().FirstOrDefault(
                         item => item.isEnabled && item.name == LoadPluginAtPathPatch.name);
                     if (p != null)
                         __instance.AddCategory(p);
+                    StatusUtil.Instance?.ModLoaded();
                     return false;
                 } else {
                     return true; //proceed as normal.
