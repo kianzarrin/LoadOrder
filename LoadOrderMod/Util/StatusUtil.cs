@@ -104,7 +104,7 @@ namespace LoadOrderMod.Util {
             else if (Helpers.InStartupMenu)
                 return "Release Mono";
             else
-                return "":
+                return "";
         }
     }
 }
