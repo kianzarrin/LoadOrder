@@ -18,7 +18,7 @@
         public int AutoLoad = 0;
         public bool Phased, Poke;
 
-        public bool SteamExe;
+        public bool SteamExe = true;
         public bool DebugMono;
 
 

@@ -372,7 +372,7 @@ namespace LoadOrderTool.UI {
             this.lblNote.Name = "lblNote";
             this.lblNote.Size = new System.Drawing.Size(261, 17);
             this.lblNote.TabIndex = 9;
-            this.lblNote.Text = "?: hover over components to for more info.";
+            this.lblNote.Text = "?: hover over components for more info.";
             // 
             // labelCommand
             // 

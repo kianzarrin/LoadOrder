@@ -24,12 +24,16 @@ namespace LoadOrderMod.Util {
         }
 
         public void Start() {
-            if (GetStatuslabel())
-                return;
-            else if (Helpers.InStartupMenu) 
-                SetupStatusAboveChirper();
-            else 
-                SetupStatusInGame();
+            try {
+                if (GetStatuslabel())
+                    return;
+                else if (Helpers.InStartupMenu)
+                    SetupStatusAboveChirper();
+                else
+                    SetupStatusInGame();
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
         }
         #endregion 
 
@@ -94,8 +98,13 @@ namespace LoadOrderMod.Util {
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static bool IsDebugMono() {
-            string file = new StackFrame(true).GetFileName();
-            return file.EndsWith(".cs");
+            try {
+                string file = new StackFrame(true).GetFileName();
+                return file?.EndsWith(".cs") ?? false;
+            }catch(Exception ex) {
+                Log.Exception(ex);
+                return false;
+            }
         }
 
         public static string GetText() {

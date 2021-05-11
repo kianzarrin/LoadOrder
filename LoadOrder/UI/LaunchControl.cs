@@ -33,6 +33,12 @@
             textBoxMapPath.SetTooltip("leave empty to load the first map. enter map name or its full path to load it.");
             checkBoxPoke.SetTooltip("depth-first: poke mods to find potential type resultion problems.");
             checkBoxPhased.SetTooltip("breadth-frist: load mods in phases to avoid potential type resultion problems.");
+
+            radioButtonSteamExe.SetTooltip("steam features availible in game. auto launches steam");
+            radioButtonSteamExe.SetTooltip("not steam features in game.");
+
+            radioButtonDebugMono.SetTooltip("use this when you want to submit logs to modders");
+            radioButtonReleaseMono.SetTooltip("this is fast but produces inferior logs");
         }
 
         public void LoadSettings() {
