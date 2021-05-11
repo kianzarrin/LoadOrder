@@ -4,7 +4,7 @@ improve data-grid:
 	- group items
 	- tool-bar
 	- status bar
-
+	- Steam.exe steam://rungameid/{YouGameID} ...
 
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 

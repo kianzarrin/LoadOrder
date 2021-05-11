@@ -36,6 +36,7 @@
     <Compile Remove="MyPluginManger.cs" />
   </ItemGroup>
   
+  
   <ItemGroup>
     <Compile Include="..\LoadOrderMod\LoadOrderConfig.cs" Link="Data\LoadOrderConfig.cs" />
     <Compile Include="CO\Plugins\PluginManger.cs" />
@@ -50,10 +51,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Update="UI\AssetDataGrid.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <None Remove="Resources\mono-debug._dll" />
+    <EmbeddedResource Include="Resources\mono-debug._dll" />
   </ItemGroup>
+  
 
   <Target Name="DeployToModDirectory" AfterTargets="Build">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">

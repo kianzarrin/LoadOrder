@@ -66,8 +66,6 @@ namespace CO.IO {
                 }
 
                 CalculatePaths();
-                SteamPath = "";
-                GamePath = "";
                 bool bGame = !string.IsNullOrEmpty(GamePath);
                 bool bSteam = !string.IsNullOrEmpty(SteamPath);
                 if (bGame && bSteam) return;
@@ -338,7 +336,7 @@ namespace CO.IO {
 
         public static string DataPath => Path.Combine(GamePath, "Cities_Data");
         public static string ManagedDLL => Path.Combine(DataPath, "Managed");
-
+        public static string MonoPath => Path.Combine(DataPath, "Mono");
 
         public static string BuiltInContentPath => Path.Combine(GamePath, "Files");
         public static string AssetStateSettingsFile => "userGameState";

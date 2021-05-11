@@ -1,10 +1,13 @@
 ﻿namespace LoadOrderTool.UI {
     using System;
+    using System.IO;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Windows.Forms;
     using CO.IO;
     using System.Diagnostics;
     using LoadOrderTool.Util;
+    using System.Reflection;
 
     public partial class LaunchControl : UserControl {
         LoadOrderToolSettings settings_ => LoadOrderToolSettings.Instace;
@@ -58,6 +61,17 @@
                     break;
             }
 
+            if (settings_.DebugMono)
+                radioButtonDebugMono.Checked = true;
+            else
+                radioButtonReleaseMono.Checked = true;
+
+            if (settings_.SteamExe)
+                radioButtonSteamExe.Checked = true;
+            else
+                radioButtonCitiesExe.Checked = true;
+
+
             textBoxSavePath.Text = settings_.SavedGamePath;
             textBoxMapPath.Text = settings_.MapPath;
 
@@ -89,6 +103,9 @@
             settings_.Phased = checkBoxPhased.Checked;
             settings_.Poke = checkBoxPoke.Checked;
 
+            settings_.DebugMono = radioButtonDebugMono.Checked;
+            settings_.SteamExe = radioButtonSteamExe.Checked;
+
             settings_.Serialize();
         }
 
@@ -98,13 +115,16 @@
         }
 
         private void UpdateCommand() {
-            labelCommand.Text = "Cities.exe " + string.Join(" ", GetCommandArgs());
+            string fileExe = radioButtonSteamExe.Checked ? "Steam.exe" : "Cities.exe";
+            labelCommand.Text = fileExe + " " + string.Join(" ", GetCommandArgs());
         }
 
         private static string quote(string path) => '"' + path + '"';
 
         private string[] GetCommandArgs() {
             List<string> args = new List<string>();
+            if (radioButtonSteamExe.Checked)
+                args.Add(@$"steam://rungameid/255710");
 
             if (checkBoxNoWorkshop.Checked)
                 args.Add("-noWorkshop");
@@ -198,7 +218,16 @@
                 }
             }
             var args = GetCommandArgs();
-            Execute(DataLocation.GamePath, "Cities.exe", string.Join(" ", args));
+            
+            if (radioButtonDebugMono.Checked)
+                AssemblyUtil.UseDebugMono();
+            else if(radioButtonReleaseMono.Checked)
+                AssemblyUtil.UseReleaseMono();
+
+            string fileExe = radioButtonSteamExe.Checked ? "Steam.exe" : "Cities.exe";
+            string dir = radioButtonSteamExe.Checked ? DataLocation.SteamPath : DataLocation.GamePath;
+
+            Execute(dir, fileExe, string.Join(" ", args));
         }
 
 
@@ -227,6 +256,5 @@
                 return null;
             }
         }
-
     }
 }
