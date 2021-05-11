@@ -8,18 +8,14 @@ namespace LoadOrderMod.Util {
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
 
-    internal class StatusUtil : MonoBehaviour, IAwakingObject, IDestroyableObject {
+    internal class StatusUtil : MonoBehaviour, IStartingObject {
         #region LifeCycle
         static StatusUtil _instance;
-        public static StatusUtil Instance {
-            get {
-                if (!_instance)
-                    _instance = UIView.GetAView()?.gameObject.AddComponent<StatusUtil>();
-                return _instance;
-            }
-        }
+        public static StatusUtil Instance => _instance = _instance ? _instance : Create();
 
         public static void Ensure() => _ = Instance;
+
+        static StatusUtil Create() => UIView.GetAView()?.gameObject.AddComponent<StatusUtil>();
 
         public static void Release() {
             DestroyImmediate(GetStatuslabel());
@@ -27,7 +23,7 @@ namespace LoadOrderMod.Util {
             _instance = null;
         }
 
-        public void Awake() {
+        public void Start() {
             if (GetStatuslabel())
                 return;
             else if (Helpers.InStartupMenu) 

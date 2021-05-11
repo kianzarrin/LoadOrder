@@ -27,6 +27,7 @@ namespace LoadOrderShared {
 
         public string WorkShopContentPath;
         public string GamePath;
+        public string SteamPath;
 
         public bool TurnOffSteamPanels = true;
         public bool FastContentManager = true;

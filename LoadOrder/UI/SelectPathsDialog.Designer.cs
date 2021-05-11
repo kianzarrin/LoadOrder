@@ -29,9 +29,9 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBoxGamePath = new System.Windows.Forms.TextBox();
+            this.textBoxCitiesPath = new System.Windows.Forms.TextBox();
             this.textBoxSteamPath = new System.Windows.Forms.TextBox();
-            this.buttonGamePath = new System.Windows.Forms.Button();
+            this.buttonCitiesPath = new System.Windows.Forms.Button();
             this.buttonSteamPath = new System.Windows.Forms.Button();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.OKButton = new System.Windows.Forms.Button();
@@ -74,9 +74,9 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.textBoxGamePath, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.textBoxCitiesPath, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.textBoxSteamPath, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.buttonGamePath, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.buttonCitiesPath, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.buttonSteamPath, 2, 1);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 20);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -104,12 +104,12 @@
             this.label3.TabIndex = 1;
             this.label3.Text = "Steam.exe:";
             // 
-            // textBoxGamePath
+            // textBoxCitiesPath
             // 
-            this.textBoxGamePath.Location = new System.Drawing.Point(79, 3);
-            this.textBoxGamePath.Name = "textBoxGamePath";
-            this.textBoxGamePath.Size = new System.Drawing.Size(500, 25);
-            this.textBoxGamePath.TabIndex = 2;
+            this.textBoxCitiesPath.Location = new System.Drawing.Point(79, 3);
+            this.textBoxCitiesPath.Name = "textBoxCitiesPath";
+            this.textBoxCitiesPath.Size = new System.Drawing.Size(500, 25);
+            this.textBoxCitiesPath.TabIndex = 2;
             // 
             // textBoxSteamPath
             // 
@@ -118,16 +118,16 @@
             this.textBoxSteamPath.Size = new System.Drawing.Size(500, 25);
             this.textBoxSteamPath.TabIndex = 3;
             // 
-            // buttonGamePath
+            // buttonCitiesPath
             // 
-            this.buttonGamePath.AutoSize = true;
-            this.buttonGamePath.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonGamePath.Location = new System.Drawing.Point(585, 3);
-            this.buttonGamePath.Name = "buttonGamePath";
-            this.buttonGamePath.Size = new System.Drawing.Size(27, 27);
-            this.buttonGamePath.TabIndex = 4;
-            this.buttonGamePath.Text = "…";
-            this.buttonGamePath.UseVisualStyleBackColor = true;
+            this.buttonCitiesPath.AutoSize = true;
+            this.buttonCitiesPath.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonCitiesPath.Location = new System.Drawing.Point(585, 3);
+            this.buttonCitiesPath.Name = "buttonCitiesPath";
+            this.buttonCitiesPath.Size = new System.Drawing.Size(27, 27);
+            this.buttonCitiesPath.TabIndex = 4;
+            this.buttonCitiesPath.Text = "…";
+            this.buttonCitiesPath.UseVisualStyleBackColor = true;
             // 
             // buttonSteamPath
             // 
@@ -198,9 +198,9 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBoxGamePath;
+        private System.Windows.Forms.TextBox textBoxCitiesPath;
         private System.Windows.Forms.TextBox textBoxSteamPath;
-        private System.Windows.Forms.Button buttonGamePath;
+        private System.Windows.Forms.Button buttonCitiesPath;
         private System.Windows.Forms.Button buttonSteamPath;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Button OKButton;

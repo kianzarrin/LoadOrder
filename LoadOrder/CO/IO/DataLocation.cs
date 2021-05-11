@@ -1,46 +1,32 @@
 ﻿#pragma warning disable
-using LoadOrderShared;
-using LoadOrderTool;
-using Microsoft.Win32;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
-using LoadOrderShared;
-
 namespace CO.IO {
-    public static class DataLocation {
-        static string installLocationSubKey_ = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 255710";
-        static string installLocationKey_ = "InstallLocation";
-        static string SteamPathSubKey_ = @"Software\Valve\Steam";
-        static string SteamPathKey_ = "SteamPath";
+    using LoadOrderShared;
+    using LoadOrderTool;
+    using Microsoft.Win32;
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
+    using System.Text;
+    using System.Windows.Forms;
+    using LoadOrderShared;
+    using static CO.IO.PathUtils;
 
-        public static string RealPath(string path)
-        {
-            if (!Directory.Exists(path)) {
-                Log.Exception(new DirectoryNotFoundException("path"));
-                return null;
-            }
-            try {
-                path = Path.GetFullPath(path);
-                var ret = Path.GetPathRoot(path).ToUpper();
-                foreach (var name in path.Substring(ret.Length).Split(Path.DirectorySeparatorChar)) {
-                    var entries = Directory.GetFileSystemEntries(ret);
-                    ret = entries.First(
-                        p => string.Equals(Path.GetFileName(p), name, StringComparison.OrdinalIgnoreCase));
-                }
-                //Log.Debug("returning " + root);
-                return ret;
-            } catch (Exception ex) {
-                Log.Exception(ex, "failed to get real path for: " + path);
-                return null;
-            }
-        }
+    public static class DataLocation {
+        const string installLocationSubKey_ = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 255710";
+        const string installLocationKey_ = "InstallLocation";
+        const string SteamPathSubKey_ = @"Software\Valve\Steam";
+        const string SteamPathKey_ = "SteamPath";
+
+        //private static bool m_IsReady;
+
+        private static bool m_IsEditor = false;
+
+        public static bool isMacOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+        public static bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
         static DataLocation()
         {
@@ -49,42 +35,54 @@ namespace CO.IO {
                 var data = LoadOrderConfig.Deserialize(localApplicationData);
                 Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
 
-                if (Directory.Exists(GamePath)) {
-                    // good :)
-                } else if (Directory.Exists(data?.GamePath)) { 
-                    GamePath = data.GamePath;
-                } else { 
-                    using (RegistryKey key = Registry.LocalMachine.OpenSubKey(installLocationSubKey_)) {
-                        GamePath = key?.GetValue(installLocationKey_) as string;
-                        GamePath = RealPath(GamePath);
+                try {
+                    if (Util.IsGamePath(data?.GamePath)) {
+                        GamePath = RealPath(data.GamePath);
+                    } else if (Directory.Exists(GamePath)) {
+                        using (RegistryKey key = Registry.LocalMachine.OpenSubKey(installLocationSubKey_)) {
+                            GamePath = key?.GetValue(installLocationKey_) as string;
+                            GamePath = RealPath(GamePath);
+                        }
                     }
+                } catch(Exception ex) {
+                    Log.Exception(ex);
                 }
 
-                if (Directory.Exists(WorkshopContentPath)) {
-                    // good :)
-                } else if (Directory.Exists(data?.WorkShopContentPath)) {
-                    WorkshopContentPath = data.WorkShopContentPath;
-                } else {
-                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(SteamPathSubKey_)) {
-                        string steamPath = key?.GetValue(SteamPathKey_) as string;
-                        WorkshopContentPath = Path.Combine(steamPath, @"steamapps\workshop\content\255710");
-                        WorkshopContentPath = RealPath(WorkshopContentPath);
+                try {
+                    if (Util.IsSteamPath(data?.SteamPath)) {
+                        SteamPath = RealPath(data.SteamPath);
+                    } else if (!Directory.Exists(SteamPath)) {
+                        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(SteamPathSubKey_)) {
+                            SteamPath = key?.GetValue(SteamPathKey_) as string;
+                            SteamPath = RealPath(SteamPath);
+                        }
                     }
+                } catch(Exception ex) {
+                    Log.Exception(ex);
                 }
 
-                bool bGame = Directory.Exists(GamePath);
-                bool bSteam = Directory.Exists(WorkshopContentPath);
+                if (Util.IsWSPath(data?.WorkShopContentPath)) {
+                    WorkshopContentPath = RealPath(data.WorkShopContentPath);
+                }
+
+                CalculatePaths();
+                SteamPath = "";
+                GamePath = "";
+                bool bGame = !string.IsNullOrEmpty(GamePath);
+                bool bSteam = !string.IsNullOrEmpty(SteamPath);
                 if (bGame && bSteam) return;
 
                 using (var spd = new LoadOrderTool.UI.SelectPathsDialog()) {
-                    if (bGame) spd.GamePath = GamePath;
-                    if (bSteam) spd.WorkshopContentPath = WorkshopContentPath;
+                    if (bGame) spd.CitiesPath = GamePath;
+                    if (bSteam) spd.SteamPath = SteamPath;
                     if (spd.ShowDialog() == DialogResult.OK) {
-                        GamePath = spd.GamePath;
-                        WorkshopContentPath = spd.WorkshopContentPath;
+                        GamePath = Path.GetDirectoryName(spd.CitiesPath);
+                        SteamPath = Path.GetDirectoryName(spd.SteamPath);
+                        CalculatePaths();
 
                         data ??= new LoadOrderConfig();
                         data.GamePath = GamePath;
+                        data.SteamPath = SteamPath;
                         data.WorkShopContentPath = WorkshopContentPath;
                         data.Serialize(localApplicationData);
                     } else {
@@ -102,20 +100,14 @@ namespace CO.IO {
             }
         }
 
-        public static string sProductName = "Cities_Skylines";
+        private static void CalculatePaths() {
+            string gamePath = GamePath, steamPath = SteamPath, wsPath = WorkshopContentPath;
+            Util.CalculatePaths(ref gamePath, ref steamPath, ref wsPath);
+            GamePath = RealPath(gamePath); 
+            SteamPath = RealPath(steamPath);
+            WorkshopContentPath = RealPath(wsPath);
+        }
 
-        public static string sCompanyName = "Colossal Order";
-
-        public static uint sProductVersion = 0u;
-
-        public static string sDevFolder = "Dev";
-
-        //private static bool m_IsReady;
-
-        private static bool m_IsEditor = false;
-
-        public static bool isMacOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-        public static bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
         //public static bool isEditor
         //{
         //	get
@@ -140,7 +132,8 @@ namespace CO.IO {
         public static void DisplayStatus()
         {
             Log.Info("GamePath: " + DataLocation.GamePath);
-            Log.Info("Steam Content Path: " + DataLocation.WorkshopContentPath);
+            Log.Info("Workshop Content Path: " + DataLocation.WorkshopContentPath);
+            Log.Info("Steam Path: " + DataLocation.SteamPath);
             Log.Info("Temp Folder: " + DataLocation.tempFolder);
             Log.Info("Local Application Data: " + DataLocation.localApplicationData);
             Log.Info("Executable Directory(Cities.exe): " + DataLocation.executableDirectory);
@@ -151,6 +144,89 @@ namespace CO.IO {
             //Log.Debug("Current directory: " + Environment.CurrentDirectory);
             //Log.Debug("Executing assembly: " + Assembly.GetExecutingAssembly().Location);
         }
+
+        public static class Util {
+            public static string ToGamePath(string path) {
+                path = ToSteamAppsPath(path);
+                path = Path.Combine(path, "common", "Cities_Skylines");
+                return Directory.Exists(path) ? path : "";
+            }
+
+            public static string ToWSPath(string path) {
+                path = ToSteamAppsPath(path);
+                path = Path.Combine(path, "workshop", "content", "255710");
+                return Directory.Exists(path) ? path : "";
+            }
+            public static string ToSteamPath(string path) => GoUpToDirectory(path, "Steam");
+
+            public static string ToSteamAppsPath(string path) {
+                try {
+                    string ret = GoUpToDirectory(path, "steamapps");
+                    if (!Directory.Exists(ret)) {
+                        ret = Path.Combine(GoUpToDirectory(path, "Steam"), "steamapps");
+                    }
+                    return Directory.Exists(ret) ? ret : "";
+                }catch(Exception ex) {
+                    Log.Exception(ex);
+                    return "";
+                }
+            }
+
+            public static bool IsGamePath(string path) {
+                path = Path.Combine(path, "Cities.exe");
+                return IsCitiesExePath(path);
+
+            }
+            public static bool IsSteamPath(string path) {
+                path = Path.Combine(path, "Steam.exe");
+                return IsSteamExePath(path);
+            }
+
+            public static bool IsSteamExePath(string path) {
+                return File.Exists(path) && string.Equals(Path.GetFileName(path), "Steam.exe", StringComparison.OrdinalIgnoreCase);
+            }
+            public static bool IsCitiesExePath(string path) {
+                return File.Exists(path) && string.Equals(Path.GetFileName(path), "Cities.exe", StringComparison.OrdinalIgnoreCase);
+            }
+
+            public static bool IsWSPath(string path) {
+                return Directory.Exists(path);
+            }
+
+            public static void CalculatePaths(ref string GamePath, ref string SteamPath, ref string WSPath) {
+                try {
+                    var paths = new[] { WSPath, GamePath, currentDirectory, assemblyDirectory, SteamPath };
+                    foreach (string path in paths) {
+                        if (IsWSPath(WSPath))
+                            break;
+                        WSPath = ToWSPath(path);
+                    }
+                    foreach (string path in paths) {
+                        if (IsGamePath(GamePath))
+                            break;
+                        WSPath = ToGamePath(path);
+                    }
+                    foreach (string path in paths) {
+                        if (IsSteamPath(SteamPath))
+                            break;
+                        SteamPath = ToWSPath(path);
+                    }
+                } catch (Exception ex) {
+                    Log.Exception(ex);
+                }
+            }
+        }
+
+
+
+
+        public static string GamePath { get; private set; } = @"C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines";
+
+        public static string WorkshopContentPath { get; private set; } = @"C:\Program Files (x86)\Steam\steamapps\workshop\content\255710";
+        public static string SteamPath { get; private set; } = @"C:\Program Files (x86)\Steam";
+
+        public static string applicationSupportPathName = "~/Library/Application Support/"; //mac
+
 
         public static string migrateProductFrom {
             set {
@@ -173,62 +249,15 @@ namespace CO.IO {
             }
         }
 
-        public static string companyName {
-            get {
-                return DataLocation.sCompanyName;
-            }
-            set {
-                DataLocation.sCompanyName = value;
-            }
-        }
+        public const string sDevFolder = "Dev";
 
-        public static uint productVersion {
-            get {
-                return DataLocation.sProductVersion;
-            }
-            set {
-                DataLocation.sProductVersion = value;
-            }
-        }
+        public const string sProductName = "Colossal Order";
 
-        public static string productVersionString {
-            get {
-                string text = "";
-                uint num = DataLocation.sProductVersion % 100u;
-                if (num != 0u) {
-                    text = ((char)(97u + num)).ToString();
-                }
-                return string.Format("{0}.{1}.{2}{3}", new object[]
-                {
-                    DataLocation.sProductVersion / 1000000u,
-                    DataLocation.sProductVersion / 10000u % 100u,
-                    DataLocation.sProductVersion / 100u % 100u,
-                    text
-                });
-            }
-        }
-
-        public static string productName {
-            get {
-                return DataLocation.sProductName;
-            }
-            set {
-                DataLocation.sProductName = value;
-            }
-        }
+        public const string sCompanyName = "Cities_Skylines";
+        public static string companyName => sProductName;
+        public static string productName => sCompanyName;
 
         public static string applicationBase => GamePath;
-        //{
-        //	get
-        //	{
-        //		DataLocation.CheckReady();
-        //		if (DataLocation.m_IsEditor)
-        //		{
-        //			return GamePath;
-        //		}
-        //		return DataLocation.executableDirectory;
-        //	}
-        //}
 
         public static string gameContentPath {
             get {
@@ -295,29 +324,21 @@ namespace CO.IO {
             }
         }
 
-        //public static string currentDirectory
-        //{
-        //	get
-        //	{
-        //		return Environment.CurrentDirectory;
-        //	}
-        //}
+        public static string currentDirectory {
+            get {
+                return Environment.CurrentDirectory;
+            }
+        }
 
-        //public static string assemblyDirectory
-        //{
-        //	get
-        //	{
-        //		return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        //	}
-        //}
+        public static string assemblyDirectory {
+            get {
+                return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            }
+        }
 
-
-        //TODO: make platform independant.
-        public static string GamePath { get; private set; } = @"C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines";
         public static string DataPath => Path.Combine(GamePath, "Cities_Data");
         public static string ManagedDLL => Path.Combine(DataPath, "Managed");
-        public static string WorkshopContentPath { get; private set; } = @"C:\Program Files (x86)\Steam\steamapps\workshop\content\255710";
-        public static string applicationSupportPathName = "~/Library/Application Support/"; //mac
+
 
         public static string BuiltInContentPath => Path.Combine(GamePath, "Files");
         public static string AssetStateSettingsFile => "userGameState";
