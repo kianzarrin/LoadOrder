@@ -85,5 +85,12 @@ namespace LoadOrderMod.Util{
             SavedY = absolutePosition.y;
         }
 
+        public override string text {
+            get => base.text;
+            set {
+                base.text = value;
+                isVisible = !text.IsNullOrWhiteSpace();
+            }
+        }
     }
 }

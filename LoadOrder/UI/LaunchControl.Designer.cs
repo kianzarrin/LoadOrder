@@ -43,15 +43,17 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelLoadMode = new System.Windows.Forms.FlowLayoutPanel();
             this.checkBoxPoke = new System.Windows.Forms.CheckBox();
             this.checkBoxPhased = new System.Windows.Forms.CheckBox();
-            this.buttonLaunch = new System.Windows.Forms.Button();
-            this.labelCommand = new System.Windows.Forms.Label();
             this.flowLayoutPanelLauncher = new System.Windows.Forms.FlowLayoutPanel();
-            this.radioButtonCitiesExe = new System.Windows.Forms.RadioButton();
             this.radioButtonSteamExe = new System.Windows.Forms.RadioButton();
+            this.radioButtonCitiesExe = new System.Windows.Forms.RadioButton();
             this.flowLayoutPanelMono = new System.Windows.Forms.FlowLayoutPanel();
             this.radioButtonReleaseMono = new System.Windows.Forms.RadioButton();
             this.radioButtonDebugMono = new System.Windows.Forms.RadioButton();
+            this.buttonLaunch = new System.Windows.Forms.Button();
             this.lblNote = new System.Windows.Forms.Label();
+            this.labelCommand = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.flowLayoutPanelTopLevel.SuspendLayout();
             this.flowLayoutPanelExclusions.SuspendLayout();
             this.tableLayoutPanelLunchMode.SuspendLayout();
@@ -278,6 +280,78 @@ namespace LoadOrderTool.UI {
             this.checkBoxPhased.Text = "Phased";
             this.checkBoxPhased.UseVisualStyleBackColor = true;
             // 
+            // flowLayoutPanelLauncher
+            // 
+            this.flowLayoutPanelLauncher.AutoSize = true;
+            this.flowLayoutPanelLauncher.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelLauncher.Controls.Add(this.label1);
+            this.flowLayoutPanelLauncher.Controls.Add(this.radioButtonSteamExe);
+            this.flowLayoutPanelLauncher.Controls.Add(this.radioButtonCitiesExe);
+            this.flowLayoutPanelLauncher.Location = new System.Drawing.Point(3, 276);
+            this.flowLayoutPanelLauncher.Margin = new System.Windows.Forms.Padding(3, 15, 3, 3);
+            this.flowLayoutPanelLauncher.Name = "flowLayoutPanelLauncher";
+            this.flowLayoutPanelLauncher.Size = new System.Drawing.Size(250, 27);
+            this.flowLayoutPanelLauncher.TabIndex = 7;
+            this.flowLayoutPanelLauncher.WrapContents = false;
+            // 
+            // radioButtonSteamExe
+            // 
+            this.radioButtonSteamExe.AutoSize = true;
+            this.radioButtonSteamExe.Location = new System.Drawing.Point(76, 3);
+            this.radioButtonSteamExe.Name = "radioButtonSteamExe";
+            this.radioButtonSteamExe.Size = new System.Drawing.Size(85, 21);
+            this.radioButtonSteamExe.TabIndex = 1;
+            this.radioButtonSteamExe.TabStop = true;
+            this.radioButtonSteamExe.Text = "Steam.exe";
+            this.radioButtonSteamExe.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonCitiesExe
+            // 
+            this.radioButtonCitiesExe.AutoSize = true;
+            this.radioButtonCitiesExe.Location = new System.Drawing.Point(167, 3);
+            this.radioButtonCitiesExe.Name = "radioButtonCitiesExe";
+            this.radioButtonCitiesExe.Size = new System.Drawing.Size(80, 21);
+            this.radioButtonCitiesExe.TabIndex = 0;
+            this.radioButtonCitiesExe.TabStop = true;
+            this.radioButtonCitiesExe.Text = "Cities.exe";
+            this.radioButtonCitiesExe.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanelMono
+            // 
+            this.flowLayoutPanelMono.AutoSize = true;
+            this.flowLayoutPanelMono.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelMono.Controls.Add(this.label2);
+            this.flowLayoutPanelMono.Controls.Add(this.radioButtonReleaseMono);
+            this.flowLayoutPanelMono.Controls.Add(this.radioButtonDebugMono);
+            this.flowLayoutPanelMono.Location = new System.Drawing.Point(3, 306);
+            this.flowLayoutPanelMono.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
+            this.flowLayoutPanelMono.Name = "flowLayoutPanelMono";
+            this.flowLayoutPanelMono.Size = new System.Drawing.Size(403, 27);
+            this.flowLayoutPanelMono.TabIndex = 8;
+            this.flowLayoutPanelMono.WrapContents = false;
+            // 
+            // radioButtonReleaseMono
+            // 
+            this.radioButtonReleaseMono.AutoSize = true;
+            this.radioButtonReleaseMono.Location = new System.Drawing.Point(59, 3);
+            this.radioButtonReleaseMono.Name = "radioButtonReleaseMono";
+            this.radioButtonReleaseMono.Size = new System.Drawing.Size(155, 21);
+            this.radioButtonReleaseMono.TabIndex = 0;
+            this.radioButtonReleaseMono.TabStop = true;
+            this.radioButtonReleaseMono.Text = "Release Mode (faster)";
+            this.radioButtonReleaseMono.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonDebugMono
+            // 
+            this.radioButtonDebugMono.AutoSize = true;
+            this.radioButtonDebugMono.Location = new System.Drawing.Point(220, 3);
+            this.radioButtonDebugMono.Name = "radioButtonDebugMono";
+            this.radioButtonDebugMono.Size = new System.Drawing.Size(180, 21);
+            this.radioButtonDebugMono.TabIndex = 1;
+            this.radioButtonDebugMono.TabStop = true;
+            this.radioButtonDebugMono.Text = "Debug Mode (better logs)";
+            this.radioButtonDebugMono.UseVisualStyleBackColor = true;
+            // 
             // buttonLaunch
             // 
             this.buttonLaunch.AutoSize = true;
@@ -291,6 +365,15 @@ namespace LoadOrderTool.UI {
             this.buttonLaunch.UseVisualStyleBackColor = true;
             this.buttonLaunch.Click += new System.EventHandler(this.buttonLaunch_Click);
             // 
+            // lblNote
+            // 
+            this.lblNote.AutoSize = true;
+            this.lblNote.Location = new System.Drawing.Point(3, 371);
+            this.lblNote.Name = "lblNote";
+            this.lblNote.Size = new System.Drawing.Size(261, 17);
+            this.lblNote.TabIndex = 9;
+            this.lblNote.Text = "?: hover over components to for more info.";
+            // 
             // labelCommand
             // 
             this.labelCommand.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -300,84 +383,25 @@ namespace LoadOrderTool.UI {
             this.labelCommand.TabIndex = 6;
             this.labelCommand.Text = "command";
             // 
-            // flowLayoutPanelLauncher
+            // label1
             // 
-            this.flowLayoutPanelLauncher.AutoSize = true;
-            this.flowLayoutPanelLauncher.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanelLauncher.Controls.Add(this.radioButtonSteamExe);
-            this.flowLayoutPanelLauncher.Controls.Add(this.radioButtonCitiesExe);
-            this.flowLayoutPanelLauncher.Location = new System.Drawing.Point(3, 276);
-            this.flowLayoutPanelLauncher.Margin = new System.Windows.Forms.Padding(3, 15, 3, 3);
-            this.flowLayoutPanelLauncher.Name = "flowLayoutPanelLauncher";
-            this.flowLayoutPanelLauncher.Size = new System.Drawing.Size(229, 27);
-            this.flowLayoutPanelLauncher.TabIndex = 7;
-            this.flowLayoutPanelLauncher.WrapContents = false;
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 5);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(67, 17);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Launcher: ";
             // 
-            // radioButtonCitiesExe
+            // label2
             // 
-            this.radioButtonCitiesExe.AutoSize = true;
-            this.radioButtonCitiesExe.Location = new System.Drawing.Point(120, 3);
-            this.radioButtonCitiesExe.Name = "radioButtonCitiesExe";
-            this.radioButtonCitiesExe.Size = new System.Drawing.Size(106, 21);
-            this.radioButtonCitiesExe.TabIndex = 0;
-            this.radioButtonCitiesExe.TabStop = true;
-            this.radioButtonCitiesExe.Text = "Use Cities.exe";
-            this.radioButtonCitiesExe.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonSteamExe
-            // 
-            this.radioButtonSteamExe.AutoSize = true;
-            this.radioButtonSteamExe.Location = new System.Drawing.Point(3, 3);
-            this.radioButtonSteamExe.Name = "radioButtonSteamExe";
-            this.radioButtonSteamExe.Size = new System.Drawing.Size(111, 21);
-            this.radioButtonSteamExe.TabIndex = 1;
-            this.radioButtonSteamExe.TabStop = true;
-            this.radioButtonSteamExe.Text = "Use Steam.exe";
-            this.radioButtonSteamExe.UseVisualStyleBackColor = true;
-            // 
-            // flowLayoutPanelMono
-            // 
-            this.flowLayoutPanelMono.AutoSize = true;
-            this.flowLayoutPanelMono.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanelMono.Controls.Add(this.radioButtonReleaseMono);
-            this.flowLayoutPanelMono.Controls.Add(this.radioButtonDebugMono);
-            this.flowLayoutPanelMono.Location = new System.Drawing.Point(3, 306);
-            this.flowLayoutPanelMono.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
-            this.flowLayoutPanelMono.Name = "flowLayoutPanelMono";
-            this.flowLayoutPanelMono.Size = new System.Drawing.Size(347, 27);
-            this.flowLayoutPanelMono.TabIndex = 8;
-            this.flowLayoutPanelMono.WrapContents = false;
-            // 
-            // radioButtonReleaseMono
-            // 
-            this.radioButtonReleaseMono.AutoSize = true;
-            this.radioButtonReleaseMono.Location = new System.Drawing.Point(3, 3);
-            this.radioButtonReleaseMono.Name = "radioButtonReleaseMono";
-            this.radioButtonReleaseMono.Size = new System.Drawing.Size(155, 21);
-            this.radioButtonReleaseMono.TabIndex = 0;
-            this.radioButtonReleaseMono.TabStop = true;
-            this.radioButtonReleaseMono.Text = "Release Mode (faster)";
-            this.radioButtonReleaseMono.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonDebugMono
-            // 
-            this.radioButtonDebugMono.AutoSize = true;
-            this.radioButtonDebugMono.Location = new System.Drawing.Point(164, 3);
-            this.radioButtonDebugMono.Name = "radioButtonDebugMono";
-            this.radioButtonDebugMono.Size = new System.Drawing.Size(180, 21);
-            this.radioButtonDebugMono.TabIndex = 1;
-            this.radioButtonDebugMono.TabStop = true;
-            this.radioButtonDebugMono.Text = "Debug Mode (better logs)";
-            this.radioButtonDebugMono.UseVisualStyleBackColor = true;
-            // 
-            // lblNote
-            // 
-            this.lblNote.AutoSize = true;
-            this.lblNote.Location = new System.Drawing.Point(3, 371);
-            this.lblNote.Name = "lblNote";
-            this.lblNote.Size = new System.Drawing.Size(261, 17);
-            this.lblNote.TabIndex = 9;
-            this.lblNote.Text = "?: hover over components to for more info.";
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 5);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(50, 17);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Mono: ";
             // 
             // LaunchControl
             // 
@@ -432,5 +456,7 @@ namespace LoadOrderTool.UI {
         private RadioButton radioButtonReleaseMono;
         private RadioButton radioButtonDebugMono;
         private Label lblNote;
+        private Label label1;
+        private Label label2;
     }
 }

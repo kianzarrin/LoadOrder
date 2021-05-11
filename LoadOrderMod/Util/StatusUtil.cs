@@ -88,7 +88,7 @@ namespace LoadOrderMod.Util {
             } else {
                 int index = lbl.text.IndexOf(text);
                 lbl.text = lbl.text.Remove(startIndex: index, count: text.Length);
-                lbl.text = lbl.text.RemoveEmptyLines();
+                lbl.text = lbl.text.RemoveEmptyLines().Trim();
             }
         }
 
@@ -98,6 +98,13 @@ namespace LoadOrderMod.Util {
             return file.EndsWith(".cs");
         }
 
-        public static string GetText() => IsDebugMono() ? "Debug Mono" : "Release Mono";
+        public static string GetText() {
+            if (IsDebugMono())
+                return "Debug Mono";
+            else if (Helpers.InStartupMenu)
+                return "Release Mono";
+            else
+                return "":
+        }
     }
 }
