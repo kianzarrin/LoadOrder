@@ -1,3 +1,4 @@
+using ColossalFramework;
 using ColossalFramework.IO;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -5,6 +6,7 @@ using Patch.API;
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using static LoadOrderIPatch.Commons;
 using static LoadOrderIPatch.ConfigUtil;
 using ILogger = Patch.API.ILogger;
@@ -54,8 +56,63 @@ namespace LoadOrderIPatch.Patches {
                 ExcludeAssetDirPatch(assemblyDefinition);
             }
 
+            LoadPluginPatch(assemblyDefinition);
 
             return assemblyDefinition;
+        }
+
+
+        /// <summary>
+        /// loads assembly with symbols
+        /// </summary>
+        public void LoadPluginPatch(AssemblyDefinition CM) {
+            logger_.LogStartPatching();
+            var module = CM.MainModule;
+            var tPluginManager = module.GetType("ColossalFramework.Plugins", "PluginManager");
+
+            MethodDefinition mTarget = tPluginManager.GetMethod("LoadPlugin");
+            var ilprocessor = mTarget.Body.GetILProcessor();
+            var instructions = mTarget.Body.Instructions;
+
+            string fpsMethod = "LoadOrScanAndPatch";
+            bool touchedByFPS = instructions.Any(code => code.Calls(fpsMethod));
+            if (touchedByFPS) {
+                logger_.Info("ignoring LoadPluginPatch because FPSBooster already loads symbols");
+                return;
+            }
+
+            var mrInjection = module.ImportReference(
+                GetType().GetMethod(nameof(LoadPlugingWithSymbols)));
+
+            ilprocessor.Prefix(
+                Instruction.Create(OpCodes.Ldarg_1),
+                Instruction.Create(OpCodes.Call, mrInjection),
+                Instruction.Create(OpCodes.Ret));
+
+            logger_.LogSucessfull();
+        }
+
+        public static Assembly LoadPlugingWithSymbols(string dllPath) {
+            try {
+                Assembly assembly;
+                string symPath = dllPath + ".mdb";
+                if (File.Exists(symPath)) {
+                    CODebugBase<InternalLogChannel>.Log(InternalLogChannel.Mods, "Loading " + dllPath + "\nSymbols " + symPath);
+                    assembly = Assembly.Load(File.ReadAllBytes(dllPath), File.ReadAllBytes(symPath));
+                } else {
+                    CODebugBase<InternalLogChannel>.Log(InternalLogChannel.Mods, "Loading " + dllPath);
+                    assembly = Assembly.Load(File.ReadAllBytes(dllPath));
+                }
+                if (assembly != null) {
+                    CODebugBase<InternalLogChannel>.Log(InternalLogChannel.Mods, "Assembly " + assembly.FullName + " loaded.");
+                } else {
+                    CODebugBase<InternalLogChannel>.Error(InternalLogChannel.Mods, "Assembly at " + dllPath + " failed to load.");
+                }
+                return assembly;
+            } catch (Exception ex) {
+                CODebugBase<InternalLogChannel>.Error(InternalLogChannel.Mods, "Assembly at " + dllPath + " failed to load.\n" + ex.ToString());
+                return null;
+            }
         }
 
         /// <summary>
