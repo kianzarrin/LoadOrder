@@ -1,4 +1,4 @@
-namespace LoadOrderMod.Util {
+namespace LoadOrderMod.UI {
     using KianCommons;
     using UnityEngine;
     using ColossalFramework.UI;

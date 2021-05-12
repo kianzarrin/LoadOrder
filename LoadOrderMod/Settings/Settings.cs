@@ -6,10 +6,8 @@ namespace LoadOrderMod.Settings {
     using LoadOrderShared;
     using System;
     using UnityEngine;
-    using UnityEngine.UI;
     using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
-    using LoadOrderMod.Util;
-
+    using LoadOrderMod.UI;
     public static class Settings {
         static LoadOrderConfig Config => ConfigUtil.Config;
 
@@ -21,7 +19,7 @@ namespace LoadOrderMod.Settings {
                 StartupSettings(helper);
                 LogLoadingTimes(helper);
                 Debug(helper);
-            }catch(Exception ex) {
+            } catch (Exception ex) {
                 Log.Exception(ex);
             }
         }
@@ -63,7 +61,7 @@ namespace LoadOrderMod.Settings {
                 val => {
                     ConfigUtil.Config.DeleteUnsubscribedItemsOnLoad = val;
                     ConfigUtil.SaveConfig();
-                }) as UICheckBox  ;
+                }) as UICheckBox;
 
             button = g.AddButton("Delete Now", SteamUtilities.DeleteUnsubbed) as UIButton;
             Pairup(checkBox, button);
@@ -131,13 +129,13 @@ namespace LoadOrderMod.Settings {
                 }) as UIComponent;
         }
 
-        public static void Indent(UIComponent c, int n=1) {
+        public static void Indent(UIComponent c, int n = 1) {
 
-            if(c.Find<UILabel>("Label") is UILabel label)
-                label.padding = new RectOffset(22*n, 0, 0, 0);
-            
-            if(c.Find<UISprite>("Unchecked") is UISprite check)
-                check.relativePosition += new Vector3(22*n, 0);
+            if (c.Find<UILabel>("Label") is UILabel label)
+                label.padding = new RectOffset(22 * n, 0, 0, 0);
+
+            if (c.Find<UISprite>("Unchecked") is UISprite check)
+                check.relativePosition += new Vector3(22 * n, 0);
         }
 
         public static void Pairup(UICheckBox checkbox, UIButton button) {
@@ -160,7 +158,7 @@ namespace LoadOrderMod.Settings {
 
         static void OnResetLoadOrdersClicked() {
             Log.Debug("Reset Load Orders pressed");
-            foreach(var mod in Config.Mods)
+            foreach (var mod in Config.Mods)
                 mod.LoadOrder = LoadOrderConfig.DefaultLoadOrder;
             ConfigUtil.SaveConfig();
 
@@ -170,14 +168,14 @@ namespace LoadOrderMod.Settings {
             Log.Debug("RunCallbacks pressed");
             try {
                 PlatformService.RunCallbacks();
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 Log.Exception(ex);
             }
         }
 
         static void RequestItemDetails() {
             Log.Debug("RequestItemDetails pressed");
-            foreach(var item in PlatformService.workshop.GetSubscribedItems()) {
+            foreach (var item in PlatformService.workshop.GetSubscribedItems()) {
                 PlatformService.workshop.RequestItemDetails(item).LogRet($"RequestItemDetails({item})");
             }
         }

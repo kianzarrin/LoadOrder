@@ -1,20 +1,11 @@
 namespace LoadOrderMod {
     using CitiesHarmony.API;
-    using ColossalFramework.IO;
-    using ColossalFramework.PlatformServices;
-    using ColossalFramework.Plugins;
     using ICities;
     using KianCommons;
     using System;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
     using UnityEngine.SceneManagement;
-    using UnityEngine;
-    using ColossalFramework.UI;
-    using static KianCommons.ReflectionHelpers;
-    using LoadOrderShared;
     using LoadOrderMod.Util;
+    using LoadOrderMod.UI;
 
     public class LoadOrderUserMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderUserMod).Assembly.GetName().Version;
@@ -51,11 +42,11 @@ namespace LoadOrderMod {
                 LoadOrderUtil.TurnOffSteamPanels();
 
                 LoadingManager.instance.m_introLoaded += Settings.ConfigUtil.StoreConfigDetails;
-                if(SceneManager.GetActiveScene().name == "IntroScreen")
+                if (SceneManager.GetActiveScene().name == "IntroScreen")
                     Settings.ConfigUtil.StoreConfigDetails();
 
                 Log.Flush();
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 Log.Exception(ex);
             }
         }

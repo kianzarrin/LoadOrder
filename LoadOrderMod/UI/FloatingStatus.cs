@@ -1,4 +1,4 @@
-namespace LoadOrderMod.Util{
+namespace LoadOrderMod.UI{
     using ColossalFramework.UI;
     using static KianCommons.ReflectionHelpers;
     using KianCommons;
