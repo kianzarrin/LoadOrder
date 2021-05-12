@@ -31,6 +31,7 @@ namespace LoadOrderMod.UI{
             bottomColor = new Color(1f, 0.2f, 0f);
             useGradient = true;
             autoSize = true;
+            tooltip = "controlled by Load Order tool";
         }
 
         bool started_ = false;

@@ -50,6 +50,7 @@ namespace LoadOrderMod.UI {
             LOMStatusLabel.useGradient = true;
             LOMStatusLabel.relativePosition = new Vector3(150, 10);
             LOMStatusLabel.zOrder = 0;
+            LOMStatusLabel.tooltip = "controlled by Load Order tool";
             return LOMStatusLabel;
         }
 
