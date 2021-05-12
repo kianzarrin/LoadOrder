@@ -109,7 +109,7 @@ namespace LoadOrderMod.Util {
 
         public static string GetText() {
             if (IsDebugMono())
-                return "Debug Mono";
+                return "Debug Mono (SLOW!)";
             else if (Helpers.InStartupMenu)
                 return "Release Mono";
             else
