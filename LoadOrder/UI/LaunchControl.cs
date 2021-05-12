@@ -7,7 +7,7 @@
     using CO.IO;
     using System.Diagnostics;
     using LoadOrderTool.Util;
-    using System.Reflection;
+    using LoadOrderTool.Data;
 
     public partial class LaunchControl : UserControl {
         LoadOrderToolSettings settings_ => LoadOrderToolSettings.Instace;

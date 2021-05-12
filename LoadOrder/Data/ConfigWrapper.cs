@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.Util {
+﻿namespace LoadOrderTool.Data {
     using CO.IO;
     using CO.Packaging;
     using CO.Plugins;
