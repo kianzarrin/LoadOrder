@@ -10,7 +10,10 @@ namespace LoadOrderMod.UI{
         public static FloatingMonoStatus Instance { get; private set; }
         public static float SavedX {
             get => ConfigUtil.Config.StatusX;
-            set => ConfigUtil.Config.StatusX = value;
+            set {
+                ConfigUtil.Config.StatusX = value;
+                ConfigUtil.SaveThread.Dirty = true;
+            }
         }
 
         public static float SavedY {
@@ -25,13 +28,13 @@ namespace LoadOrderMod.UI{
 
         private UIDragHandle drag_ { get; set; }
 
+        #region Life Cycle
         public override void Awake() {
             base.Awake();
             textColor = new Color(0.97f, 1f, 0.69f);
             bottomColor = new Color(1f, 0.2f, 0f);
             useGradient = true;
             autoSize = true;
-            tooltip = "controlled by Load Order tool";
             objectUserData = 1; //refcount
         }
 
@@ -41,9 +44,18 @@ namespace LoadOrderMod.UI{
             base.Start();
             Instance = this;
             absolutePosition = new Vector3(SavedX, SavedY);
+            tooltip = "controlled by Load Order tool";
             SetupDrag();
+            if (Helpers.InStartupMenu) {
+                var chirperSprite = UIView.GetAView().FindUIComponent<UISprite>("Chirper");
+                chirperSprite.parent.AttachUIComponent(gameObject);
+                chirperSprite.relativePosition = new Vector3(140, 10);
+                drag_.enabled = false;
+            }
             started_ = true;
         }
+
+        #endregion
 
         public void SetupDrag() {
             var dragHandler = new GameObject("UnifiedUI_FloatingButton_DragHandler");
