@@ -8,13 +8,13 @@ namespace LoadOrderMod.UI {
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
 
-    internal class StatusUtil : MonoBehaviour, IStartingObject {
+    internal class MonoStatus : MonoBehaviour, IStartingObject {
         #region LifeCycle
 
-        public static StatusUtil Instance => FindObjectOfType<StatusUtil>();
+        public static MonoStatus Instance => FindObjectOfType<MonoStatus>();
         public static void Ensure() => _ = Instance ?? Create();
 
-        static StatusUtil Create() => UIView.GetAView()?.gameObject.AddComponent<StatusUtil>();
+        static MonoStatus Create() => UIView.GetAView()?.gameObject.AddComponent<MonoStatus>();
 
         public static void Release() {
             DecreaseRefCount(GetStatuslabel());
@@ -74,7 +74,7 @@ namespace LoadOrderMod.UI {
             LOMStatusLabel.textColor = new Color(0.97f, 1f, 0.69f);
             LOMStatusLabel.bottomColor = new Color(1f, 0.2f, 0f);
             LOMStatusLabel.useGradient = true;
-            LOMStatusLabel.relativePosition = new Vector3(150, 10);
+            LOMStatusLabel.relativePosition = new Vector3(140, 10);
             LOMStatusLabel.zOrder = 0;
             LOMStatusLabel.tooltip = "controlled by Load Order tool";
             LOMStatusLabel.objectUserData = 1; //refcount
@@ -83,7 +83,7 @@ namespace LoadOrderMod.UI {
 
         public static UILabel SetupStatusInGame() {
             Log.Info("Setting up status text around the chirper logo");
-            UILabel floatingStatus = UIView.GetAView().AddUIComponent(typeof(FloatingStatus)) as UILabel;
+            UILabel floatingStatus = UIView.GetAView().AddUIComponent(typeof(FloatingMonoStatus)) as UILabel;
             floatingStatus.name = LABEL_NAME;
             floatingStatus.text = GetText();
 

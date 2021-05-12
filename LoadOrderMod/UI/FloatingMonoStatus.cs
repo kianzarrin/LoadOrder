@@ -6,8 +6,8 @@ namespace LoadOrderMod.UI{
     using ColossalFramework;
     using LoadOrderMod.Settings;
 
-    public class FloatingStatus : UILabel {
-        public static FloatingStatus Instance { get; private set; }
+    public class FloatingMonoStatus : UILabel {
+        public static FloatingMonoStatus Instance { get; private set; }
         public static float SavedX {
             get => ConfigUtil.Config.StatusX;
             set => ConfigUtil.Config.StatusX = value;

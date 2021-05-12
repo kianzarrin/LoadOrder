@@ -13,7 +13,7 @@ namespace LoadOrderMod.Settings {
 
         public static void OnSettingsUI(UIHelper helper) {
             try {
-                StatusUtil.Ensure();
+                MonoStatus.Ensure();
 
                 Subscriptions(helper);
                 StartupSettings(helper);
