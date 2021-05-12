@@ -31,6 +31,10 @@ namespace LoadOrderMod.UI {
                     SetupStatusAboveChirper();
                 else
                     SetupStatusInGame();
+
+                if(IsDebugMono()) {
+                    Log.Warning("using DEBUG MONO is slow! use Load order tool to launch game in release mode!", true);
+                }
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
