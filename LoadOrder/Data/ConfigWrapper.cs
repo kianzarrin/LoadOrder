@@ -69,6 +69,7 @@
 
             foreach (var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
                 try {
+                    pluginInfo.ResetLoadOrder();
                     pluginInfo.IsIncluded = true;
                 } catch (Exception ex) {
                     Log.Exception(ex, pluginInfo.ToString(), false);
