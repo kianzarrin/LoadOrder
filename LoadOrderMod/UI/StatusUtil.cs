@@ -10,40 +10,62 @@ namespace LoadOrderMod.UI {
 
     internal class StatusUtil : MonoBehaviour, IStartingObject {
         #region LifeCycle
-        static StatusUtil _instance;
-        public static StatusUtil Instance => _instance = _instance ? _instance : Create();
 
-        public static void Ensure() => _ = Instance;
+        public static StatusUtil Instance => FindObjectOfType<StatusUtil>();
+        public static void Ensure() => _ = Instance ?? Create();
 
         static StatusUtil Create() => UIView.GetAView()?.gameObject.AddComponent<StatusUtil>();
 
         public static void Release() {
-            DestroyImmediate(GetStatuslabel());
-            DestroyImmediate(_instance);
-            _instance = null;
+            DecreaseRefCount(GetStatuslabel());
+            DestroyImmediate(Instance);
         }
 
         public void Start() {
             try {
-                if (GetStatuslabel())
-                    return;
-                else if (Helpers.InStartupMenu)
-                    SetupStatusAboveChirper();
-                else
-                    SetupStatusInGame();
-
-                if(IsDebugMono()) {
-                    Log.Warning("using DEBUG MONO is slow! use Load order tool to launch game in release mode!", true);
-                }
+                CreateOrIncreaseRefCount();
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
         }
+
+        static UILabel CreateOrIncreaseRefCount() {
+            if (GetStatuslabel() is UILabel lbl) {
+                IncreaseRefCount(lbl);
+                return lbl;
+            } else {
+                return CreateLabel();
+            }
+        }
+
+        static UILabel CreateLabel() {
+            if (IsDebugMono()) {
+                Log.Warning("using DEBUG MONO is slow! use Load order tool to launch game in release mode!", true);
+            }
+
+            if (Helpers.InStartupMenu)
+                return SetupStatusAboveChirper();
+            else
+                return SetupStatusInGame();
+        }
+
+        static void IncreaseRefCount(UILabel label) {
+            label.objectUserData ??= 1; // recover from failure.
+            label.objectUserData = (int)label.objectUserData + 1;
+        }
+
+        static void DecreaseRefCount(UILabel label) {
+            label.objectUserData ??= 1; // recover from failure.
+            label.objectUserData = (int)label.objectUserData - 1;
+            if ((int)label.objectUserData <= 0)
+                DestroyImmediate(label);
+        }
+
         #endregion 
 
-        const string LABEL_NAME = "LOMDebugLabel";
+        const string LABEL_NAME = "MonoDebugStatusLabel";
 
-        public UILabel SetupStatusAboveChirper() {
+        public static UILabel SetupStatusAboveChirper() {
             Log.Info("Setting up status text around the chirper logo");
             var chirperSprite = UIView.GetAView().FindUIComponent<UISprite>("Chirper");
             var LOMStatusLabel = chirperSprite.parent.AddUIComponent<UILabel>();
@@ -55,10 +77,11 @@ namespace LoadOrderMod.UI {
             LOMStatusLabel.relativePosition = new Vector3(150, 10);
             LOMStatusLabel.zOrder = 0;
             LOMStatusLabel.tooltip = "controlled by Load Order tool";
+            LOMStatusLabel.objectUserData = 1; //refcount
             return LOMStatusLabel;
         }
 
-        public UILabel SetupStatusInGame() {
+        public static UILabel SetupStatusInGame() {
             Log.Info("Setting up status text around the chirper logo");
             UILabel floatingStatus = UIView.GetAView().AddUIComponent(typeof(FloatingStatus)) as UILabel;
             floatingStatus.name = LABEL_NAME;
@@ -85,7 +108,7 @@ namespace LoadOrderMod.UI {
             yield return null;
         }
 
-        public void ShowText(string text, bool visible) {
+        public static void ShowText(string text, bool visible) {
             var lbl = GetStatuslabel();
             if (!lbl) return;
             if (visible) {

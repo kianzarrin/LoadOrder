@@ -1,17 +1,11 @@
 namespace LoadOrderMod.Patches.HotReload {
     using HarmonyLib;
     using System;
-    using static KianCommons.ReflectionHelpers;
     using ColossalFramework.Plugins;
-    using System.Collections.Generic;
-    using System.Reflection.Emit;
-    using static ColossalFramework.Plugins.PluginManager;
-    using System.Reflection;
-    using KianCommons.Patches;
-    using System.Diagnostics;
     using KianCommons;
     using LoadOrderMod.Util;
     using System.Linq;
+    using LoadOrderMod.UI;
 
     /// <summary>
     /// time each invocation.

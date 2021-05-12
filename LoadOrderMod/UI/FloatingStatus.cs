@@ -32,6 +32,7 @@ namespace LoadOrderMod.UI{
             useGradient = true;
             autoSize = true;
             tooltip = "controlled by Load Order tool";
+            objectUserData = 1; //refcount
         }
 
         bool started_ = false;
