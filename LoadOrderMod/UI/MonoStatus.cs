@@ -11,13 +11,13 @@ namespace LoadOrderMod.UI {
     internal class MonoStatus : MonoBehaviour, IStartingObject {
         #region LifeCycle
 
-        public static MonoStatus Instance => FindObjectOfType<MonoStatus>() ?? Create();
-        public static void Ensure() => _ = Instance;
+        public static MonoStatus Instance => FindObjectOfType<MonoStatus>();
+        public static void Ensure() => _ = Instance ?? Create();
         static MonoStatus Create() => UIView.GetAView()?.gameObject.AddComponent<MonoStatus>();
 
         public static void Release() {
             DecreaseRefCount(GetStatuslabel());
-            DestroyImmediate(Instance);
+            DestroyImmediate(Instance?.gameObject);
         }
 
         public void Start() {
@@ -57,13 +57,13 @@ namespace LoadOrderMod.UI {
             label.objectUserData ??= 1; // recover from failure.
             label.objectUserData = (int)label.objectUserData - 1;
             if ((int)label.objectUserData <= 0)
-                DestroyImmediate(label);
+                DestroyImmediate(label.gameObject);
         }
         #endregion 
 
         const string LABEL_NAME = "MonoDebugStatusLabel";
 
-        public static UILabel SetupStatusAboveChirper() {
+        static UILabel SetupStatusAboveChirper() {
             Log.Info("Setting up status text around the chirper logo");
             var chirperSprite = UIView.GetAView().FindUIComponent<UISprite>("Chirper");
             var LOMStatusLabel = chirperSprite.parent.AddUIComponent<UILabel>();
@@ -79,7 +79,7 @@ namespace LoadOrderMod.UI {
             return LOMStatusLabel;
         }
 
-        public static UILabel SetupStatusInGame() {
+        static UILabel SetupStatusInGame() {
             Log.Info("Setting up status text around the chirper logo");
             UILabel floatingStatus = UIView.GetAView().AddUIComponent(typeof(FloatingMonoStatus)) as UILabel;
             floatingStatus.name = LABEL_NAME;
@@ -88,7 +88,7 @@ namespace LoadOrderMod.UI {
             return floatingStatus;
         }
 
-        public static UILabel GetStatuslabel() {
+        static UILabel GetStatuslabel() {
             return UIView.GetAView()?.FindUIComponent<UILabel>(LABEL_NAME);
         }
 
@@ -97,7 +97,7 @@ namespace LoadOrderMod.UI {
         public void ModUnloaded() => ShowText("Mod Unloaded");
         
 
-        public Coroutine ShowText(string text, float sec = 4) => StartCoroutine(ShowTextCoroutine(text, sec));
+        Coroutine ShowText(string text, float sec = 4) => StartCoroutine(ShowTextCoroutine(text, sec));
 
         private IEnumerator ShowTextCoroutine(string text, float sec) {
             ShowText(text, true);
@@ -106,7 +106,7 @@ namespace LoadOrderMod.UI {
             yield return null;
         }
 
-        public static void ShowText(string text, bool visible) {
+        static void ShowText(string text, bool visible) {
             var lbl = GetStatuslabel();
             if (!lbl) return;
             if (visible) {
@@ -133,7 +133,7 @@ namespace LoadOrderMod.UI {
             }
         }
 
-        public static string GetText() {
+        static string GetText() {
             if (IsDebugMono())
                 return "Debug Mono (SLOW!)";
             else if (Helpers.InStartupMenu)
