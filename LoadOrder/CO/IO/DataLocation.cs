@@ -171,11 +171,15 @@ namespace CO.IO {
             }
 
             public static bool IsGamePath(string path) {
+                if (string.IsNullOrEmpty(path))
+                    return false;
                 path = Path.Combine(path, "Cities.exe");
                 return IsCitiesExePath(path);
 
             }
             public static bool IsSteamPath(string path) {
+                if (string.IsNullOrEmpty(path))
+                    return false;
                 path = Path.Combine(path, "Steam.exe");
                 return IsSteamExePath(path);
             }
