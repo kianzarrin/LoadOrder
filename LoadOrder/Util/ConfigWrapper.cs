@@ -28,8 +28,8 @@
 
         public ConfigWrapper() {
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            Config = LoadOrderShared.LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
-                ?? new LoadOrderShared.LoadOrderConfig();
+            Config = LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+                ?? new LoadOrderConfig();
             Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
             StartSaveThread();
         }
@@ -62,7 +62,9 @@
             Config = new LoadOrderConfig {
                 WorkShopContentPath = DataLocation.WorkshopContentPath,
                 GamePath = DataLocation.GamePath,
+                SteamPath = DataLocation.SteamPath,
             };
+
             Config.Serialize(DataLocation.localApplicationData);
 
             foreach (var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
