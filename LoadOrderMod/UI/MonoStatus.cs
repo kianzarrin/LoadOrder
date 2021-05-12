@@ -11,9 +11,8 @@ namespace LoadOrderMod.UI {
     internal class MonoStatus : MonoBehaviour, IStartingObject {
         #region LifeCycle
 
-        public static MonoStatus Instance => FindObjectOfType<MonoStatus>();
-        public static void Ensure() => _ = Instance ?? Create();
-
+        public static MonoStatus Instance => FindObjectOfType<MonoStatus>() ?? Create();
+        public static void Ensure() => _ = Instance;
         static MonoStatus Create() => UIView.GetAView()?.gameObject.AddComponent<MonoStatus>();
 
         public static void Release() {
@@ -60,7 +59,6 @@ namespace LoadOrderMod.UI {
             if ((int)label.objectUserData <= 0)
                 DestroyImmediate(label);
         }
-
         #endregion 
 
         const string LABEL_NAME = "MonoDebugStatusLabel";
