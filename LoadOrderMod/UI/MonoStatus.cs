@@ -30,9 +30,10 @@ namespace LoadOrderMod.UI {
         }
 
         static UILabel CreateOrIncreaseRefCount() {
-            if (GetStatuslabel() is UILabel lbl) {
-                IncreaseRefCount(lbl);
-                return lbl;
+            if (GetStatuslabel() is UILabel label) {
+                label.objectUserData ??= 1; // recover from failure.
+                label.objectUserData = (int)label.objectUserData + 1;
+                return label;
             } else {
                 return CreateLabel();
             }
@@ -49,12 +50,11 @@ namespace LoadOrderMod.UI {
                 return SetupStatusInGame();
         }
 
-        static void IncreaseRefCount(UILabel label) {
-            label.objectUserData ??= 1; // recover from failure.
-            label.objectUserData = (int)label.objectUserData + 1;
-        }
 
         static void DecreaseRefCount(UILabel label) {
+            if (label == null)
+                return;
+
             label.objectUserData ??= 1; // recover from failure.
             label.objectUserData = (int)label.objectUserData - 1;
             if ((int)label.objectUserData <= 0)

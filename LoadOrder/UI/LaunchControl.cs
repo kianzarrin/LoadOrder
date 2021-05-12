@@ -35,7 +35,7 @@
             checkBoxPhased.SetTooltip("breadth-frist: load mods in phases to avoid potential type resultion problems.");
 
             radioButtonSteamExe.SetTooltip("steam features availible in game. auto launches steam");
-            radioButtonSteamExe.SetTooltip("not steam features in game.");
+            radioButtonCitiesExe.SetTooltip("no steam features in game.");
 
             radioButtonDebugMono.SetTooltip("use this when you want to submit logs to modders");
             radioButtonReleaseMono.SetTooltip("this is fast but produces inferior logs");
