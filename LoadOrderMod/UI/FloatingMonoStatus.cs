@@ -49,7 +49,7 @@ namespace LoadOrderMod.UI{
             if (Helpers.InStartupMenu) {
                 var chirperSprite = UIView.GetAView().FindUIComponent<UISprite>("Chirper");
                 chirperSprite.parent.AttachUIComponent(gameObject);
-                chirperSprite.relativePosition = new Vector3(140, 10);
+                relativePosition = new Vector3(140, 10);
                 drag_.enabled = false;
             }
             started_ = true;
