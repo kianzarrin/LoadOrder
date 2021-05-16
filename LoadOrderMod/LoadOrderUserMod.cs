@@ -58,6 +58,7 @@ namespace LoadOrderMod {
                 LoadingManager.instance.m_introLoaded -= Settings.ConfigUtil.StoreConfigDetails;
                 HarmonyUtil.UninstallHarmony(HARMONY_ID);
                 MonoStatus.Release();
+                LOMAssetDataExtension.Release();
 
                 Settings.ConfigUtil.Terminate();
                 Log.Buffered = false;
