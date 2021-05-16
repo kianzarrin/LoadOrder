@@ -13,6 +13,7 @@ namespace LoadOrderMod.Patches {
             Log.Flush();
             sw_total.Reset();
             sw_total.Start();
+            AssetDataExtension.Init();
         }
 
         public static void Postfix() {
