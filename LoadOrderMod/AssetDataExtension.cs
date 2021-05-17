@@ -17,7 +17,7 @@ namespace LoadOrderMod {
             OnAssetLoadedImpl(name, asset as PrefabInfo, userData);
 
         internal static void OnAssetLoadedImpl(string name, PrefabInfo asset, Dictionary<string, byte[]> userData) {
-            if(asset != null)
+            if(asset)
                 Assets2UserData.Add(asset, userData);
         }
 
@@ -38,7 +38,8 @@ namespace LoadOrderMod {
             foreach(var asset2UserData in assets2UserData) {
                 var asset = asset2UserData.Key;
                 var userData = asset2UserData.Value;
-                OnAssetLoadedImpl(asset.name, asset, userData);
+                if(asset)
+                    OnAssetLoadedImpl(asset.name, asset, userData);
             }
         }
     }
