@@ -130,7 +130,7 @@
         private string[] GetCommandArgs() {
             List<string> args = new List<string>();
             if (radioButtonSteamExe.Checked)
-                args.Add(@$"steam://rungameid/255710");
+                args.Add("-applaunch 255710");
 
             if (checkBoxNoWorkshop.Checked)
                 args.Add("-noWorkshop");
@@ -141,7 +141,7 @@
             if (checkBoxLHT.Checked)
                 args.Add("-LHT");
             if (checkBoxPhased.Checked)
-                args.Add("-pahsed");
+                args.Add("-phased");
             if (checkBoxPoke.Checked)
                 args.Add("-poke");
 

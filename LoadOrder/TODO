@@ -1,10 +1,12 @@
-improve data-grid:
-	- copy to temp folder.
-	- propery display
-	- group items
-	- tool-bar
-	- status bar
-	- Steam.exe steam://rungameid/{YouGameID} ...
-
+- sort by harmony by default.
+- load save does not work when game save == asset save (eg both of them are named NewSave).
+- BUG: is LOM tool is showing update date?
+- bug: fix date sorting in tool.
+- property display
+- group items
+- tool-bar
+- status bar
+- copy to temp folder.
+	
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 
