@@ -17,6 +17,7 @@ namespace CO.Packaging {
     using System.Windows.Forms;
     using LoadOrderShared;
     using LoadOrderTool.Data;
+    using System.Globalization;
 
     public class PackageManager : SingletonLite<PackageManager> {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
@@ -66,12 +67,30 @@ namespace CO.Packaging {
                     if (date_ == null) {
                         if (string.IsNullOrWhiteSpace(ConfigAssetInfo.Date))
                             date_ = default(DateTime);
-                        else if (DateTime.TryParse(ConfigAssetInfo.Date, out var date))
+                        else if (DateTime.TryParse(
+                            ConfigAssetInfo.Date,
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.None,
+                            out var date))
                             date_ = date;
-                        else
+                        else {
+                            Log.Warning($"could not parse {ConfigAssetInfo.Date}");
                             date_ = default(DateTime);
+                        }
                     }
                     return date_.Value;
+                }
+            }
+
+            string strDate_;
+            public string StrDate {
+                get {
+                    if (strDate_ != null)
+                        return strDate_;
+                    else if (Date == default)
+                        return strDate_ = "";
+                    else
+                        return strDate_ = Date.ToString("d", CultureInfo.CurrentCulture);
                 }
             }
 

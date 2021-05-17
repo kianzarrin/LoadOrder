@@ -9,6 +9,7 @@ namespace LoadOrderShared {
         public string ModName;
         public string Description;
         public string Author;
+        public string Date;
     }
 
     public class AssetInfo {

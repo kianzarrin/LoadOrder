@@ -164,8 +164,8 @@
             try {
                 if (ModList == null) return;
                 //Log.Info($"e.ColumnIndex={e.ColumnIndex} Description.Index={Description.Index}");
-                if (e.RowIndex >= ModList.Filtered.Count || e.RowIndex >= Rows.Count)
-                    return;
+                if (e.RowIndex < 0) return;
+                if (e.RowIndex >= ModList.Filtered.Count || e.RowIndex >= Rows.Count) return;
                 var cell = Rows[e.RowIndex].Cells[e.ColumnIndex];
                 if (e.ColumnIndex == CDescription.Index && e.Value != null) {
                     cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
@@ -173,7 +173,7 @@
                     cell.ToolTipText = ContentUtil.GetItemURL((string)cell.Value);
                 }
             } catch (Exception ex) {
-                Log.Exception(ex);
+                Log.Exception(ex, $"e.ColumnIndex={e.ColumnIndex} e.RowIndex={e.RowIndex}");
             }
         }
 

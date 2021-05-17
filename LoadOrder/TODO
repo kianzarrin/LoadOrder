@@ -1,7 +1,6 @@
 - sort by harmony by default.
+- text box for extra options
 - load save does not work when game save == asset save (eg both of them are named NewSave).
-- BUG: is LOM tool is showing update date?
-- bug: fix date sorting in tool.
 - property display
 - group items
 - tool-bar

@@ -14,6 +14,7 @@ namespace LoadOrderMod.Settings {
     using System.Threading;
     using static ColossalFramework.Plugins.PluginManager;
     using static KianCommons.ReflectionHelpers;
+    using System.Globalization;
 
     public static class ConfigUtil {
         private static LoadOrderConfig config_;
@@ -133,6 +134,10 @@ namespace LoadOrderMod.Settings {
                     string author = pluginInfo.GetAuthor();
                     if (author.IsAuthorNameValid())
                         modInfo.Author = author;
+                    var entry = pluginInfo.GetEntryData();
+                    if (entry != null && entry.updated != default)
+                        modInfo.Date = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+
                     // TODO: listen to events to get name.
                 } catch (Exception ex) {
                     Log.Exception(ex);
@@ -161,7 +166,11 @@ namespace LoadOrderMod.Settings {
                         assetInfo.Author = author;
 
                     assetInfo.description = ContentManagerUtil.SafeGetAssetDesc(metaData, asset.package);
-                    assetInfo.Date = metaData.getTimeStamp.ToLocalTime().ToString();
+                    var entry = asset.GetEntryData();
+                    if (entry != null && entry.updated != default)
+                        assetInfo.Date = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                    else
+                        assetInfo.Date = metaData.getTimeStamp.ToLocalTime().ToString(CultureInfo.InvariantCulture);
                     assetInfo.Tags = metaData.Tags(asset.package.GetPublishedFileID());
                 } catch (Exception ex) {
                     Log.Exception(ex);
@@ -213,6 +222,19 @@ namespace LoadOrderMod.Settings {
         internal static void SetAuthor(this PluginInfo p, string author) {
             if (p.GetModConfig() is ModInfo modInfo) {
                 modInfo.Author = author;
+                SaveThread.Dirty = true;
+            }
+        }
+        internal static void SetDate(this Package.Asset a, DateTime date) {
+            if (a.GetAssetConfig() is AssetInfo assetInfo) {
+                assetInfo.Date = date.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                SaveThread.Dirty = true;
+            }
+        }
+
+        internal static void SetDate(this PluginInfo p, DateTime date) {
+            if (p.GetModConfig() is ModInfo modInfo) {
+                modInfo.Date = date.ToLocalTime().ToString(CultureInfo.InvariantCulture);
                 SaveThread.Dirty = true;
             }
         }

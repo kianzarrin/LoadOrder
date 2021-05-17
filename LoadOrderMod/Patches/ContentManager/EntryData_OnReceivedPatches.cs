@@ -17,7 +17,14 @@ namespace LoadOrderMod.Patches.ContentManager {
     static class EntryData_OnReceivedPatches {
         [HarmonyPostfix]
         [HarmonyPatch(nameof(EntryData.OnDetailsReceived))]
-        static void OnDetailsReceived_Postfix(EntryData __instance) => __instance.OnAuthorRecieved();
+        static void OnDetailsReceived_Postfix(EntryData __instance) {
+            __instance.OnAuthorRecieved();
+            if (__instance.updated != default) {
+                __instance.asset?.SetDate(__instance.updated);
+                __instance.pluginInfo?.SetDate(__instance.updated);
+            }
+
+        }
 
         [HarmonyPostfix]
         [HarmonyPatch("OnNameReceived")]

@@ -123,7 +123,7 @@
                 } else if (e.ColumnIndex == cAuthor.Index) {
                     e.Value = asset.ConfigAssetInfo.Author ?? "";
                 } else if (e.ColumnIndex == cDate.Index) {
-                    e.Value = asset.ConfigAssetInfo.Date ?? "";
+                    e.Value = asset.StrDate;
                 } else if (e.ColumnIndex == cTags.Index) {
                     e.Value = asset.StrTags;
                 }
