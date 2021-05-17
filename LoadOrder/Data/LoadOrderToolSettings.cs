@@ -14,12 +14,16 @@
         public string SavedGamePath, MapPath;
 
         public bool NoAssets, NoMods, NoWorkshop;
+        public bool NewAsset;
+        public bool LSM = true;
         public bool LHT;
         public int AutoLoad = 0;
         public bool Phased, Poke;
 
         public bool SteamExe = true;
         public bool DebugMono;
+
+        public string ExtraArgs;
 
 
         const string FILE_NAME = "LoadOrderToolSettings.xml";

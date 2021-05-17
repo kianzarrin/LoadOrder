@@ -77,7 +77,18 @@
                 .OfType<Type>();
         }
 
-        public static void SetTooltip(this Control control, string tooltip) =>
-            new ToolTip().SetToolTip(control, tooltip);
+        public static ToolTip SetTooltip(this Control control, string tooltip) {
+            ToolTip tp = new ToolTip {
+                IsBalloon = true,
+                InitialDelay = 1,
+                ReshowDelay = 1,
+                AutomaticDelay = 3600 * 1000,
+                UseAnimation = false,
+                UseFading = false,
+                ShowAlways = true,
+            };
+            tp.SetToolTip(control, tooltip);
+            return tp;
+        }
     }
 }

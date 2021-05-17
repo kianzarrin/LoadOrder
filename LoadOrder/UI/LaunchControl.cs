@@ -29,6 +29,8 @@
             foreach (var c in this.GetAll<RadioButton>())
                 c.CheckedChanged += Update;
 
+
+            checkBoxNewAsset.SetTooltip("");
             checkBoxLHT.SetTooltip("Traffic drives on left.");
             textBoxSavePath.SetTooltip("leave empty to continue last save. enter save name or its full path to load it.");
             textBoxMapPath.SetTooltip("leave empty to load the first map. enter map name or its full path to load it.");
@@ -78,12 +80,16 @@
             else
                 radioButtonCitiesExe.Checked = true;
 
+            checkBoxNewAsset.Checked = settings_.NewAsset;
+            checkBoxLSM.Checked = settings_.LSM;
 
             textBoxSavePath.Text = settings_.SavedGamePath;
             textBoxMapPath.Text = settings_.MapPath;
 
             checkBoxPhased.Checked = settings_.Phased;
             checkBoxPoke.Checked = settings_.Poke;
+
+            textBoxExtraArgs.Text = settings_.ExtraArgs;
         }
 
         void SaveSettings() {
@@ -104,6 +110,9 @@
             else
                 settings_.AutoLoad = 0;
 
+            settings_.NewAsset = checkBoxNewAsset.Checked;
+            settings_.LSM = checkBoxLSM.Checked;
+
             settings_.SavedGamePath = textBoxSavePath.Text;
             settings_.MapPath = textBoxMapPath.Text;
 
@@ -112,6 +121,8 @@
 
             settings_.DebugMono = radioButtonDebugMono.Checked;
             settings_.SteamExe = radioButtonSteamExe.Checked;
+
+            settings_.ExtraArgs = textBoxExtraArgs.Text;
 
             settings_.Serialize();
         }
@@ -149,7 +160,12 @@
             if (radioButtonMainMenu.Checked) {
                 ;
             } else if (radioButtonAssetEditor.Checked) {
-                args.Add("-editor");
+                if (checkBoxNewAsset.Checked)
+                    args.Add("-newAsset");
+                else 
+                    args.Add("-loadAsset");
+                if (checkBoxLSM.Checked)
+                    args.Add("-LSM");
             } else if (radioButtonNewGame.Checked) {
                 string path = textBoxMapPath.Text;
                 if (string.IsNullOrEmpty(path))

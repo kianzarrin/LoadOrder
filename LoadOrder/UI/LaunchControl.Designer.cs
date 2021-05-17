@@ -57,6 +57,9 @@ namespace LoadOrderTool.UI {
             this.buttonLaunch = new System.Windows.Forms.Button();
             this.lblNote = new System.Windows.Forms.Label();
             this.labelCommand = new System.Windows.Forms.Label();
+            this.flowLayoutPanelAssetEditorOptions = new System.Windows.Forms.FlowLayoutPanel();
+            this.checkBoxNewAsset = new System.Windows.Forms.CheckBox();
+            this.checkBoxLSM = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanelTopLevel.SuspendLayout();
             this.flowLayoutPanelExclusions.SuspendLayout();
             this.tableLayoutPanelLunchMode.SuspendLayout();
@@ -64,6 +67,7 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelLauncher.SuspendLayout();
             this.flowLayoutPanelMono.SuspendLayout();
             this.tableLayoutPanelExtraArgs.SuspendLayout();
+            this.flowLayoutPanelAssetEditorOptions.SuspendLayout();
             this.SuspendLayout();
             // 
             // flowLayoutPanelTopLevel
@@ -157,6 +161,7 @@ namespace LoadOrderTool.UI {
             this.tableLayoutPanelLunchMode.Controls.Add(this.radioButtonNewGame, 0, 3);
             this.tableLayoutPanelLunchMode.Controls.Add(this.textBoxMapPath, 1, 3);
             this.tableLayoutPanelLunchMode.Controls.Add(this.buttonMapPath, 2, 3);
+            this.tableLayoutPanelLunchMode.Controls.Add(this.flowLayoutPanelAssetEditorOptions, 1, 1);
             this.tableLayoutPanelLunchMode.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanelLunchMode.Location = new System.Drawing.Point(3, 93);
             this.tableLayoutPanelLunchMode.Margin = new System.Windows.Forms.Padding(3, 3, 3, 15);
@@ -167,7 +172,7 @@ namespace LoadOrderTool.UI {
             this.tableLayoutPanelLunchMode.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelLunchMode.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelLunchMode.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanelLunchMode.Size = new System.Drawing.Size(422, 120);
+            this.tableLayoutPanelLunchMode.Size = new System.Drawing.Size(422, 126);
             this.tableLayoutPanelLunchMode.TabIndex = 2;
             // 
             // radioButtonMainMenu
@@ -195,7 +200,7 @@ namespace LoadOrderTool.UI {
             // radioButtonLoadSave
             // 
             this.radioButtonLoadSave.AutoSize = true;
-            this.radioButtonLoadSave.Location = new System.Drawing.Point(3, 57);
+            this.radioButtonLoadSave.Location = new System.Drawing.Point(3, 63);
             this.radioButtonLoadSave.Name = "radioButtonLoadSave";
             this.radioButtonLoadSave.Size = new System.Drawing.Size(86, 21);
             this.radioButtonLoadSave.TabIndex = 5;
@@ -206,7 +211,7 @@ namespace LoadOrderTool.UI {
             // textBoxSavePath
             // 
             this.textBoxSavePath.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBoxSavePath.Location = new System.Drawing.Point(105, 57);
+            this.textBoxSavePath.Location = new System.Drawing.Point(105, 63);
             this.textBoxSavePath.Name = "textBoxSavePath";
             this.textBoxSavePath.Size = new System.Drawing.Size(281, 25);
             this.textBoxSavePath.TabIndex = 0;
@@ -215,7 +220,7 @@ namespace LoadOrderTool.UI {
             // 
             this.buttonSavePath.AutoSize = true;
             this.buttonSavePath.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonSavePath.Location = new System.Drawing.Point(392, 57);
+            this.buttonSavePath.Location = new System.Drawing.Point(392, 63);
             this.buttonSavePath.Name = "buttonSavePath";
             this.buttonSavePath.Size = new System.Drawing.Size(27, 27);
             this.buttonSavePath.TabIndex = 3;
@@ -226,7 +231,7 @@ namespace LoadOrderTool.UI {
             // radioButtonNewGame
             // 
             this.radioButtonNewGame.AutoSize = true;
-            this.radioButtonNewGame.Location = new System.Drawing.Point(3, 90);
+            this.radioButtonNewGame.Location = new System.Drawing.Point(3, 96);
             this.radioButtonNewGame.Name = "radioButtonNewGame";
             this.radioButtonNewGame.Size = new System.Drawing.Size(90, 21);
             this.radioButtonNewGame.TabIndex = 5;
@@ -237,7 +242,7 @@ namespace LoadOrderTool.UI {
             // textBoxMapPath
             // 
             this.textBoxMapPath.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBoxMapPath.Location = new System.Drawing.Point(105, 90);
+            this.textBoxMapPath.Location = new System.Drawing.Point(105, 96);
             this.textBoxMapPath.Name = "textBoxMapPath";
             this.textBoxMapPath.Size = new System.Drawing.Size(281, 25);
             this.textBoxMapPath.TabIndex = 0;
@@ -246,7 +251,7 @@ namespace LoadOrderTool.UI {
             // 
             this.buttonMapPath.AutoSize = true;
             this.buttonMapPath.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonMapPath.Location = new System.Drawing.Point(392, 90);
+            this.buttonMapPath.Location = new System.Drawing.Point(392, 96);
             this.buttonMapPath.Name = "buttonMapPath";
             this.buttonMapPath.Size = new System.Drawing.Size(27, 27);
             this.buttonMapPath.TabIndex = 4;
@@ -261,7 +266,7 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelLoadMode.Controls.Add(this.checkBoxPoke);
             this.flowLayoutPanelLoadMode.Controls.Add(this.checkBoxPhased);
             this.flowLayoutPanelLoadMode.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanelLoadMode.Location = new System.Drawing.Point(3, 231);
+            this.flowLayoutPanelLoadMode.Location = new System.Drawing.Point(3, 237);
             this.flowLayoutPanelLoadMode.Name = "flowLayoutPanelLoadMode";
             this.flowLayoutPanelLoadMode.Size = new System.Drawing.Size(136, 27);
             this.flowLayoutPanelLoadMode.TabIndex = 6;
@@ -293,7 +298,7 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelLauncher.Controls.Add(this.labelLauncher);
             this.flowLayoutPanelLauncher.Controls.Add(this.radioButtonSteamExe);
             this.flowLayoutPanelLauncher.Controls.Add(this.radioButtonCitiesExe);
-            this.flowLayoutPanelLauncher.Location = new System.Drawing.Point(3, 276);
+            this.flowLayoutPanelLauncher.Location = new System.Drawing.Point(3, 282);
             this.flowLayoutPanelLauncher.Margin = new System.Windows.Forms.Padding(3, 15, 3, 3);
             this.flowLayoutPanelLauncher.Name = "flowLayoutPanelLauncher";
             this.flowLayoutPanelLauncher.Size = new System.Drawing.Size(250, 27);
@@ -339,7 +344,7 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelMono.Controls.Add(this.labelMono);
             this.flowLayoutPanelMono.Controls.Add(this.radioButtonReleaseMono);
             this.flowLayoutPanelMono.Controls.Add(this.radioButtonDebugMono);
-            this.flowLayoutPanelMono.Location = new System.Drawing.Point(3, 306);
+            this.flowLayoutPanelMono.Location = new System.Drawing.Point(3, 312);
             this.flowLayoutPanelMono.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.flowLayoutPanelMono.Name = "flowLayoutPanelMono";
             this.flowLayoutPanelMono.Size = new System.Drawing.Size(403, 27);
@@ -387,7 +392,7 @@ namespace LoadOrderTool.UI {
             this.tableLayoutPanelExtraArgs.Controls.Add(this.labelExtraArgs, 0, 0);
             this.tableLayoutPanelExtraArgs.Controls.Add(this.textBoxExtraArgs, 1, 0);
             this.tableLayoutPanelExtraArgs.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanelExtraArgs.Location = new System.Drawing.Point(3, 339);
+            this.tableLayoutPanelExtraArgs.Location = new System.Drawing.Point(3, 345);
             this.tableLayoutPanelExtraArgs.Name = "tableLayoutPanelExtraArgs";
             this.tableLayoutPanelExtraArgs.RowCount = 1;
             this.tableLayoutPanelExtraArgs.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -416,7 +421,7 @@ namespace LoadOrderTool.UI {
             // 
             this.buttonLaunch.AutoSize = true;
             this.buttonLaunch.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonLaunch.Location = new System.Drawing.Point(3, 378);
+            this.buttonLaunch.Location = new System.Drawing.Point(3, 384);
             this.buttonLaunch.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
             this.buttonLaunch.Name = "buttonLaunch";
             this.buttonLaunch.Size = new System.Drawing.Size(139, 27);
@@ -428,7 +433,7 @@ namespace LoadOrderTool.UI {
             // lblNote
             // 
             this.lblNote.AutoSize = true;
-            this.lblNote.Location = new System.Drawing.Point(3, 408);
+            this.lblNote.Location = new System.Drawing.Point(3, 414);
             this.lblNote.Name = "lblNote";
             this.lblNote.Size = new System.Drawing.Size(245, 17);
             this.lblNote.TabIndex = 9;
@@ -442,6 +447,37 @@ namespace LoadOrderTool.UI {
             this.labelCommand.Size = new System.Drawing.Size(508, 17);
             this.labelCommand.TabIndex = 6;
             this.labelCommand.Text = "command";
+            // 
+            // flowLayoutPanelAssetEditorOptions
+            // 
+            this.flowLayoutPanelAssetEditorOptions.AutoSize = true;
+            this.flowLayoutPanelAssetEditorOptions.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelAssetEditorOptions.Controls.Add(this.checkBoxNewAsset);
+            this.flowLayoutPanelAssetEditorOptions.Controls.Add(this.checkBoxLSM);
+            this.flowLayoutPanelAssetEditorOptions.Location = new System.Drawing.Point(105, 30);
+            this.flowLayoutPanelAssetEditorOptions.Name = "flowLayoutPanelAssetEditorOptions";
+            this.flowLayoutPanelAssetEditorOptions.Size = new System.Drawing.Size(117, 27);
+            this.flowLayoutPanelAssetEditorOptions.TabIndex = 6;
+            // 
+            // checkBoxNewAsset
+            // 
+            this.checkBoxNewAsset.AutoSize = true;
+            this.checkBoxNewAsset.Location = new System.Drawing.Point(3, 3);
+            this.checkBoxNewAsset.Name = "checkBoxNewAsset";
+            this.checkBoxNewAsset.Size = new System.Drawing.Size(53, 21);
+            this.checkBoxNewAsset.TabIndex = 0;
+            this.checkBoxNewAsset.Text = "New";
+            this.checkBoxNewAsset.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxLSM
+            // 
+            this.checkBoxLSM.AutoSize = true;
+            this.checkBoxLSM.Location = new System.Drawing.Point(62, 3);
+            this.checkBoxLSM.Name = "checkBoxLSM";
+            this.checkBoxLSM.Size = new System.Drawing.Size(52, 21);
+            this.checkBoxLSM.TabIndex = 1;
+            this.checkBoxLSM.Text = "LSM";
+            this.checkBoxLSM.UseVisualStyleBackColor = true;
             // 
             // LaunchControl
             // 
@@ -465,6 +501,8 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelMono.PerformLayout();
             this.tableLayoutPanelExtraArgs.ResumeLayout(false);
             this.tableLayoutPanelExtraArgs.PerformLayout();
+            this.flowLayoutPanelAssetEditorOptions.ResumeLayout(false);
+            this.flowLayoutPanelAssetEditorOptions.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -503,5 +541,8 @@ namespace LoadOrderTool.UI {
         private TableLayoutPanel tableLayoutPanelExtraArgs;
         private Label labelExtraArgs;
         private TextBox textBoxExtraArgs;
+        private FlowLayoutPanel flowLayoutPanelAssetEditorOptions;
+        private CheckBox checkBoxNewAsset;
+        private CheckBox checkBoxLSM;
     }
 }

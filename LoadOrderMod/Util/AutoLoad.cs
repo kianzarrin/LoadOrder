@@ -30,9 +30,12 @@ namespace LoadOrderMod.Util {
             try {
                 ParseCommandLine("game|newGame", out string newGame);
                 ParseCommandLine("save|loadSave", out string loadSave);
-                bool editor = ParseCommandLine("editor", out _);
+                bool loadAsset = ParseCommandLine("editor|loadAsset", out _);
+                bool newAsset = ParseCommandLine("newAsset", out _);
+                bool lsm = ParseCommandLine("LSM", out _);
                 bool lht = ParseCommandLine("LHT", out _);
-                Log.Debug($"options: newGame={newGame.ToSTR()} loadSave={loadSave.ToSTR()} editor={editor} lht={lht}");
+                Log.Debug($"options: newGame={newGame.ToSTR()} loadSave={loadSave.ToSTR()} " +
+                    $"loadAsset={loadAsset} newAsset={newAsset} LSM={lsm} lht={lht}");
 
                 var mainMenu = GameObject.FindObjectOfType<MainMenu>();
 
@@ -43,8 +46,8 @@ namespace LoadOrderMod.Util {
                         LoadSavedGame(loadSave);
                 } else if (newGame != null) {
                     LoadMap(newGame);
-                } else if (editor) {
-                    LoadAssetEditor(lht: lht);
+                } else if (loadAsset || newAsset) {
+                    LoadAssetEditor(lht: lht, load: loadAsset, lsm:lsm);
                 }
             } catch (Exception ex) {
                 Log.Exception(ex);
@@ -173,8 +176,11 @@ namespace LoadOrderMod.Util {
             LoadGame(metaData, ngs);
         }
 
-        public void LoadAssetEditor(bool load = true, bool lht = false) {
+        public void LoadAssetEditor(bool load = true, bool lht = false, bool lsm = true) {
             LogCalled();
+
+            Patches.ForceLSMPatch.ForceLSM = lsm;
+
             var mode = load ?
                 SimulationManager.UpdateMode.LoadAsset :
                 SimulationManager.UpdateMode.NewAsset;
