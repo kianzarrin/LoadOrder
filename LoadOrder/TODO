@@ -1,6 +1,6 @@
-- sort by harmony by default.
+- Launcher: New asset | LSM (conrol+click)
 - text box for extra options
-- load save does not work when game save == asset save (eg both of them are named NewSave).
+- BUG: load save does not work when game save == asset save (eg both of them are named NewSave).
 - property display
 - group items
 - tool-bar

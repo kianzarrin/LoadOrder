@@ -1,46 +1,41 @@
 ﻿using CO.PlatformServices;
 using CO.Plugins;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Windows.Forms;
 using static CO.Plugins.PluginManager;
 
 namespace LoadOrderTool {
-    public class ModList : List<PluginManager.PluginInfo> {
+    public class ModList : List<PluginInfo> {
         const int DefaultLoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
         public List<PluginInfo> Filtered;
 
         public delegate bool PredicateHandler(PluginInfo p);
-        public Func<PluginInfo,bool> PredicateCallback { get; set; }
+        public Func<PluginInfo, bool> PredicateCallback { get; set; }
 
 
-        public ModList(IEnumerable<PluginInfo> list, Func<PluginInfo, bool> predicateCallback) : base(list)
-        {
+        public ModList(IEnumerable<PluginInfo> list, Func<PluginInfo, bool> predicateCallback) : base(list) {
             PredicateCallback = predicateCallback;
             FilterIn();
         }
 
-        public static ModList GetAllMods(Func<PluginInfo, bool> predicateCallback)
-        {
+        public static ModList GetAllMods(Func<PluginInfo, bool> predicateCallback) {
             return new ModList(PluginManager.instance.GetPluginsInfo(), predicateCallback);
         }
 
         public void FilterIn() {
             if (PredicateCallback != null)
                 Filtered = this.Where(PredicateCallback).ToList();
-            else 
+            else
                 Filtered = this.ToList();
         }
 
         public static int LoadOrderComparison(PluginInfo p1, PluginInfo p2) =>
             p1.LoadOrder.CompareTo(p2.LoadOrder);
 
-        public static int DefaultComparison(PluginInfo p1, PluginInfo p2)
-        {
+        public static int OldDefaultComparison(PluginInfo p1, PluginInfo p2) {
             var savedOrder1 = p1.LoadOrder;
             var savedOrder2 = p2.LoadOrder;
 
@@ -72,8 +67,7 @@ namespace LoadOrderTool {
         /// harmony 1 : 1.*
         /// no harmony : 0
         /// </returns>
-        public static int GetHarmonyOrder(PluginInfo p)
-        {
+        public static int GetHarmonyOrder(PluginInfo p) {
             if (p.IsHarmonyMod())
                 return 0;
             foreach (var file in p.DllPaths) {
@@ -86,10 +80,15 @@ namespace LoadOrderTool {
             return 3;
         }
 
-        public static int HarmonyComparison(PluginInfo p1, PluginInfo p2)
-        {
+        public static int HarmonyComparison(PluginInfo p1, PluginInfo p2) {
             var savedOrder1 = p1.LoadOrder;
             var savedOrder2 = p2.LoadOrder;
+
+            // orderless harmony comes first
+            if (!p1.HasLoadOrder() && p1.IsHarmonyMod())
+                return -1;
+            if (!p2.HasLoadOrder() && p2.IsHarmonyMod())
+                return +1;
 
             if (!p1.HasLoadOrder() && !p2.HasLoadOrder()) {
                 // if neither have saved order,
@@ -104,8 +103,8 @@ namespace LoadOrderTool {
                         return o1 - o2;
                 }
                 {
-                    // builin first, workshop second, local last
-                    int order(PluginInfo _p) =>
+                    // builtin first, workshop second, local last
+                    static int order(PluginInfo _p) =>
                         _p.isBuiltin ? 0 :
                         (_p.PublishedFileId != PublishedFileId.invalid ? 1 : 2);
                     if (order(p1) != order(p2))
@@ -122,37 +121,33 @@ namespace LoadOrderTool {
         }
 
         public void ResetLoadOrders() {
-            foreach(var p in this) 
+            foreach (var p in this)
                 p.ResetLoadOrder();
         }
 
-        public void DefaultSort() => Sort(DefaultComparison);
+        public void DefaultSort() => Sort(HarmonyComparison);
 
-        public void SortBy(Comparison<PluginInfo> comparison)
-        {
+        public void SortBy(Comparison<PluginInfo> comparison) {
             Sort(comparison);
             for (int i = 0; i < Count; ++i)
                 this[i].LoadOrder = i;
         }
 
-        public void ReverseOrder()
-        {
+        public void ReverseOrder() {
             int lastIndex = Count - 1;
             for (int i = 0; i < Count; ++i)
-                this[i].LoadOrder = lastIndex-i;
+                this[i].LoadOrder = lastIndex - i;
             this.Sort(LoadOrderComparison);
         }
 
-        private int[] RandomNumber(int count)
-        {
+        private int[] RandomNumber(int count) {
             var orderedList = Enumerable.Range(0, count);
             int randomSeed = RNGCryptoServiceProvider.GetInt32(0, int.MaxValue);
             var rng = new Random(randomSeed);
             return orderedList.OrderBy(c => rng.Next()).ToArray();
         }
 
-        public void RandomizeOrder()
-        {
+        public void RandomizeOrder() {
             int[] order = RandomNumber(Count);
             for (int i = 0; i < Count; ++i)
                 this[i].LoadOrder = order[i];
@@ -161,8 +156,7 @@ namespace LoadOrderTool {
 
 
         [Obsolete("Does not work if Load order is not pre-determined", true)]
-        public void MoveItem(int oldIndex, int newIndex)
-        {
+        public void MoveItem(int oldIndex, int newIndex) {
             if (oldIndex == newIndex) return;
             newIndex = Math.Clamp(newIndex, 0, Count - 1);
             var item = this[oldIndex];
@@ -184,15 +178,15 @@ namespace LoadOrderTool {
             }
 
             // work around: hyarmony without load order comes first:
-            if(newLoadOrder < DefaultLoadOrder) {
-                foreach(var p2 in this) {
+            if (newLoadOrder < DefaultLoadOrder) {
+                foreach (var p2 in this) {
                     if (p2 != p && p2.IsHarmonyMod() && !p2.HasLoadOrder())
                         p2.LoadOrder = 0;
                 }
             }
 
-            int newIndex = this.FindIndex(item => DefaultComparison(item, p) >= 0);
-            if (newIndex ==  -1) newIndex = this.Count -1; // this is the biggest value;
+            int newIndex = this.FindIndex(item => OldDefaultComparison(item, p) >= 0);
+            if (newIndex == -1) newIndex = this.Count - 1; // this is the biggest value;
             this.Remove(p);
             this.Insert(newIndex, p);
             Log.Debug($"newIndex={newIndex} newLoadOrder={p.LoadOrder}");
@@ -206,7 +200,7 @@ namespace LoadOrderTool {
         public PluginManager.PluginInfo GetPluginInfo(string path) =>
             this.FirstOrDefault(p => p.IncludedPath == path);
 
-        public void LoadFromProfile(LoadOrderProfile profile, bool replace=true) {
+        public void LoadFromProfile(LoadOrderProfile profile, bool replace = true) {
             foreach (var pluginInfo in this) {
                 var modProfile = profile.GetMod(pluginInfo.IncludedPath);
                 if (modProfile != null) {
@@ -217,7 +211,7 @@ namespace LoadOrderTool {
                         pluginInfo.IsIncludedPending |= included0;
                         pluginInfo.IsEnabledPending |= enabled0;
                     }
-                } else if(replace) {
+                } else if (replace) {
                     Log.Info("mod profile with path not found: " + pluginInfo.IncludedPath);
                     pluginInfo.LoadOrder = DefaultLoadOrder;
                     pluginInfo.IsIncluded = false;
