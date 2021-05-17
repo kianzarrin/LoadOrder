@@ -44,22 +44,26 @@ namespace LoadOrderTool.UI {
             this.checkBoxPoke = new System.Windows.Forms.CheckBox();
             this.checkBoxPhased = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanelLauncher = new System.Windows.Forms.FlowLayoutPanel();
+            this.labelLauncher = new System.Windows.Forms.Label();
             this.radioButtonSteamExe = new System.Windows.Forms.RadioButton();
             this.radioButtonCitiesExe = new System.Windows.Forms.RadioButton();
             this.flowLayoutPanelMono = new System.Windows.Forms.FlowLayoutPanel();
+            this.labelMono = new System.Windows.Forms.Label();
             this.radioButtonReleaseMono = new System.Windows.Forms.RadioButton();
             this.radioButtonDebugMono = new System.Windows.Forms.RadioButton();
+            this.tableLayoutPanelExtraArgs = new System.Windows.Forms.TableLayoutPanel();
+            this.labelExtraArgs = new System.Windows.Forms.Label();
+            this.textBoxExtraArgs = new System.Windows.Forms.TextBox();
             this.buttonLaunch = new System.Windows.Forms.Button();
             this.lblNote = new System.Windows.Forms.Label();
             this.labelCommand = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.flowLayoutPanelTopLevel.SuspendLayout();
             this.flowLayoutPanelExclusions.SuspendLayout();
             this.tableLayoutPanelLunchMode.SuspendLayout();
             this.flowLayoutPanelLoadMode.SuspendLayout();
             this.flowLayoutPanelLauncher.SuspendLayout();
             this.flowLayoutPanelMono.SuspendLayout();
+            this.tableLayoutPanelExtraArgs.SuspendLayout();
             this.SuspendLayout();
             // 
             // flowLayoutPanelTopLevel
@@ -70,13 +74,14 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelLoadMode);
             this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelLauncher);
             this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelMono);
+            this.flowLayoutPanelTopLevel.Controls.Add(this.tableLayoutPanelExtraArgs);
             this.flowLayoutPanelTopLevel.Controls.Add(this.buttonLaunch);
             this.flowLayoutPanelTopLevel.Controls.Add(this.lblNote);
             this.flowLayoutPanelTopLevel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanelTopLevel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanelTopLevel.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanelTopLevel.Name = "flowLayoutPanelTopLevel";
-            this.flowLayoutPanelTopLevel.Size = new System.Drawing.Size(605, 423);
+            this.flowLayoutPanelTopLevel.Size = new System.Drawing.Size(508, 499);
             this.flowLayoutPanelTopLevel.TabIndex = 0;
             this.flowLayoutPanelTopLevel.WrapContents = false;
             // 
@@ -161,6 +166,7 @@ namespace LoadOrderTool.UI {
             this.tableLayoutPanelLunchMode.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelLunchMode.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelLunchMode.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelLunchMode.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanelLunchMode.Size = new System.Drawing.Size(422, 120);
             this.tableLayoutPanelLunchMode.TabIndex = 2;
             // 
@@ -284,7 +290,7 @@ namespace LoadOrderTool.UI {
             // 
             this.flowLayoutPanelLauncher.AutoSize = true;
             this.flowLayoutPanelLauncher.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanelLauncher.Controls.Add(this.label1);
+            this.flowLayoutPanelLauncher.Controls.Add(this.labelLauncher);
             this.flowLayoutPanelLauncher.Controls.Add(this.radioButtonSteamExe);
             this.flowLayoutPanelLauncher.Controls.Add(this.radioButtonCitiesExe);
             this.flowLayoutPanelLauncher.Location = new System.Drawing.Point(3, 276);
@@ -293,6 +299,16 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelLauncher.Size = new System.Drawing.Size(250, 27);
             this.flowLayoutPanelLauncher.TabIndex = 7;
             this.flowLayoutPanelLauncher.WrapContents = false;
+            // 
+            // labelLauncher
+            // 
+            this.labelLauncher.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelLauncher.AutoSize = true;
+            this.labelLauncher.Location = new System.Drawing.Point(3, 5);
+            this.labelLauncher.Name = "labelLauncher";
+            this.labelLauncher.Size = new System.Drawing.Size(67, 17);
+            this.labelLauncher.TabIndex = 2;
+            this.labelLauncher.Text = "Launcher: ";
             // 
             // radioButtonSteamExe
             // 
@@ -320,7 +336,7 @@ namespace LoadOrderTool.UI {
             // 
             this.flowLayoutPanelMono.AutoSize = true;
             this.flowLayoutPanelMono.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanelMono.Controls.Add(this.label2);
+            this.flowLayoutPanelMono.Controls.Add(this.labelMono);
             this.flowLayoutPanelMono.Controls.Add(this.radioButtonReleaseMono);
             this.flowLayoutPanelMono.Controls.Add(this.radioButtonDebugMono);
             this.flowLayoutPanelMono.Location = new System.Drawing.Point(3, 306);
@@ -329,6 +345,16 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelMono.Size = new System.Drawing.Size(403, 27);
             this.flowLayoutPanelMono.TabIndex = 8;
             this.flowLayoutPanelMono.WrapContents = false;
+            // 
+            // labelMono
+            // 
+            this.labelMono.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelMono.AutoSize = true;
+            this.labelMono.Location = new System.Drawing.Point(3, 5);
+            this.labelMono.Name = "labelMono";
+            this.labelMono.Size = new System.Drawing.Size(50, 17);
+            this.labelMono.TabIndex = 2;
+            this.labelMono.Text = "Mono: ";
             // 
             // radioButtonReleaseMono
             // 
@@ -352,11 +378,45 @@ namespace LoadOrderTool.UI {
             this.radioButtonDebugMono.Text = "Debug Mode (better logs)";
             this.radioButtonDebugMono.UseVisualStyleBackColor = true;
             // 
+            // tableLayoutPanelExtraArgs
+            // 
+            this.tableLayoutPanelExtraArgs.AutoSize = true;
+            this.tableLayoutPanelExtraArgs.ColumnCount = 2;
+            this.tableLayoutPanelExtraArgs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanelExtraArgs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelExtraArgs.Controls.Add(this.labelExtraArgs, 0, 0);
+            this.tableLayoutPanelExtraArgs.Controls.Add(this.textBoxExtraArgs, 1, 0);
+            this.tableLayoutPanelExtraArgs.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tableLayoutPanelExtraArgs.Location = new System.Drawing.Point(3, 339);
+            this.tableLayoutPanelExtraArgs.Name = "tableLayoutPanelExtraArgs";
+            this.tableLayoutPanelExtraArgs.RowCount = 1;
+            this.tableLayoutPanelExtraArgs.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelExtraArgs.Size = new System.Drawing.Size(422, 31);
+            this.tableLayoutPanelExtraArgs.TabIndex = 10;
+            // 
+            // labelExtraArgs
+            // 
+            this.labelExtraArgs.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelExtraArgs.AutoSize = true;
+            this.labelExtraArgs.Location = new System.Drawing.Point(3, 7);
+            this.labelExtraArgs.Name = "labelExtraArgs";
+            this.labelExtraArgs.Size = new System.Drawing.Size(104, 17);
+            this.labelExtraArgs.TabIndex = 0;
+            this.labelExtraArgs.Text = "Extra Arguments";
+            // 
+            // textBoxExtraArgs
+            // 
+            this.textBoxExtraArgs.Dock = System.Windows.Forms.DockStyle.Top;
+            this.textBoxExtraArgs.Location = new System.Drawing.Point(113, 3);
+            this.textBoxExtraArgs.Name = "textBoxExtraArgs";
+            this.textBoxExtraArgs.Size = new System.Drawing.Size(306, 25);
+            this.textBoxExtraArgs.TabIndex = 1;
+            // 
             // buttonLaunch
             // 
             this.buttonLaunch.AutoSize = true;
             this.buttonLaunch.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonLaunch.Location = new System.Drawing.Point(3, 341);
+            this.buttonLaunch.Location = new System.Drawing.Point(3, 378);
             this.buttonLaunch.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
             this.buttonLaunch.Name = "buttonLaunch";
             this.buttonLaunch.Size = new System.Drawing.Size(139, 27);
@@ -368,40 +428,20 @@ namespace LoadOrderTool.UI {
             // lblNote
             // 
             this.lblNote.AutoSize = true;
-            this.lblNote.Location = new System.Drawing.Point(3, 371);
+            this.lblNote.Location = new System.Drawing.Point(3, 408);
             this.lblNote.Name = "lblNote";
-            this.lblNote.Size = new System.Drawing.Size(261, 17);
+            this.lblNote.Size = new System.Drawing.Size(245, 17);
             this.lblNote.TabIndex = 9;
             this.lblNote.Text = "?: hover over components for more info.";
             // 
             // labelCommand
             // 
             this.labelCommand.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.labelCommand.Location = new System.Drawing.Point(0, 406);
+            this.labelCommand.Location = new System.Drawing.Point(0, 482);
             this.labelCommand.Name = "labelCommand";
-            this.labelCommand.Size = new System.Drawing.Size(605, 17);
+            this.labelCommand.Size = new System.Drawing.Size(508, 17);
             this.labelCommand.TabIndex = 6;
             this.labelCommand.Text = "command";
-            // 
-            // label1
-            // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 5);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 17);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Launcher: ";
-            // 
-            // label2
-            // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 5);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(50, 17);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Mono: ";
             // 
             // LaunchControl
             // 
@@ -410,7 +450,7 @@ namespace LoadOrderTool.UI {
             this.Controls.Add(this.labelCommand);
             this.Controls.Add(this.flowLayoutPanelTopLevel);
             this.Name = "LaunchControl";
-            this.Size = new System.Drawing.Size(605, 423);
+            this.Size = new System.Drawing.Size(508, 499);
             this.flowLayoutPanelTopLevel.ResumeLayout(false);
             this.flowLayoutPanelTopLevel.PerformLayout();
             this.flowLayoutPanelExclusions.ResumeLayout(false);
@@ -423,6 +463,8 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelLauncher.PerformLayout();
             this.flowLayoutPanelMono.ResumeLayout(false);
             this.flowLayoutPanelMono.PerformLayout();
+            this.tableLayoutPanelExtraArgs.ResumeLayout(false);
+            this.tableLayoutPanelExtraArgs.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -456,7 +498,10 @@ namespace LoadOrderTool.UI {
         private RadioButton radioButtonReleaseMono;
         private RadioButton radioButtonDebugMono;
         private Label lblNote;
-        private Label label1;
-        private Label label2;
+        private Label labelLauncher;
+        private Label labelMono;
+        private TableLayoutPanel tableLayoutPanelExtraArgs;
+        private Label labelExtraArgs;
+        private TextBox textBoxExtraArgs;
     }
 }

@@ -8,6 +8,7 @@
     using System.Diagnostics;
     using LoadOrderTool.Util;
     using LoadOrderTool.Data;
+    using CO;
 
     public partial class LaunchControl : UserControl {
         LoadOrderToolSettings settings_ => LoadOrderToolSettings.Instace;
@@ -162,6 +163,9 @@
                 else
                     args.Add("--loadSave=" + quote(path));
             }
+
+            var extraArgs = textBoxExtraArgs.Text.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            args.AddRange(extraArgs);
 
             return args.ToArray();
         }
