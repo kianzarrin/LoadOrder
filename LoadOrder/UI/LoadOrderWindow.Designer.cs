@@ -29,8 +29,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.TabContainer = new System.Windows.Forms.TabControl();
             this.ModsTab = new System.Windows.Forms.TabPage();
             this.dataGridMods = new LoadOrderTool.UI.ModDataGrid();
@@ -73,6 +73,11 @@
             this.tsmiHarmonyOrder = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiReverseOrder = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiRandomOrder = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiWiki = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiDiscordSupport = new System.Windows.Forms.ToolStripMenuItem();
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMods)).BeginInit();
@@ -116,8 +121,8 @@
             this.dataGridMods.AllowUserToAddRows = false;
             this.dataGridMods.AllowUserToDeleteRows = false;
             this.dataGridMods.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Beige;
-            this.dataGridMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Beige;
+            this.dataGridMods.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridMods.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridMods.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -281,8 +286,8 @@
             this.dataGridAssets.AllowUserToDeleteRows = false;
             this.dataGridAssets.AllowUserToOrderColumns = true;
             this.dataGridAssets.AllowUserToResizeRows = false;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Beige;
-            this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Beige;
+            this.dataGridAssets.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridAssets.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridAssets.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataGridAssets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -426,7 +431,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiFile,
-            this.tsmiOrder});
+            this.tsmiOrder,
+            this.tsmiHelp});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(956, 25);
@@ -534,6 +540,40 @@
             this.tsmiRandomOrder.Text = "Ra&ndom";
             this.tsmiRandomOrder.ToolTipText = "Random order";
             // 
+            // tsmiHelp
+            // 
+            this.tsmiHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiWiki,
+            this.tsmiDiscordSupport,
+            this.toolStripSeparator3,
+            this.tsmiAbout});
+            this.tsmiHelp.Name = "tsmiHelp";
+            this.tsmiHelp.Size = new System.Drawing.Size(47, 21);
+            this.tsmiHelp.Text = "&Help";
+            // 
+            // tsmiWiki
+            // 
+            this.tsmiWiki.Name = "tsmiWiki";
+            this.tsmiWiki.Size = new System.Drawing.Size(172, 22);
+            this.tsmiWiki.Text = "&Wiki";
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(169, 6);
+            // 
+            // tsmiAbout
+            // 
+            this.tsmiAbout.Name = "tsmiAbout";
+            this.tsmiAbout.Size = new System.Drawing.Size(172, 22);
+            this.tsmiAbout.Text = "&About";
+            // 
+            // tsmiDiscordSupport
+            // 
+            this.tsmiDiscordSupport.Name = "tsmiDiscordSupport";
+            this.tsmiDiscordSupport.Size = new System.Drawing.Size(172, 22);
+            this.tsmiDiscordSupport.Text = "Discord &Support";
+            // 
             // LoadOrderWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -612,5 +652,10 @@
         private ToolStripMenuItem tsmiHarmonyOrder;
         private ToolStripMenuItem tsmiReverseOrder;
         private ToolStripMenuItem tsmiRandomOrder;
+        private ToolStripMenuItem tsmiHelp;
+        private ToolStripMenuItem tsmiWiki;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripMenuItem tsmiAbout;
+        private ToolStripMenuItem tsmiDiscordSupport;
     }
 }

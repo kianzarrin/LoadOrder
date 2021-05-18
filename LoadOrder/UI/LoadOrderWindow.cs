@@ -75,6 +75,9 @@ namespace LoadOrderTool.UI {
                 tsmiSave.Click += Save_Click;
                 tsmiExport.Click += Export_Click;
                 tsmiImport.Click += Import_Click;
+                tsmiWiki.Click += TsmiWiki_Click;
+                tsmiDiscordSupport.Click += TsmiDiscordSupport_Click;
+                tsmiAbout.Click += TsmiAbout_Click;
 
             } catch (Exception ex){
                 ex.Log();
@@ -147,6 +150,19 @@ namespace LoadOrderTool.UI {
             if (!Visible) return; // skip during initialization.
             LoadOrderToolSettings.Instace.FormWidth = Width;
             LoadOrderToolSettings.Instace.FormHeight = Height;
+        }
+
+        private void TsmiDiscordSupport_Click(object sender, EventArgs e) =>
+            ContentUtil.OpenURL("https://discord.gg/tTYS6XnmBb");
+
+        private void TsmiAbout_Click(object sender, EventArgs e) {
+            using(var d = new AboutBox()) {
+                d.ShowDialog();
+            }
+        }
+
+        private void TsmiWiki_Click(object sender, EventArgs e) {
+            ContentUtil.OpenURL("https://github.com/kianzarrin/LoadOrder/wiki");
         }
 
         #region MenuBar
@@ -349,7 +365,7 @@ namespace LoadOrderTool.UI {
 
             this.IncludeAllAssets.Click += IncludeAllAssets_Click;
             this.ExcludeAllAssets.Click += ExcludeAllAssets_Click;
-
+            
             var buttons = AssetsActionPanel.Controls.OfType<Button>();
             var maxwidth = buttons.Max(b => b.Width);
             foreach (var b in buttons)
