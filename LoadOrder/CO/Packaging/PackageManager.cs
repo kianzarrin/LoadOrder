@@ -160,8 +160,11 @@ namespace CO.Packaging {
 
         public IEnumerable<AssetInfo> GetAssets() => m_Assets;
 
-        public string[] GetAllTags() =>
-            m_Assets.SelectMany(a => a.GetTags()).Distinct().ToArray();
+        public string[] GetAllTags() {
+            var ret = m_Assets.SelectMany(a => a.GetTags()).Distinct().ToArray();
+            Array.Sort(ret);
+            return ret;
+        }
 
         public void LoadPackages() {
             try {

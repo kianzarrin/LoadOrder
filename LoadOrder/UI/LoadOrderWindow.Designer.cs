@@ -382,7 +382,9 @@
             // 
             // ComboBoxAssetTags
             // 
-            this.ComboBoxAssetTags.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ComboBoxAssetTags.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
+            this.ComboBoxAssetTags.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            this.ComboBoxAssetTags.AutoCompleteSource = AutoCompleteSource.ListItems;
             this.ComboBoxAssetTags.FormattingEnabled = true;
             this.ComboBoxAssetTags.Location = new System.Drawing.Point(315, 3);
             this.ComboBoxAssetTags.Name = "ComboBoxAssetTags";
