@@ -82,10 +82,18 @@ namespace LoadOrderTool.UI {
         }
 
         private void TsmiResetSettings_Click(object sender, EventArgs e) {
-            ConfigWrapper.ResetAllConfig();
-            ReloadAll();
-            launchControl.LoadSettings();
-            ConfigWrapper.instance.SaveConfig();
+            if (DialogResult.Yes ==
+                MessageBox.Show(
+                    text:"Are you sure you want to reset all settings?",
+                    caption:"Reset settings?",
+                    buttons:MessageBoxButtons.YesNo, 
+                    icon:MessageBoxIcon.Warning
+                )) {
+                ConfigWrapper.ResetAllConfig();
+                ReloadAll();
+                launchControl.LoadSettings();
+                ConfigWrapper.instance.SaveConfig();
+            }
         }
 
         protected override void OnResizeEnd(EventArgs e) {
@@ -220,17 +228,17 @@ namespace LoadOrderTool.UI {
             ComboBoxWS.SelectedIndexChanged += RefreshModList;
             TextFilterMods.TextChanged += RefreshModList;
 
-
-
-            SortByHarmony.Click += SortByHarmony_Click;
-            ReverseOrder.Click += ReverseOrder_Click;
-            RandomizeOrder.Click += RandomizeOrder_Click;
-            ResetOrder.Click += ResetOrder_Click;
+            TabContainer.SelectedIndexChanged += TabContainer_SelectedIndexChanged;
+            tsmiHarmonyOrder.Click += SortByHarmony_Click;
+            tsmiReverseOrder.Click += ReverseOrder_Click;
+            tsmiRandomOrder.Click += RandomizeOrder_Click;
+            tsmiResetOrder.Click += ResetOrder_Click;
             IncludeAllMods.Click += IncludeAllMods_Click;
             ExcludeAllMods.Click += ExcludeAllMods_Click;
             EnableAllMods.Click += EnableAllMods_Click;
             DisableAllMods.Click += DisableAllMods_Click;
-
+            
+            
             var buttons = ModActionPanel.Controls.OfType<Button>();
             var maxwidth = buttons.Max(b => b.Width);
             foreach (var b in buttons)
@@ -276,6 +284,9 @@ namespace LoadOrderTool.UI {
 
             return true;
         }
+
+        private void TabContainer_SelectedIndexChanged(object sender, EventArgs e) =>
+            tsmiOrder.Visible = dataGridMods.Visible;
 
         private void ResetOrder_Click(object sender, EventArgs e) {
             foreach (var mod in dataGridMods.ModList)
@@ -479,6 +490,6 @@ namespace LoadOrderTool.UI {
         }
 
 
-#endregion
+        #endregion
     }
 }

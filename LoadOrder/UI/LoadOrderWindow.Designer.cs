@@ -35,10 +35,6 @@
             this.ModsTab = new System.Windows.Forms.TabPage();
             this.dataGridMods = new LoadOrderTool.UI.ModDataGrid();
             this.ModActionPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.ResetOrder = new System.Windows.Forms.Button();
-            this.SortByHarmony = new System.Windows.Forms.Button();
-            this.ReverseOrder = new System.Windows.Forms.Button();
-            this.RandomizeOrder = new System.Windows.Forms.Button();
             this.IncludeAllMods = new System.Windows.Forms.Button();
             this.ExcludeAllMods = new System.Windows.Forms.Button();
             this.EnableAllMods = new System.Windows.Forms.Button();
@@ -64,6 +60,7 @@
             this.launchControl = new LoadOrderTool.UI.LaunchControl();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiResetSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiReload = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiSave = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,7 +68,11 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiExport = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiImport = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiResetSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiOrder = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiResetOrder = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiHarmonyOrder = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiReverseOrder = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiRandomOrder = new System.Windows.Forms.ToolStripMenuItem();
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMods)).BeginInit();
@@ -125,82 +126,30 @@
             this.dataGridMods.MultiSelect = false;
             this.dataGridMods.Name = "dataGridMods";
             this.dataGridMods.RowHeadersVisible = false;
-            this.dataGridMods.Size = new System.Drawing.Size(816, 533);
+            this.dataGridMods.Size = new System.Drawing.Size(858, 533);
             this.dataGridMods.TabIndex = 1;
             // 
             // ModActionPanel
             // 
             this.ModActionPanel.AutoSize = true;
             this.ModActionPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ModActionPanel.Controls.Add(this.ResetOrder);
-            this.ModActionPanel.Controls.Add(this.SortByHarmony);
-            this.ModActionPanel.Controls.Add(this.ReverseOrder);
-            this.ModActionPanel.Controls.Add(this.RandomizeOrder);
             this.ModActionPanel.Controls.Add(this.IncludeAllMods);
             this.ModActionPanel.Controls.Add(this.ExcludeAllMods);
             this.ModActionPanel.Controls.Add(this.EnableAllMods);
             this.ModActionPanel.Controls.Add(this.DisableAllMods);
             this.ModActionPanel.Dock = System.Windows.Forms.DockStyle.Right;
             this.ModActionPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.ModActionPanel.Location = new System.Drawing.Point(819, 34);
+            this.ModActionPanel.Location = new System.Drawing.Point(861, 34);
             this.ModActionPanel.Name = "ModActionPanel";
-            this.ModActionPanel.Size = new System.Drawing.Size(126, 533);
+            this.ModActionPanel.Size = new System.Drawing.Size(84, 533);
             this.ModActionPanel.TabIndex = 2;
-            // 
-            // ResetOrder
-            // 
-            this.ResetOrder.AutoSize = true;
-            this.ResetOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ResetOrder.Location = new System.Drawing.Point(2, 2);
-            this.ResetOrder.Margin = new System.Windows.Forms.Padding(2);
-            this.ResetOrder.Name = "ResetOrder";
-            this.ResetOrder.Size = new System.Drawing.Size(89, 27);
-            this.ResetOrder.TabIndex = 0;
-            this.ResetOrder.Text = "Reset Order";
-            this.ResetOrder.UseVisualStyleBackColor = true;
-            // 
-            // SortByHarmony
-            // 
-            this.SortByHarmony.AutoSize = true;
-            this.SortByHarmony.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.SortByHarmony.Location = new System.Drawing.Point(2, 33);
-            this.SortByHarmony.Margin = new System.Windows.Forms.Padding(2);
-            this.SortByHarmony.Name = "SortByHarmony";
-            this.SortByHarmony.Size = new System.Drawing.Size(116, 27);
-            this.SortByHarmony.TabIndex = 1;
-            this.SortByHarmony.Text = "Sort By Harmony";
-            this.SortByHarmony.UseVisualStyleBackColor = true;
-            // 
-            // ReverseOrder
-            // 
-            this.ReverseOrder.AutoSize = true;
-            this.ReverseOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ReverseOrder.Location = new System.Drawing.Point(2, 64);
-            this.ReverseOrder.Margin = new System.Windows.Forms.Padding(2);
-            this.ReverseOrder.Name = "ReverseOrder";
-            this.ReverseOrder.Size = new System.Drawing.Size(103, 27);
-            this.ReverseOrder.TabIndex = 2;
-            this.ReverseOrder.Text = "Reverse Order";
-            this.ReverseOrder.UseVisualStyleBackColor = true;
-            // 
-            // RandomizeOrder
-            // 
-            this.RandomizeOrder.AutoSize = true;
-            this.RandomizeOrder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.RandomizeOrder.Location = new System.Drawing.Point(2, 95);
-            this.RandomizeOrder.Margin = new System.Windows.Forms.Padding(2);
-            this.RandomizeOrder.Name = "RandomizeOrder";
-            this.RandomizeOrder.Size = new System.Drawing.Size(122, 27);
-            this.RandomizeOrder.TabIndex = 5;
-            this.RandomizeOrder.Text = "Randomize Order";
-            this.RandomizeOrder.UseVisualStyleBackColor = true;
             // 
             // IncludeAllMods
             // 
             this.IncludeAllMods.AutoSize = true;
             this.IncludeAllMods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.IncludeAllMods.Location = new System.Drawing.Point(2, 134);
-            this.IncludeAllMods.Margin = new System.Windows.Forms.Padding(2, 10, 2, 2);
+            this.IncludeAllMods.Location = new System.Drawing.Point(2, 2);
+            this.IncludeAllMods.Margin = new System.Windows.Forms.Padding(2);
             this.IncludeAllMods.Name = "IncludeAllMods";
             this.IncludeAllMods.Size = new System.Drawing.Size(77, 27);
             this.IncludeAllMods.TabIndex = 7;
@@ -211,7 +160,7 @@
             // 
             this.ExcludeAllMods.AutoSize = true;
             this.ExcludeAllMods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ExcludeAllMods.Location = new System.Drawing.Point(2, 165);
+            this.ExcludeAllMods.Location = new System.Drawing.Point(2, 33);
             this.ExcludeAllMods.Margin = new System.Windows.Forms.Padding(2);
             this.ExcludeAllMods.Name = "ExcludeAllMods";
             this.ExcludeAllMods.Size = new System.Drawing.Size(80, 27);
@@ -223,7 +172,7 @@
             // 
             this.EnableAllMods.AutoSize = true;
             this.EnableAllMods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.EnableAllMods.Location = new System.Drawing.Point(2, 196);
+            this.EnableAllMods.Location = new System.Drawing.Point(2, 64);
             this.EnableAllMods.Margin = new System.Windows.Forms.Padding(2);
             this.EnableAllMods.Name = "EnableAllMods";
             this.EnableAllMods.Size = new System.Drawing.Size(75, 27);
@@ -235,7 +184,7 @@
             // 
             this.DisableAllMods.AutoSize = true;
             this.DisableAllMods.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.DisableAllMods.Location = new System.Drawing.Point(2, 227);
+            this.DisableAllMods.Location = new System.Drawing.Point(2, 95);
             this.DisableAllMods.Margin = new System.Windows.Forms.Padding(2);
             this.DisableAllMods.Name = "DisableAllMods";
             this.DisableAllMods.Size = new System.Drawing.Size(79, 27);
@@ -476,7 +425,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiFile});
+            this.tsmiFile,
+            this.tsmiOrder});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(956, 25);
@@ -498,53 +448,91 @@
             this.tsmiFile.Size = new System.Drawing.Size(39, 21);
             this.tsmiFile.Text = "&File";
             // 
+            // tsmiResetSettings
+            // 
+            this.tsmiResetSettings.Name = "tsmiResetSettings";
+            this.tsmiResetSettings.Size = new System.Drawing.Size(158, 22);
+            this.tsmiResetSettings.Text = "Reset &Settings";
+            // 
             // tsmiReload
             // 
             this.tsmiReload.Name = "tsmiReload";
-            this.tsmiReload.Size = new System.Drawing.Size(176, 22);
+            this.tsmiReload.Size = new System.Drawing.Size(158, 22);
             this.tsmiReload.Text = "&Reload Items";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(155, 6);
             // 
             // tsmiSave
             // 
             this.tsmiSave.Name = "tsmiSave";
             this.tsmiSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.tsmiSave.Size = new System.Drawing.Size(176, 22);
+            this.tsmiSave.Size = new System.Drawing.Size(158, 22);
             this.tsmiSave.Text = "&Save";
             // 
             // tsmiAutoSave
             // 
             this.tsmiAutoSave.CheckOnClick = true;
             this.tsmiAutoSave.Name = "tsmiAutoSave";
-            this.tsmiAutoSave.Size = new System.Drawing.Size(176, 22);
+            this.tsmiAutoSave.Size = new System.Drawing.Size(158, 22);
             this.tsmiAutoSave.Text = "&Auto-save";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(155, 6);
             // 
             // tsmiExport
             // 
             this.tsmiExport.Name = "tsmiExport";
-            this.tsmiExport.Size = new System.Drawing.Size(176, 22);
+            this.tsmiExport.Size = new System.Drawing.Size(158, 22);
             this.tsmiExport.Text = "&Export ...";
             // 
             // tsmiImport
             // 
             this.tsmiImport.Name = "tsmiImport";
-            this.tsmiImport.Size = new System.Drawing.Size(176, 22);
+            this.tsmiImport.Size = new System.Drawing.Size(158, 22);
             this.tsmiImport.Text = "&Import ...";
             // 
-            // tsmiResetSettings
+            // tsmiOrder
             // 
-            this.tsmiResetSettings.Name = "tsmiResetSettings";
-            this.tsmiResetSettings.Size = new System.Drawing.Size(176, 22);
-            this.tsmiResetSettings.Text = "Reset &Settings";
+            this.tsmiOrder.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiResetOrder,
+            this.tsmiHarmonyOrder,
+            this.tsmiReverseOrder,
+            this.tsmiRandomOrder});
+            this.tsmiOrder.Name = "tsmiOrder";
+            this.tsmiOrder.Size = new System.Drawing.Size(55, 21);
+            this.tsmiOrder.Text = "&Order";
+            // 
+            // tsmiResetOrder
+            // 
+            this.tsmiResetOrder.Name = "tsmiResetOrder";
+            this.tsmiResetOrder.Size = new System.Drawing.Size(143, 22);
+            this.tsmiResetOrder.Text = "&ResetOrder";
+            // 
+            // tsmiHarmonyOrder
+            // 
+            this.tsmiHarmonyOrder.Name = "tsmiHarmonyOrder";
+            this.tsmiHarmonyOrder.Size = new System.Drawing.Size(143, 22);
+            this.tsmiHarmonyOrder.Text = "&Harmony";
+            this.tsmiHarmonyOrder.ToolTipText = "sort by harmony";
+            // 
+            // tsmiReverseOrder
+            // 
+            this.tsmiReverseOrder.Name = "tsmiReverseOrder";
+            this.tsmiReverseOrder.Size = new System.Drawing.Size(143, 22);
+            this.tsmiReverseOrder.Text = "Re&verse";
+            this.tsmiReverseOrder.ToolTipText = "revese order";
+            // 
+            // tsmiRandomOrder
+            // 
+            this.tsmiRandomOrder.Name = "tsmiRandomOrder";
+            this.tsmiRandomOrder.Size = new System.Drawing.Size(143, 22);
+            this.tsmiRandomOrder.Text = "Ra&ndom";
+            this.tsmiRandomOrder.ToolTipText = "Random order";
             // 
             // LoadOrderWindow
             // 
@@ -588,11 +576,8 @@
         private TableLayoutPanel tableLayoutPanelModFilters;
         private TableLayoutPanel tableLayoutPanelAssetFilters;
         private FlowLayoutPanel ModActionPanel;
-        private Button SortByHarmony;
-        private Button ReverseOrder;
         private Button ExcludeAllMods;
         private Button EnableAllMods;
-        private Button RandomizeOrder;
         private Button DisableAllMods;
         private Button IncludeAllMods;
         public UI.ModDataGrid dataGridMods;
@@ -610,7 +595,6 @@
         private Label label2;
         private TextBox TextFilterAsset;
         private UI.AssetDataGrid dataGridAssets;
-        private Button ResetOrder;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem tsmiFile;
         private ToolStripMenuItem tsmiReload;
@@ -623,5 +607,10 @@
         private TabPage LaunchTab;
         private UI.LaunchControl launchControl;
         private ToolStripMenuItem tsmiResetSettings;
+        private ToolStripMenuItem tsmiOrder;
+        private ToolStripMenuItem tsmiResetOrder;
+        private ToolStripMenuItem tsmiHarmonyOrder;
+        private ToolStripMenuItem tsmiReverseOrder;
+        private ToolStripMenuItem tsmiRandomOrder;
     }
 }
