@@ -124,7 +124,6 @@
 
         public static void UseDebugMono() {
             try {
-
                 EnsureBReleaseMonoBackedup();
                 EnsureDebugMonoWritten();
                 CopyMono(source: DebugMonoPath, dest: MonoPath);
@@ -135,7 +134,8 @@
         }
         public static void UseReleaseMono() {
             try {
-                CopyMono(source: ReleaseMonoPath, dest: MonoPath);
+                if(File.Exists(ReleaseMonoPath))
+                    CopyMono(source: ReleaseMonoPath, dest: MonoPath);
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
