@@ -7,6 +7,8 @@ namespace LoadOrderMod.Patches.Startup {
     static class WorkshopAdPanel_Awake {
         static bool Prefix(WorkshopAdPanel __instance ) {
             LogCalled();
+            if (!Settings.ConfigUtil.Config.TurnOffSteamPanels)
+                return true;
             GameObject.DestroyImmediate(__instance.gameObject);
             return false;
         }

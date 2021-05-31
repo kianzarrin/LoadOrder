@@ -17,6 +17,10 @@
             ILogger logger,
             string patcherWorkingPath,
             IPaths gamePaths) {
+
+            var args = Environment.GetCommandLineArgs();
+            logger.Info("comamnd line args are: " + string.Join(" ", args));
+            
             if (IsDebugMono()) {
                 logger.Info("Warning! Debug mono is slow! use Load order tool to change it.");
             }

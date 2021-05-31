@@ -20,6 +20,10 @@ namespace LoadOrderMod {
         public void OnEnabled() {
             try {
                 Util.LoadOrderUtil.ApplyGameLoggingImprovements();
+
+                var args = Environment.GetCommandLineArgs();
+                Log.Info("comamnd line args are: " + string.Join(" ", args));
+
                 Log.ShowGap = true;
                 Log.Buffered = true;
                 //Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: true);
@@ -71,9 +75,12 @@ namespace LoadOrderMod {
             Log.Info($"SceneManager.sceneLoaded({scene.name}, {mode})", true);
             Log.Flush();
         }
+
         public static void OnActiveSceneChanged(Scene from, Scene to) {
             Log.Info($"SceneManager.activeSceneChanged({from.name}, {to.name})", true);
             Log.Flush();
+            if (Helpers.InStartupMenu)
+                LoadOrderUtil.TurnOffSteamPanels();
         }
 
         public void OnSettingsUI(UIHelperBase helper) => Settings.Settings.OnSettingsUI(helper as UIHelper);

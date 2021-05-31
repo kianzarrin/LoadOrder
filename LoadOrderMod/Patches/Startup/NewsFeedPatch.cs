@@ -7,6 +7,8 @@ namespace LoadOrderMod.Patches.Startup {
     static class NewsFeedPanel_Awake {
         static bool Prefix(NewsFeedPanel __instance) {
             LogCalled();
+            if (!Settings.ConfigUtil.Config.TurnOffSteamPanels)
+                return true;
             GameObject.DestroyImmediate(__instance.gameObject);
             return false;
         }
