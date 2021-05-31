@@ -41,7 +41,7 @@ namespace LoadOrderMod.Util {
                 LogCalled();
                 if (name == null) throw new ArgumentNullException("name");
                 var categories = optionsMainPanel.m_Categories();
-                int index = categories.items.IndexOf(name);
+                int index = (categories.items as IList<string>).IndexOf(name);
                 if (index < 0) return;
                 int selectedIndex = categories.selectedIndex;
 

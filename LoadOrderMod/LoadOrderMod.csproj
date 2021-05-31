@@ -52,6 +52,8 @@
     <Compile Remove="KianCommons\KianCommons\Patches\**" />
     <Compile Remove="KianCommons\KianCommons\Properties\**" />
     <Compile Remove="KianCommons\KianCommons\Serialization\**" />
+    <Compile Remove="KianCommons\KianCommons\StockCode\**" />
+    <Compile Remove="KianCommons\KianCommons\Tool\**" />
     <Compile Remove="KianCommons\KianCommons\UI\**" />
     <Compile Remove="KianCommons\KianCommons\Util\**" />
     <Compile Remove="KianCommons\libs\**" />
@@ -63,6 +65,8 @@
     <EmbeddedResource Remove="KianCommons\KianCommons\Patches\**" />
     <EmbeddedResource Remove="KianCommons\KianCommons\Properties\**" />
     <EmbeddedResource Remove="KianCommons\KianCommons\Serialization\**" />
+    <EmbeddedResource Remove="KianCommons\KianCommons\StockCode\**" />
+    <EmbeddedResource Remove="KianCommons\KianCommons\Tool\**" />
     <EmbeddedResource Remove="KianCommons\KianCommons\UI\**" />
     <EmbeddedResource Remove="KianCommons\KianCommons\Util\**" />
     <EmbeddedResource Remove="KianCommons\libs\**" />
@@ -74,6 +78,8 @@
     <None Remove="KianCommons\KianCommons\Patches\**" />
     <None Remove="KianCommons\KianCommons\Properties\**" />
     <None Remove="KianCommons\KianCommons\Serialization\**" />
+    <None Remove="KianCommons\KianCommons\StockCode\**" />
+    <None Remove="KianCommons\KianCommons\Tool\**" />
     <None Remove="KianCommons\KianCommons\UI\**" />
     <None Remove="KianCommons\KianCommons\Util\**" />
     <None Remove="KianCommons\libs\**" />
@@ -98,7 +104,6 @@
     <Compile Include="KianCommons\KianCommons\Util\Log.cs" />
     <Compile Include="KianCommons\KianCommons\Util\ReflectionHelpers.cs" />
     <Compile Include="KianCommons\KianCommons\Util\StringExtensions.cs" />
-    <Folder Include="KianCommons\KianCommons\Math\" />
   </ItemGroup>
 
   <Target Name="DeployToModDirectory" AfterTargets="Build">
