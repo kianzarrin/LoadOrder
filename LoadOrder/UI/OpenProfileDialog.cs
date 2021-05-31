@@ -7,6 +7,7 @@
     using CO.Packaging;
     using CO.Plugins;
     using LoadOrderTool.Util;
+    using LoadOrderTool.UI;
     using System.IO;
 
     public partial class OpenProfileDialog : Form {
@@ -43,6 +44,9 @@
             btnReplace.Click += BtnReplace_Click;
             btnAppend.Click += BtnAppend_Click;
             btnReload.Click += BtnReload_Click;
+
+            btnAppend.SetTooltip("current mods/assets + profile mods/assets");
+            btnReplace.SetTooltip("profile mods/assets only");
         }
 
         private void BtnReload_Click(object sender, EventArgs e) {
