@@ -1,5 +1,5 @@
 <Project>
   <PropertyGroup>
-    <AssemblyVersion>0.4.7.*</AssemblyVersion>
+    <AssemblyVersion>0.5.0.*</AssemblyVersion>
   </PropertyGroup>
 </Project>
