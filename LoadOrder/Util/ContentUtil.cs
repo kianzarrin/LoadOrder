@@ -36,6 +36,33 @@
             }
         }
 
+        public static Process OpenPath(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                {
+                    string cmd = "explorer.exe";
+                    string arg = "/select, " + path;
+                    return Process.Start(cmd, arg);
+                }
+                else
+                {
+                    string cmd = "explorer.exe";
+                    string arg = path;
+                    return Process.Start(cmd, arg);
+                }
+
+            }
+            catch (Exception ex2)
+            {
+                Log.Exception(
+                    new Exception("could not open path: " + path, ex2),
+                    "could not open path");
+                return null;
+            }
+        }
+
         public static bool IsPathIncluded(string fullPath) {
             return Path.GetFileName(fullPath).StartsWith("_");
         }
@@ -76,12 +103,15 @@
         }
 
         public static bool TryGetID(string dir, out ulong id) {
-            string dir2;
-            if (dir.StartsWith("_"))
-                dir2 = dir.Remove(0, 1);
+            if (File.Exists(dir))
+                dir = new FileInfo(dir).Directory.Name;
+            else if (Directory.Exists(dir))
+                dir = new FileInfo(dir).Directory.Name;
             else
-                dir2 = dir;
-            return ulong.TryParse(dir2, out id);
+                dir = Path.GetFileName(dir);
+            if (dir.StartsWith("_"))
+                dir = dir.Remove(0, 1);
+            return ulong.TryParse(dir, out id);
         }
 
         static ulong Path2ID(string path) {

@@ -7,6 +7,7 @@
     using CO.Packaging;
     using CO.Plugins;
     using LoadOrderTool.Util;
+    using System.IO;
 
     public partial class OpenProfileDialog : Form {
         public enum ItemTypeT {
@@ -79,14 +80,18 @@
             dataGridView1.Refresh();
         }
 
-        static bool TryGetItemId(object item, out ulong id) {
-            string path;
+        static string GetItemPath(object item)
+        {
             if (item is LoadOrderProfile.Mod mod)
-                path = mod.IncludedPathFinal;
+                return mod.IncludedPathFinal;
             else if (item is LoadOrderProfile.Asset asset)
-                path = asset.IncludedPath;
+                return asset.IncludedPath;
             else
                 throw new Exception("unknow item : " + item);
+        }
+
+        static bool TryGetItemId(object item, out ulong id) {
+            string path = GetItemPath(item);
             return ContentUtil.TryGetID(path, out id);
         }
 
@@ -126,6 +131,8 @@
                     if (TryGetItemId(item, out var id)) {
                         string url = ContentUtil.GetItemURL(id.ToString());
                         e.ToolTipText = url;
+                    } else {
+                        e.ToolTipText = GetItemPath(item) ?? "";
                     }
                 }
             } catch (Exception ex) {
@@ -144,6 +151,8 @@
                     if (TryGetItemId(item, out var id)) {
                         string url = ContentUtil.GetItemURL(id.ToString());
                         ContentUtil.OpenURL(url);
+                    } else {
+                        ContentUtil.OpenPath(GetItemPath(item));
                     }
                 }
             } catch (Exception ex) {

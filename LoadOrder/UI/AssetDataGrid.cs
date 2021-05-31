@@ -116,7 +116,7 @@
                 } else if (e.ColumnIndex == cAssetID.Index) {
                     string id = asset.PublishedFileId.AsUInt64.ToString();
                     if (id == "0" || asset.PublishedFileId == PublishedFileId.invalid)
-                        id = "";
+                        id = "Local";
                     e.Value = id;
                 } else if (e.ColumnIndex == cName.Index) {
                     e.Value = asset.DisplayText ?? "";
@@ -142,7 +142,7 @@
                 if (e.ColumnIndex == cAssetID.Index) {
                     var id = asset.PublishedFileId;
                     string url = ContentUtil.GetItemURL(asset.PublishedFileId);
-                    e.ToolTipText = url ?? "local";
+                    e.ToolTipText = url ?? asset.AssetPath;
                 }
             } catch (Exception ex) {
                 Log.Exception(ex, $"rowIndex={e.RowIndex}");
@@ -162,6 +162,8 @@
                     string url = ContentUtil.GetItemURL(asset.PublishedFileId);
                     if (url != null)
                         ContentUtil.OpenURL(url);
+                    else
+                        ContentUtil.OpenPath(asset.AssetPath);
                 }
             } catch (Exception ex) {
                 Log.Exception(ex);

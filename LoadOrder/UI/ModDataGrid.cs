@@ -170,7 +170,7 @@
                 if (e.ColumnIndex == CDescription.Index && e.Value != null) {
                     cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
                 } else if (e.ColumnIndex == CModID.Index) {
-                    cell.ToolTipText = ContentUtil.GetItemURL((string)cell.Value);
+                    cell.ToolTipText = ContentUtil.GetItemURL((string)cell.Value) ?? ModList.Filtered[e.RowIndex].ModPath;
                 }
             } catch (Exception ex) {
                 Log.Exception(ex, $"e.ColumnIndex={e.ColumnIndex} e.RowIndex={e.RowIndex}");
@@ -186,9 +186,17 @@
                 if (e.RowIndex < 0 || e.RowIndex >= ModList.Filtered.Count) return;
                 var cell = Rows[e.RowIndex].Cells[e.ColumnIndex];
                 if (e.ColumnIndex == CModID.Index) {
-                    string url = ContentUtil.GetItemURL((string)cell.Value);
-                    if (url != null)
-                        ContentUtil.OpenURL(url);
+                    var mod = ModList.Filtered[e.RowIndex];
+                    if (mod.IsWorkshop)
+                    {
+                        string url = ContentUtil.GetItemURL(mod.PublishedFileId);
+                        if (url != null)
+                            ContentUtil.OpenURL(url);
+                    }
+                    else
+                    {
+                        ContentUtil.OpenPath(ModList.Filtered[e.RowIndex].ModPath);
+                    }
                 }
             } catch (Exception ex) {
                 Log.Exception(ex);
@@ -227,7 +235,7 @@
                 try {
                     string id = mod.PublishedFileId.AsUInt64.ToString();
                     if (id == "0" || mod.PublishedFileId == PublishedFileId.invalid)
-                        id = "";
+                        id = "Local";
                     rows.Add(
                         mod.LoadOrder,
                         mod.IsIncludedPending,
