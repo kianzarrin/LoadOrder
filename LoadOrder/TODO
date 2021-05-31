@@ -1,4 +1,3 @@
-- Launcher: New asset | LSM (conrol+click)
 - load map theme when loading save.
 - BUG: load save does not work when game save == asset save (eg both of them are named NewSave).
 - property display

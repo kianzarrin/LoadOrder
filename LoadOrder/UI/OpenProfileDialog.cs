@@ -71,7 +71,7 @@
             PackageManager.instance.GetAsset(includedPath) != null;
 
         private void Populate() {
-            var missingMods = Profile.Mods.Where(m => m.IsIncluded && !PluginExists(m.IncludedPath));
+            var missingMods = Profile.Mods.Where(m => m.IsIncluded && !PluginExists(m.IncludedPathFinal));
             var missingAssets = Profile.Assets.Where(m => m.IsIncluded && !AssetExists(m.IncludedPath));
             MissingItems = missingMods.Concat<object>(missingAssets).ToList();
             dataGridView1.Rows.Clear();
@@ -82,7 +82,7 @@
         static bool TryGetItemId(object item, out ulong id) {
             string path;
             if (item is LoadOrderProfile.Mod mod)
-                path = mod.IncludedPath;
+                path = mod.IncludedPathFinal;
             else if (item is LoadOrderProfile.Asset asset)
                 path = asset.IncludedPath;
             else
