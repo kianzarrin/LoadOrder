@@ -27,7 +27,7 @@ namespace LoadOrderMod.Settings {
                 Log.Info($"[WARNING!] subscribed item not installed properly:" +
                     $"{result.publishedFileId} {result.title}\n" +
                     $"reason={reason}. " +
-                    $"try resintalling the item.", true);
+                    $"try reinstalling the item.", true);
             } else {
                 Log.Debug($"subscribed item is good:{result.publishedFileId} {result.title}", false);
             }

@@ -426,7 +426,7 @@ namespace LoadOrderTool.UI {
             this.buttonLaunch.Name = "buttonLaunch";
             this.buttonLaunch.Size = new System.Drawing.Size(139, 27);
             this.buttonLaunch.TabIndex = 5;
-            this.buttonLaunch.Text = "Launch Cites Skylines";
+            this.buttonLaunch.Text = "Launch Cities Skylines";
             this.buttonLaunch.UseVisualStyleBackColor = true;
             this.buttonLaunch.Click += new System.EventHandler(this.buttonLaunch_Click);
             // 
