@@ -10,12 +10,12 @@
         public int FormWidth = -1;
         public int FormHeight = -1;
 
-        public bool AutoSave;
+        public bool AutoSave = true;
         public string SavedGamePath, MapPath;
 
         public bool NoAssets, NoMods, NoWorkshop;
         public bool NewAsset;
-        public bool LSM = true;
+        public bool LSM = false;
         public bool LHT;
         public int AutoLoad = 0;
         public bool Phased, Poke;
