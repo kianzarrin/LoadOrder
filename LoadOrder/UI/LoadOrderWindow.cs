@@ -78,6 +78,7 @@ namespace LoadOrderTool.UI {
                 tsmiWiki.Click += TsmiWiki_Click;
                 tsmiDiscordSupport.Click += TsmiDiscordSupport_Click;
                 tsmiAbout.Click += TsmiAbout_Click;
+                tsmiMassSubscribe.Click += TsmiMassSubscribe_Click;
 
             } catch (Exception ex){
                 ex.Log();
@@ -152,11 +153,12 @@ namespace LoadOrderTool.UI {
             LoadOrderToolSettings.Instace.FormHeight = Height;
         }
 
+        #region MenuBar
         private void TsmiDiscordSupport_Click(object sender, EventArgs e) =>
             ContentUtil.OpenURL("https://discord.gg/tTYS6XnmBb");
 
         private void TsmiAbout_Click(object sender, EventArgs e) {
-            using(var d = new AboutBox()) {
+            using (var d = new AboutBox()) {
                 d.ShowDialog();
             }
         }
@@ -165,7 +167,11 @@ namespace LoadOrderTool.UI {
             ContentUtil.OpenURL("https://github.com/kianzarrin/LoadOrder/wiki");
         }
 
-        #region MenuBar
+
+        private void TsmiMassSubscribe_Click(object sender, EventArgs e) {
+            new SubscribeDialog().Show();
+        }
+
         private void TsmiAutoSave_CheckedChanged(object sender, EventArgs e) {
             ConfigWrapper.AutoSave = tsmiAutoSave.Checked;
         }

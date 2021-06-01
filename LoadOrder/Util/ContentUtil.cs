@@ -63,6 +63,40 @@
             }
         }
 
+        public static Process Execute(string dir, string exeFile, string args) {
+            try {
+                ProcessStartInfo startInfo = new ProcessStartInfo {
+                    WorkingDirectory = dir,
+                    FileName = exeFile,
+                    Arguments = args,
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    UseShellExecute = true,
+                    CreateNoWindow = false,
+                };
+                Log.Info($"Executing ...\n" +
+                    $"\tWorkingDirectory={dir}\n" +
+                    $"\tFileName={exeFile}\n" +
+                    $"\tArguments={args}");
+                Process process = new Process { StartInfo = startInfo };
+                process.Start();
+                process.OutputDataReceived += (_, e) => Log.Info(e.Data);
+                process.ErrorDataReceived += (_, e) => Log.Warning(e.Data);
+                process.Exited += (_, e) => Log.Info("process exited with code " + process.ExitCode);
+                return process;
+            } catch (Exception ex) {
+                Log.Exception(ex);
+                return null;
+            }
+        }
+
+        public static Process Subscribe(IEnumerable<PublishedFileId> ids) => Subscribe(ids.Select(id => id.ToString()));
+        public static Process Subscribe(IEnumerable<ulong> ids) => Subscribe(ids.Select(id => id.ToString()));
+        public static Process Subscribe(IEnumerable<string> ids) {
+            if (!ids.Any()) return null;
+            var ids2 = string.Join(";", ids);
+            return Execute(CO.IO.DataLocation.GamePath, "Cities.exe", $"--subscribe {ids2}");
+        }
+
         public static bool IsPathIncluded(string fullPath) {
             return Path.GetFileName(fullPath).StartsWith("_");
         }

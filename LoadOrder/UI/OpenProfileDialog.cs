@@ -1,15 +1,12 @@
 ﻿namespace LoadOrderTool.UI {
+    using CO.Packaging;
+    using CO.Plugins;
+    using LoadOrderTool.Util;
     using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using System.Windows.Forms;
-    using CO.Packaging;
-    using CO.Plugins;
-    using LoadOrderTool.Util;
-    using LoadOrderTool.UI;
-    using System.IO;
-    using System.Diagnostics;
 
     public partial class OpenProfileDialog : Form {
         public enum ItemTypeT {
@@ -86,8 +83,7 @@
             SubscribeAll.Enabled = GetMissingIDs().Length > 0;
         }
 
-        static string GetItemPath(object item)
-        {
+        static string GetItemPath(object item) {
             if (item is LoadOrderProfile.Mod mod)
                 return mod.IncludedPathFinal;
             else if (item is LoadOrderProfile.Asset asset)
@@ -180,23 +176,17 @@
             }
         }
 
-        public string [] GetMissingIDs()
-        {
+        public string[] GetMissingIDs() {
             List<string> ids = new List<string>();
-            foreach (var item in MissingItems)
-            {
+            foreach (var item in MissingItems) {
                 if (TryGetItemId(item, out ulong id))
                     ids.Add(id.ToString());
             }
             return ids.ToArray();
         }
 
-        private void SubscribeAll_Click(object sender, EventArgs e)
-        {
-            var ids = GetMissingIDs();
-            if (!ids.Any()) return;
-            var ids2 = string.Join(";", ids);
-            LaunchControl.Execute(CO.IO.DataLocation.GamePath, "Cities.exe", $"--subscribe {ids2}");
+        private void SubscribeAll_Click(object sender, EventArgs e) {
+            ContentUtil.Subscribe(GetMissingIDs());
         }
     }
 }

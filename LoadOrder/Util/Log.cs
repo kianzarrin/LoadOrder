@@ -9,6 +9,7 @@ namespace LoadOrderTool {
     using LoadOrderTool.Util;
     using System.ComponentModel;
     using LoadOrderTool.UI;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// A simple logging class.
@@ -218,6 +219,9 @@ namespace LoadOrderTool {
                 w.WriteLine();
             }
         }
+
+        internal static void Called(params object[] args) => Log.Info(Helpers.CurrentMethod(2, args) + " called.", false);
+        internal static void Succeeded() => Log.Info(Helpers.CurrentMethod(2) + " succeeded!", false);
     }
 
     internal static class LogExtensions {

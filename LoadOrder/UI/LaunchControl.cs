@@ -253,34 +253,7 @@
             string fileExe = radioButtonSteamExe.Checked ? "Steam.exe" : "Cities.exe";
             string dir = radioButtonSteamExe.Checked ? DataLocation.SteamPath : DataLocation.GamePath;
 
-            Execute(dir, fileExe, string.Join(" ", args));
-        }
-
-
-        public static Process Execute(string dir, string exeFile, string args) {
-            try {
-                ProcessStartInfo startInfo = new ProcessStartInfo {
-                    WorkingDirectory = dir,
-                    FileName = exeFile,
-                    Arguments = args,
-                    WindowStyle = ProcessWindowStyle.Normal,
-                    UseShellExecute = true,
-                    CreateNoWindow = false,
-                };
-                Log.Info($"Executing ...\n" +
-                    $"\tWorkingDirectory={dir}\n" +
-                    $"\tFileName={exeFile}\n" +
-                    $"\tArguments={args}");
-                Process process = new Process { StartInfo = startInfo };
-                process.Start();
-                process.OutputDataReceived += (_, e) => Log.Info(e.Data);
-                process.ErrorDataReceived += (_, e) => Log.Warning(e.Data);
-                process.Exited += (_, e) => Log.Info("process exited with code " + process.ExitCode);
-                return process;
-            } catch (Exception ex) {
-                Log.Exception(ex);
-                return null;
-            }
+            ContentUtil.Execute(dir, fileExe, string.Join(" ", args));
         }
     }
 }
