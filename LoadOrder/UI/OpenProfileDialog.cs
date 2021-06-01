@@ -9,6 +9,7 @@
     using LoadOrderTool.Util;
     using LoadOrderTool.UI;
     using System.IO;
+    using System.Diagnostics;
 
     public partial class OpenProfileDialog : Form {
         public enum ItemTypeT {
@@ -82,6 +83,7 @@
             dataGridView1.Rows.Clear();
             dataGridView1.RowCount = MissingItems.Count;
             dataGridView1.Refresh();
+            SubscribeAll.Enabled = GetMissingIDs().Length > 0;
         }
 
         static string GetItemPath(object item)
@@ -176,6 +178,25 @@
                 dataGridView1.AutoResizeColumns();
                 firstTime_ = false;
             }
+        }
+
+        public string [] GetMissingIDs()
+        {
+            List<string> ids = new List<string>();
+            foreach (var item in MissingItems)
+            {
+                if (TryGetItemId(item, out ulong id))
+                    ids.Add(id.ToString());
+            }
+            return ids.ToArray();
+        }
+
+        private void SubscribeAll_Click(object sender, EventArgs e)
+        {
+            var ids = GetMissingIDs();
+            if (!ids.Any()) return;
+            var ids2 = string.Join(";", ids);
+            LaunchControl.Execute(CO.IO.DataLocation.GamePath, "Cities.exe", $"--subscribe {ids2}");
         }
     }
 }

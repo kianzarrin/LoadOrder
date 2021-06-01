@@ -257,7 +257,7 @@
         }
 
 
-        static Process Execute(string dir, string exeFile, string args) {
+        public static Process Execute(string dir, string exeFile, string args) {
             try {
                 ProcessStartInfo startInfo = new ProcessStartInfo {
                     WorkingDirectory = dir,

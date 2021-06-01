@@ -87,6 +87,7 @@ namespace LoadOrderInjections {
                             Items.Add(new ItemT(id2));
                     }
                 }
+                RemainingCount = Items.Count();
                 StartSubToAll();
                 StartUpdateUI();
             }
@@ -102,30 +103,22 @@ namespace LoadOrderInjections {
 
             PlatformService.workshop.eventWorkshopSubscriptionChanged += Workshop_eventWorkshopSubscriptionChanged;
 
-            int counter = 0;
-            foreach (var item in Items)
+            for (; ; )
             {
-                item.Subscribe();
-                counter++;
-                if (counter % 100 == 0)
+                int counter = 0;
+                foreach (var item in Items)
                 {
-                    yield return 0;
+                    item.Subscribe();
+                    counter++;
+                    if (counter % 100 == 0)
+                        yield return 0;
                 }
-            }
 
-            for(int watchdog=0; watchdog < 100; ++watchdog)
-            {
-                int n = Items.Count(item => item.State <= StateT.SubSent);
+                int n = RemainingItems.Count();
+                if (n == 0) break;
                 yield return new WaitForSeconds(1);
                 yield return new WaitForSeconds(0.01f * n);
-
-                for (int i = 0; i < Math.Min(n,100); ++i)
-                {
-                    var earliestItem = RemainingItems.MinBy(item =>  item.LastEventTime);
-                    earliestItem?.Subscribe();
-                }
             }
-
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
 
