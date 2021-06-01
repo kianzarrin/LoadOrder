@@ -1,10 +1,13 @@
 using ColossalFramework.PlatformServices;
 using KianCommons;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using static KianCommons.ReflectionHelpers;
 
 namespace LoadOrderInjections {
     public class TestComponent : MonoBehaviour {
@@ -18,6 +21,149 @@ namespace LoadOrderInjections {
                 SteamUtilities.DeleteUnsubbed();
         }
     }
+
+    public class MassSubscribe : MonoBehaviour
+    {
+        public enum StateT
+        {
+            None = 0,
+            SubSent = 1,
+            Subbed = 2,
+            Failed = 3,
+        }
+
+        public class ItemT
+        {
+            public ItemT(ulong id)
+            {
+                PublishedFileId = new PublishedFileId(id);
+                State = StateT.None;
+                LastEventTime = default;
+                RequestCount = 0;
+            }
+
+            public PublishedFileId PublishedFileId;
+            public StateT State;
+            public DateTime LastEventTime;
+            public int RequestCount;
+
+            public void Subscribe()
+            {
+                RequestCount++;
+                LastEventTime = DateTime.Now;
+                if (PublishedFileId == default || PublishedFileId == PublishedFileId.invalid)
+                {
+                    State = StateT.Failed;
+                }
+                PlatformService.workshop.Subscribe(PublishedFileId);
+
+            }
+        }
+        // TODO: detect/resub to problematic items.
+        public static bool SteamInitialized;
+
+        DateTime LastEventTime = default;
+
+        public List<ItemT> Items = new List<ItemT>();
+        public IEnumerable<ItemT> RemainingItems => Items.Where(item => item.State <= StateT.SubSent);
+
+        void Awake() => LogCalled();
+        
+        void Start()
+        {
+            try
+            {
+                LogCalled();
+                int i = Environment.GetCommandLineArgs().FindIndex(_arg => _arg == "--subscribe");
+                if (i < 0)
+                    return;
+                var ids = Environment.GetCommandLineArgs()[i + 1];
+                var subscriedItems = PlatformService.workshop.GetSubscribedItems();
+                foreach (var id in ids.Split(' ', ';', ','))
+                {
+                    if (ulong.TryParse(id, out ulong id2))
+                    {
+                        if(!subscriedItems.Any(item=> item.AsUInt64 == id2))
+                            Items.Add(new ItemT(id2));
+                    }
+                }
+                StartSubToAll();
+                StartUpdateUI();
+            }
+            catch(Exception ex) { ex.Log(); }
+        }
+
+        public Coroutine StartSubToAll() => StartCoroutine(SubToAllCoroutine());
+        private IEnumerator SubToAllCoroutine()
+        {
+            LogCalled();
+            while (!SteamInitialized)
+                yield return new WaitForSeconds(0.1f);
+
+            PlatformService.workshop.eventWorkshopSubscriptionChanged += Workshop_eventWorkshopSubscriptionChanged;
+
+            int counter = 0;
+            foreach (var item in Items)
+            {
+                item.Subscribe();
+                counter++;
+                if (counter % 100 == 0)
+                {
+                    yield return 0;
+                }
+            }
+
+            for(int watchdog=0; watchdog < 100; ++watchdog)
+            {
+                int n = Items.Count(item => item.State <= StateT.SubSent);
+                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(0.01f * n);
+
+                for (int i = 0; i < Math.Min(n,100); ++i)
+                {
+                    var earliestItem = RemainingItems.MinBy(item =>  item.LastEventTime);
+                    earliestItem?.Subscribe();
+                }
+            }
+
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
+        }
+
+        private void Workshop_eventWorkshopSubscriptionChanged(PublishedFileId fileID, bool subscribed)
+        {
+            try
+            {
+                LastEventTime = DateTime.Now;
+                var item = Items.Find(item => item.PublishedFileId == fileID);
+                if (item == null)
+                    return;
+                else if (subscribed)
+                    item.State = StateT.Subbed;
+                else
+                    item.Subscribe();
+            }
+            catch (Exception ex) { ex.Log(); }
+        }
+
+        public int RemainingCount;
+        public Coroutine StartUpdateUI() => StartCoroutine(SubToAllCoroutine());
+        private IEnumerator UpdateUICoroutine()
+        {
+            RemainingCount = RemainingItems.Count();
+            if(RemainingCount == 0)
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            yield return new WaitForSeconds(0.5f);
+        }
+
+
+        void OnGUI()
+        {
+            GUILayout.Label($"{Items.Count - RemainingCount}/{Items.Count} of assets are subscribed");
+            if (GUILayout.Button("Terminate Now"))
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+        }
+    }
+
 
     public class Example : MonoBehaviour {
         private enum UpDown { Down = -1, Start = 0, Up = 1 };
@@ -115,13 +261,22 @@ namespace LoadOrderInjections {
     public static class SubscriptionManager {
         /// <returns>true, to avoid loading intro</returns>
         public static bool PostBootAction() {
-            bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
-            if (sman) {
+            if (SteamUtilities.sman) {
                 new GameObject().AddComponent<Camera>();
                 //new GameObject("base").AddComponent<Example>();
-                new GameObject("test component go").AddComponent<TestComponent>();
+                new GameObject("test go").AddComponent<TestComponent>();
+                return true;
+            }else if (SteamUtilities.massub)
+            {
+                new GameObject().AddComponent<Camera>();
+                //new GameObject("base").AddComponent<Example>();
+                new GameObject("mass subscirbe go").AddComponent<MassSubscribe>();
+                return true;
             }
-            return sman;
+            else
+            {
+                return false;
+            }
         }
 
         public static void EnsureSubs() {
@@ -130,6 +285,9 @@ namespace LoadOrderInjections {
     }
 
     public static class SteamUtilities {
+        public static bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
+        public static bool massub = Environment.GetCommandLineArgs().Any(_arg => _arg == "--subscribe");
+
         static LoadOrderShared.LoadOrderConfig Config =>
             LoadOrderInjections.Util.LoadOrderUtil.Config;
         // steam manager is already initialized at this point.
@@ -147,7 +305,7 @@ namespace LoadOrderInjections {
 
         public static void OnInitSteamController() {
             Log.Debug(Environment.StackTrace);
-            bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
+            MassSubscribe.SteamInitialized = true;
             if (sman)
                 EnsureAll();
             else {

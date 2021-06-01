@@ -25,31 +25,32 @@ namespace LoadOrderIPatch.Patches {
             ILogger logger, 
             string patcherWorkingPath,
             IPaths gamePaths) {
-            logger_ = logger;
-            workingPath_ = patcherWorkingPath;
-            ConfigUtil.LocalApplicationPath = gamePaths.AppDataPath;
-
-            //GameState.GameStateUtil.logger = logger;
-            //var enabled = GameState.GameStateUtil.IsModEnabled(workingPath_);
-            //logger.Info("is enabled:" + enabled?.ToString() ?? "null");
-
-            assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
-            assemblyDefinition = BindEnableDisableAllPatch(assemblyDefinition);
-            //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition); // handled by harmony patch
-            LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
-            InstallResolverLog();
-            if (ConfigUtil.Config.AddHarmonyResolver)
-                InstallHarmonyResolver();
-
-            bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
-            //if (sman) 
+            try
             {
-                assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
-            }
+                logger_ = logger;
+                workingPath_ = patcherWorkingPath;
 
-            if(ConfigUtil.Config.TurnOffSteamPanels)
-                NoQueryPatch(assemblyDefinition); // handled by harmony patch
+                //GameState.GameStateUtil.logger = logger;
+                //var enabled = GameState.GameStateUtil.IsModEnabled(workingPath_);
+                //logger.Info("is enabled:" + enabled?.ToString() ?? "null");
 
+                assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
+                assemblyDefinition = BindEnableDisableAllPatch(assemblyDefinition);
+                //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition); // handled by harmony patch
+                LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
+                InstallResolverLog();
+                if (ConfigUtil.Config.AddHarmonyResolver)
+                    InstallHarmonyResolver();
+
+                bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
+                //if (sman) 
+                {
+                    assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
+                }
+
+                if (ConfigUtil.Config.TurnOffSteamPanels)
+                    NoQueryPatch(assemblyDefinition); // handled by harmony patch
+            } catch (Exception ex) { logger.Error(ex.ToString());  }
             return assemblyDefinition;
         }
 
