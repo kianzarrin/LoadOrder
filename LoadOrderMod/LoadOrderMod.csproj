@@ -90,6 +90,7 @@
     <Compile Remove="Patches\ContentManager\DebugStackTime.cs" />
     <Compile Remove="Patches\HotReload\DebugStackTime.cs" />
     <Compile Remove="Patches\LoadingProfiler_NewEventPatch.cs" />
+    <Compile Remove="Patches\LoadLevel\ForceLSMPatch.cs" />
     <Compile Remove="Patches\SetSceneProgressPatch.cs" />
     <Compile Remove="Util\Log.cs" />
     <None Remove="KianCommons\.git" />

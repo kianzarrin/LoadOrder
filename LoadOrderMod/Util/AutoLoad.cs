@@ -179,7 +179,7 @@ namespace LoadOrderMod.Util {
         public void LoadAssetEditor(bool load = true, bool lht = false, bool lsm = true) {
             LogCalled();
 
-            Patches.ForceLSMPatch.ForceLSM = lsm;
+            //Patches.ForceLSMPatch.ForceLSM = lsm;
 
             var mode = load ?
                 SimulationManager.UpdateMode.LoadAsset :

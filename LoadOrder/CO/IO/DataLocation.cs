@@ -30,10 +30,10 @@ namespace CO.IO {
 
         static DataLocation()
         {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             try {
-                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var data = LoadOrderConfig.Deserialize(localApplicationData);
-                Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
+                sw.Stop();
 
                 try {
                     if (Util.IsGamePath(data?.GamePath)) {
@@ -96,6 +96,8 @@ namespace CO.IO {
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
+            Log.Debug($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
+            DataLocation.DisplayStatus();
         }
 
         private static void CalculatePaths() {

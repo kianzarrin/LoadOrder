@@ -29,7 +29,7 @@
             foreach (var c in this.GetAll<RadioButton>())
                 c.CheckedChanged += Update;
 
-
+            checkBoxLSM.Hide();
             checkBoxNewAsset.SetTooltip("");
             checkBoxLHT.SetTooltip("Traffic drives on left.");
             textBoxSavePath.SetTooltip("leave empty to continue last save. enter save name or its full path to load it.");
@@ -81,7 +81,7 @@
                 radioButtonCitiesExe.Checked = true;
 
             checkBoxNewAsset.Checked = settings_.NewAsset;
-            checkBoxLSM.Checked = settings_.LSM;
+            checkBoxLSM.Checked = false;// settings_.LSM;
 
             textBoxSavePath.Text = settings_.SavedGamePath;
             textBoxMapPath.Text = settings_.MapPath;

@@ -13,7 +13,7 @@ namespace LoadOrderMod.Patches {
     public static class ForceLSMPatch {
         public static bool ForceLSM;
         //static FieldInfo fForceLSM = GetField(typeof(ForceLSMPatch), nameof(ForceLSM));
-        static MethodInfo mGetKey = GetMethod(
+        static MethodInfo mGetKey => GetMethod(
             type:typeof(Input),
             name:nameof(Input.GetKey),
             bindingFlags: ALL,

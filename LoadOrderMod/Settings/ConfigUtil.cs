@@ -105,19 +105,24 @@ namespace LoadOrderMod.Settings {
 
         public static void AquirePathDetails() {
             try {
+                LogCalled();
                 Config.GamePath = DataLocation.applicationBase;
+                Log.Info("Config.GamePath=" + Config.GamePath,true);
                 foreach (var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
                     if (pluginInfo.publishedFileID != PublishedFileId.invalid) {
                         Config.WorkShopContentPath = Path.GetDirectoryName(pluginInfo.modPath);
+                        Log.Info("Config.WorkShopContentPath=" + Config.WorkShopContentPath,true);
                         break;
                     }
                 }
+                
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
         }
 
         public static void AquireModsDetails() {
+            LogCalled();
             foreach (var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
                 try {
                     if (pluginInfo.userModInstance == null) continue;
@@ -146,6 +151,7 @@ namespace LoadOrderMod.Settings {
         }
 
         public static void AquireAssetsDetails() {
+            LogCalled();
             foreach (var asset in PackageManager.FilterAssets(UserAssetType.CustomAssetMetaData)) {
                 try {
                     if (!asset.isMainAsset) continue;
@@ -179,6 +185,7 @@ namespace LoadOrderMod.Settings {
         }
 
         public static void StoreConfigDetails() {
+            LogCalled();
             try {
                 //PlatformService.eventPersonaStateChange += OnNameReceived;
                 //PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnDetailsReceived;
