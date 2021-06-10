@@ -51,17 +51,22 @@ namespace LoadOrderTool {
         /// </summary>
         static Log() {
             try {
-                LogFilePath = Path.Combine(DataLocation.DataPath, "Logs");
-                LogFilePath = Path.Combine(LogFilePath, LogFileName);
-                if (File.Exists(LogFilePath)) {
-                    File.Delete(LogFilePath);
+                string logfileDir;
+                if (DataLocation.Util.IsGamePath(DataLocation.GamePath) && false) {
+                    logfileDir = Path.Combine(DataLocation.DataPath, "Logs");
+                } else { 
+                    logfileDir = DataLocation.currentDirectory;
                 }
+                LogFilePath = Path.Combine(logfileDir, LogFileName);
+                if (File.Exists(LogFilePath))
+                    File.Delete(LogFilePath);
 
                 if (ShowTimestamp) {
                     Timer = Stopwatch.StartNew();
                 }
 
                 AssemblyName details = typeof(Log).Assembly.GetName();
+                
                 Info($"{details.Name} v{details.Version.ToString()}", true);
             } catch (Exception ex) {
                 Log.Exception(ex);

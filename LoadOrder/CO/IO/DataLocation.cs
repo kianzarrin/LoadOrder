@@ -1,4 +1,4 @@
-﻿#pragma warning disable
+#pragma warning disable
 namespace CO.IO {
     using LoadOrderShared;
     using LoadOrderTool;
@@ -37,27 +37,31 @@ namespace CO.IO {
 
                 try {
                     if (Util.IsGamePath(data?.GamePath)) {
+                        //MessageBox.Show("game path found: " + data.GamePath);
                         GamePath = RealPath(data.GamePath);
-                    } else if (Directory.Exists(GamePath)) {
+                        //MessageBox.Show("real game path is: " + GamePath);
+                    } else if (!Util.IsGamePath(GamePath)) {
                         using (RegistryKey key = Registry.LocalMachine.OpenSubKey(installLocationSubKey_)) {
                             GamePath = key?.GetValue(installLocationKey_) as string;
                             GamePath = RealPath(GamePath);
                         }
                     }
-                } catch(Exception ex) {
+                }
+                catch (Exception ex) {
                     Log.Exception(ex);
                 }
 
                 try {
                     if (Util.IsSteamPath(data?.SteamPath)) {
                         SteamPath = RealPath(data.SteamPath);
-                    } else if (!Directory.Exists(SteamPath)) {
+                    } else if (!Util.IsSteamPath(SteamPath)) {
                         using (RegistryKey key = Registry.CurrentUser.OpenSubKey(SteamPathSubKey_)) {
                             SteamPath = key?.GetValue(SteamPathKey_) as string;
                             SteamPath = RealPath(SteamPath);
                         }
                     }
-                } catch(Exception ex) {
+                }
+                catch (Exception ex) {
                     Log.Exception(ex);
                 }
 
@@ -93,11 +97,15 @@ namespace CO.IO {
                     throw new Exception("failed to get GamePath : " + GamePath);
                 if (!Directory.Exists(WorkshopContentPath))
                     throw new Exception("failed to get SteamContentPath : " + WorkshopContentPath);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 Log.Exception(ex);
             }
-            Log.Debug($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
-            DataLocation.DisplayStatus();
+            finally {
+                VerifyPaths();
+                Log.Debug($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
+                DataLocation.DisplayStatus();
+            }
         }
 
         private static void CalculatePaths() {
@@ -143,6 +151,22 @@ namespace CO.IO {
             Log.Info("Mods path: " + DataLocation.modsPath);
             //Log.Debug("Current directory: " + Environment.CurrentDirectory);
             //Log.Debug("Executing assembly: " + Assembly.GetExecutingAssembly().Location);
+        }
+
+        public static string PrintPaths()
+        {
+            string ret = "GamePath: " + DataLocation.GamePath;
+            ret += "\nWorkshop Content Path: " + DataLocation.WorkshopContentPath;
+            ret += "\nSteam Path: " + DataLocation.SteamPath;
+            ret += "\nTemp Folder: " + DataLocation.tempFolder;
+            ret += "\nLocal Application Data: " + DataLocation.localApplicationData;
+            ret += "\nExecutable Directory(Cities.exe): " + DataLocation.executableDirectory;
+            ret += "\nSave Location: " + DataLocation.saveLocation;
+            ret += "\nApplication base: " + DataLocation.applicationBase;
+            ret += "\nAddons path: " + DataLocation.addonsPath;
+            ret += "\nMods path: " + DataLocation.modsPath;
+            ret += "\nCurrent directory: " + DataLocation.currentDirectory;
+            return ret;
         }
 
         public static class Util {
@@ -221,8 +245,25 @@ namespace CO.IO {
             }
         }
 
+        public static bool VerifyPaths()
+        {
+            try
+            {
+                bool good =
+                    Util.IsGamePath(GamePath) &&
+                    Util.IsWSPath(WorkshopContentPath) &&
+                    Util.IsSteamPath(SteamPath);
+                if (good)
+                    return true;
+                MessageBox.Show("could not find paths\n" + PrintPaths()); ;
+            }
+            catch (Exception ex) {
+                MessageBox.Show("could not find paths\n" + PrintPaths()); ;
+                ex.Log();
+            }
+            return false;
 
-
+        }
 
         public static string GamePath { get; private set; } = @"C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines";
 

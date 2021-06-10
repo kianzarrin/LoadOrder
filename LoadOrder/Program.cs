@@ -27,6 +27,9 @@ namespace LoadOrderTool {
                 AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
                 Application.ThreadException += UnhandledThreadExceptionHandler;
 
+                _ = DataLocation.GamePath; // run DataLocation static constructor
+                _ = Log.LogFilePath; // run Log static constructor
+
                 Application.Run(new UI.LoadOrderWindow());
             } catch (Exception ex) {
                 Log.Exception(ex);
