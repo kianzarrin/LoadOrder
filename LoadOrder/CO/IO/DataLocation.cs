@@ -31,49 +31,69 @@ namespace CO.IO {
         static DataLocation()
         {
             var sw = System.Diagnostics.Stopwatch.StartNew();
+            string m = "Delayed messages: "; // delayed message;
             try {
                 var data = LoadOrderConfig.Deserialize(localApplicationData);
                 sw.Stop();
 
                 try {
+                    m += "\ndata is "+ (data is null ? "null" : "not null");
+                    m += $"\ndata?.GamePath={data?.GamePath ?? "<null>"}";
                     if (Util.IsGamePath(data?.GamePath)) {
-                        //MessageBox.Show("game path found: " + data.GamePath);
+                        m += "\ngame path found: " + data.GamePath;
                         GamePath = RealPath(data.GamePath);
-                        //MessageBox.Show("real game path is: " + GamePath);
+                        m += "\nreal game path is: " + GamePath;
                     } else if (!Util.IsGamePath(GamePath)) {
+                        m += "\ngetting game path from regisitry ...";
                         using (RegistryKey key = Registry.LocalMachine.OpenSubKey(installLocationSubKey_)) {
                             GamePath = key?.GetValue(installLocationKey_) as string;
                             GamePath = RealPath(GamePath);
+                            m += "\ngame path from regisitery: " + GamePath;
                         }
                     }
+                    m += "\n[P1] game path so far is:" + GamePath;
                 }
                 catch (Exception ex) {
                     Log.Exception(ex);
                 }
 
                 try {
+                    m += $"\ndata?.SteamPath={data?.SteamPath ?? "<null>"}";
                     if (Util.IsSteamPath(data?.SteamPath)) {
+                        m += "\nSteamPath found: " + data.SteamPath;
                         SteamPath = RealPath(data.SteamPath);
+                        m += "\nreal SteamPath is: " + SteamPath;
                     } else if (!Util.IsSteamPath(SteamPath)) {
+                        m += "\ngetting SteamPath from regisitry ...";
                         using (RegistryKey key = Registry.CurrentUser.OpenSubKey(SteamPathSubKey_)) {
                             SteamPath = key?.GetValue(SteamPathKey_) as string;
                             SteamPath = RealPath(SteamPath);
+                            m += "\nSteamPath from regisitery: " + SteamPath;
                         }
                     }
+                    m += "\n[P2] SteamPath so far is:" + SteamPath;
                 }
                 catch (Exception ex) {
                     Log.Exception(ex);
                 }
 
+                m += $"\ndata?.WorkShopContentPath={data?.WorkShopContentPath ?? "<null>"}";
                 if (Util.IsWSPath(data?.WorkShopContentPath)) {
                     WorkshopContentPath = RealPath(data.WorkShopContentPath);
+                    m += "\nWorkshopContentPath found: " + WorkshopContentPath;
                 }
+                m += "\n[P3]WorkshopContentPath so far is: " + WorkshopContentPath;
 
                 CalculatePaths();
+                m += "\n[P4] AfterCalucaltePaths";
+                m += "\nGamePath=" + (GamePath ?? "<null>");
+                m += "\nSteamPath=" + (SteamPath ?? "<null>");
+                m += "\nWorkshopContentPath=" + (WorkshopContentPath ?? "<null>");
                 bool bGame = !string.IsNullOrEmpty(GamePath);
                 bool bSteam = !string.IsNullOrEmpty(SteamPath);
                 if (bGame && bSteam) return;
 
+                m += "\n[P5] Creating select path dialog";
                 using (var spd = new LoadOrderTool.UI.SelectPathsDialog()) {
                     if (bGame) spd.CitiesPath = GamePath;
                     if (bSteam) spd.SteamPath = SteamPath;
@@ -100,8 +120,8 @@ namespace CO.IO {
             }
             catch (Exception ex) {
                 Log.Exception(ex);
-            }
-            finally {
+            } finally {
+                Log.Info(m);
                 VerifyPaths();
                 Log.Debug($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
                 DataLocation.DisplayStatus();
@@ -201,8 +221,8 @@ namespace CO.IO {
                     return false;
                 path = Path.Combine(path, "Cities.exe");
                 return IsCitiesExePath(path);
-
             }
+
             public static bool IsSteamPath(string path) {
                 if (string.IsNullOrEmpty(path))
                     return false;

@@ -17,7 +17,7 @@ namespace LoadOrderTool {
     /// When mod activates, it creates a log file in same location as `output_log.txt`.
     /// Mac users: It will be in the Cities app contents.
     /// </summary>
-    public class Log {
+    public static class Log {
         /// <summary>
         /// Set to <c>true</c> to include log level in log entries.
         /// </summary>
@@ -45,6 +45,7 @@ namespace LoadOrderTool {
         /// </summary>
         private static readonly Stopwatch Timer;
 
+        private static object fileLock = new object();
         /// <summary>
         /// Initializes static members of the <see cref="Log"/> class.
         /// Resets log file on startup.
@@ -52,7 +53,7 @@ namespace LoadOrderTool {
         static Log() {
             try {
                 string logfileDir;
-                if (DataLocation.Util.IsGamePath(DataLocation.GamePath) && false) {
+                if (DataLocation.Util.IsGamePath(DataLocation.GamePath)) {
                     logfileDir = Path.Combine(DataLocation.DataPath, "Logs");
                 } else { 
                     logfileDir = DataLocation.currentDirectory;
@@ -154,19 +155,24 @@ namespace LoadOrderTool {
         }
 
         internal static void Exception(Exception e, string m = "", bool showInPanel = true) {
-            string message = e.ToString() + $"\n\t-- {assemblyName_}:end of inner stack trace --";
-            if (!string.IsNullOrEmpty(m))
-                message = m + " -> \n" + message;
-            LogImpl(message, LogLevel.Exception, true);
-            if (showInPanel) {
-                message += "\n" + new StackTrace(1, true).ToString();
-                message = message.Replace("\r", ""); // avoid /r/r/n 
-                message = message.Replace("\n", Environment.NewLine);
-                var prompt = ThreadExceptionDialogUtil.Create(e, message);
-                var res = prompt.ShowDialog();
-                if (res == DialogResult.Abort || res == DialogResult.Cancel) {
-                    Process.GetCurrentProcess().Kill();
+            try {
+                string message = e.ToString() + $"\n\t-- {assemblyName_}:end of inner stack trace --";
+                if (!string.IsNullOrEmpty(m))
+                    message = m + " -> \n" + message;
+                LogImpl(message, LogLevel.Exception, true);
+                if (showInPanel) {
+                    message += "\n" + new StackTrace(1, true).ToString();
+                    message = message.Replace("\r", ""); // avoid /r/r/n 
+                    message = message.Replace("\n", Environment.NewLine);
+                    var prompt = ThreadExceptionDialogUtil.Create(e, message);
+                    var res = prompt.ShowDialog();
+                    if (res == DialogResult.Abort || res == DialogResult.Cancel) {
+                        Process.GetCurrentProcess().Kill();
+                    }
                 }
+            } catch(Exception ex) {
+                new ThreadExceptionDialog(new Exception("could not show advanced exception panel.", ex)).ShowDialog();
+                Process.GetCurrentProcess().Kill();
             }
         }
 
@@ -199,16 +205,18 @@ namespace LoadOrderTool {
                     m += new StackTrace(true).ToString() + nl + nl;
                 }
 
-                using (StreamWriter w = File.AppendText(LogFilePath)) {
-                    w.Write(m);
+                lock (fileLock) {
+                    using (StreamWriter w = File.AppendText(LogFilePath)) {
+                        w.Write(m);
+                    }
                 }
 
                 if (copyToGameLog) {
                     m = assemblyName_ + " | " + m;
                     Console.WriteLine(m);
                 }
-            } catch {
-                // ignore
+            } catch (Exception ex) {
+                new ThreadExceptionDialog(new Exception("log impl fialed", ex)).ShowDialog();
             }
         }
 
