@@ -101,6 +101,10 @@ namespace CO.IO {
                         GamePath = Path.GetDirectoryName(spd.CitiesPath);
                         SteamPath = Path.GetDirectoryName(spd.SteamPath);
                         CalculatePaths();
+                        m += "\n[P5] AfterCalucaltePaths";
+                        m += "\nGamePath=" + (GamePath ?? "<null>");
+                        m += "\nSteamPath=" + (SteamPath ?? "<null>");
+                        m += "\nWorkshopContentPath=" + (WorkshopContentPath ?? "<null>");
 
                         data ??= new LoadOrderConfig();
                         data.GamePath = GamePath;
@@ -108,10 +112,15 @@ namespace CO.IO {
                         data.WorkShopContentPath = WorkshopContentPath;
                         data.Serialize(localApplicationData);
                     } else {
+                        Log.Info(m);
                         Process.GetCurrentProcess().Kill();
                     }
                 }
 
+                m += "\n[P6] at the end:";
+                m += "\nGamePath=" + (GamePath ?? "<null>");
+                m += "\nSteamPath=" + (SteamPath ?? "<null>");
+                m += "\nWorkshopContentPath=" + (WorkshopContentPath ?? "<null>");
 
                 if (!Directory.Exists(GamePath))
                     throw new Exception("failed to get GamePath : " + GamePath);
@@ -131,9 +140,9 @@ namespace CO.IO {
         private static void CalculatePaths() {
             string gamePath = GamePath, steamPath = SteamPath, wsPath = WorkshopContentPath;
             Util.CalculatePaths(ref gamePath, ref steamPath, ref wsPath);
-            GamePath = RealPath(gamePath); 
-            SteamPath = RealPath(steamPath);
-            WorkshopContentPath = RealPath(wsPath);
+            GamePath = Util.IsGamePath(gamePath) ? RealPath(gamePath) : "";
+            SteamPath = Util.IsSteamPath(steamPath) ? RealPath(steamPath) : "";
+            WorkshopContentPath = Util.IsWSPath(wsPath) ? RealPath(wsPath) : "";
         }
 
         //public static bool isEditor
