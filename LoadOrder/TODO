@@ -3,9 +3,6 @@
 - tool-bar
 - status bar
 
-- Clearing the text box of the tags dropdown should show all assets (also switch back to on submit)
-- if an illegal text is entered in the text box of the tags dropdown, it should switch back to sellected item on submit.
-- more tags (Color correction LUT, theme, style ?, ... )	
 - make sorting on mods the same as on assets
 
 - command line invokation
@@ -13,7 +10,7 @@
 
 - improve report mod error UI.
 
-- mange DLC's
+- manage DLC's
 
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 

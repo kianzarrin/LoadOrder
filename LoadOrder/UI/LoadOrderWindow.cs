@@ -405,6 +405,7 @@ namespace LoadOrderTool.UI {
                 ComboBoxAssetTags.Items.AddRange(PackageManager.instance.GetAllTags());
                 ComboBoxAssetTags.SelectedIndex = 0;
                 ComboBoxAssetTags.AutoSize();
+                ComboBoxAssetTags.TextChanged += ComboBoxAssetTags_TextChanged;
 
                 dataGridAssets.AssetList = new AssetList(PackageManager.instance.GetAssets(), FilterAssets);
             } catch (Exception ex) {
@@ -414,6 +415,14 @@ namespace LoadOrderTool.UI {
                 dataGridAssets.Refresh();
             }
         }
+
+        private void ComboBoxAssetTags_TextChanged(object sender, EventArgs e) {
+            if (ComboBoxAssetTags.SelectedIndex != 0 && ComboBoxAssetTags.Text == "") {
+                ComboBoxAssetTags.SelectedIndex = 0;
+                Invoke(new Action(ComboBoxAssetTags.SelectAll));
+            }
+        }
+
         #region Filter
         private void ApplyAssetFilter(object sender, EventArgs e) {
             ApplyAssetFilter();
