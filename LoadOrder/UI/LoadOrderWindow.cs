@@ -81,7 +81,7 @@ namespace LoadOrderTool.UI {
                 menuStrip.tsmiImport.Click += Import_Click;
 
                 ProgressWindow.Instance?.SetProgress(90, "Loading UI ...");
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 ex.Log();
             }
         }
@@ -92,10 +92,10 @@ namespace LoadOrderTool.UI {
         }
         protected override void OnVisibleChanged(EventArgs e) {
             base.OnVisibleChanged(e);
-            if(Visible) ProgressWindow.Instance?.Close();
+            if (Visible) ProgressWindow.Instance?.Close();
         }
 
-         protected override void OnResizeEnd(EventArgs e) {
+        protected override void OnResizeEnd(EventArgs e) {
             base.OnResizeEnd(e);
             SaveSize();
         }
@@ -170,7 +170,7 @@ namespace LoadOrderTool.UI {
 
         private void TsmiAutoSave_Click(object sender, EventArgs e) =>
             menuStrip.tsmiFile.ShowDropDown(); // prevent hiding menu when clicking auto-save
-        
+
         private void Export_Click(object sender, EventArgs e) {
             SaveFileDialog diaglog = new SaveFileDialog();
             diaglog.Filter = "xml files (*.xml)|*.xml";
@@ -189,12 +189,12 @@ namespace LoadOrderTool.UI {
                 ofd.InitialDirectory = LoadOrderProfile.DIR;
                 if (ofd.ShowDialog() == DialogResult.OK) {
                     var profile = LoadOrderProfile.Deserialize(ofd.FileName);
-                    using(var opd = new OpenProfileDialog(profile)) {
+                    using (var opd = new OpenProfileDialog(profile)) {
                         opd.ShowDialog();
                         bool mods = opd.ItemType != OpenProfileDialog.ItemTypeT.AssetsOnly;
                         bool assets = opd.ItemType != OpenProfileDialog.ItemTypeT.ModsOnly;
                         if (opd.DialogResult == OpenProfileDialog.RESULT_REPLACE)
-                            ApplyProfile(profile, mods:mods, assets: assets, replace: true);
+                            ApplyProfile(profile, mods: mods, assets: assets, replace: true);
                         else if (opd.DialogResult == OpenProfileDialog.RESULT_APPEND)
                             ApplyProfile(profile, mods: mods, assets: assets, replace: false);
                     }
@@ -251,8 +251,8 @@ namespace LoadOrderTool.UI {
             ExcludeAllMods.Click += ExcludeAllMods_Click;
             EnableAllMods.Click += EnableAllMods_Click;
             DisableAllMods.Click += DisableAllMods_Click;
-            
-            
+
+
             var buttons = ModActionPanel.Controls.OfType<Button>();
             var maxwidth = buttons.Max(b => b.Width);
             foreach (var b in buttons)
@@ -347,6 +347,20 @@ namespace LoadOrderTool.UI {
             dataGridMods.ModList.RandomizeOrder();
             dataGridMods.RefreshModList();
         }
+
+        #region ContextMenu
+        private void DataGridMods_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+            if (e.Button != MouseButtons.Right)
+                return;
+            int i = e.RowIndex;
+            var mods = dataGridMods.ModList.Filtered;
+            if (i >= 0 && i < mods.Count) {
+                var mod = dataGridMods.ModList.Filtered[i];
+                new LoadOrderWindowContextMenu(mod.)
+            }
+        }
+
+        #endregion
         #endregion Mod tab
 
         #region AssetTab
