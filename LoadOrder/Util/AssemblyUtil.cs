@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.Util {
+namespace LoadOrderTool.Util {
     using Mono.Cecil;
     using System;
     using System.Collections.Generic;
@@ -46,17 +46,20 @@
             }
         }
 
-        public static TypeDefinition FindImplementation(string[] dllPaths, string fullInterfaceName) {
-            foreach (string dllpath in dllPaths) {
+        public static TypeDefinition FindImplementation(string[] dllPaths, string fullInterfaceName, out string dllPath) {
+            foreach (string path in dllPaths) {
                 try {
-                    var asm = ReadAssemblyDefinition(dllpath);
+                    var asm = ReadAssemblyDefinition(path);
                     var userMod = asm?.GetExportedImplementation(fullInterfaceName);
-                    if (userMod != null)
+                    if (userMod != null) {
+                        dllPath = path;
                         return userMod;
+                    }
                 } catch (Exception ex) {
                     Log.Exception(ex, showInPanel: false);
                 }
             }
+            dllPath = null;
             return null;
         }
 
