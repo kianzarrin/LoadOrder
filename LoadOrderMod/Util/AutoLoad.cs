@@ -230,7 +230,7 @@ namespace LoadOrderMod.Util {
             FindAssetByShortName(name, UserAssetType.MapMetaData);
 
         static Package.Asset FindAssetByShortName(string name, Package.AssetType assetType) =>
-            FilterAssets(assetType).FirstOrDefault(a => string.Equals(a.name, name, StringComparison.OrdinalIgnoreCase);
+            FilterAssets(assetType).FirstOrDefault(a => string.Equals(a.name, name, StringComparison.OrdinalIgnoreCase));
 
 
         static Package.Asset GetAMap() => Maps.MinBy(m => m.Instantiate<MapMetaData>()?.mapName);

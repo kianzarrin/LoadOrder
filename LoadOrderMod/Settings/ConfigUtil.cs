@@ -152,16 +152,19 @@ namespace LoadOrderMod.Settings {
 
         public static void AquireAssetsDetails() {
             LogCalled();
-            foreach (var asset in PackageManager.FilterAssets(UserAssetType.CustomAssetMetaData)) {
-                try {
-                    if (!asset.isMainAsset) continue;
-                    string path = asset.package.packagePath;
-                    var assetInfo = asset.GetAssetConfig();
-                    if (assetInfo == null) {
-                        assetInfo = new LoadOrderShared.AssetInfo { Path = asset.GetPath() };
-                        Config.Assets = Config.Assets.AddToArray(assetInfo);
-                    }
-                    CustomAssetMetaData metaData = asset.Instantiate<CustomAssetMetaData>();
+
+            foreach (var asset in PackageManager.FilterAssets(new[] {
+                UserAssetType.CustomAssetMetaData,
+                UserAssetType.MapThemeMetaData,
+                UserAssetType.ColorCorrection,
+                UserAssetType.DistrictStyleMetaData,
+            })) {
+                if (!asset.isMainAsset) continue;
+                string path = asset.package.packagePath;
+                var assetInfo = asset.GetAssetConfig();
+                if (assetInfo == null) {
+                    assetInfo = new LoadOrderShared.AssetInfo { Path = asset.GetPath() };
+                    Config.Assets = Config.Assets.AddToArray(assetInfo);
                     assetInfo.AssetName = asset.name;
 
                     // get asset name from file (which could be less complete)
@@ -171,13 +174,50 @@ namespace LoadOrderMod.Settings {
                     if (author.IsAuthorNameValid())
                         assetInfo.Author = author;
 
-                    assetInfo.description = ContentManagerUtil.SafeGetAssetDesc(metaData, asset.package);
+                    var assetType = asset.type;
+                    var entry = asset.GetEntryData();
+
+                    MetaData metaData = asset.Instantiate() as MetaData;
+                    if (entry != null && entry.updated != default)
+                        assetInfo.Date = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                    else
+                        assetInfo.Date = metaData.getTimeStamp.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+
+                    if (metaData is CustomAssetMetaData customAssetMetaData) {
+                        assetInfo.description = ContentManagerUtil.SafeGetAssetDesc(customAssetMetaData, asset.package);
+                        assetInfo.Tags = customAssetMetaData.Tags(asset.package.GetPublishedFileID(), asset.type);
+                    } else {
+                        assetInfo.Tags = assetType.Tags();
+                    }
+                }
+            }
+
+
+            foreach (var asset in PackageManager.FilterAssets(UserAssetType.MapThemeMetaData)) {
+                try {
+                    if (!asset.isMainAsset) continue;
+                    string path = asset.package.packagePath;
+                    var assetInfo = asset.GetAssetConfig();
+                    if (assetInfo == null) {
+                        assetInfo = new LoadOrderShared.AssetInfo { Path = asset.GetPath() };
+                        Config.Assets = Config.Assets.AddToArray(assetInfo);
+                    }
+                    MapThemeMetaData metaData = asset.Instantiate<MapThemeMetaData>();
+                    assetInfo.AssetName = asset.name;
+
+                    // get asset name from file (which could be less complete)
+                    // if we don't already have a complete name
+                    bool fallback = !assetInfo.Author.IsAuthorNameValid();
+                    string author = asset.GetAuthor(fallback);
+                    if (author.IsAuthorNameValid())
+                        assetInfo.Author = author;
+
                     var entry = asset.GetEntryData();
                     if (entry != null && entry.updated != default)
                         assetInfo.Date = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
                     else
                         assetInfo.Date = metaData.getTimeStamp.ToLocalTime().ToString(CultureInfo.InvariantCulture);
-                    assetInfo.Tags = metaData.Tags(asset.package.GetPublishedFileID());
+                    assetInfo.Tags = new[] { "Theme" };
                 } catch (Exception ex) {
                     Log.Exception(ex);
                 }
