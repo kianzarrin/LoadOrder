@@ -216,7 +216,8 @@ namespace LoadOrderTool {
                     Console.WriteLine(m);
                 }
             } catch (Exception ex) {
-                new ThreadExceptionDialog(new Exception("log impl fialed", ex)).ShowDialog();
+                new ThreadExceptionDialog(new Exception("log impl fialed at" + Environment.StackTrace, ex))
+                    .ShowDialog();
             }
         }
 
