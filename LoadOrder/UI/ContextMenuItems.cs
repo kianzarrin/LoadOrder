@@ -12,19 +12,20 @@ using LoadOrderTool.UI;
 using CO.PlatformServices;
 
 namespace LoadOrderTool.UI {
-    class LoadOrderWindowContextMenu : ContextMenuStrip {
+    class ContextMenuItems : ContextMenuStrip {
         string path_;
         string url_;
 
-        public LoadOrderWindowContextMenu(string path, PublishedFileId id) {
+        public ContextMenuItems(string path, PublishedFileId id) {
+            path_ = path;
             var itemOpenFile = new ToolStripMenuItem("Open File Location");
             itemOpenFile.Click += ItemOpenFile_Click;
             Items.Add(itemOpenFile);
 
             if (id != PublishedFileId.invalid) {
+                url_ = ContentUtil.GetItemURL(id);
                 var itemOpenURL = new ToolStripMenuItem("Open In Workshop");
                 itemOpenURL.Click += ItemOpenURL_Click; ;
-                url_ = ContentUtil.GetItemURL(id);
                 Items.Add(itemOpenURL);
             }
         }

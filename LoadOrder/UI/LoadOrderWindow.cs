@@ -259,6 +259,8 @@ namespace LoadOrderTool.UI {
                 b.MinimumSize = new Size(maxwidth, 0);
 
             dataGridMods.LoadMods(ModPredicate);
+
+            dataGridMods.CellMouseClick += DataGridMods_CellMouseClick;
         }
 
         private void RefreshModList(object sender, EventArgs e) => dataGridMods.RefreshModList();
@@ -348,20 +350,18 @@ namespace LoadOrderTool.UI {
             dataGridMods.RefreshModList();
         }
 
-        #region ContextMenu
         private void DataGridMods_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
             if (e.Button != MouseButtons.Right)
                 return;
             int i = e.RowIndex;
             var mods = dataGridMods.ModList.Filtered;
             if (i >= 0 && i < mods.Count) {
-                var mod = dataGridMods.ModList.Filtered[i];
-                new LoadOrderWindowContextMenu(mod.)
+                var mod = mods[i];
+                string path = mod.dllPath ?? mod.ModPath;
+                new ContextMenuItems(path, mod.PublishedFileId).Show(MousePosition);
             }
         }
-
         #endregion
-        #endregion Mod tab
 
         #region AssetTab
         void InitializeAssetTab() {
@@ -384,6 +384,8 @@ namespace LoadOrderTool.UI {
                 b.MinimumSize = new Size(maxwidth, 0);
 
             LoadAsssets();
+
+            dataGridAssets.CellMouseClick += DataGridAssets_CellMouseClick;
         }
 
         public void LoadAsssets() {
@@ -517,7 +519,17 @@ namespace LoadOrderTool.UI {
             IncludeExcludeFilteredAssets(false);
         }
 
-
+        private void DataGridAssets_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+            if (e.Button != MouseButtons.Right)
+                return;
+            int i = e.RowIndex;
+            var assets = dataGridAssets.AssetList.Filtered;
+            if (i >= 0 && i < assets.Count) {
+                var asset = assets[i];
+                string path = asset.AssetPath;
+                new ContextMenuItems(path, asset.PublishedFileId).Show(MousePosition);
+            }
+        }
         #endregion
     }
 }
