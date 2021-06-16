@@ -58,8 +58,8 @@ namespace LoadOrderTool.UI
             this.TextFilterAsset = new System.Windows.Forms.TextBox();
             this.LaunchTab = new System.Windows.Forms.TabPage();
             this.launchControl = new LoadOrderTool.UI.LaunchControl();
-            this.menuStrip = new LoadOrderWindowMenuStrip();
-
+            this.menuStrip = new LoadOrderTool.UI.LoadOrderWindowMenuStrip();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMods)).BeginInit();
@@ -70,7 +70,6 @@ namespace LoadOrderTool.UI
             this.AssetsActionPanel.SuspendLayout();
             this.tableLayoutPanelAssetFilters.SuspendLayout();
             this.LaunchTab.SuspendLayout();
-            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // TabContainer
@@ -88,6 +87,7 @@ namespace LoadOrderTool.UI
             // ModsTab
             // 
             this.ModsTab.BackColor = System.Drawing.SystemColors.Control;
+            this.ModsTab.Controls.Add(this.statusStrip);
             this.ModsTab.Controls.Add(this.dataGridMods);
             this.ModsTab.Controls.Add(this.ModActionPanel);
             this.ModsTab.Controls.Add(this.tableLayoutPanelModFilters);
@@ -258,7 +258,7 @@ namespace LoadOrderTool.UI
             this.AssetsTab.Location = new System.Drawing.Point(4, 24);
             this.AssetsTab.Name = "AssetsTab";
             this.AssetsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AssetsTab.Size = new System.Drawing.Size(948, 501);
+            this.AssetsTab.Size = new System.Drawing.Size(948, 499);
             this.AssetsTab.TabIndex = 1;
             this.AssetsTab.Text = "Assets";
             // 
@@ -279,7 +279,7 @@ namespace LoadOrderTool.UI
             this.dataGridAssets.Name = "dataGridAssets";
             this.dataGridAssets.RowHeadersVisible = false;
             this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridAssets.Size = new System.Drawing.Size(863, 466);
+            this.dataGridAssets.Size = new System.Drawing.Size(863, 464);
             this.dataGridAssets.TabIndex = 0;
             this.dataGridAssets.VirtualMode = true;
             // 
@@ -293,7 +293,7 @@ namespace LoadOrderTool.UI
             this.AssetsActionPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.AssetsActionPanel.Location = new System.Drawing.Point(866, 32);
             this.AssetsActionPanel.Name = "AssetsActionPanel";
-            this.AssetsActionPanel.Size = new System.Drawing.Size(79, 466);
+            this.AssetsActionPanel.Size = new System.Drawing.Size(79, 464);
             this.AssetsActionPanel.TabIndex = 1;
             // 
             // IncludeAllAssets
@@ -398,7 +398,7 @@ namespace LoadOrderTool.UI
             this.LaunchTab.Location = new System.Drawing.Point(4, 24);
             this.LaunchTab.Name = "LaunchTab";
             this.LaunchTab.Padding = new System.Windows.Forms.Padding(3);
-            this.LaunchTab.Size = new System.Drawing.Size(948, 501);
+            this.LaunchTab.Size = new System.Drawing.Size(948, 499);
             this.LaunchTab.TabIndex = 2;
             this.LaunchTab.Text = "Launch";
             // 
@@ -407,7 +407,7 @@ namespace LoadOrderTool.UI
             this.launchControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.launchControl.Location = new System.Drawing.Point(3, 3);
             this.launchControl.Name = "launchControl";
-            this.launchControl.Size = new System.Drawing.Size(942, 495);
+            this.launchControl.Size = new System.Drawing.Size(942, 493);
             this.launchControl.TabIndex = 0;
             // 
             // menuStrip
@@ -417,6 +417,14 @@ namespace LoadOrderTool.UI
             this.menuStrip.Size = new System.Drawing.Size(956, 24);
             this.menuStrip.TabIndex = 2;
             this.menuStrip.Text = "menuStrip";
+            // 
+            // statusStrip
+            // 
+            this.statusStrip.Location = new System.Drawing.Point(3, 474);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(863, 22);
+            this.statusStrip.TabIndex = 3;
+            this.statusStrip.Text = "statusStrip1";
             // 
             // LoadOrderWindow
             // 
@@ -446,8 +454,6 @@ namespace LoadOrderTool.UI
             this.tableLayoutPanelAssetFilters.ResumeLayout(false);
             this.tableLayoutPanelAssetFilters.PerformLayout();
             this.LaunchTab.ResumeLayout(false);
-            this.menuStrip.ResumeLayout(false);
-            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -483,5 +489,6 @@ namespace LoadOrderTool.UI
 
         private TabPage LaunchTab;
         private UI.LaunchControl launchControl;
+        private StatusStrip statusStrip;
     }
 }

@@ -79,6 +79,20 @@ namespace LoadOrderTool.UI {
                 .OfType<Type>();
         }
 
+        //public static ToolTip SetTooltip(this Control control, string tooltip) {
+        //    ToolTip tp = new ToolTip {
+        //        IsBalloon = true,
+        //        InitialDelay = 1,
+        //        ReshowDelay = 1,
+        //        AutomaticDelay = 3600 * 1000,
+        //        UseAnimation = false,
+        //        UseFading = false,
+        //        ShowAlways = true,
+        //    };
+        //    tp.SetToolTip(control, tooltip);
+        //    return tp;
+        //}
+
         public static ToolTip SetTooltip(this Control control, string tooltip) {
             ToolTip tp = new ToolTip {
                 IsBalloon = true,
@@ -90,6 +104,13 @@ namespace LoadOrderTool.UI {
                 ShowAlways = true,
             };
             tp.SetToolTip(control, tooltip);
+            control.MouseEnter += (_, __) => {
+                var pnt = control.PointToClient(Cursor.Position);
+                pnt.X += 10;
+                pnt.Y += 10;
+                tp.Show(tooltip, control, pnt);
+            };
+            control.MouseLeave += (_, __) => tp.Hide(control);
             return tp;
         }
     }

@@ -18,7 +18,6 @@ namespace LoadOrderTool.UI {
             InitializeComponent();
         }
 
-        
         protected override void OnLoad(EventArgs e) {
             base.OnLoad(e);
 
@@ -35,10 +34,25 @@ namespace LoadOrderTool.UI {
                 c.CheckedChanged += Update;
 
             checkBoxLSM.Hide();
+            checkBoxNoMods.Hide();
             checkBoxNewAsset.SetTooltip("");
             checkBoxLHT.SetTooltip("Traffic drives on left.");
-            textBoxSavePath.SetTooltip("leave empty to continue last save. enter save name or its full path to load it.");
-            textBoxMapPath.SetTooltip("leave empty to load the first map. enter map name or its full path to load it.");
+
+            string loadSaveTooltip =
+                "empty => continue last save.\n" +
+                "save name => load save by name\n" +
+                "full path => load save by path.";
+            textBoxSavePath.SetTooltip(loadSaveTooltip);
+            radioButtonLoadSave.SetTooltip(loadSaveTooltip);
+            buttonSavePath.SetTooltip(loadSaveTooltip);
+
+            string loadMapTooltip = "empty => load first map.\n" +
+                "map name => load map by name\n" +
+                "full path => load map from path.";
+            textBoxMapPath.SetTooltip(loadMapTooltip);
+            radioButtonNewGame.SetTooltip(loadMapTooltip);
+            buttonMapPath.SetTooltip(loadMapTooltip);
+
             checkBoxPoke.SetTooltip("depth-first: poke mods to find potential type resultion problems.");
             checkBoxPhased.SetTooltip("breadth-frist: load mods in phases to avoid potential type resultion problems.");
 
@@ -53,7 +67,7 @@ namespace LoadOrderTool.UI {
             if (UIUtil.DesignMode) return;
 
             checkBoxNoAssets.Checked = settings_.NoAssets;
-            checkBoxNoMods.Checked = settings_.NoMods;
+            //checkBoxNoMods.Checked = settings_.NoMods;
             checkBoxNoWorkshop.Checked = settings_.NoWorkshop;
 
             checkBoxLHT.Checked = settings_.LHT;
