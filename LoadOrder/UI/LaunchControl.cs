@@ -18,9 +18,10 @@ namespace LoadOrderTool.UI {
             InitializeComponent();
         }
 
+        
         protected override void OnLoad(EventArgs e) {
             base.OnLoad(e);
-        
+
             LoadSettings();
             UpdateCommand();
 
@@ -49,6 +50,8 @@ namespace LoadOrderTool.UI {
         }
 
         public void LoadSettings() {
+            if (UIUtil.DesignMode) return;
+
             checkBoxNoAssets.Checked = settings_.NoAssets;
             checkBoxNoMods.Checked = settings_.NoMods;
             checkBoxNoWorkshop.Checked = settings_.NoWorkshop;

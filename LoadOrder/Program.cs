@@ -11,12 +11,15 @@ namespace LoadOrderTool {
     using System.Security.Principal;
 
     static class Program {
+        public static bool IsMain { get; private set; }
+
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main() {
             try {
+                IsMain = true;
                 Application.SetHighDpiMode(HighDpiMode.SystemAware);
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);

@@ -1,6 +1,7 @@
-﻿namespace LoadOrderTool.UI {
+namespace LoadOrderTool.UI {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
@@ -11,6 +12,7 @@
     }
 
     public static class UIUtil {
+        public static bool DesignMode => (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
         public static void U32TextBox_KeyPress(object sender, KeyPressEventArgs e) {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) {
                 e.Handled = true;
