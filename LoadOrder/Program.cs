@@ -8,6 +8,7 @@ namespace LoadOrderTool {
     using System.Windows.Forms;
     using System.Threading;
     using System.Diagnostics;
+    using System.Security.Principal;
 
     static class Program {
         /// <summary>
@@ -27,8 +28,17 @@ namespace LoadOrderTool {
                 AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
                 Application.ThreadException += UnhandledThreadExceptionHandler;
 
+                if (IsAdministrator)
+                    MessageBox.Show(
+                        text: "Running this application as administrator can cause problems. Please quite and run this normally",
+                        caption: "Warning: Admin mode",
+                        buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Warning);
+
+                new UI.ProgressWindow().Show();
+
                 _ = DataLocation.GamePath; // run DataLocation static constructor
                 _ = Log.LogFilePath; // run Log static constructor
+
 
                 Application.Run(new UI.LoadOrderWindow());
             } catch (Exception ex) {
@@ -36,6 +46,9 @@ namespace LoadOrderTool {
             }
         }
 
+        public static bool IsAdministrator =>
+           new WindowsPrincipal(WindowsIdentity.GetCurrent())
+               .IsInRole(WindowsBuiltInRole.Administrator);
 
         static void LoadManagedDLLs() {
             var dlls = Directory.GetFiles(DataLocation.ManagedDLL, "*.dll");

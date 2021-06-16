@@ -1,4 +1,4 @@
-﻿using CO;
+using CO;
 using CO.Packaging;
 using CO.Plugins;
 using LoadOrderTool.Util;
@@ -56,11 +56,15 @@ namespace LoadOrderTool.UI {
             try {
                 Instance = this;
                 ConfigWrapper.Suspend();
+                ProgressWindow.Instance?.SetProgress(10, "Initializing UI ...");
                 InitializeComponent();
                 LoadSize();
 
+                ProgressWindow.Instance?.SetProgress(20, "Loading Mods ...");
                 InitializeModTab();
+                ProgressWindow.Instance?.SetProgress(50, "Loading Assets ...");
                 InitializeAssetTab();
+                ProgressWindow.Instance?.SetProgress(80, "Assets Loaded.");
 
                 Dirty = ConfigWrapper.Dirty;
                 ConfigWrapper.Resume();
@@ -80,9 +84,19 @@ namespace LoadOrderTool.UI {
                 tsmiAbout.Click += TsmiAbout_Click;
                 tsmiMassSubscribe.Click += TsmiMassSubscribe_Click;
 
+                ProgressWindow.Instance?.SetProgress(90, "Loading UI ...");
             } catch (Exception ex){
                 ex.Log();
             }
+        }
+
+        protected override void OnLoad(EventArgs e) {
+            base.OnLoad(e);
+            ProgressWindow.Instance?.SetProgress(90, "UI Loaded");
+        }
+        protected override void OnVisibleChanged(EventArgs e) {
+            base.OnVisibleChanged(e);
+            if(Visible) ProgressWindow.Instance?.Close();
         }
 
         private void TsmiResetSettings_Click(object sender, EventArgs e) {
