@@ -79,10 +79,6 @@ namespace LoadOrderTool.UI {
                 menuStrip.tsmiSave.Click += Save_Click;
                 menuStrip.tsmiExport.Click += Export_Click;
                 menuStrip.tsmiImport.Click += Import_Click;
-                menuStrip.tsmiWiki.Click += TsmiWiki_Click;
-                menuStrip.tsmiDiscordSupport.Click += TsmiDiscordSupport_Click;
-                menuStrip.tsmiAbout.Click += TsmiAbout_Click;
-                menuStrip.tsmiMassSubscribe.Click += TsmiMassSubscribe_Click;
 
                 ProgressWindow.Instance?.SetProgress(90, "Loading UI ...");
             } catch (Exception ex){
@@ -99,22 +95,7 @@ namespace LoadOrderTool.UI {
             if(Visible) ProgressWindow.Instance?.Close();
         }
 
-        private void TsmiResetSettings_Click(object sender, EventArgs e) {
-            if (DialogResult.Yes ==
-                MessageBox.Show(
-                    text:"Are you sure you want to reset all settings?",
-                    caption:"Reset settings?",
-                    buttons:MessageBoxButtons.YesNo, 
-                    icon:MessageBoxIcon.Warning
-                )) {
-                ConfigWrapper.ResetAllConfig();
-                ReloadAll();
-                launchControl.LoadSettings();
-                ConfigWrapper.instance.SaveConfig();
-            }
-        }
-
-        protected override void OnResizeEnd(EventArgs e) {
+         protected override void OnResizeEnd(EventArgs e) {
             base.OnResizeEnd(e);
             SaveSize();
         }
@@ -168,22 +149,19 @@ namespace LoadOrderTool.UI {
         }
 
         #region MenuBar
-        private void TsmiDiscordSupport_Click(object sender, EventArgs e) =>
-            ContentUtil.OpenURL("https://discord.gg/tTYS6XnmBb");
-
-        private void TsmiAbout_Click(object sender, EventArgs e) {
-            using (var d = new AboutBox()) {
-                d.ShowDialog();
+        private void TsmiResetSettings_Click(object sender, EventArgs e) {
+            if (DialogResult.Yes ==
+                MessageBox.Show(
+                    text: "Are you sure you want to reset all settings?",
+                    caption: "Reset settings?",
+                    buttons: MessageBoxButtons.YesNo,
+                    icon: MessageBoxIcon.Warning
+                )) {
+                ConfigWrapper.ResetAllConfig();
+                ReloadAll();
+                launchControl.LoadSettings();
+                ConfigWrapper.instance.SaveConfig();
             }
-        }
-
-        private void TsmiWiki_Click(object sender, EventArgs e) {
-            ContentUtil.OpenURL("https://github.com/kianzarrin/LoadOrder/wiki");
-        }
-
-
-        private void TsmiMassSubscribe_Click(object sender, EventArgs e) {
-            new SubscribeDialog().Show();
         }
 
         private void TsmiAutoSave_CheckedChanged(object sender, EventArgs e) {

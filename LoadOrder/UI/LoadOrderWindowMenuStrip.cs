@@ -1,11 +1,33 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-
 namespace LoadOrderTool.UI {
+    using System;
+    using System.Drawing;
+    using System.Windows.Forms;
+    using LoadOrderTool.Util;
+
     public class LoadOrderWindowMenuStrip : MenuStrip {
+        public ToolStripMenuItem tsmiFile;
+        public ToolStripMenuItem tsmiReload;
+        private ToolStripSeparator toolStripSeparator1;
+        public ToolStripMenuItem tsmiSave;
+        private ToolStripSeparator toolStripSeparator2;
+        public ToolStripMenuItem tsmiExport;
+        public ToolStripMenuItem tsmiImport;
+        public ToolStripMenuItem tsmiAutoSave;
+        public ToolStripMenuItem tsmiResetSettings;
+        public ToolStripMenuItem tsmiOrder;
+        public ToolStripMenuItem tsmiResetOrder;
+        public ToolStripMenuItem tsmiHarmonyOrder;
+        public ToolStripMenuItem tsmiReverseOrder;
+        public ToolStripMenuItem tsmiRandomOrder;
+        public ToolStripMenuItem tsmiHelp;
+        public ToolStripMenuItem tsmiWiki;
+        private ToolStripSeparator toolStripSeparator3;
+        public ToolStripMenuItem tsmiAbout;
+        public ToolStripMenuItem tsmiOpenLogLocation;
+        public ToolStripMenuItem tsmiDiscordSupport;
+        public ToolStripMenuItem tsniTools;
+        public ToolStripMenuItem tsmiMassSubscribe;
+
         public LoadOrderWindowMenuStrip() {
             tsmiFile = new ToolStripMenuItem();
             tsmiResetSettings = new ToolStripMenuItem();
@@ -24,6 +46,7 @@ namespace LoadOrderTool.UI {
             tsmiHelp = new ToolStripMenuItem();
             tsmiWiki = new ToolStripMenuItem();
             tsmiDiscordSupport = new ToolStripMenuItem();
+            tsmiOpenLogLocation = new ToolStripMenuItem();
             toolStripSeparator3 = new ToolStripSeparator();
             tsmiAbout = new ToolStripMenuItem();
             tsniTools = new ToolStripMenuItem();
@@ -142,6 +165,7 @@ namespace LoadOrderTool.UI {
             tsmiHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             tsmiWiki,
             tsmiDiscordSupport,
+            tsmiOpenLogLocation,
             toolStripSeparator3,
             tsmiAbout});
             tsmiHelp.Name = "tsmiHelp";
@@ -159,6 +183,12 @@ namespace LoadOrderTool.UI {
             tsmiDiscordSupport.Name = "tsmiDiscordSupport";
             tsmiDiscordSupport.Size = new Size(180, 22);
             tsmiDiscordSupport.Text = "Discord &Support";
+            // 
+            // tsmiOpenLogLocation
+            // 
+            tsmiOpenLogLocation.Name = "tsmiOpenLogLocation";
+            tsmiOpenLogLocation.Size = new Size(180, 22);
+            tsmiOpenLogLocation.Text = "Open &Log Location";
             // 
             // toolStripSeparator3
             // 
@@ -184,29 +214,28 @@ namespace LoadOrderTool.UI {
             tsmiMassSubscribe.Name = "tsmiMassSubscribe";
             tsmiMassSubscribe.Size = new Size(180, 22);
             tsmiMassSubscribe.Text = "Mass &Subscribe";
+
+            tsmiWiki.Click += TsmiWiki_Click;
+            tsmiDiscordSupport.Click += TsmiDiscordSupport_Click;
+            tsmiOpenLogLocation.Click += TsmiOpenLogLocation_Click;
+            tsmiAbout.Click += TsmiAbout_Click;
+            tsmiMassSubscribe.Click += TsmiMassSubscribe_Click;
         }
 
-        public ToolStripMenuItem tsmiFile;
-        public ToolStripMenuItem tsmiReload;
-        public ToolStripSeparator toolStripSeparator1;
-        public ToolStripMenuItem tsmiSave;
-        public ToolStripSeparator toolStripSeparator2;
-        public ToolStripMenuItem tsmiExport;
-        public ToolStripMenuItem tsmiImport;
-        public ToolStripMenuItem tsmiAutoSave;
+        private void TsmiDiscordSupport_Click(object sender, EventArgs e) =>
+            ContentUtil.OpenURL("https://discord.gg/tTYS6XnmBb");
 
-        public ToolStripMenuItem tsmiResetSettings;
-        public ToolStripMenuItem tsmiOrder;
-        public ToolStripMenuItem tsmiResetOrder;
-        public ToolStripMenuItem tsmiHarmonyOrder;
-        public ToolStripMenuItem tsmiReverseOrder;
-        public ToolStripMenuItem tsmiRandomOrder;
-        public ToolStripMenuItem tsmiHelp;
-        public ToolStripMenuItem tsmiWiki;
-        public ToolStripSeparator toolStripSeparator3;
-        public ToolStripMenuItem tsmiAbout;
-        public ToolStripMenuItem tsmiDiscordSupport;
-        public ToolStripMenuItem tsniTools;
-        public ToolStripMenuItem tsmiMassSubscribe;
-    }
+        private void TsmiOpenLogLocation_Click(object sender, EventArgs e) =>
+            ContentUtil.OpenPath(Log.LogFilePath);
+
+        private void TsmiAbout_Click(object sender, EventArgs e) =>
+            new AboutBox().ShowDialog();
+
+        private void TsmiWiki_Click(object sender, EventArgs e) =>
+            ContentUtil.OpenURL("https://github.com/kianzarrin/LoadOrder/wiki");
+        
+        private void TsmiMassSubscribe_Click(object sender, EventArgs e) =>
+            new SubscribeDialog().Show();
+        
+   }
 }
