@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.Util {
+namespace LoadOrderTool.Util {
     using CO.IO;
     using CO.PlatformServices;
     using System;
@@ -36,6 +36,9 @@
             }
         }
 
+        /// <summary>
+        /// opens folder or file location in explorer.
+        /// </summary>
         public static Process OpenPath(string path)
         {
             try
@@ -54,11 +57,9 @@
                 }
 
             }
-            catch (Exception ex2)
+            catch (Exception ex)
             {
-                Log.Exception(
-                    new Exception("could not open path: " + path, ex2),
-                    "could not open path");
+                Log.Exception(new Exception("could not open path: " + path, ex));
                 return null;
             }
         }

@@ -58,6 +58,15 @@ namespace CO.Plugins {
             private string m_CachedName;
 
             public string dllName => userModImplementation?.Module.Assembly.Name.Name;
+            private string dllPath_;
+
+            public string dllPath {
+                get {
+                    if(dllPath_ == null) 
+                        _ = userModImplementation;
+                    return dllPath_;
+                }
+            }
 
             public bool isBuiltin => m_IsBuiltin;
 
@@ -308,7 +317,7 @@ namespace CO.Plugins {
                 m_UserModImplementation ??= GetImplementation(PluginManager.kUserMod);
 
             public TypeDefinition GetImplementation(string fullInterfaceName) =>
-                AssemblyUtil.FindImplementation(DllPaths, fullInterfaceName);
+                AssemblyUtil.FindImplementation(DllPaths, fullInterfaceName, out dllPath_);
 
             public void ApplyPendingValues() {
                 IsIncluded = isIncludedPending_;
