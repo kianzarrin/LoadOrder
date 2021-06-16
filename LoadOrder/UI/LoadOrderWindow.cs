@@ -70,19 +70,19 @@ namespace LoadOrderTool.UI {
                 ConfigWrapper.Resume();
                 ConfigWrapper.SaveConfig();
 
-                tsmiAutoSave.Checked = ConfigWrapper.AutoSave;
-                tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
-                tsmiAutoSave.Click += TsmiAutoSave_Click;
+                menuStrip.tsmiAutoSave.Checked = ConfigWrapper.AutoSave;
+                menuStrip.tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
+                menuStrip.tsmiAutoSave.Click += TsmiAutoSave_Click;
 
-                tsmiResetSettings.Click += TsmiResetSettings_Click;
-                tsmiReload.Click += ReloadAll_Click;
-                tsmiSave.Click += Save_Click;
-                tsmiExport.Click += Export_Click;
-                tsmiImport.Click += Import_Click;
-                tsmiWiki.Click += TsmiWiki_Click;
-                tsmiDiscordSupport.Click += TsmiDiscordSupport_Click;
-                tsmiAbout.Click += TsmiAbout_Click;
-                tsmiMassSubscribe.Click += TsmiMassSubscribe_Click;
+                menuStrip.tsmiResetSettings.Click += TsmiResetSettings_Click;
+                menuStrip.tsmiReload.Click += ReloadAll_Click;
+                menuStrip.tsmiSave.Click += Save_Click;
+                menuStrip.tsmiExport.Click += Export_Click;
+                menuStrip.tsmiImport.Click += Import_Click;
+                menuStrip.tsmiWiki.Click += TsmiWiki_Click;
+                menuStrip.tsmiDiscordSupport.Click += TsmiDiscordSupport_Click;
+                menuStrip.tsmiAbout.Click += TsmiAbout_Click;
+                menuStrip.tsmiMassSubscribe.Click += TsmiMassSubscribe_Click;
 
                 ProgressWindow.Instance?.SetProgress(90, "Loading UI ...");
             } catch (Exception ex){
@@ -187,11 +187,11 @@ namespace LoadOrderTool.UI {
         }
 
         private void TsmiAutoSave_CheckedChanged(object sender, EventArgs e) {
-            ConfigWrapper.AutoSave = tsmiAutoSave.Checked;
+            ConfigWrapper.AutoSave = menuStrip.tsmiAutoSave.Checked;
         }
 
         private void TsmiAutoSave_Click(object sender, EventArgs e) =>
-            tsmiFile.ShowDropDown(); // prevent hiding menu when clicking auto-save
+            menuStrip.tsmiFile.ShowDropDown(); // prevent hiding menu when clicking auto-save
         
         private void Export_Click(object sender, EventArgs e) {
             SaveFileDialog diaglog = new SaveFileDialog();
@@ -265,10 +265,10 @@ namespace LoadOrderTool.UI {
             TextFilterMods.TextChanged += RefreshModList;
 
             TabContainer.SelectedIndexChanged += TabContainer_SelectedIndexChanged;
-            tsmiHarmonyOrder.Click += SortByHarmony_Click;
-            tsmiReverseOrder.Click += ReverseOrder_Click;
-            tsmiRandomOrder.Click += RandomizeOrder_Click;
-            tsmiResetOrder.Click += ResetOrder_Click;
+            menuStrip.tsmiHarmonyOrder.Click += SortByHarmony_Click;
+            menuStrip.tsmiReverseOrder.Click += ReverseOrder_Click;
+            menuStrip.tsmiRandomOrder.Click += RandomizeOrder_Click;
+            menuStrip.tsmiResetOrder.Click += ResetOrder_Click;
             IncludeAllMods.Click += IncludeAllMods_Click;
             ExcludeAllMods.Click += ExcludeAllMods_Click;
             EnableAllMods.Click += EnableAllMods_Click;
@@ -322,7 +322,7 @@ namespace LoadOrderTool.UI {
         }
 
         private void TabContainer_SelectedIndexChanged(object sender, EventArgs e) =>
-            tsmiOrder.Visible = dataGridMods.Visible;
+            menuStrip.tsmiOrder.Visible = dataGridMods.Visible;
 
         private void ResetOrder_Click(object sender, EventArgs e) {
             foreach (var mod in dataGridMods.ModList)

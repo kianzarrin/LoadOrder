@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.UI
+namespace LoadOrderTool.UI
 {
     using System.Windows.Forms;
     partial class LoadOrderWindow
@@ -58,28 +58,8 @@
             this.TextFilterAsset = new System.Windows.Forms.TextBox();
             this.LaunchTab = new System.Windows.Forms.TabPage();
             this.launchControl = new LoadOrderTool.UI.LaunchControl();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiResetSettings = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiReload = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiAutoSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiExport = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiImport = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiOrder = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiResetOrder = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiHarmonyOrder = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiReverseOrder = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiRandomOrder = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiHelp = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiWiki = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiDiscordSupport = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsmiAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsniTools = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiMassSubscribe = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip = new LoadOrderWindowMenuStrip();
+
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMods)).BeginInit();
@@ -90,7 +70,7 @@
             this.AssetsActionPanel.SuspendLayout();
             this.tableLayoutPanelAssetFilters.SuspendLayout();
             this.LaunchTab.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
+            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // TabContainer
@@ -430,167 +410,13 @@
             this.launchControl.Size = new System.Drawing.Size(942, 495);
             this.launchControl.TabIndex = 0;
             // 
-            // menuStrip1
+            // menuStrip
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiFile,
-            this.tsmiOrder,
-            this.tsniTools,
-            this.tsmiHelp});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(956, 24);
-            this.menuStrip1.TabIndex = 2;
-            this.menuStrip1.Text = "menuStrip1";
-            // 
-            // tsmiFile
-            // 
-            this.tsmiFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiResetSettings,
-            this.tsmiReload,
-            this.toolStripSeparator1,
-            this.tsmiSave,
-            this.tsmiAutoSave,
-            this.toolStripSeparator2,
-            this.tsmiExport,
-            this.tsmiImport});
-            this.tsmiFile.Name = "tsmiFile";
-            this.tsmiFile.Size = new System.Drawing.Size(37, 20);
-            this.tsmiFile.Text = "&File";
-            // 
-            // tsmiResetSettings
-            // 
-            this.tsmiResetSettings.Name = "tsmiResetSettings";
-            this.tsmiResetSettings.Size = new System.Drawing.Size(147, 22);
-            this.tsmiResetSettings.Text = "Reset &Settings";
-            // 
-            // tsmiReload
-            // 
-            this.tsmiReload.Name = "tsmiReload";
-            this.tsmiReload.Size = new System.Drawing.Size(147, 22);
-            this.tsmiReload.Text = "&Reload Items";
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(144, 6);
-            // 
-            // tsmiSave
-            // 
-            this.tsmiSave.Name = "tsmiSave";
-            this.tsmiSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.tsmiSave.Size = new System.Drawing.Size(147, 22);
-            this.tsmiSave.Text = "&Save";
-            // 
-            // tsmiAutoSave
-            // 
-            this.tsmiAutoSave.CheckOnClick = true;
-            this.tsmiAutoSave.Name = "tsmiAutoSave";
-            this.tsmiAutoSave.Size = new System.Drawing.Size(147, 22);
-            this.tsmiAutoSave.Text = "&Auto-save";
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(144, 6);
-            // 
-            // tsmiExport
-            // 
-            this.tsmiExport.Name = "tsmiExport";
-            this.tsmiExport.Size = new System.Drawing.Size(147, 22);
-            this.tsmiExport.Text = "&Export ...";
-            // 
-            // tsmiImport
-            // 
-            this.tsmiImport.Name = "tsmiImport";
-            this.tsmiImport.Size = new System.Drawing.Size(147, 22);
-            this.tsmiImport.Text = "&Import ...";
-            // 
-            // tsmiOrder
-            // 
-            this.tsmiOrder.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiResetOrder,
-            this.tsmiHarmonyOrder,
-            this.tsmiReverseOrder,
-            this.tsmiRandomOrder});
-            this.tsmiOrder.Name = "tsmiOrder";
-            this.tsmiOrder.Size = new System.Drawing.Size(49, 20);
-            this.tsmiOrder.Text = "&Order";
-            // 
-            // tsmiResetOrder
-            // 
-            this.tsmiResetOrder.Name = "tsmiResetOrder";
-            this.tsmiResetOrder.Size = new System.Drawing.Size(132, 22);
-            this.tsmiResetOrder.Text = "&ResetOrder";
-            // 
-            // tsmiHarmonyOrder
-            // 
-            this.tsmiHarmonyOrder.Name = "tsmiHarmonyOrder";
-            this.tsmiHarmonyOrder.Size = new System.Drawing.Size(132, 22);
-            this.tsmiHarmonyOrder.Text = "&Harmony";
-            this.tsmiHarmonyOrder.ToolTipText = "sort by harmony";
-            // 
-            // tsmiReverseOrder
-            // 
-            this.tsmiReverseOrder.Name = "tsmiReverseOrder";
-            this.tsmiReverseOrder.Size = new System.Drawing.Size(132, 22);
-            this.tsmiReverseOrder.Text = "Re&verse";
-            this.tsmiReverseOrder.ToolTipText = "revese order";
-            // 
-            // tsmiRandomOrder
-            // 
-            this.tsmiRandomOrder.Name = "tsmiRandomOrder";
-            this.tsmiRandomOrder.Size = new System.Drawing.Size(132, 22);
-            this.tsmiRandomOrder.Text = "Ra&ndom";
-            this.tsmiRandomOrder.ToolTipText = "Random order";
-            // 
-            // tsmiHelp
-            // 
-            this.tsmiHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiWiki,
-            this.tsmiDiscordSupport,
-            this.toolStripSeparator3,
-            this.tsmiAbout});
-            this.tsmiHelp.Name = "tsmiHelp";
-            this.tsmiHelp.Size = new System.Drawing.Size(44, 20);
-            this.tsmiHelp.Text = "&Help";
-            // 
-            // tsmiWiki
-            // 
-            this.tsmiWiki.Name = "tsmiWiki";
-            this.tsmiWiki.Size = new System.Drawing.Size(180, 22);
-            this.tsmiWiki.Text = "&Wiki";
-            // 
-            // tsmiDiscordSupport
-            // 
-            this.tsmiDiscordSupport.Name = "tsmiDiscordSupport";
-            this.tsmiDiscordSupport.Size = new System.Drawing.Size(180, 22);
-            this.tsmiDiscordSupport.Text = "Discord &Support";
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
-            // 
-            // tsmiAbout
-            // 
-            this.tsmiAbout.Name = "tsmiAbout";
-            this.tsmiAbout.Size = new System.Drawing.Size(180, 22);
-            this.tsmiAbout.Text = "&About";
-            // 
-            // tsniTools
-            // 
-            this.tsniTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmiMassSubscribe});
-            this.tsniTools.Name = "tsniTools";
-            this.tsniTools.Size = new System.Drawing.Size(46, 20);
-            this.tsniTools.Text = "&Tools";
-            // 
-            // tsmiMassSubscribe
-            // 
-            this.tsmiMassSubscribe.Name = "tsmiMassSubscribe";
-            this.tsmiMassSubscribe.Size = new System.Drawing.Size(180, 22);
-            this.tsmiMassSubscribe.Text = "Mass &Subscribe";
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(956, 24);
+            this.menuStrip.TabIndex = 2;
+            this.menuStrip.Text = "menuStrip";
             // 
             // LoadOrderWindow
             // 
@@ -598,8 +424,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(956, 551);
             this.Controls.Add(this.TabContainer);
-            this.Controls.Add(this.menuStrip1);
-            this.MainMenuStrip = this.menuStrip1;
+            this.Controls.Add(this.menuStrip);
+            this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(524, 299);
             this.Name = "LoadOrderWindow";
             this.Text = "LoadOrder";
@@ -620,8 +446,8 @@
             this.tableLayoutPanelAssetFilters.ResumeLayout(false);
             this.tableLayoutPanelAssetFilters.PerformLayout();
             this.LaunchTab.ResumeLayout(false);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -653,29 +479,9 @@
         private Label label2;
         private TextBox TextFilterAsset;
         private UI.AssetDataGrid dataGridAssets;
-        private MenuStrip menuStrip1;
-        private ToolStripMenuItem tsmiFile;
-        private ToolStripMenuItem tsmiReload;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripMenuItem tsmiSave;
-        private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem tsmiExport;
-        private ToolStripMenuItem tsmiImport;
-        public ToolStripMenuItem tsmiAutoSave;
+        public LoadOrderWindowMenuStrip menuStrip;
+
         private TabPage LaunchTab;
         private UI.LaunchControl launchControl;
-        private ToolStripMenuItem tsmiResetSettings;
-        private ToolStripMenuItem tsmiOrder;
-        private ToolStripMenuItem tsmiResetOrder;
-        private ToolStripMenuItem tsmiHarmonyOrder;
-        private ToolStripMenuItem tsmiReverseOrder;
-        private ToolStripMenuItem tsmiRandomOrder;
-        private ToolStripMenuItem tsmiHelp;
-        private ToolStripMenuItem tsmiWiki;
-        private ToolStripSeparator toolStripSeparator3;
-        private ToolStripMenuItem tsmiAbout;
-        private ToolStripMenuItem tsmiDiscordSupport;
-        private ToolStripMenuItem tsniTools;
-        private ToolStripMenuItem tsmiMassSubscribe;
     }
 }
