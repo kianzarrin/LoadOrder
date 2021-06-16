@@ -339,3 +339,5 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /libs/Patch.API.dll
+/LoadOrder/dummy0.6.1
+/LoadOrder/dummy0.6.0

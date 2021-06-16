@@ -1,10 +1,21 @@
-- load map theme when loading save.
-- BUG: load save does not work when game save == asset save (eg both of them are named NewSave).
+- load save case insensetive.
 - property display
 - group items
 - tool-bar
 - status bar
-- copy to temp folder.
-	
+- textbox tooltip use show tooltip with control input. https://stackoverflow.com/questions/27192532/winforms-tooltips-not-showing-up
+
+- Clearing the text box of the tags dropdown should show all assets (also switch back to on submit)
+- if an illegal text is entered in the text box of the tags dropdown, it should switch back to sellected item on submit.
+- more tags (LUT, theme, ... )	
+- make sorting on mods the same as on assets
+
+- command line invokation
+- CS termination button in launcher
+
+- improve report mod error UI.
+
+- mange DLC's
+
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 

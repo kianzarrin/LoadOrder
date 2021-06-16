@@ -209,7 +209,7 @@ namespace LoadOrderMod.Util {
 
         static void UpdateTheme(string mapThemeRef, SimulationMetaData ngs) {
             if (!string.IsNullOrEmpty(mapThemeRef)) {
-                Package.Asset asset = PackageManager.FindAssetByName(mapThemeRef, UserAssetType.MapThemeMapMetaData);
+                Package.Asset asset = PackageManager.FindAssetByName(mapThemeRef, UserAssetType.MapThemeMetaData);
                 if (asset != null) {
                     ngs.m_MapThemeMetaData = asset.Instantiate<MapThemeMetaData>();
                     ngs.m_MapThemeMetaData.SetSelfRef(asset);
