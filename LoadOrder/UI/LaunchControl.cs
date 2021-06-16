@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.UI {
+namespace LoadOrderTool.UI {
     using System;
     using System.IO;
     using System.Linq;
@@ -16,7 +16,11 @@
 
         public LaunchControl() {
             InitializeComponent();
+        }
 
+        protected override void OnLoad(EventArgs e) {
+            base.OnLoad(e);
+        
             LoadSettings();
             UpdateCommand();
 
