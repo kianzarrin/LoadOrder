@@ -70,19 +70,15 @@ namespace LoadOrderTool.UI {
                 ConfigWrapper.Resume();
                 ConfigWrapper.SaveConfig();
 
-                tsmiAutoSave.Checked = ConfigWrapper.AutoSave;
-                tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
-                tsmiAutoSave.Click += TsmiAutoSave_Click;
+                menuStrip.tsmiAutoSave.Checked = ConfigWrapper.AutoSave;
+                menuStrip.tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
+                menuStrip.tsmiAutoSave.Click += TsmiAutoSave_Click;
 
-                tsmiResetSettings.Click += TsmiResetSettings_Click;
-                tsmiReload.Click += ReloadAll_Click;
-                tsmiSave.Click += Save_Click;
-                tsmiExport.Click += Export_Click;
-                tsmiImport.Click += Import_Click;
-                tsmiWiki.Click += TsmiWiki_Click;
-                tsmiDiscordSupport.Click += TsmiDiscordSupport_Click;
-                tsmiAbout.Click += TsmiAbout_Click;
-                tsmiMassSubscribe.Click += TsmiMassSubscribe_Click;
+                menuStrip.tsmiResetSettings.Click += TsmiResetSettings_Click;
+                menuStrip.tsmiReload.Click += ReloadAll_Click;
+                menuStrip.tsmiSave.Click += Save_Click;
+                menuStrip.tsmiExport.Click += Export_Click;
+                menuStrip.tsmiImport.Click += Import_Click;
 
                 ProgressWindow.Instance?.SetProgress(90, "Loading UI ...");
             } catch (Exception ex){
@@ -99,22 +95,7 @@ namespace LoadOrderTool.UI {
             if(Visible) ProgressWindow.Instance?.Close();
         }
 
-        private void TsmiResetSettings_Click(object sender, EventArgs e) {
-            if (DialogResult.Yes ==
-                MessageBox.Show(
-                    text:"Are you sure you want to reset all settings?",
-                    caption:"Reset settings?",
-                    buttons:MessageBoxButtons.YesNo, 
-                    icon:MessageBoxIcon.Warning
-                )) {
-                ConfigWrapper.ResetAllConfig();
-                ReloadAll();
-                launchControl.LoadSettings();
-                ConfigWrapper.instance.SaveConfig();
-            }
-        }
-
-        protected override void OnResizeEnd(EventArgs e) {
+         protected override void OnResizeEnd(EventArgs e) {
             base.OnResizeEnd(e);
             SaveSize();
         }
@@ -168,30 +149,27 @@ namespace LoadOrderTool.UI {
         }
 
         #region MenuBar
-        private void TsmiDiscordSupport_Click(object sender, EventArgs e) =>
-            ContentUtil.OpenURL("https://discord.gg/tTYS6XnmBb");
-
-        private void TsmiAbout_Click(object sender, EventArgs e) {
-            using (var d = new AboutBox()) {
-                d.ShowDialog();
+        private void TsmiResetSettings_Click(object sender, EventArgs e) {
+            if (DialogResult.Yes ==
+                MessageBox.Show(
+                    text: "Are you sure you want to reset all settings?",
+                    caption: "Reset settings?",
+                    buttons: MessageBoxButtons.YesNo,
+                    icon: MessageBoxIcon.Warning
+                )) {
+                ConfigWrapper.ResetAllConfig();
+                ReloadAll();
+                launchControl.LoadSettings();
+                ConfigWrapper.instance.SaveConfig();
             }
         }
 
-        private void TsmiWiki_Click(object sender, EventArgs e) {
-            ContentUtil.OpenURL("https://github.com/kianzarrin/LoadOrder/wiki");
-        }
-
-
-        private void TsmiMassSubscribe_Click(object sender, EventArgs e) {
-            new SubscribeDialog().Show();
-        }
-
         private void TsmiAutoSave_CheckedChanged(object sender, EventArgs e) {
-            ConfigWrapper.AutoSave = tsmiAutoSave.Checked;
+            ConfigWrapper.AutoSave = menuStrip.tsmiAutoSave.Checked;
         }
 
         private void TsmiAutoSave_Click(object sender, EventArgs e) =>
-            tsmiFile.ShowDropDown(); // prevent hiding menu when clicking auto-save
+            menuStrip.tsmiFile.ShowDropDown(); // prevent hiding menu when clicking auto-save
         
         private void Export_Click(object sender, EventArgs e) {
             SaveFileDialog diaglog = new SaveFileDialog();
@@ -265,10 +243,10 @@ namespace LoadOrderTool.UI {
             TextFilterMods.TextChanged += RefreshModList;
 
             TabContainer.SelectedIndexChanged += TabContainer_SelectedIndexChanged;
-            tsmiHarmonyOrder.Click += SortByHarmony_Click;
-            tsmiReverseOrder.Click += ReverseOrder_Click;
-            tsmiRandomOrder.Click += RandomizeOrder_Click;
-            tsmiResetOrder.Click += ResetOrder_Click;
+            menuStrip.tsmiHarmonyOrder.Click += SortByHarmony_Click;
+            menuStrip.tsmiReverseOrder.Click += ReverseOrder_Click;
+            menuStrip.tsmiRandomOrder.Click += RandomizeOrder_Click;
+            menuStrip.tsmiResetOrder.Click += ResetOrder_Click;
             IncludeAllMods.Click += IncludeAllMods_Click;
             ExcludeAllMods.Click += ExcludeAllMods_Click;
             EnableAllMods.Click += EnableAllMods_Click;
@@ -322,7 +300,7 @@ namespace LoadOrderTool.UI {
         }
 
         private void TabContainer_SelectedIndexChanged(object sender, EventArgs e) =>
-            tsmiOrder.Visible = dataGridMods.Visible;
+            menuStrip.tsmiOrder.Visible = dataGridMods.Visible;
 
         private void ResetOrder_Click(object sender, EventArgs e) {
             foreach (var mod in dataGridMods.ModList)

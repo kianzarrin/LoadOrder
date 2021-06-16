@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.Data {
+namespace LoadOrderTool.Data {
     using CO.IO;
     using CO.Packaging;
     using CO.Plugins;
@@ -48,7 +48,7 @@
             set {
                 LoadOrderToolSettings.Instace.AutoSave = value;
                 LoadOrderToolSettings.Instace.Serialize();
-                LoadOrderWindow.Instance.tsmiAutoSave.Checked = value;
+                LoadOrderWindow.Instance.menuStrip.tsmiAutoSave.Checked = value;
             }
         }
 
