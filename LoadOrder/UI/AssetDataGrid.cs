@@ -113,7 +113,7 @@ namespace LoadOrderTool.UI {
             VirtualMode = true;
             foreach (DataGridViewColumn col in Columns) {
                 col.SortMode = DataGridViewColumnSortMode.Programmatic;
-                col.Width += 1; // workaround : show hyphon
+                col.Width += 1; // workaround : show Glyph
             }
         }
 
@@ -221,6 +221,7 @@ namespace LoadOrderTool.UI {
                 }
                 var sortOrder = sortAssending_ ? SortOrder.Ascending : SortOrder.Descending;
                 Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = sortOrder;
+
                 prevSortCol_ = e.ColumnIndex;
 
 
@@ -259,6 +260,7 @@ namespace LoadOrderTool.UI {
             base.OnVisibleChanged(e);
             if (Visible && firstTime_) {
                 AutoResizeColumns();
+                this.AutoResizeFirstColumn();
                 firstTime_ = false;
             }
         }

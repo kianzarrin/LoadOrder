@@ -113,5 +113,12 @@ namespace LoadOrderTool.UI {
             control.MouseLeave += (_, __) => tp.Hide(control);
             return tp;
         }
+
+        public static void AutoResizeFirstColumn(this DataGridView dgv) {
+            dgv.AutoResizeColumn(columnIndex: 0);
+            var col0 = dgv.Columns[0];
+            col0.Width = Math.Max(col0.Width, col0.HeaderCell.Size.Width + SystemInformation.Border3DSize.Width);
+
+        }
     }
 }

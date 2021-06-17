@@ -77,6 +77,9 @@ namespace LoadOrderTool.Util {
                     yield return i.InterfaceType;
                 try {
                     type = type.BaseType?.Resolve();
+                } catch(AssemblyResolutionException ex0) {
+                    Log.Info($"[harmless] GetAllInterfaces({type}) could not resolve {type.BaseType}.");
+                    type = null;
                 } catch (Exception ex) {
                     ex.Log(false);
                     type = null;

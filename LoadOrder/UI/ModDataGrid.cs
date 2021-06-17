@@ -53,11 +53,12 @@ namespace LoadOrderTool.UI {
             ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             MultiSelect = false;
             RowHeadersVisible = false;
+            AllowUserToResizeColumns = false;
 
             // 
             // COrder
             // 
-            COrder.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            COrder.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             COrder.HeaderText = "Order";
             COrder.Name = "COrder";
             COrder.Resizable = DataGridViewTriState.True;
@@ -116,10 +117,8 @@ namespace LoadOrderTool.UI {
             CDescription.ReadOnly = true;
 
             DataError += ModDataGrid_DataError;
-            foreach (DataGridViewColumn col in Columns) {
+            foreach (DataGridViewColumn col in Columns)
                 col.SortMode = DataGridViewColumnSortMode.Programmatic;
-                col.Width += 2; // workaround : show hyphon
-            }
         }
 
         private void ModDataGrid_DataError(object sender, DataGridViewDataErrorEventArgs e) {
@@ -127,10 +126,15 @@ namespace LoadOrderTool.UI {
             e.Cancel = true;
         }
 
+        protected override void OnVisibleChanged(EventArgs e) {
+            base.OnVisibleChanged(e);
+            this.AutoResizeFirstColumn();
+        }
+
         // numeric textbox 
         protected override void OnEditingControlShowing(DataGridViewEditingControlShowingEventArgs e) {
             base.OnEditingControlShowing(e);
-            if (CurrentCell.ColumnIndex == 0 && e.Control is TextBox tb) // Desired Column
+            if (CurrentCell.ColumnIndex == COrder.Index && e.Control is TextBox tb) // Desired Column
             {
                 tb.KeyPress -= UIUtil.U32TextBox_KeyPress;
                 tb.Leave -= UIUtil.U32TextBox_Submit;
@@ -187,7 +191,10 @@ namespace LoadOrderTool.UI {
                     cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
                 } else if (e.ColumnIndex == CModID.Index) {
                     cell.ToolTipText = ContentUtil.GetItemURL((string)cell.Value) ?? ModList.Filtered[e.RowIndex].ModPath;
+                } else {
+                    cell.ToolTipText = null;
                 }
+
             } catch (Exception ex) {
                 Log.Exception(ex, $"e.ColumnIndex={e.ColumnIndex} e.RowIndex={e.RowIndex}");
             }
@@ -222,7 +229,7 @@ namespace LoadOrderTool.UI {
             try {
                 if (ModList == null) return;
                 if (e.ColumnIndex == prevSortCol_) {
-                    sortAssending_ = !sortAssending_;
+                    sortAssending_ = e.ColumnIndex == COrder.Index ? true :!sortAssending_;
                 } else {
                     sortAssending_ = true;
                     foreach (DataGridViewColumn col in Columns)
@@ -262,8 +269,10 @@ namespace LoadOrderTool.UI {
         }
 
         public void RefreshModList(bool sort = false) {
-            if (sort)
+            if (sort) {
                 ModList.DefaultSort();
+                COrder.HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+            }
             ModList.FilterIn();
             PopulateMods();
         }
@@ -313,6 +322,7 @@ namespace LoadOrderTool.UI {
                 }
             }
             ResumeLayout();
+            this.AutoResizeFirstColumn();
         }
     }
 }
