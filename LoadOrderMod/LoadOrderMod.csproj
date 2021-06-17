@@ -102,7 +102,6 @@
     <Compile Include="KianCommons\KianCommons\Util\Assertion.cs" />
     <Compile Include="KianCommons\KianCommons\Util\EnumerationExtensions.cs" />
     <Compile Include="KianCommons\KianCommons\Util\HelpersExtensions.cs" />
-    <Compile Include="KianCommons\KianCommons\Util\Log.cs" />
     <Compile Include="KianCommons\KianCommons\Util\ReflectionHelpers.cs" />
     <Compile Include="KianCommons\KianCommons\Util\StringExtensions.cs" />
   </ItemGroup>
