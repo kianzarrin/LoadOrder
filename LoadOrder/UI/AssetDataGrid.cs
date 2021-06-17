@@ -101,7 +101,6 @@ namespace LoadOrderTool.UI {
             cDateSubscribed.Name = "cDateSubscribed";
             cDateSubscribed.ReadOnly = true;
             cDateSubscribed.Width = 60;
-            cDateSubscribed.Visible = false; //TODO: add this when ready.
             // 
             // cTags
             // 

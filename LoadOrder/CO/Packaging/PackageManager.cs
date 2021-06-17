@@ -98,16 +98,9 @@ namespace CO.Packaging {
             public DateTime DateSubscribed {
                 get {
                     if (dateSubscribed_ == null) {
-                        if (string.IsNullOrWhiteSpace(ConfigAssetInfo.DateSubscribed))
-                            dateSubscribed_ = default(DateTime);
-                        else if (DateTime.TryParse(
-                            ConfigAssetInfo.DateSubscribed,
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
-                            out var date))
-                            dateSubscribed_ = date;
-                        else {
-                            Log.Warning($"could not parse {ConfigAssetInfo.DateSubscribed}");
+                        if (File.Exists(AssetPath)) {
+                            dateSubscribed_ = File.GetCreationTimeUtc(AssetPath);
+                        } else {
                             dateSubscribed_ = default(DateTime);
                         }
                     }

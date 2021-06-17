@@ -7,9 +7,7 @@ namespace LoadOrderTool {
     using CO.IO;
     using System.Windows.Forms;
     using LoadOrderTool.Util;
-    using System.ComponentModel;
     using LoadOrderTool.UI;
-    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// A simple logging class.

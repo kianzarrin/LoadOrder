@@ -10,7 +10,6 @@ namespace LoadOrderShared {
         public string Description;
         public string Author;
         public string DateUpdated;
-        public string DateSubscribed;
     }
 
     public class AssetInfo {
@@ -19,7 +18,6 @@ namespace LoadOrderShared {
         public string AssetName;
         public string description;
         public string DateUpdated;
-        public string DateSubscribed;
         public string[] Tags;
         public string Author;
     }

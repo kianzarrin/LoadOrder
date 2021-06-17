@@ -107,7 +107,6 @@ namespace LoadOrderTool.UI {
             CDateSubscribed.ToolTipText = "subscription date";
             CDateSubscribed.Name = "CDateSubscribed";
             CDateSubscribed.ReadOnly = true;
-            CDateSubscribed.Visible = false; // TODO: add this when ready
             // 
             // CDescription
             // 
@@ -303,8 +302,8 @@ namespace LoadOrderTool.UI {
                         mod.IsEnabledPending,
                         id,
                         mod.ModInfo.Author ?? "",
-                        mod.ModInfo.DateUpdated ?? "",
-                        mod.ModInfo.DateSubscribed ?? "",
+                        mod.StrDateUpdate ?? "",
+                        mod.StrDateSubscribed ?? "",
                         mod.DisplayText ?? "");
                 } catch (Exception ex) {
                     Log.Exception(new Exception(
@@ -314,8 +313,8 @@ namespace LoadOrderTool.UI {
                         $"IsEnabledPending={mod.IsEnabledPending} " +
                         $"id={mod.PublishedFileId} " +
                         $"Author={mod.ModInfo.Author} " +
-                        $"DateUpdated={mod.ModInfo.DateUpdated} " +
-                        $"DateSubscribed={mod.ModInfo.DateSubscribed} " +
+                        $"DateUpdated={mod.StrDateUpdate} " +
+                        $"DateSubscribed={mod.StrDateSubscribed} " +
                         $"DisplayText={mod.DisplayText}",
                         innerException: ex
                         ));

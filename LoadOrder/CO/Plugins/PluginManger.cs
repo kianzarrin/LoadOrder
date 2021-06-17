@@ -143,21 +143,14 @@ namespace CO.Plugins {
             DateTime? dateSubscribed_;
             public DateTime DateSubscribed {
                 get {
-                    if (dateUpdate_ == null) {
-                        if (string.IsNullOrWhiteSpace(ModInfo.DateSubscribed))
-                            dateUpdate_ = default(DateTime);
-                        else if (DateTime.TryParse(
-                            ModInfo.DateSubscribed,
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
-                            out var date))
-                            dateUpdate_ = date;
-                        else {
-                            Log.Warning($"could not parse {ModInfo.DateSubscribed}");
-                            dateUpdate_ = default(DateTime);
+                    if (dateSubscribed_ == null) {
+                        if (File.Exists(dllPath)){
+                            dateSubscribed_ = File.GetCreationTimeUtc(dllPath);
+                        } else {
+                            dateSubscribed_ = default(DateTime);
                         }
                     }
-                    return dateUpdate_.Value;
+                    return dateSubscribed_.Value;
                 }
             }
 
