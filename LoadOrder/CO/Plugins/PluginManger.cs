@@ -105,7 +105,7 @@ namespace CO.Plugins {
 
             string displayText_;
             public string DisplayText => 
-                displayText_ ??= (DispalyPath + " " + ModInfo.ModName).Trim();
+                displayText_ ??= string.Join(" | ", new[] { ModInfo.ModName, DispalyPath });
 
             DateTime? dateUpdate_;
             public DateTime DateUpdated {

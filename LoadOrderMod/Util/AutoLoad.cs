@@ -58,7 +58,7 @@ namespace LoadOrderMod.Util {
         /// if no match was found, value=null and returns false.
         /// if a match is found, value="" or string after --prototype= and returns true.
         /// </summary>
-        static bool ParseCommandLine(string prototypes, out string value) {
+        public static bool ParseCommandLine(string prototypes, out string value) {
             foreach (string arg in Environment.GetCommandLineArgs()) {
                 foreach (string prototype in prototypes.Split("|")) {
                     if (MatchCommandLineArg(arg, prototype, out string val)) {

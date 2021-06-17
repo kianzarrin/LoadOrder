@@ -1,14 +1,11 @@
 namespace LoadOrderTool.UI {
     using System;
-    using System.IO;
-    using System.Linq;
     using System.Collections.Generic;
     using System.Windows.Forms;
     using CO.IO;
     using System.Diagnostics;
     using LoadOrderTool.Util;
     using LoadOrderTool.Data;
-    using CO;
 
     public partial class LaunchControl : UserControl {
         LoadOrderToolSettings settings_ => LoadOrderToolSettings.Instace;
@@ -276,5 +273,14 @@ namespace LoadOrderTool.UI {
 
             ContentUtil.Execute(dir, fileExe, string.Join(" ", args));
         }
+
+        private void btnTerminate_Click(object sender, EventArgs e) {
+
+            foreach (var proc in Process.GetProcessesByName("Cities")) {
+                Log.Info("killing " + proc);
+                proc.Kill();
+            }
+        }
+
     }
 }

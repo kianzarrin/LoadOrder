@@ -253,6 +253,8 @@ namespace LoadOrderTool.UI {
                     ModList.SortItemsBy(item => item.ModInfo.Author ?? "[unknown", sortAssending_);
                 } else if (e.ColumnIndex == this.CDateUpdated.Index) {
                     ModList.SortItemsBy(item => item.DateUpdated, sortAssending_);
+                } else if (e.ColumnIndex == this.CDateSubscribed.Index) {
+                    ModList.SortItemsBy(item => item.DateSubscribed, sortAssending_);
                 }
 
                 RefreshModList(sort: false);

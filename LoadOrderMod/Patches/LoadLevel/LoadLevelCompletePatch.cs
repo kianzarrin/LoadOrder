@@ -92,6 +92,9 @@ namespace LoadOrderMod.Patches {
 
         private static IEnumerator OnLoadingFinished() {
             Log.Info("LoadOrderMod:GAME LOADING HAS FINISHED", true);
+            if(Util.AutoLoad.ParseCommandLine("terminate|terminateOnLoad", out _)) {
+                Process.GetCurrentProcess().Kill();
+            }
             yield return 0;
         }
     }

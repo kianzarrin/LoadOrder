@@ -1,14 +1,12 @@
-bugs:
+- command line invokation
+- improve report mod error UI.
+
+bugs: none
 
 - property display
 - group items
 - tool-bar
 - status bar
-
-- command line invokation
-- CS termination button in launcher
-- auto-terminate when game loads with -terminate command arg.
-- improve report mod error UI.
 
 - manage DLC's
 
