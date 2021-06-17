@@ -141,7 +141,7 @@ namespace LoadOrderMod.Settings {
                         modInfo.Author = author;
                     var entry = pluginInfo.GetEntryData();
                     if (entry != null && entry.updated != default)
-                        modInfo.Date = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                        modInfo.DateUpdated = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
 
                     // TODO: listen to events to get name.
                 } catch (Exception ex) {
@@ -179,9 +179,9 @@ namespace LoadOrderMod.Settings {
 
                     MetaData metaData = asset.Instantiate() as MetaData;
                     if (entry != null && entry.updated != default)
-                        assetInfo.Date = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                        assetInfo.DateUpdated = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
                     else
-                        assetInfo.Date = metaData.getTimeStamp.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                        assetInfo.DateUpdated = metaData.getTimeStamp.ToLocalTime().ToString(CultureInfo.InvariantCulture);
 
                     if (metaData is CustomAssetMetaData customAssetMetaData) {
                         assetInfo.description = ContentManagerUtil.SafeGetAssetDesc(customAssetMetaData, asset.package);
@@ -214,9 +214,9 @@ namespace LoadOrderMod.Settings {
 
                     var entry = asset.GetEntryData();
                     if (entry != null && entry.updated != default)
-                        assetInfo.Date = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                        assetInfo.DateUpdated = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
                     else
-                        assetInfo.Date = metaData.getTimeStamp.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                        assetInfo.DateUpdated = metaData.getTimeStamp.ToLocalTime().ToString(CultureInfo.InvariantCulture);
                     assetInfo.Tags = new[] { "Theme" };
                 } catch (Exception ex) {
                     Log.Exception(ex);
@@ -274,14 +274,14 @@ namespace LoadOrderMod.Settings {
         }
         internal static void SetDate(this Package.Asset a, DateTime date) {
             if (a.GetAssetConfig() is AssetInfo assetInfo) {
-                assetInfo.Date = date.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                assetInfo.DateUpdated = date.ToLocalTime().ToString(CultureInfo.InvariantCulture);
                 SaveThread.Dirty = true;
             }
         }
 
         internal static void SetDate(this PluginInfo p, DateTime date) {
             if (p.GetModConfig() is ModInfo modInfo) {
-                modInfo.Date = date.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                modInfo.DateUpdated = date.ToLocalTime().ToString(CultureInfo.InvariantCulture);
                 SaveThread.Dirty = true;
             }
         }

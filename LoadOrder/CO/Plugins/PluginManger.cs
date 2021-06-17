@@ -17,6 +17,7 @@ namespace CO.Plugins {
     using LoadOrderShared;
     using LoadOrderTool.Data;
     using LoadOrderTool.UI;
+    using System.Globalization;
 
     public class PluginManager : SingletonLite<PluginManager> {
         public static ConfigWrapper ConfigWrapper = ConfigWrapper.instance;
@@ -105,6 +106,72 @@ namespace CO.Plugins {
             string displayText_;
             public string DisplayText => 
                 displayText_ ??= (DispalyPath + " " + ModInfo.ModName).Trim();
+
+            DateTime? dateUpdate_;
+            public DateTime DateUpdated {
+                get {
+                    if (dateUpdate_ == null) {
+                        if (string.IsNullOrWhiteSpace(ModInfo.DateUpdated))
+                            dateUpdate_ = default(DateTime);
+                        else if (DateTime.TryParse(
+                            ModInfo.DateUpdated,
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.None,
+                            out var date))
+                            dateUpdate_ = date;
+                        else {
+                            Log.Warning($"could not parse {ModInfo.DateUpdated}");
+                            dateUpdate_ = default(DateTime);
+                        }
+                    }
+                    return dateUpdate_.Value;
+                }
+            }
+
+            string strDateUpdated_;
+            public string StrDateUpdate {
+                get {
+                    if (strDateUpdated_ != null)
+                        return strDateUpdated_;
+                    else if (DateUpdated == default)
+                        return strDateUpdated_ = "";
+                    else
+                        return strDateUpdated_ = DateUpdated.ToString("d", CultureInfo.CurrentCulture);
+                }
+            }
+
+            DateTime? dateSubscribed_;
+            public DateTime DateSubscribed {
+                get {
+                    if (dateUpdate_ == null) {
+                        if (string.IsNullOrWhiteSpace(ModInfo.DateSubscribed))
+                            dateUpdate_ = default(DateTime);
+                        else if (DateTime.TryParse(
+                            ModInfo.DateSubscribed,
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.None,
+                            out var date))
+                            dateUpdate_ = date;
+                        else {
+                            Log.Warning($"could not parse {ModInfo.DateSubscribed}");
+                            dateUpdate_ = default(DateTime);
+                        }
+                    }
+                    return dateUpdate_.Value;
+                }
+            }
+
+            string strDateSubscribed_;
+            public string StrDateSubscribed {
+                get {
+                    if (strDateSubscribed_ != null)
+                        return strDateSubscribed_;
+                    else if (DateSubscribed == default)
+                        return strDateSubscribed_ = "";
+                    else
+                        return strDateSubscribed_ = DateSubscribed.ToString("d", CultureInfo.CurrentCulture);
+                }
+            }
 
             string searchText_;
             public string SearchText => searchText_ ??=

@@ -1,4 +1,4 @@
-﻿using CO.PlatformServices;
+using CO.PlatformServices;
 using CO.Plugins;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,6 @@ namespace LoadOrderTool {
 
         public delegate bool PredicateHandler(PluginInfo p);
         public Func<PluginInfo, bool> PredicateCallback { get; set; }
-
 
         public ModList(IEnumerable<PluginInfo> list, Func<PluginInfo, bool> predicateCallback) : base(list) {
             PredicateCallback = predicateCallback;
@@ -123,6 +122,22 @@ namespace LoadOrderTool {
         public void ResetLoadOrders() {
             foreach (var p in this)
                 p.ResetLoadOrder();
+        }
+
+        public void SortItemsBy<TKey>(Func<PluginInfo, TKey> selector, bool assending) where TKey : IComparable {
+            if (assending)
+                Sort((a, b) => Compare(selector(a), selector(b)));
+            else
+                Sort((a, b) => Compare(selector(b), selector(a)));
+        }
+
+        static int Compare<T>(T a, T b) where T : IComparable {
+            bool aIsNull = a is null;
+            bool bIsNull = b is null;
+            if (aIsNull | bIsNull)
+                return aIsNull.CompareTo(bIsNull);
+            else
+                return a.CompareTo(b);
         }
 
         public void DefaultSort() => Sort(HarmonyComparison);

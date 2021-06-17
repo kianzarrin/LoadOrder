@@ -61,36 +61,69 @@ namespace CO.Packaging {
                 ? string.Join(", ", ConfigAssetInfo.Tags)
                 : "";
 
-            DateTime ?date_;
-            public DateTime Date {
+            DateTime ?dateUpdated_;
+            public DateTime DateUpdated {
                 get {
-                    if (date_ == null) {
-                        if (string.IsNullOrWhiteSpace(ConfigAssetInfo.Date))
-                            date_ = default(DateTime);
+                    if (dateUpdated_ == null) {
+                        if (string.IsNullOrWhiteSpace(ConfigAssetInfo.DateUpdated))
+                            dateUpdated_ = default(DateTime);
                         else if (DateTime.TryParse(
-                            ConfigAssetInfo.Date,
+                            ConfigAssetInfo.DateUpdated,
                             CultureInfo.InvariantCulture,
                             DateTimeStyles.None,
                             out var date))
-                            date_ = date;
+                            dateUpdated_ = date;
                         else {
-                            Log.Warning($"could not parse {ConfigAssetInfo.Date}");
-                            date_ = default(DateTime);
+                            Log.Warning($"could not parse {ConfigAssetInfo.DateUpdated}");
+                            dateUpdated_ = default(DateTime);
                         }
                     }
-                    return date_.Value;
+                    return dateUpdated_.Value;
                 }
             }
 
-            string strDate_;
-            public string StrDate {
+            string strDateUpdated_;
+            public string StrDateUpdated {
                 get {
-                    if (strDate_ != null)
-                        return strDate_;
-                    else if (Date == default)
-                        return strDate_ = "";
+                    if (strDateUpdated_ != null)
+                        return strDateUpdated_;
+                    else if (DateUpdated == default)
+                        return strDateUpdated_ = "";
                     else
-                        return strDate_ = Date.ToString("d", CultureInfo.CurrentCulture);
+                        return strDateUpdated_ = DateUpdated.ToString("d", CultureInfo.CurrentCulture);
+                }
+            }
+
+            DateTime? dateSubscribed_;
+            public DateTime DateSubscribed {
+                get {
+                    if (dateSubscribed_ == null) {
+                        if (string.IsNullOrWhiteSpace(ConfigAssetInfo.DateSubscribed))
+                            dateSubscribed_ = default(DateTime);
+                        else if (DateTime.TryParse(
+                            ConfigAssetInfo.DateSubscribed,
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.None,
+                            out var date))
+                            dateSubscribed_ = date;
+                        else {
+                            Log.Warning($"could not parse {ConfigAssetInfo.DateSubscribed}");
+                            dateSubscribed_ = default(DateTime);
+                        }
+                    }
+                    return dateSubscribed_.Value;
+                }
+            }
+
+            string strDateSubscribed_;
+            public string StrDateSubscribed {
+                get {
+                    if (strDateSubscribed_ != null)
+                        return strDateSubscribed_;
+                    else if (DateSubscribed == default)
+                        return strDateSubscribed_ = "";
+                    else
+                        return strDateSubscribed_ = DateSubscribed.ToString("d", CultureInfo.CurrentCulture);
                 }
             }
 

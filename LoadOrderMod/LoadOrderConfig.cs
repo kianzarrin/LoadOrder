@@ -9,7 +9,8 @@ namespace LoadOrderShared {
         public string ModName;
         public string Description;
         public string Author;
-        public string Date;
+        public string DateUpdated;
+        public string DateSubscribed;
     }
 
     public class AssetInfo {
@@ -17,7 +18,8 @@ namespace LoadOrderShared {
         public string Path; // included path
         public string AssetName;
         public string description;
-        public string Date;
+        public string DateUpdated;
+        public string DateSubscribed;
         public string[] Tags;
         public string Author;
     }

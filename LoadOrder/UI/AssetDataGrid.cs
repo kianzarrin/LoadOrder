@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.UI {
+namespace LoadOrderTool.UI {
     using System.Drawing;
     using System.Windows.Forms;
     using System.ComponentModel;
@@ -21,7 +21,8 @@
         private DataGridViewLinkColumn cAssetID;
         private DataGridViewTextBoxColumn cName;
         private DataGridViewTextBoxColumn cAuthor;
-        private DataGridViewTextBoxColumn cDate;
+        private DataGridViewTextBoxColumn cDateUpdated;
+        private DataGridViewTextBoxColumn cDateSubscribed;
         private DataGridViewTextBoxColumn cTags;
 
         public AssetDataGrid() {
@@ -29,7 +30,8 @@
             cAssetID = new DataGridViewLinkColumn();
             cName = new DataGridViewTextBoxColumn();
             cAuthor = new DataGridViewTextBoxColumn();
-            cDate = new DataGridViewTextBoxColumn();
+            cDateUpdated = new DataGridViewTextBoxColumn();
+            cDateSubscribed = new DataGridViewTextBoxColumn();
             cTags = new DataGridViewTextBoxColumn();
 
             AllowUserToAddRows = false;
@@ -49,53 +51,64 @@
             cAssetID,
             cName,
             cAuthor,
-            cDate,
+            cDateUpdated,
+            cDateSubscribed,
             cTags});
 
             // 
             // cIncluded
             // 
-            this.cIncluded.HeaderText = "Included";
-            this.cIncluded.Name = "cIncluded";
-            this.cIncluded.Width = 63;
+            cIncluded.HeaderText = "Included";
+            cIncluded.Name = "cIncluded";
+            cIncluded.Width = 63;
             // 
             // cAssetID
             // 
-            this.cAssetID.HeaderText = "ID";
-            this.cAssetID.Name = "cAssetID";
-            this.cAssetID.ReadOnly = true;
-            this.cAssetID.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.cAssetID.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.cAssetID.TrackVisitedState = false;
-            this.cAssetID.Width = 45;
+            cAssetID.HeaderText = "ID";
+            cAssetID.Name = "cAssetID";
+            cAssetID.ReadOnly = true;
+            cAssetID.Resizable = DataGridViewTriState.True;
+            cAssetID.SortMode = DataGridViewColumnSortMode.Automatic;
+            cAssetID.TrackVisitedState = false;
+            cAssetID.Width = 45;
             // 
             // cName
             // 
-            this.cName.HeaderText = "Name";
-            this.cName.Name = "cName";
-            this.cName.ReadOnly = true;
-            this.cName.Width = 68;
+            cName.HeaderText = "Name";
+            cName.Name = "cName";
+            cName.ReadOnly = true;
+            cName.Width = 68;
             // 
             // cAuthor
             // 
-            this.cAuthor.HeaderText = "Author";
-            this.cAuthor.Name = "cAuthor";
-            this.cAuthor.ReadOnly = true;
-            this.cAuthor.Width = 72;
+            cAuthor.HeaderText = "Author";
+            cAuthor.Name = "cAuthor";
+            cAuthor.ReadOnly = true;
+            cAuthor.Width = 72;
             // 
-            // cDate
+            // cDateUpdated
             // 
-            this.cDate.HeaderText = "Date";
-            this.cDate.Name = "cDate";
-            this.cDate.ReadOnly = true;
-            this.cDate.Width = 60;
+            cDateUpdated.HeaderText = "Updated";
+            cDateUpdated.ToolTipText = "date of last update on workshop";
+            cDateUpdated.Name = "cDateUpdated";
+            cDateUpdated.ReadOnly = true;
+            cDateUpdated.Width = 60;
+            // 
+            // cDateSubscribed
+            // 
+            cDateSubscribed.HeaderText = "Subscribed";
+            cDateSubscribed.ToolTipText = "subscription date";
+            cDateSubscribed.Name = "cDateSubscribed";
+            cDateSubscribed.ReadOnly = true;
+            cDateSubscribed.Width = 60;
+            cDateSubscribed.Visible = false; //TODO: add this when ready.
             // 
             // cTags
             // 
-            this.cTags.HeaderText = "Tags";
-            this.cTags.Name = "cTags";
-            this.cTags.ReadOnly = true;
-            this.cTags.Width = 60;
+            cTags.HeaderText = "Tags";
+            cTags.Name = "cTags";
+            cTags.ReadOnly = true;
+            cTags.Width = 60;
 
             VirtualMode = true;
             foreach (DataGridViewColumn col in Columns) {
@@ -122,8 +135,10 @@
                     e.Value = asset.DisplayText ?? "";
                 } else if (e.ColumnIndex == cAuthor.Index) {
                     e.Value = asset.ConfigAssetInfo.Author ?? "";
-                } else if (e.ColumnIndex == cDate.Index) {
-                    e.Value = asset.StrDate;
+                } else if (e.ColumnIndex == cDateUpdated.Index) {
+                    e.Value = asset.StrDateUpdated;
+                } else if (e.ColumnIndex == cDateSubscribed.Index) {
+                    e.Value = asset.StrDateSubscribed;
                 } else if (e.ColumnIndex == cTags.Index) {
                     e.Value = asset.StrTags;
                 }
@@ -218,8 +233,10 @@
                 } else if (e.ColumnIndex == cAuthor.Index) {
                     // "[unknown" is sorted before "[unknown]". This puts empty before unknown author.
                     AssetList.SortItemsBy(item => item.ConfigAssetInfo.Author ?? "[unknown", sortAssending_);
-                } else if (e.ColumnIndex == cDate.Index) {
-                    AssetList.SortItemsBy(item => item.Date, sortAssending_);
+                } else if (e.ColumnIndex == cDateUpdated.Index) {
+                    AssetList.SortItemsBy(item => item.DateUpdated, sortAssending_);
+                } else if (e.ColumnIndex == cDateSubscribed.Index) {
+                    AssetList.SortItemsBy(item => item.DateSubscribed, sortAssending_);
                 } else if (e.ColumnIndex == cTags.Index) {
                     AssetList.SortItemsBy(item => item.StrTags, sortAssending_);
                 }
