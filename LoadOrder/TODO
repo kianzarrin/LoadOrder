@@ -5,11 +5,9 @@ bugs:
 - tool-bar
 - status bar
 
-- both update/sub date columns
-
 - command line invokation
 - CS termination button in launcher
-
+- auto-terminate when game loads with -terminate command arg.
 - improve report mod error UI.
 
 - manage DLC's
