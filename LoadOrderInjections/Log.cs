@@ -156,14 +156,11 @@ namespace KianCommons {
             try {
                 var dir = Path.Combine(Application.dataPath, "Logs");
                 LogFilePath = Path.Combine(dir, LogFileName);
-                var oldFilePath = Path.Combine(Application.dataPath, LogFileName);
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-                TryDeleteFile(oldFilePath);
+                TryDeleteFile(LogFilePath);
+                TryDeleteFile(Path.Combine(Application.dataPath, LogFileName)); 
                 TryDeleteFile(Path.Combine(dir, "LoadOrderMod.dll"));
                 TryDeleteFile(Path.Combine(dir, "LoadOrderInjections.dll"));
-
-
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
                 if (ShowTimestamp) {
                     Timer = GetSharedTimer() ?? Stopwatch.StartNew();

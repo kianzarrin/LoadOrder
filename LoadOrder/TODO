@@ -10,5 +10,8 @@ bugs: none
 
 - manage DLC's
 
+- profile to manage prefab skipping.
+
+
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 

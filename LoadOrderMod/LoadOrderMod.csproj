@@ -94,9 +94,14 @@
     <None Remove="KianCommons\.gitattributes" />
     <None Remove="KianCommons\.gitignore" />
     <None Remove="KianCommons\KianCommons\.editorconfig" />
+    <None Remove="Resources\fully_downloaded.png" />
+    <None Remove="Resources\not_downloaded.png" />
+    <None Remove="Resources\partially_downloaded.png" />
     <Compile Include="KianCommons\KianCommons\Patches\HarmonyUtil.cs" />
     <Compile Include="KianCommons\KianCommons\Patches\TranspilerUtils.cs" />
+    <Compile Include="KianCommons\KianCommons\UI\TextureUtil.cs" />
     <Compile Include="KianCommons\KianCommons\UI\UIHelperExtension.cs" />
+    <Compile Include="KianCommons\KianCommons\UI\UIUtils.cs" />
     <Compile Include="KianCommons\KianCommons\Util\Assertion.cs" />
     <Compile Include="KianCommons\KianCommons\Util\EnumerationExtensions.cs" />
     <Compile Include="KianCommons\KianCommons\Util\HelpersExtensions.cs" />
@@ -104,13 +109,7 @@
     <Compile Include="KianCommons\KianCommons\Util\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Resources\fully_downloaded.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\not_downloaded.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\partially_downloaded.png">
+    <None Update="Resources\Status.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -121,7 +120,7 @@
     </GetAssemblyIdentity>
     <ItemGroup>
       <AuxiliaryFiles Include="$(TargetDir)CitiesHarmony.API.dll;" />
-      <ResourceFiles Include="$(TargetDir)/Resources/*.png"/>
+      <ResourceFiles Include="$(TargetDir)/Resources/*.png" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
     <PropertyGroup>
