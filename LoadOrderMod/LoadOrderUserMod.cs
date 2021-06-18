@@ -72,12 +72,12 @@ namespace LoadOrderMod {
         }
 
         public static void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-            Log.Info($"SceneManager.sceneLoaded({scene.name}, {mode})", true);
+            Log.Info($"OnSceneLoaded({scene.name}, {mode})", true);
             Log.Flush();
         }
 
         public static void OnActiveSceneChanged(Scene from, Scene to) {
-            Log.Info($"SceneManager.activeSceneChanged({from.name}, {to.name})", true);
+            Log.Info($"OnActiveSceneChanged({from.name}, {to.name})", true);
             Log.Flush();
             if (Helpers.InStartupMenu)
                 LoadOrderUtil.TurnOffSteamPanels();

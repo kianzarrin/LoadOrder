@@ -143,6 +143,11 @@ namespace KianCommons {
             return t?.GetField("m_Timer")?.GetValue(null) as Stopwatch;
         }
 
+        static void TryDeleteFile(string path) {
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+
         /// <summary>
         /// Initializes static members of the <see cref="Log"/> class.
         /// Resets log file on startup.
@@ -154,10 +159,10 @@ namespace KianCommons {
                 var oldFilePath = Path.Combine(Application.dataPath, LogFileName);
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
-                if (File.Exists(LogFilePath))
-                    File.Delete(LogFilePath);
-                if (File.Exists(oldFilePath))
-                    File.Delete(oldFilePath);
+                TryDeleteFile(oldFilePath);
+                TryDeleteFile(Path.Combine(dir, "LoadOrderMod.dll"));
+                TryDeleteFile(Path.Combine(dir, "LoadOrderInjections.dll"));
+
 
 
                 if (ShowTimestamp) {

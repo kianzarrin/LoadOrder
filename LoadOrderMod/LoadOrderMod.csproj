@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../Version.props" />
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
@@ -57,7 +57,6 @@
     <Compile Remove="KianCommons\KianCommons\UI\**" />
     <Compile Remove="KianCommons\KianCommons\Util\**" />
     <Compile Remove="KianCommons\libs\**" />
-    <Compile Remove="Resources\**" />
     <EmbeddedResource Remove="KianCommons\KianCommons\Backport\**" />
     <EmbeddedResource Remove="KianCommons\KianCommons\Math\**" />
     <EmbeddedResource Remove="KianCommons\KianCommons\ObjUnity3D\**" />
@@ -70,7 +69,6 @@
     <EmbeddedResource Remove="KianCommons\KianCommons\UI\**" />
     <EmbeddedResource Remove="KianCommons\KianCommons\Util\**" />
     <EmbeddedResource Remove="KianCommons\libs\**" />
-    <EmbeddedResource Remove="Resources\**" />
     <None Remove="KianCommons\KianCommons\Backport\**" />
     <None Remove="KianCommons\KianCommons\Math\**" />
     <None Remove="KianCommons\KianCommons\ObjUnity3D\**" />
@@ -83,7 +81,6 @@
     <None Remove="KianCommons\KianCommons\UI\**" />
     <None Remove="KianCommons\KianCommons\Util\**" />
     <None Remove="KianCommons\libs\**" />
-    <None Remove="Resources\**" />
     <Compile Remove="KianCommons\KianCommons\LifeCycleBase.cs" />
     <Compile Remove="KianCommons\KianCommons\Plugins\AdaptiveRoadsUtil.cs" />
     <Compile Remove="KianCommons\KianCommons\Plugins\CSURUtil.cs" />
@@ -99,11 +96,23 @@
     <None Remove="KianCommons\KianCommons\.editorconfig" />
     <Compile Include="KianCommons\KianCommons\Patches\HarmonyUtil.cs" />
     <Compile Include="KianCommons\KianCommons\Patches\TranspilerUtils.cs" />
+    <Compile Include="KianCommons\KianCommons\UI\UIHelperExtension.cs" />
     <Compile Include="KianCommons\KianCommons\Util\Assertion.cs" />
     <Compile Include="KianCommons\KianCommons\Util\EnumerationExtensions.cs" />
     <Compile Include="KianCommons\KianCommons\Util\HelpersExtensions.cs" />
     <Compile Include="KianCommons\KianCommons\Util\ReflectionHelpers.cs" />
     <Compile Include="KianCommons\KianCommons\Util\StringExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Resources\fully_downloaded.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\not_downloaded.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\partially_downloaded.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="DeployToModDirectory" AfterTargets="Build">
@@ -111,7 +120,8 @@
       <Output TaskParameter="Assemblies" ItemName="Targets" />
     </GetAssemblyIdentity>
     <ItemGroup>
-      <AuxiliaryFiles Include="$(TargetDir)CitiesHarmony.API.dll" />
+      <AuxiliaryFiles Include="$(TargetDir)CitiesHarmony.API.dll;" />
+      <ResourceFiles Include="$(TargetDir)/Resources/*.png"/>
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
     <PropertyGroup>
@@ -129,7 +139,8 @@
     <Exec Command="&quot;$(pdb2mdb)&quot; &quot;$(TargetPath)&quot;" />
     <Copy SourceFiles="$(TargetPath).mdb" DestinationFolder="$(DeployDir)" />
 
-    <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" /> 
+    <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" />
+    <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="$(DeployDir)Resources" />
     <Delete Files="$(DeployDir)$(TargetFileName)" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />

@@ -350,7 +350,7 @@ namespace LoadOrderInjections {
             //Log.Debug($"OnUGCRequestUGCDetailsCompleted(" +
             //    $"result:{result.ToSTR2()}, " +
             //    $"ioError:{ioError})");
-            bool good = IsUGCUpToDate(result, out string reason);
+            bool good = IsUGCUpToDate(result, out string reason) == IsUGCUpToDateResult.OK;
             if (!good) {
                 Log.Warning($"subscribed item not installed properly:{result.publishedFileId} {result.title} " +
                     $"reason={reason}. " +
@@ -436,12 +436,12 @@ namespace LoadOrderInjections {
             return $"{local} (UTC {utc})";
         }
 
-        public static bool IsUGCUpToDate(UGCDetails det, out string reason) {
+        public static IsUGCUpToDateResult IsUGCUpToDate(UGCDetails det, out string reason) {
             string localPath = GetSubscribedItemFinalPath(det.publishedFileId);
             if (localPath == null) {
                 reason = "subscribed item is not downloaded. path does not exits: " +
                     PlatformService.workshop.GetSubscribedItemPath(det.publishedFileId);
-                return false;
+                return IsUGCUpToDateResult.NotDownloaded;
             }
 
             var updatedServer = det.timeUpdated.ToUTCTime();
@@ -455,18 +455,18 @@ namespace LoadOrderInjections {
                 string be = serious ? "is" : "may be";
                 reason = $"subscribed item {be} out of date.\n\t" +
                     $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
-                return false;
+                return IsUGCUpToDateResult.OutOfDate;
             }
 
 
             if (localSize < sizeServer ) // could be smaller if user has its own files in there.
             {
                 reason = $"subscribed item download is incomplete. server-size={sizeServer}) local-size={localSize})";
-                return false;
+                return IsUGCUpToDateResult.PartiallyDownloaded;
             }
 
             reason = null;
-            return true;
+            return IsUGCUpToDateResult.OK;
         }
 
         public static long GetTotalSize(string path) {
@@ -521,6 +521,11 @@ namespace LoadOrderInjections {
         public static void EnsureIncludedOrExcluded(PublishedFileId id) {
             try {
                 string path1 = PlatformService.workshop.GetSubscribedItemPath(id);
+                if (path1.IsNullorEmpty()) {
+                    Log.Warning($"item {id} does not have path");
+                    return;
+                }
+                
                 string path2 = ToExcludedPath(path1);
                 if (Directory.Exists(path1) && Directory.Exists(path2)) {
                     Directory.Delete(path2, true);
