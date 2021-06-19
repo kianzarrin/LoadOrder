@@ -33,8 +33,8 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp"/>
-    <Reference Include="ColossalManaged"/>
+    <Reference Include="Assembly-CSharp" />
+    <Reference Include="ColossalManaged" />
     <Reference Include="ICities" />
     <Reference Include="UnityEngine" />
     <Reference Include="UnityEngine.UI" />
@@ -110,6 +110,9 @@
     <Compile Include="KianCommons\KianCommons\Util\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Resources\PreviewImage.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Status.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
