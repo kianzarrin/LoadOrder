@@ -5,18 +5,10 @@ namespace LoadOrderMod.UI {
     using static Injections.LoadOrderInjections.SteamUtilities.IsUGCUpToDateResult;
     using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
     using UnityEngine;
-    using UnityEngine.UI;
-    using ColossalFramework;
     using ColossalFramework.UI;
-    using KianCommons.UI;
     using static KianCommons.ReflectionHelpers;
-    using System.Diagnostics;
     using HarmonyLib;
-
-    public static class EntryStatusExtesions {
-        public static void UpdateDownloadStatusSprite(this PackageEntry packageEntry) =>
-            EntryStatusPanel.UpdateDownloadStatusSprite(packageEntry);
-    }
+    using ColossalFramework.PlatformServices;
 
     public class EntryStatusPanel : UIPanel{
         static readonly Vector2 POSITION = new Vector2(1600, 320);
@@ -41,25 +33,13 @@ namespace LoadOrderMod.UI {
                 Assertion.NotNull(packageEntry, "packageEntry");
                 var ugc = m_EntryDataRef(packageEntry).workshopDetails;
                 var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
-                if (status != DownloadOK) {
-                    string m = "$subscribed item not installed properly:" +
-                        $"{ugc.publishedFileId} {ugc.title}\n" +
-                        $"reason={reason}. " +
-                        $"try reinstalling the item.";
-                    DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Warning, m);
+                if (status == DownloadOK) {
+                    GetStatusPanel(packageEntry)?.StatusButton?.SetStatus(status, reason);
+                } else {
+                    GetorCreateStatusPanel(packageEntry).StatusButton.SetStatus(status, reason);
                 }
-
-                SetStatus(packageEntry, status, reason);
+                Log.Succeeded();
             } catch (Exception ex) { ex.Log(); }
-        }
-
-        public static void SetStatus(PackageEntry packageEntry, SteamUtilities.IsUGCUpToDateResult status, string reason) {
-            if (status == DownloadOK) {
-                GetStatusPanel(packageEntry)?.StatusButton?.SetStatus(status, reason);
-            } else {
-                GetorCreateStatusPanel(packageEntry).StatusButton.SetStatus(status, reason);
-            }
-            Log.Succeeded();
         }
 
         public static EntryStatusPanel GetorCreateStatusPanel(PackageEntry packageEntry) {

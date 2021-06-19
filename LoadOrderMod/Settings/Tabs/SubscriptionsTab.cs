@@ -4,10 +4,9 @@ namespace LoadOrderMod.Settings.Tabs {
     using ColossalFramework.UI;
     using KianCommons;
     using LoadOrderShared;
-    using System;
-    using UnityEngine;
+    using LoadOrderMod.Util;
     using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
-    using LoadOrderMod.UI;
+
     static class SubscriptionsTab {
         static LoadOrderConfig Config => ConfigUtil.Config;
 

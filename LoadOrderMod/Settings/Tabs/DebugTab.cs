@@ -3,11 +3,9 @@ namespace LoadOrderMod.Settings.Tabs {
     using ColossalFramework.PlatformServices;
     using ColossalFramework.UI;
     using KianCommons;
-    using LoadOrderShared;
     using System;
-    using UnityEngine;
-    using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
-    using LoadOrderMod.UI;
+    using LoadOrderMod.Util;
+
     static class DebugTab {
         public static void Make(ExtUITabstrip tabStrip) {
             UIHelper panelHelper = tabStrip.AddTabPage("Developer");

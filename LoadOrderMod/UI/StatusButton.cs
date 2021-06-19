@@ -6,7 +6,7 @@ namespace LoadOrderMod.UI {
     using KianCommons;
     using KianCommons.UI;
     using System;
-    using System.Collections.Generic;
+    using LoadOrderMod.Util;
     using UnityEngine;
     using static KianCommons.ReflectionHelpers;
     using ColossalFramework.PlatformServices;
@@ -70,7 +70,7 @@ namespace LoadOrderMod.UI {
             p.Use();
             return;
             if(EntryData != null && EntryData.publishedFileId != PublishedFileId.invalid) {
-                Settings.CheckSubsUtil.Instance.Resubscribe(EntryData.publishedFileId);
+                CheckSubsUtil.Instance.Resubscribe(EntryData.publishedFileId);
             }
 
             base.OnClick(p);
