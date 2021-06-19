@@ -9,13 +9,16 @@ namespace LoadOrderMod.UI {
     using System.Collections.Generic;
     using UnityEngine;
     using static KianCommons.ReflectionHelpers;
-    
+    using ColossalFramework.PlatformServices;
+
     public class StatusButton : UIButton {
-        static string bgSpriteHovered = "Hovered";
-        static string bgSpritePressed = "Pressed";
+        const string bgSpriteHoveredName = "Hovered";
+        const string bgSpritePressedName = "Pressed";
 
         public string AtlasName => $"{GetType().FullName}_{nameof(StatusButton)}_rev" + typeof(StatusButton).VersionOf();
         public const int SIZE = 80;
+
+        public EntryData EntryData;
 
         public override void Awake() {
             try {
@@ -26,6 +29,7 @@ namespace LoadOrderMod.UI {
                 name = nameof(StatusButton);
                 SetupSprites();
                 isVisible = false;
+                isEnabled = true;
             } catch (Exception ex) { Log.Exception(ex); }
         }
 
@@ -35,30 +39,40 @@ namespace LoadOrderMod.UI {
         }
 
         static UITextureAtlas atlas_;
-        public UITextureAtlas SetupSprites() {
+        public void SetupSprites() {
             TextureUtil.EmbededResources = false;
             try {
                 string[] spriteNames = new string[] {
                     nameof(SteamUtilities.IsUGCUpToDateResult.NotDownloaded) ,
                     nameof(SteamUtilities.IsUGCUpToDateResult.PartiallyDownloaded),
                     nameof(SteamUtilities.IsUGCUpToDateResult.OutOfDate),
-                    bgSpriteHovered,
-                    bgSpritePressed,
+                    bgSpriteHoveredName,
+                    bgSpritePressedName,
                 };
-                atlas_ ??= TextureUtil.CreateTextureAtlas("Resources/Status.png" , AtlasName, spriteNames);
-                return atlas = atlas_;
+                atlas = atlas_ ??= TextureUtil.CreateTextureAtlas("Resources/Status.png" , AtlasName, spriteNames);
+
+                hoveredBgSprite = bgSpriteHoveredName;
+                pressedBgSprite = bgSpritePressedName;
+
             } catch (Exception ex) {
                 Log.Exception(ex);
-                return TextureUtil.Ingame;
             }
         }
 
         public void SetStatus(SteamUtilities.IsUGCUpToDateResult status, string result) {
-            isVisible = status == SteamUtilities.IsUGCUpToDateResult.OK;
-            if (isVisible) {
-                normalFgSprite = hoveredFgSprite = pressedFgSprite = status.ToString();
-            }
+            LogCalled(status, result);
+            isVisible = status != SteamUtilities.IsUGCUpToDateResult.OK;
+            disabledFgSprite = focusedFgSprite = normalFgSprite = hoveredFgSprite = pressedFgSprite = status.ToString();
             tooltip = result;
+        }
+
+        protected override void OnClick(UIMouseEventParameter p) {
+            p.Use();
+            if(EntryData != null && EntryData.publishedFileId != PublishedFileId.invalid) {
+                Settings.CheckSubsUtil.Instance.Resubscribe(EntryData.publishedFileId);
+            }
+
+            base.OnClick(p);
         }
     }
 }

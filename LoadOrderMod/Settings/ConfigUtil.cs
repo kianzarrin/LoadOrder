@@ -227,8 +227,6 @@ namespace LoadOrderMod.Settings {
         public static void StoreConfigDetails() {
             LogCalled();
             try {
-                //PlatformService.eventPersonaStateChange += OnNameReceived;
-                //PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnDetailsReceived;
                 AquirePathDetails();
                 AquireModsDetails();
                 AquireAssetsDetails();

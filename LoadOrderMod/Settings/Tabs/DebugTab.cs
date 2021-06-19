@@ -24,12 +24,7 @@ namespace LoadOrderMod.Settings.Tabs {
             panelHelper.AddButton("RunCallbacks", OnRunCallbacksClicked);
 
             var bufferedToggle = panelHelper.AddCheckbox("Bufferred Log", Log.Buffered, (val) => Log.Buffered = val) as UICheckBox;
-            bufferedToggle.eventVisibilityChanged += (_,___) => bufferedToggle.isChecked = Log.Buffered;
-
-            //PlatformService.workshop.eventUGCQueryCompleted -= OnUGCQueryCompleted;
-            //PlatformService.workshop.eventUGCRequestUGCDetailsCompleted -= OnUGCRequestUGCDetailsCompleted;
-            //PlatformService.workshop.eventUGCQueryCompleted += OnUGCQueryCompleted;
-            //PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnUGCRequestUGCDetailsCompleted;
+            bufferedToggle.eventVisibilityChanged += new PropertyChangedEventHandler<bool>( (_,___) => bufferedToggle.isChecked = Log.Buffered);
         }
 
         static void OnRunCallbacksClicked() {

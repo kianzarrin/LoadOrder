@@ -581,7 +581,7 @@ namespace LoadOrderInjections {
         }
 
         public static void EnsureAll() {
-            Log.Info("EnsureAll called ...");
+            Log.Called();
             var items = PlatformService.workshop.GetSubscribedItems();
             foreach (var id in items) {
                 EnsureIncludedOrExcluded(id);

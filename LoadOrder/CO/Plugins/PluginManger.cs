@@ -104,8 +104,17 @@ namespace CO.Plugins {
                 dispalyPath_ ??= IsWorkshop ? $"{dllName}.dll" : $"{m_CachedName}\\{dllName}.dll";
 
             string displayText_;
-            public string DisplayText => 
-                displayText_ ??= string.Join(" | ", new[] { ModInfo.ModName, DispalyPath });
+            public string DisplayText {
+                get {
+                    if (displayText_ == null) {
+                        if (ModInfo.ModName.IsNullorEmpty() || DispalyPath.IsNullorEmpty())
+                            displayText_ = ModInfo.ModName + DispalyPath.IsNullorEmpty();
+                        else
+                            displayText_ = string.Join(" | ", new[] { ModInfo.ModName, DispalyPath });
+                    }
+                    return displayText_;
+                }
+            }
 
             DateTime? dateUpdate_;
             public DateTime DateUpdated {

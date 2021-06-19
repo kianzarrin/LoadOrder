@@ -9,6 +9,9 @@ namespace LoadOrderMod.UI {
     using ColossalFramework;
     using ColossalFramework.UI;
     using KianCommons.UI;
+    using static KianCommons.ReflectionHelpers;
+    using System.Diagnostics;
+    using HarmonyLib;
 
     public static class EntryStatusExtesions {
         public static void UpdateDownloadStatusSprite(this EntryData entryData) =>
@@ -16,17 +19,21 @@ namespace LoadOrderMod.UI {
     }
 
     public class EntryStatusPanel : UIPanel{
-        static readonly Vector2 POSITION = new Vector2(1595, 320);
+        static readonly Vector2 POSITION = new Vector2(1600, 320);
         StatusButton StatusButton => GetComponentInChildren<StatusButton>();
         public override void Awake() {
-            base.Awake();
-            anchor = UIAnchorStyle.Top | UIAnchorStyle.Right;
-            autoLayoutStart = LayoutStart.TopRight;
-            autoLayout = true;
-            autoLayoutPadding = new RectOffset(3, 3, 3, 3);
-            autoLayoutDirection = LayoutDirection.Horizontal;
-            relativePosition = POSITION;
-            AddUIComponent<StatusButton>();
+            try {
+                base.Awake();
+                anchor = UIAnchorStyle.Top | UIAnchorStyle.Right;
+                autoLayoutStart = LayoutStart.TopRight;
+                autoLayout = true;
+                autoLayoutPadding = new RectOffset(3, 3, 3, 3);
+                autoLayoutDirection = LayoutDirection.Horizontal;
+                relativePosition = POSITION - new Vector2(160,0);
+                size = new Vector2(160, 80);
+                var statusButton = AddUIComponent<StatusButton>();
+                LogSucceeded();
+            } catch(Exception ex) { ex.Log(); }
         }
 
         public static void UpdateDownloadStatusSprite(EntryData entryData) {
@@ -39,24 +46,40 @@ namespace LoadOrderMod.UI {
                         $"reason={reason}. " +
                         $"try reinstalling the item.";
                     DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Warning, m);
-                    GetorCreateStatusPanel(entryData).StatusButton.SetStatus(status, reason);
-                } else {
-                    // optimisation: don't create if not necessary.
-                    GetStatusPanel(entryData)?.StatusButton?.SetStatus(status, reason);
+
                 }
-                
+
+                SetStatus(entryData, status, reason);
             } catch (Exception ex) { ex.Log(); }
+        }
+
+        public static void SetStatus(EntryData entryData, SteamUtilities.IsUGCUpToDateResult status, string reason) {
+            Log.Called(status, "entryData.attachedEntry="+ entryData.attachedEntry.ToSTR());
+
+            //Assertion.Assert(entryData.attachedEntry is not null, "x");
+            if (!entryData.attachedEntry) {
+                Log.Debug("entryData.attachedEntry == null", false);
+                return;
+            }
+
+            if (status == SteamUtilities.IsUGCUpToDateResult.OK) {
+                GetStatusPanel(entryData)?.StatusButton?.SetStatus(status, reason);
+            } else {
+                GetorCreateStatusPanel(entryData).StatusButton.SetStatus(status, reason);
+            }
+            Log.Succeeded();
         }
 
         public static EntryStatusPanel GetorCreateStatusPanel(EntryData entryData) {
             var packageEntry = entryData.attachedEntry;
-            if (!packageEntry) return null;
-            return packageEntry.GetComponent<EntryStatusPanel>() ?? Create(packageEntry);
+            if (packageEntry is null) return null;
+            return packageEntry.GetComponent<EntryStatusPanel>() ?? Create(packageEntry)
+                ?? throw new Exception("failed to create panel");
         }
 
         public static EntryStatusPanel GetStatusPanel(EntryData entryData) {
             var packageEntry = entryData.attachedEntry;
-            if (!packageEntry) return null;
+            if (packageEntry is null) return null;
             return packageEntry.GetComponent<EntryStatusPanel>();
         }
 
@@ -64,8 +87,13 @@ namespace LoadOrderMod.UI {
             Assertion.Assert(packageEntry, "packageEntry");
             var topPanel = packageEntry.GetComponent<UIPanel>();
             Assertion.Assert(topPanel, "topPanel");
-            return topPanel.AddUIComponent<EntryStatusPanel>();
+            var ret = topPanel.AddUIComponent<EntryStatusPanel>();
+            ret.StatusButton.EntryData = m_EntryDataRef(packageEntry);
+            return ret;
         }
+
+        private static AccessTools.FieldRef<PackageEntry, EntryData> m_EntryDataRef =
+            AccessTools.FieldRefAccess<PackageEntry, EntryData>("m_EntryData");
 
     }
 }

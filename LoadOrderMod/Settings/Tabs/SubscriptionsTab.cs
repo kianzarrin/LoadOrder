@@ -41,16 +41,6 @@ namespace LoadOrderMod.Settings.Tabs {
             CheckSubsUtil.EnsureAll();
             SteamUtilities.DeleteUnsubbed();
         }
-        static void RequestItemDetails() {
-            Log.Debug("RequestItemDetails pressed");
-            foreach (var item in PlatformService.workshop.GetSubscribedItems()) {
-                PlatformService.workshop.RequestItemDetails(item).LogRet($"RequestItemDetails({item})");
-            }
-        }
-
-
-
-
-
+        static void RequestItemDetails() => CheckSubsUtil.Instance.RequestItemDetails();
     }
 }

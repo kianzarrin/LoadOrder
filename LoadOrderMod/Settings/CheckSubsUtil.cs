@@ -35,7 +35,7 @@ namespace LoadOrderMod.Settings {
             int counter = 0;
             foreach (var id in items) {
                 SteamUtilities.EnsureIncludedOrExcluded(id);
-                if(counter >= 100) {
+                if (counter >= 100) {
                     counter = 0;
                     yield return 0;
                 }
@@ -86,6 +86,16 @@ namespace LoadOrderMod.Settings {
                     counter = 0;
                     yield return 0;
                 }
+            }
+        }
+
+        public Coroutine Resubscribe(PublishedFileId id) => StartCoroutine(ResubscribeCoroutine(id));
+        public IEnumerator ResubscribeCoroutine(PublishedFileId id) {
+            Log.Called(id);
+            if (id != PublishedFileId.invalid) {
+                PlatformService.workshop.Unsubscribe(id);
+                yield return new WaitForSeconds(5);
+                PlatformService.workshop.Subscribe(id);
             }
         }
     }
