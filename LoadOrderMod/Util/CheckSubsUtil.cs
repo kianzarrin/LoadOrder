@@ -1,14 +1,14 @@
-namespace LoadOrderMod.Settings {
+namespace LoadOrderMod.Util {
     extern alias Injections;
-    using Injections.LoadOrderInjections;
     using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
-
     using ColossalFramework.PlatformServices;
+    using ColossalFramework.Plugins;
     using KianCommons;
     using UnityEngine;
     using System.Collections;
     using System.IO;
     using System.Linq;
+    using System;
 
     public class CheckSubsUtil : MonoBehaviour {
         static GameObject go_;
@@ -93,9 +93,36 @@ namespace LoadOrderMod.Settings {
         public IEnumerator ResubscribeCoroutine(PublishedFileId id) {
             Log.Called(id);
             if (id != PublishedFileId.invalid) {
-                PlatformService.workshop.Unsubscribe(id);
-                yield return new WaitForSeconds(5);
-                PlatformService.workshop.Subscribe(id);
+                try {
+                    string path = PlatformService.workshop.GetSubscribedItemPath(id);
+                    if (Directory.Exists(path))
+                        Directory.Delete(path, true);
+                    PlatformService.workshop.Unsubscribe(id);
+                } catch(Exception ex) { ex.Log(); }
+
+                yield return new WaitForSeconds(20);
+
+                try { PlatformService.workshop.Subscribe(id); } catch (Exception ex) { ex.Log(); }
+            }
+        }
+
+        public static void RemoveEvents() {
+            PlatformService.workshop.eventUGCRequestUGCDetailsCompleted -= OnUGCRequestUGCDetailsCompleted;
+            PlatformService.workshop.eventUGCRequestUGCDetailsCompleted -= SteamUtilities.OnUGCRequestUGCDetailsCompleted;
+        }
+        public static void RegisterEvents() {
+            RemoveEvents();
+            PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnUGCRequestUGCDetailsCompleted;
+        }
+
+        private static void OnUGCRequestUGCDetailsCompleted(UGCDetails ugc, bool ioError) {
+            var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
+            if (status != SteamUtilities.IsUGCUpToDateResult.DownloadOK) {
+                string m = "$subscribed item not installed properly:" +
+                    $"{ugc.publishedFileId} {ugc.title}\n" +
+                    $"reason={reason}. " +
+                    $"try reinstalling the item.";
+                Log.DisplayWarning(m);
             }
         }
     }

@@ -61,13 +61,14 @@ namespace LoadOrderMod.UI {
 
         public void SetStatus(SteamUtilities.IsUGCUpToDateResult status, string result) {
             LogCalled(status, result);
-            isVisible = status != SteamUtilities.IsUGCUpToDateResult.OK;
+            isVisible = status != SteamUtilities.IsUGCUpToDateResult.DownloadOK;
             disabledFgSprite = focusedFgSprite = normalFgSprite = hoveredFgSprite = pressedFgSprite = status.ToString();
             tooltip = result;
         }
 
         protected override void OnClick(UIMouseEventParameter p) {
             p.Use();
+            return;
             if(EntryData != null && EntryData.publishedFileId != PublishedFileId.invalid) {
                 Settings.CheckSubsUtil.Instance.Resubscribe(EntryData.publishedFileId);
             }

@@ -1,7 +1,9 @@
 - command line invokation
 - improve report mod error UI.
 
-bugs: none
+bugs:
+    - if I build a new mod, and then press reload in tool, the enable is not always accurate.
+    - phased causes errors.
 
 - property display
 - group items

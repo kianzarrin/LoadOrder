@@ -6,6 +6,8 @@ namespace LoadOrderMod {
     using UnityEngine.SceneManagement;
     using LoadOrderMod.Util;
     using LoadOrderMod.UI;
+    using UnityEngine;
+    using ColossalFramework;
 
     public class LoadOrderUserMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderUserMod).Assembly.GetName().Version;
@@ -49,15 +51,19 @@ namespace LoadOrderMod {
                 if (SceneManager.GetActiveScene().name == "IntroScreen")
                     Settings.ConfigUtil.StoreConfigDetails();
 
+                CheckSubsUtil.RegisterEvents();
                 Log.Flush();
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
         }
 
-
         public void OnDisabled() {
             try {
+                foreach(var item in GameObject.FindObjectsOfType<EntryStatusPanel>()) {
+                    GameObject.DestroyImmediate(item?.gameObject);
+                }
+
                 LoadingManager.instance.m_introLoaded -= LoadOrderUtil.TurnOffSteamPanels;
                 LoadingManager.instance.m_introLoaded -= Settings.ConfigUtil.StoreConfigDetails;
                 HarmonyUtil.UninstallHarmony(HARMONY_ID);
@@ -65,6 +71,7 @@ namespace LoadOrderMod {
                 LOMAssetDataExtension.Release();
 
                 Settings.ConfigUtil.Terminate();
+                CheckSubsUtil.RemoveEvents();
                 Log.Buffered = false;
             } catch (Exception ex) {
                 Log.Exception(ex);

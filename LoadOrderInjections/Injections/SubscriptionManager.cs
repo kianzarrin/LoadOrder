@@ -338,19 +338,19 @@ namespace LoadOrderInjections {
             Log.Debug($"PlatformService.workshop.eventWorkshopSubscriptionChanged({id.AsUInt64}, {subscribed})");
         }
 
-        static void OnUGCQueryCompleted(UGCDetails result, bool ioError) {
+        private static void OnUGCQueryCompleted(UGCDetails result, bool ioError) {
             // called after QueryItems
             Log.Debug($"OnUGCQueryCompleted(" +
                 $"result:{result.ToSTR()}, " +
                 $"ioError:{ioError})");
         }
 
-        static void OnUGCRequestUGCDetailsCompleted(UGCDetails result, bool ioError) {
+        public static void OnUGCRequestUGCDetailsCompleted(UGCDetails result, bool ioError) {
             // called after RequestItemDetails
             //Log.Debug($"OnUGCRequestUGCDetailsCompleted(" +
             //    $"result:{result.ToSTR2()}, " +
             //    $"ioError:{ioError})");
-            bool good = IsUGCUpToDate(result, out string reason) == IsUGCUpToDateResult.OK;
+            bool good = IsUGCUpToDate(result, out string reason) == IsUGCUpToDateResult.DownloadOK;
             if (!good) {
                 Log.Warning($"subscribed item not installed properly:{result.publishedFileId} {result.title} " +
                     $"reason={reason}. " +
@@ -424,7 +424,7 @@ namespace LoadOrderInjections {
         public static string ToAuthorName(this UserID userID) => new Friend(userID).personaName;
 
         public enum IsUGCUpToDateResult {
-            OK,
+            DownloadOK,
             OutOfDate,
             NotDownloaded,
             PartiallyDownloaded,
@@ -466,7 +466,7 @@ namespace LoadOrderInjections {
             }
 
             reason = null;
-            return IsUGCUpToDateResult.OK;
+            return IsUGCUpToDateResult.DownloadOK;
         }
 
         public static long GetTotalSize(string path) {

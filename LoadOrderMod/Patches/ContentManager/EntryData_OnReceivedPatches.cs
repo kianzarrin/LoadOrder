@@ -21,8 +21,6 @@ namespace LoadOrderMod.Patches.ContentManager {
                     __instance.asset?.SetDate(__instance.updated);
                     __instance.pluginInfo?.SetDate(__instance.updated);
                 }
-                // TODO: update sprite
-                __instance.UpdateDownloadStatusSprite();
             }
         }
 

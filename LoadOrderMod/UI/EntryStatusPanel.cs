@@ -14,8 +14,8 @@ namespace LoadOrderMod.UI {
     using HarmonyLib;
 
     public static class EntryStatusExtesions {
-        public static void UpdateDownloadStatusSprite(this EntryData entryData) =>
-            EntryStatusPanel.UpdateDownloadStatusSprite(entryData);
+        public static void UpdateDownloadStatusSprite(this PackageEntry packageEntry) =>
+            EntryStatusPanel.UpdateDownloadStatusSprite(packageEntry);
     }
 
     public class EntryStatusPanel : UIPanel{
@@ -36,50 +36,40 @@ namespace LoadOrderMod.UI {
             } catch(Exception ex) { ex.Log(); }
         }
 
-        public static void UpdateDownloadStatusSprite(EntryData entryData) {
+        public static void UpdateDownloadStatusSprite(PackageEntry packageEntry) {
             try {
-                var ugc = entryData.workshopDetails;
+                Assertion.NotNull(packageEntry, "packageEntry");
+                var ugc = m_EntryDataRef(packageEntry).workshopDetails;
                 var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
-                if (status != OK) {
+                if (status != DownloadOK) {
                     string m = "$subscribed item not installed properly:" +
                         $"{ugc.publishedFileId} {ugc.title}\n" +
                         $"reason={reason}. " +
                         $"try reinstalling the item.";
                     DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Warning, m);
-
                 }
 
-                SetStatus(entryData, status, reason);
+                SetStatus(packageEntry, status, reason);
             } catch (Exception ex) { ex.Log(); }
         }
 
-        public static void SetStatus(EntryData entryData, SteamUtilities.IsUGCUpToDateResult status, string reason) {
-            Log.Called(status, "entryData.attachedEntry="+ entryData.attachedEntry.ToSTR());
-
-            //Assertion.Assert(entryData.attachedEntry is not null, "x");
-            if (!entryData.attachedEntry) {
-                Log.Debug("entryData.attachedEntry == null", false);
-                return;
-            }
-
-            if (status == SteamUtilities.IsUGCUpToDateResult.OK) {
-                GetStatusPanel(entryData)?.StatusButton?.SetStatus(status, reason);
+        public static void SetStatus(PackageEntry packageEntry, SteamUtilities.IsUGCUpToDateResult status, string reason) {
+            if (status == DownloadOK) {
+                GetStatusPanel(packageEntry)?.StatusButton?.SetStatus(status, reason);
             } else {
-                GetorCreateStatusPanel(entryData).StatusButton.SetStatus(status, reason);
+                GetorCreateStatusPanel(packageEntry).StatusButton.SetStatus(status, reason);
             }
             Log.Succeeded();
         }
 
-        public static EntryStatusPanel GetorCreateStatusPanel(EntryData entryData) {
-            var packageEntry = entryData.attachedEntry;
-            if (packageEntry is null) return null;
+        public static EntryStatusPanel GetorCreateStatusPanel(PackageEntry packageEntry) {
+            Assertion.NotNull(packageEntry);
             return packageEntry.GetComponent<EntryStatusPanel>() ?? Create(packageEntry)
                 ?? throw new Exception("failed to create panel");
         }
 
-        public static EntryStatusPanel GetStatusPanel(EntryData entryData) {
-            var packageEntry = entryData.attachedEntry;
-            if (packageEntry is null) return null;
+        public static EntryStatusPanel GetStatusPanel(PackageEntry packageEntry) {
+            Assertion.NotNull(packageEntry);
             return packageEntry.GetComponent<EntryStatusPanel>();
         }
 

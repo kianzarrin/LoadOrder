@@ -42,6 +42,20 @@ namespace KianCommons {
 
         public static void Warning(string message, bool copyToGameLog = true) => LogMain.Warning(message, copyToGameLog);
 
+        public static void DisplayWarning(string message) {
+            Warning(message, true);
+            DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Warning, message);
+        }
+
+        public static void DisplayError(string message) {
+            Error(message, true);
+            DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Error, message);
+        }
+
+        public static void DisplayMesage(string message) {
+            Info(message, true);
+            DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Message, message);
+        }
 
         public static void Exception(this Exception ex, string m = "", bool showInPanel = true) => LogMain.Exception(ex, m, showInPanel);
 
