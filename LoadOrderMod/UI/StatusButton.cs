@@ -16,7 +16,7 @@ namespace LoadOrderMod.UI {
         const string bgSpritePressedName = "Pressed";
 
         public string AtlasName => $"{GetType().FullName}_{nameof(StatusButton)}_rev" + typeof(StatusButton).VersionOf();
-        public const int SIZE = 80;
+        public const int SIZE = 40;
 
         public EntryData EntryData;
 
