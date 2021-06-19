@@ -120,7 +120,7 @@ namespace LoadOrderMod.Util {
                 var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
                 if (status != SteamUtilities.IsUGCUpToDateResult.DownloadOK) {
                     string m =
-                        "$subscribed item not installed properly:" +
+                        "subscribed item not installed properly:" +
                         $"{ugc.publishedFileId} {ugc.title}\n" +
                         $"reason={reason}. " +
                         $"try reinstalling the item.";

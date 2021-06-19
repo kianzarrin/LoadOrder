@@ -27,7 +27,12 @@ namespace LoadOrderMod {
                 Log.Info("comamnd line args are: " + string.Join(" ", args));
 
                 Log.ShowGap = true;
+#if DEBUG
+                Log.Buffered = false; // TODO BUFFER
+#else
                 Log.Buffered = true;
+#endif
+
                 //Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: true);
                 //KianCommons.UI.TextureUtil.EmbededResources = false;
                 //HelpersExtensions.VERBOSE = false;

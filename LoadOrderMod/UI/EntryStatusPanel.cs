@@ -10,8 +10,14 @@ namespace LoadOrderMod.UI {
     using HarmonyLib;
     using ColossalFramework.PlatformServices;
 
+    static class Extensions {
+        public static bool IsValid(this PublishedFileId id)
+            => id != PublishedFileId.invalid && id.AsUInt64 != 0UL;
+    }
+
     public class EntryStatusPanel : UIPanel{
-        static readonly Vector2 POSITION = new Vector2(1600, 320);
+        static readonly Vector3 POSITION = new Vector2(910, 50) - SIZE;
+        static readonly Vector2 SIZE = new Vector2(160, 40);
         StatusButton StatusButton => GetComponentInChildren<StatusButton>();
         public override void Awake() {
             try {
@@ -21,22 +27,37 @@ namespace LoadOrderMod.UI {
                 autoLayout = true;
                 autoLayoutPadding = new RectOffset(3, 3, 3, 3);
                 autoLayoutDirection = LayoutDirection.Horizontal;
-                relativePosition = POSITION - new Vector2(160,0);
-                size = new Vector2(160, 80);
                 var statusButton = AddUIComponent<StatusButton>();
                 LogSucceeded();
             } catch(Exception ex) { ex.Log(); }
         }
 
+        public override void Start() {
+            base.Start();
+            size = SIZE;
+            var pos = POSITION;
+            if (parent.height < 90)
+                pos.y = 10;
+            relativePosition = pos;
+        }
+
+
         public static void UpdateDownloadStatusSprite(PackageEntry packageEntry) {
             try {
                 Assertion.NotNull(packageEntry, "packageEntry");
                 var ugc = m_WorkshopDetails(packageEntry);
-                var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
-                if (status == DownloadOK) {
-                    Destroy(GetStatusPanel(packageEntry)?.gameObject);
+                if (!packageEntry.publishedFileId.IsValid() || !ugc.publishedFileId.IsValid()) {
+                    Log.Debug("[p0] entry name=" + packageEntry.entryName);
+                    RemoveDownloadStatusSprite(packageEntry);
                 } else {
-                    GetorCreateStatusPanel(packageEntry).StatusButton.SetStatus(status, reason);
+                    var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
+                    if (status == DownloadOK) {
+                        Log.Debug("[p1] entry name=" + packageEntry.entryName);
+                        RemoveDownloadStatusSprite(packageEntry);
+                    } else {
+                        Log.Debug("[p2] entry name=" + packageEntry.entryName);
+                        GetorCreateStatusPanel(packageEntry).StatusButton.SetStatus(status, reason);
+                    }
                 }
                 Log.Succeeded();
             } catch (Exception ex) { ex.Log(); }
@@ -52,14 +73,13 @@ namespace LoadOrderMod.UI {
 
         public static EntryStatusPanel GetorCreateStatusPanel(PackageEntry packageEntry) {
             Assertion.NotNull(packageEntry);
-            return packageEntry.GetComponent<EntryStatusPanel>() ?? Create(packageEntry)
+            return GetStatusPanel(packageEntry) ?? Create(packageEntry)
                 ?? throw new Exception("failed to create panel");
         }
 
-        public static EntryStatusPanel GetStatusPanel(PackageEntry packageEntry) {
-            Assertion.NotNull(packageEntry);
-            return packageEntry.GetComponent<EntryStatusPanel>();
-        }
+        public static EntryStatusPanel GetStatusPanel(PackageEntry packageEntry)  =>
+            packageEntry?.GetComponentInChildren<EntryStatusPanel>();
+        
 
         static EntryStatusPanel Create(PackageEntry packageEntry) {
             Assertion.Assert(packageEntry, "packageEntry");

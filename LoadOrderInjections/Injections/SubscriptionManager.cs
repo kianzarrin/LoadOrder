@@ -279,6 +279,7 @@ namespace LoadOrderInjections {
     }
 
     public static class SteamUtilities {
+        static bool initialized = false;
         public static bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
         public static bool massub = Environment.GetCommandLineArgs().Any(_arg => _arg == "--subscribe");
 
@@ -286,6 +287,8 @@ namespace LoadOrderInjections {
             LoadOrderInjections.Util.LoadOrderUtil.Config;
         // steam manager is already initialized at this point.
         public static void RegisterEvents() {
+            if (initialized) return;
+            initialized = true;
             Log.Debug(Environment.StackTrace);
             PlatformService.eventSteamControllerInit += OnInitSteamController;
 
@@ -297,7 +300,12 @@ namespace LoadOrderInjections {
             PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnUGCRequestUGCDetailsCompleted;
         }
 
+        public static bool firstTime = true;
         public static void OnInitSteamController() {
+            if (!firstTime)
+                return;
+            firstTime = false;
+
             Log.Debug(Environment.StackTrace);
             MassSubscribe.SteamInitialized = true;
             if (sman)
@@ -439,6 +447,8 @@ namespace LoadOrderInjections {
         }
 
         public static IsUGCUpToDateResult IsUGCUpToDate(UGCDetails det, out string reason) {
+            Assertion.Assert(det.publishedFileId != PublishedFileId.invalid,"invalid id");
+            Assertion.Assert(det.publishedFileId.AsUInt64 != 0, "id 0");
             if (det.title.IsNullOrWhiteSpace()) {
                 reason = "could not get steam details (removed from workshop?)";
                 return IsUGCUpToDateResult.Gone;

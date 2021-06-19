@@ -16,10 +16,10 @@ namespace LoadOrderMod.Patches.ContentManager {
             EntryStatusPanel.UpdateDownloadStatusSprite(__instance);
         }
 
-        [HarmonyPostfix]
+        [HarmonyPrefix]
         [HarmonyPatch(nameof(PackageEntry.Reset))]
-        static void Reset_Postfix(PackageEntry __instance, EntryData data) {
-            Log.Called($"entry: {data.publishedFileId} {data.entryName}");
+        static void Reset_prefix(PackageEntry __instance) {
+            Log.Called(__instance.entryName);
             EntryStatusPanel.RemoveDownloadStatusSprite(__instance);
         }
     }
