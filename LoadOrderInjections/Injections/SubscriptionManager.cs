@@ -8,6 +8,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static KianCommons.ReflectionHelpers;
+using ColossalFramework;
 
 namespace LoadOrderInjections {
     public class TestComponent : MonoBehaviour {
@@ -428,6 +429,7 @@ namespace LoadOrderInjections {
             OutOfDate,
             NotDownloaded,
             PartiallyDownloaded,
+            Broken,
         }
 
         static string STR(DateTime time) {
@@ -437,7 +439,17 @@ namespace LoadOrderInjections {
         }
 
         public static IsUGCUpToDateResult IsUGCUpToDate(UGCDetails det, out string reason) {
-            string localPath = GetSubscribedItemFinalPath(det.publishedFileId);
+            if (det.title.IsNullOrWhiteSpace()) {
+                reason = "could not get steam details (removed from workshop?)";
+                return IsUGCUpToDateResult.Broken;
+            }
+            string path = PlatformService.workshop.GetSubscribedItemPath(det.publishedFileId);
+            if (path.IsNullOrWhiteSpace()) {
+                reason = "could not get item path (removed from workshop?)";
+                return IsUGCUpToDateResult.Broken;
+            }
+
+            string localPath = GetFinalPath(path);
             if (localPath == null) {
                 reason = "subscribed item is not downloaded. path does not exits: " +
                     PlatformService.workshop.GetSubscribedItemPath(det.publishedFileId);
@@ -449,15 +461,14 @@ namespace LoadOrderInjections {
             var sizeServer = det.fileSize;
             var localSize = GetTotalSize(localPath);
             if (updatedLocal < updatedServer) {
-                bool serious =
+                bool sure =
                     localSize < sizeServer ||
                     updatedLocal < updatedServer.AddHours(-24);
-                string be = serious ? "is" : "may be";
+                string be = sure ? "is" : "may be";
                 reason = $"subscribed item {be} out of date.\n\t" +
                     $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
                 return IsUGCUpToDateResult.OutOfDate;
             }
-
 
             if (localSize < sizeServer ) // could be smaller if user has its own files in there.
             {
@@ -474,8 +485,9 @@ namespace LoadOrderInjections {
             return files.Sum(_f => new FileInfo(_f).Length);
         }
 
-        public static string GetSubscribedItemFinalPath(PublishedFileId id) {
-            string path = PlatformService.workshop.GetSubscribedItemPath(id);
+        public static string GetFinalPath(string path) {
+            if (path.IsNullorEmpty())
+                return null;
             if (!Directory.Exists(path)) {
                 path = ToExcludedPath(path);
                 if (!Directory.Exists(path))
@@ -483,6 +495,7 @@ namespace LoadOrderInjections {
             }
             return path;
         }
+
         public static string ToExcludedPath(string includedPath) {
             string p1 = Path.GetDirectoryName(includedPath);
             string p2 = Path.GetFileName(includedPath);

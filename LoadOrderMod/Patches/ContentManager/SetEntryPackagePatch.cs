@@ -11,8 +11,8 @@ namespace LoadOrderMod.Patches.ContentManager {
     static class SetEntryPackagePatch {
         [HarmonyPostfix]
         [HarmonyPatch(nameof(PackageEntry.SetEntry))]
-        static void SetEntry_Postfix(PackageEntry __instance, EntryData entryData) {
-            Log.Called($"entry: {entryData.publishedFileId} {entryData.entryName}");
+        static void SetEntry_Postfix(PackageEntry __instance, EntryData data) {
+            Log.Called($"entry: {data.publishedFileId} {data.entryName}");
             EntryStatusPanel.UpdateDownloadStatusSprite(__instance);
         }
     }

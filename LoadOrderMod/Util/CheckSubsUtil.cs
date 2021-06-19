@@ -116,14 +116,17 @@ namespace LoadOrderMod.Util {
         }
 
         private static void OnUGCRequestUGCDetailsCompleted(UGCDetails ugc, bool ioError) {
-            var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
-            if (status != SteamUtilities.IsUGCUpToDateResult.DownloadOK) {
-                string m = "$subscribed item not installed properly:" +
-                    $"{ugc.publishedFileId} {ugc.title}\n" +
-                    $"reason={reason}. " +
-                    $"try reinstalling the item.";
-                Log.DisplayWarning(m);
-            }
+            try {
+                var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
+                if (status != SteamUtilities.IsUGCUpToDateResult.DownloadOK) {
+                    string m =
+                        "$subscribed item not installed properly:" +
+                        $"{ugc.publishedFileId} {ugc.title}\n" +
+                        $"reason={reason}. " +
+                        $"try reinstalling the item.";
+                    Log.DisplayWarning(m);
+                }
+            } catch (Exception ex) { ex.Log(); }
         }
     }
 }
