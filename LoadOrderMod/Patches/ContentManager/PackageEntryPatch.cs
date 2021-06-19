@@ -8,12 +8,19 @@ namespace LoadOrderMod.Patches.ContentManager {
     using LoadOrderMod.UI;
 
     [HarmonyPatch(typeof(PackageEntry))]
-    static class SetEntryPackagePatch {
+    static class PackageEntryPatch {
         [HarmonyPostfix]
         [HarmonyPatch(nameof(PackageEntry.SetEntry))]
         static void SetEntry_Postfix(PackageEntry __instance, EntryData data) {
             Log.Called($"entry: {data.publishedFileId} {data.entryName}");
             EntryStatusPanel.UpdateDownloadStatusSprite(__instance);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(PackageEntry.Reset))]
+        static void Reset_Postfix(PackageEntry __instance, EntryData data) {
+            Log.Called($"entry: {data.publishedFileId} {data.entryName}");
+            EntryStatusPanel.RemoveDownloadStatusSprite(__instance);
         }
     }
 

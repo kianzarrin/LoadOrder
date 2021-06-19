@@ -429,7 +429,7 @@ namespace LoadOrderInjections {
             OutOfDate,
             NotDownloaded,
             PartiallyDownloaded,
-            Broken,
+            Gone,
         }
 
         static string STR(DateTime time) {
@@ -441,12 +441,12 @@ namespace LoadOrderInjections {
         public static IsUGCUpToDateResult IsUGCUpToDate(UGCDetails det, out string reason) {
             if (det.title.IsNullOrWhiteSpace()) {
                 reason = "could not get steam details (removed from workshop?)";
-                return IsUGCUpToDateResult.Broken;
+                return IsUGCUpToDateResult.Gone;
             }
             string path = PlatformService.workshop.GetSubscribedItemPath(det.publishedFileId);
             if (path.IsNullOrWhiteSpace()) {
                 reason = "could not get item path (removed from workshop?)";
-                return IsUGCUpToDateResult.Broken;
+                return IsUGCUpToDateResult.Gone;
             }
 
             string localPath = GetFinalPath(path);

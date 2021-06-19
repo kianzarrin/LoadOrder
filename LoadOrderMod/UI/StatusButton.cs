@@ -18,7 +18,7 @@ namespace LoadOrderMod.UI {
         public string AtlasName => $"{GetType().FullName}_{nameof(StatusButton)}_rev" + typeof(StatusButton).VersionOf();
         public const int SIZE = 40;
 
-        public EntryData EntryData;
+        public UGCDetails UGCDetails;
 
         public override void Awake() {
             try {
@@ -43,6 +43,7 @@ namespace LoadOrderMod.UI {
             TextureUtil.EmbededResources = false;
             try {
                 string[] spriteNames = new string[] {
+                    nameof(SteamUtilities.IsUGCUpToDateResult.Gone) ,
                     nameof(SteamUtilities.IsUGCUpToDateResult.NotDownloaded) ,
                     nameof(SteamUtilities.IsUGCUpToDateResult.PartiallyDownloaded),
                     nameof(SteamUtilities.IsUGCUpToDateResult.OutOfDate),
@@ -69,8 +70,8 @@ namespace LoadOrderMod.UI {
         protected override void OnClick(UIMouseEventParameter p) {
             p.Use();
             return;
-            if(EntryData != null && EntryData.publishedFileId != PublishedFileId.invalid) {
-                CheckSubsUtil.Instance.Resubscribe(EntryData.publishedFileId);
+            if(UGCDetails.publishedFileId.AsUInt64 != 0 && UGCDetails.publishedFileId != PublishedFileId.invalid) {
+                CheckSubsUtil.Instance.Resubscribe(UGCDetails.publishedFileId);
             }
 
             base.OnClick(p);

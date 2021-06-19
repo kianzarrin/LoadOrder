@@ -31,13 +31,21 @@ namespace LoadOrderMod.UI {
         public static void UpdateDownloadStatusSprite(PackageEntry packageEntry) {
             try {
                 Assertion.NotNull(packageEntry, "packageEntry");
-                var ugc = m_EntryDataRef(packageEntry).workshopDetails;
+                var ugc = m_WorkshopDetails(packageEntry);
                 var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
                 if (status == DownloadOK) {
-                    GetStatusPanel(packageEntry)?.StatusButton?.SetStatus(status, reason);
+                    Destroy(GetStatusPanel(packageEntry)?.gameObject);
                 } else {
                     GetorCreateStatusPanel(packageEntry).StatusButton.SetStatus(status, reason);
                 }
+                Log.Succeeded();
+            } catch (Exception ex) { ex.Log(); }
+        }
+
+        public static void RemoveDownloadStatusSprite(PackageEntry packageEntry) {
+            try {
+                Assertion.NotNull(packageEntry, "packageEntry");
+                Destroy(GetStatusPanel(packageEntry)?.gameObject);
                 Log.Succeeded();
             } catch (Exception ex) { ex.Log(); }
         }
@@ -58,12 +66,12 @@ namespace LoadOrderMod.UI {
             var topPanel = packageEntry.GetComponent<UIPanel>();
             Assertion.Assert(topPanel, "topPanel");
             var ret = topPanel.AddUIComponent<EntryStatusPanel>();
-            ret.StatusButton.EntryData = m_EntryDataRef(packageEntry);
+            ret.StatusButton.UGCDetails = m_WorkshopDetails(packageEntry);
             return ret;
         }
 
-        private static AccessTools.FieldRef<PackageEntry, EntryData> m_EntryDataRef =
-            AccessTools.FieldRefAccess<PackageEntry, EntryData>("m_EntryData");
+        private static AccessTools.FieldRef<PackageEntry, UGCDetails> m_WorkshopDetails =
+            AccessTools.FieldRefAccess<PackageEntry, UGCDetails>("m_WorkshopDetails");
 
     }
 }
