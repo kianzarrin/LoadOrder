@@ -107,10 +107,10 @@ namespace CO.Plugins {
             public string DisplayText {
                 get {
                     if (displayText_ == null) {
-                        if (ModInfo.ModName.IsNullorEmpty() || DispalyPath.IsNullorEmpty())
-                            displayText_ = ModInfo.ModName + DispalyPath.IsNullorEmpty();
+                        if (ModInfo.Name.IsNullorEmpty() || DispalyPath.IsNullorEmpty())
+                            displayText_ = ModInfo.Name + DispalyPath.IsNullorEmpty();
                         else
-                            displayText_ = string.Join(" | ", new[] { ModInfo.ModName, DispalyPath });
+                            displayText_ = string.Join(" | ", new[] { ModInfo.Name, DispalyPath });
                     }
                     return displayText_;
                 }
@@ -422,7 +422,7 @@ namespace CO.Plugins {
         //                    }
         //                }
         //            } catch (Exception ex) {
-        //                Log.Exception(new Exception("this can happen if not all dependencies are laoded", ex));
+        //                Log.Exception(new Exception("this can happen if not all dependencies are loaded", ex));
         //            }
         //        }
         //        return null;

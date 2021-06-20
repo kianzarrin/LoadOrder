@@ -137,17 +137,29 @@ namespace LoadOrderTool.Util {
                 StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public static bool TryGetID(string dir, out ulong id) {
-            if (File.Exists(dir))
-                dir = new FileInfo(dir).Directory.Name;
-            else if (Directory.Exists(dir))
-                dir = new FileInfo(dir).Directory.Name;
-            else
-                dir = Path.GetFileName(dir);
-            if (dir.StartsWith("_"))
-                dir = dir.Remove(0, 1);
-            return ulong.TryParse(dir, out id);
+
+        public static bool TryGetAssetID(string path, out ulong id) {
+            if (!path.Contains(DataLocation.WorkshopContentPath)) {
+                id = 0;
+                return false;
+            }
+            path = Path.GetRelativePath(DataLocation.WorkshopContentPath, path);
+            int i = Math.Min(path.IndexOf('\\'), path.IndexOf('/'));
+            var dirname = i< 0 ?path : path.Substring(0, i);
+            return TryGetID(dirname, out id);
         }
+
+        public static bool TryGetModID(string dir, out ulong id) {
+            string dirname = new DirectoryInfo(dir).Name;
+            return TryGetID(dirname, out id);
+        }
+
+        private static bool TryGetID(string dirName, out ulong id) {
+            if (dirName.StartsWith("_"))
+                dirName = dirName.Remove(0, 1);
+            return ulong.TryParse(dirName, out id);
+        }
+            
 
         static ulong Path2ID(string path) {
             TryGetID(Path.GetFileName(path), out ulong ret);

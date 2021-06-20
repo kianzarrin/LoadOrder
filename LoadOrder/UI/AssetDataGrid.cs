@@ -22,7 +22,7 @@ namespace LoadOrderTool.UI {
         private DataGridViewTextBoxColumn cName;
         private DataGridViewTextBoxColumn cAuthor;
         private DataGridViewTextBoxColumn cDateUpdated;
-        private DataGridViewTextBoxColumn cDateSubscribed;
+        private DataGridViewTextBoxColumn cDateDownloaded;
         private DataGridViewTextBoxColumn cTags;
 
         public AssetDataGrid() {
@@ -31,7 +31,7 @@ namespace LoadOrderTool.UI {
             cName = new DataGridViewTextBoxColumn();
             cAuthor = new DataGridViewTextBoxColumn();
             cDateUpdated = new DataGridViewTextBoxColumn();
-            cDateSubscribed = new DataGridViewTextBoxColumn();
+            cDateDownloaded = new DataGridViewTextBoxColumn();
             cTags = new DataGridViewTextBoxColumn();
 
             AllowUserToAddRows = false;
@@ -52,7 +52,7 @@ namespace LoadOrderTool.UI {
             cName,
             cAuthor,
             cDateUpdated,
-            cDateSubscribed,
+            cDateDownloaded,
             cTags});
 
             // 
@@ -94,13 +94,13 @@ namespace LoadOrderTool.UI {
             cDateUpdated.ReadOnly = true;
             cDateUpdated.Width = 60;
             // 
-            // cDateSubscribed
+            // cDateDownloaded
             // 
-            cDateSubscribed.HeaderText = "Subscribed";
-            cDateSubscribed.ToolTipText = "subscription date";
-            cDateSubscribed.Name = "cDateSubscribed";
-            cDateSubscribed.ReadOnly = true;
-            cDateSubscribed.Width = 60;
+            cDateDownloaded.HeaderText = "Downloaded";
+            cDateDownloaded.ToolTipText = "date downloaded";
+            cDateDownloaded.Name = "cDateDownloaded";
+            cDateDownloaded.ReadOnly = true;
+            cDateDownloaded.Width = 60;
             // 
             // cTags
             // 
@@ -136,7 +136,7 @@ namespace LoadOrderTool.UI {
                     e.Value = asset.ConfigAssetInfo.Author ?? "";
                 } else if (e.ColumnIndex == cDateUpdated.Index) {
                     e.Value = asset.StrDateUpdated;
-                } else if (e.ColumnIndex == cDateSubscribed.Index) {
+                } else if (e.ColumnIndex == cDateDownloaded.Index) {
                     e.Value = asset.StrDateSubscribed;
                 } else if (e.ColumnIndex == cTags.Index) {
                     e.Value = asset.StrTags;
@@ -235,7 +235,7 @@ namespace LoadOrderTool.UI {
                     AssetList.SortItemsBy(item => item.ConfigAssetInfo.Author ?? "[unknown", sortAssending_);
                 } else if (e.ColumnIndex == cDateUpdated.Index) {
                     AssetList.SortItemsBy(item => item.DateUpdated, sortAssending_);
-                } else if (e.ColumnIndex == cDateSubscribed.Index) {
+                } else if (e.ColumnIndex == cDateDownloaded.Index) {
                     AssetList.SortItemsBy(item => item.DateSubscribed, sortAssending_);
                 } else if (e.ColumnIndex == cTags.Index) {
                     AssetList.SortItemsBy(item => item.StrTags, sortAssending_);

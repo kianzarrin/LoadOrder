@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.UI {
+namespace LoadOrderTool.UI {
     using CO.Packaging;
     using CO.Plugins;
     using LoadOrderTool.Util;
@@ -7,6 +7,7 @@
     using System.Data;
     using System.Linq;
     using System.Windows.Forms;
+    using LoadOrderTool.Data;
 
     public partial class OpenProfileDialog : Form {
         public enum ItemTypeT {
@@ -20,7 +21,7 @@
 
         LoadOrderProfile Profile;
 
-        List<object> MissingItems;
+        List<IProfileItem> MissingItems;
 
         public ItemTypeT ItemType => cbItemType.GetSelectedItem<ItemTypeT>();
 
@@ -76,25 +77,16 @@
         private void Populate() {
             var missingMods = Profile.Mods.Where(m => m.IsIncluded && !PluginExists(m.IncludedPathFinal));
             var missingAssets = Profile.Assets.Where(m => m.IsIncluded && !AssetExists(m.IncludedPath));
-            MissingItems = missingMods.Concat<object>(missingAssets).ToList();
+            MissingItems = missingMods.Concat<IProfileItem>(missingAssets).ToList();
             dataGridView1.Rows.Clear();
             dataGridView1.RowCount = MissingItems.Count;
             dataGridView1.Refresh();
+            bool anyMissingItems = MissingItems.Any();
+            dataGridView1.Visible = anyMissingItems;
+            if (!anyMissingItems) {
+                lblMissingItems.Text = "No Missing Items.";
+            }
             SubscribeAll.Enabled = GetMissingIDs().Length > 0;
-        }
-
-        static string GetItemPath(object item) {
-            if (item is LoadOrderProfile.Mod mod)
-                return mod.IncludedPathFinal;
-            else if (item is LoadOrderProfile.Asset asset)
-                return asset.IncludedPath;
-            else
-                throw new Exception("unknow item : " + item);
-        }
-
-        static bool TryGetItemId(object item, out ulong id) {
-            string path = GetItemPath(item);
-            return ContentUtil.TryGetID(path, out id);
         }
 
         protected void DataGridView1_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
@@ -103,20 +95,14 @@
                 if (e.RowIndex >= MissingItems.Count) return;
                 var item = MissingItems[e.RowIndex];
                 if (e.ColumnIndex == cID.Index) {
-                    if (TryGetItemId(item, out var id))
+                    if (item.TryGetID(out var id))
                         e.Value = id.ToString();
                     else
                         e.Value = "Local";
                 } else if (e.ColumnIndex == cName.Index) {
-                    if (item is LoadOrderProfile.Mod mod)
-                        e.Value = mod.DisplayText ?? "";
-                    else if (item is LoadOrderProfile.Asset asset)
-                        e.Value = asset.DisplayText ?? "";
+                    e.Value = item.GetDisplayText();
                 } else if (e.ColumnIndex == cType.Index) {
-                    if (item is LoadOrderProfile.Mod mod)
-                        e.Value = "Mod";
-                    else if (item is LoadOrderProfile.Asset asset)
-                        e.Value = "Asset";
+                    e.Value = item.GetCategoryName();
                 }
             } catch (Exception ex) {
                 Log.Exception(ex);
@@ -130,11 +116,11 @@
                 if (e.RowIndex < 0 || e.RowIndex >= MissingItems.Count) return;
                 var item = MissingItems[e.RowIndex];
                 if (e.ColumnIndex == cID.Index) {
-                    if (TryGetItemId(item, out var id)) {
+                    if (item.TryGetID(out var id)) {
                         string url = ContentUtil.GetItemURL(id.ToString());
                         e.ToolTipText = url;
                     } else {
-                        e.ToolTipText = GetItemPath(item) ?? "";
+                        e.ToolTipText = item.GetIncludedPath() ?? "";
                     }
                 }
             } catch (Exception ex) {
@@ -150,11 +136,11 @@
                 var item = MissingItems[e.RowIndex];
 
                 if (e.ColumnIndex == cID.Index) {
-                    if (TryGetItemId(item, out var id)) {
+                    if (item.TryGetID(out var id)) {
                         string url = ContentUtil.GetItemURL(id.ToString());
                         ContentUtil.OpenURL(url);
                     } else {
-                        ContentUtil.OpenPath(GetItemPath(item));
+                        ContentUtil.OpenPath(item.GetIncludedPath());
                     }
                 }
             } catch (Exception ex) {
@@ -179,7 +165,7 @@
         public string[] GetMissingIDs() {
             List<string> ids = new List<string>();
             foreach (var item in MissingItems) {
-                if (TryGetItemId(item, out ulong id))
+                if (item.TryGetID(out ulong id))
                     ids.Add(id.ToString());
             }
             return ids.ToArray();

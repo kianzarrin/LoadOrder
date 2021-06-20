@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using static CO.Plugins.PluginManager;
+using LoadOrderTool.Data;
 
 namespace LoadOrderTool {
     public class ModList : List<PluginInfo> {

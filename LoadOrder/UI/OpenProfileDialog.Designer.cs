@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.UI {
+namespace LoadOrderTool.UI {
 
     partial class OpenProfileDialog {
         /// <summary>
@@ -25,7 +25,7 @@
         /// </summary>
         private void InitializeComponent() {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblMissingItems = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.cID = new System.Windows.Forms.DataGridViewLinkColumn();
             this.cType = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -42,15 +42,15 @@
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // label1
+            // lblMissingItems
             // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 15);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Missing items:";
+            this.lblMissingItems.AutoSize = true;
+            this.lblMissingItems.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblMissingItems.Location = new System.Drawing.Point(0, 0);
+            this.lblMissingItems.Name = "lblMissingItems";
+            this.lblMissingItems.Size = new System.Drawing.Size(83, 15);
+            this.lblMissingItems.TabIndex = 0;
+            this.lblMissingItems.Text = "Missing items:";
             // 
             // dataGridView1
             // 
@@ -195,7 +195,7 @@
             this.ClientSize = new System.Drawing.Size(712, 539);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblMissingItems);
             this.Name = "OpenProfileDialog";
             this.Text = "Open Profile";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
@@ -208,7 +208,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblMissingItems;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button btnCancel;

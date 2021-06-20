@@ -1,32 +1,53 @@
-﻿namespace LoadOrderTool {
-    using System.IO;
-    using System.Xml.Serialization;
+namespace LoadOrderTool.Data {
     using CO.IO;
+    using System.IO;
+    using System;
     using System.Linq;
+    using System.Xml.Serialization;
+    using LoadOrderTool.Util;
+
+    public interface IProfileItem {
+        string GetIncludedPath();
+        bool TryGetID(out ulong id);
+        string GetDisplayText();
+        string GetCategoryName(); // mod or asset
+
+    }
 
     public class LoadOrderProfile {
-        public class Mod {
-            const string LOCAL_APP_DATA_PATH = "%LOCALAPPDATA%";
-            const string CITIES_PATH = "%CITIES%";
-            const string WS_CONTENT_PATH = "%WORKSHOP%";
+
+        const string LOCAL_APP_DATA_PATH = "%LOCALAPPDATA%";
+        const string CITIES_PATH = "%CITIES%";
+        const string WS_CONTENT_PATH = "%WORKSHOP%";
+
+        static string FromFinalPath(string path) {
+            return path
+                .Replace(DataLocation.localApplicationData, LOCAL_APP_DATA_PATH)
+                .Replace(DataLocation.GamePath, CITIES_PATH)
+                .Replace(DataLocation.WorkshopContentPath, WS_CONTENT_PATH);
+        }
+
+        static string ToFinalPath(string path) {
+            return path
+                .Replace(LOCAL_APP_DATA_PATH, DataLocation.localApplicationData)
+                .Replace(CITIES_PATH, DataLocation.GamePath)
+                .Replace(WS_CONTENT_PATH, DataLocation.WorkshopContentPath);
+        }
+
+        public interface IItemProfile {
+
+        }
+
+        public class Mod : IProfileItem {
 
             [XmlIgnore]
             public string IncludedPathFinal;
 
             public string IncludedPath {
-                get {
-                    return IncludedPathFinal
-                        .Replace(DataLocation.localApplicationData, LOCAL_APP_DATA_PATH)
-                        .Replace(DataLocation.GamePath, CITIES_PATH)
-                        .Replace(DataLocation.WorkshopContentPath, WS_CONTENT_PATH);
-                }
-                set {
-                    IncludedPathFinal = value
-                        .Replace(LOCAL_APP_DATA_PATH, DataLocation.localApplicationData)
-                        .Replace(CITIES_PATH, DataLocation.GamePath)
-                        .Replace(WS_CONTENT_PATH, DataLocation.WorkshopContentPath);
-                }
+                get => FromFinalPath(IncludedPathFinal);
+                set => IncludedPathFinal = ToFinalPath(value);
             }
+
             public bool IsEnabled;
             public bool IsIncluded;
             public int LoadOrder;
@@ -47,17 +68,32 @@
                 pluginInfo.IsEnabledPending = IsEnabled;
                 pluginInfo.LoadOrder = LoadOrder;
             }
+
+            public string GetIncludedPath() => IncludedPathFinal;
+
+            public bool TryGetID(out ulong id) => ContentUtil.TryGetModID(IncludedPathFinal, out id);
+
+            public string GetDisplayText() => DisplayText;
+
+            public string GetCategoryName() => "Mod";
         }
 
-        public class Asset {
-            public string IncludedPath;
+        public class Asset : IProfileItem {
+            [XmlIgnore]
+            public string IncludedPathFinal;
+
+            public string IncludedPath {
+                get => FromFinalPath(IncludedPathFinal);
+                set => IncludedPathFinal = ToFinalPath(value);
+            }
+
             public bool IsIncluded;
             public string DisplayText;
 
             public Asset() { }
 
             public Asset(CO.Packaging.PackageManager.AssetInfo assetInfo) {
-                IncludedPath = assetInfo.AssetPath;
+                IncludedPathFinal = assetInfo.AssetPath;
                 IsIncluded = assetInfo.IsIncludedPending;
                 DisplayText = assetInfo.DisplayText;
             }
@@ -65,6 +101,13 @@
             public void WriteTo(CO.Packaging.PackageManager.AssetInfo assetInfo) {
                 assetInfo.IsIncludedPending = IsIncluded;
             }
+            public string GetIncludedPath() => IncludedPathFinal;
+
+            public bool TryGetID(out ulong id) => ContentUtil.TryGetAssetID(IncludedPathFinal, out id);
+
+            public string GetDisplayText() => DisplayText;
+
+            public string GetCategoryName() => "Asset";
         }
 
 
@@ -81,7 +124,7 @@
         public Asset[] Assets = new Asset[0];
 
         public Mod GetMod(string includedPath) => Mods.FirstOrDefault(m => m.IncludedPathFinal == includedPath);
-        public Asset GetAsset(string includedPath) => Assets.FirstOrDefault(m => m.IncludedPath == includedPath);
+        public Asset GetAsset(string includedPath) => Assets.FirstOrDefault(m => m.IncludedPathFinal == includedPath);
 
         public void Serialize(string path) {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderProfile));

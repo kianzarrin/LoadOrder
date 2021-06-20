@@ -20,7 +20,7 @@ namespace LoadOrderTool.UI {
         public DataGridViewLinkColumn CModID;
         public DataGridViewTextBoxColumn CAuthor;
         public DataGridViewTextBoxColumn CDateUpdated;
-        public DataGridViewTextBoxColumn CDateSubscribed;
+        public DataGridViewTextBoxColumn CDateDownloaded;
         public DataGridViewTextBoxColumn CDescription;
 
 
@@ -32,7 +32,7 @@ namespace LoadOrderTool.UI {
             CDescription = new DataGridViewTextBoxColumn();
             CAuthor = new DataGridViewTextBoxColumn();
             CDateUpdated = new DataGridViewTextBoxColumn();
-            CDateSubscribed = new DataGridViewTextBoxColumn();
+            CDateDownloaded = new DataGridViewTextBoxColumn();
 
             Columns.AddRange(new DataGridViewColumn[] {
             COrder,
@@ -41,7 +41,7 @@ namespace LoadOrderTool.UI {
             CModID,
             CAuthor,
             CDateUpdated,
-            CDateSubscribed,
+            CDateDownloaded,
             CDescription});
 
             AllowUserToAddRows = false;
@@ -100,13 +100,13 @@ namespace LoadOrderTool.UI {
             CDateUpdated.Name = "Updated";
             CDateUpdated.ReadOnly = true;
             // 
-            // CDateSubscribed
+            // CDateDownloaded
             // 
-            CDateSubscribed.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            CDateSubscribed.HeaderText = "Subscribed";
-            CDateSubscribed.ToolTipText = "subscription date";
-            CDateSubscribed.Name = "CDateSubscribed";
-            CDateSubscribed.ReadOnly = true;
+            CDateDownloaded.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            CDateDownloaded.HeaderText = "Downloaded";
+            CDateDownloaded.ToolTipText = "download date";
+            CDateDownloaded.Name = "CDateDownloaded";
+            CDateDownloaded.ReadOnly = true;
             // 
             // CDescription
             // 
@@ -253,7 +253,7 @@ namespace LoadOrderTool.UI {
                     ModList.SortItemsBy(item => item.ModInfo.Author ?? "[unknown", sortAssending_);
                 } else if (e.ColumnIndex == this.CDateUpdated.Index) {
                     ModList.SortItemsBy(item => item.DateUpdated, sortAssending_);
-                } else if (e.ColumnIndex == this.CDateSubscribed.Index) {
+                } else if (e.ColumnIndex == this.CDateDownloaded.Index) {
                     ModList.SortItemsBy(item => item.DateSubscribed, sortAssending_);
                 }
 

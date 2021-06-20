@@ -10,29 +10,27 @@ namespace LoadOrderShared {
         Gone,
     }
 
-
-    public class ModInfo {
+    public class ItemInfo {
         public string Path; // included path
-        public int LoadOrder;
-        public string AssemblyName;
-        public string ModName;
+        public string Name;
         public string Description;
         public string Author;
         public string DateUpdated;
         public DownloadStatus Status;
         public string DownloadFailureReason;
+
     }
 
-    public class AssetInfo {
+    public class ModInfo : ItemInfo {
+        public int LoadOrder;
+        public string AssemblyName;
+    }
+
+    public class AssetInfo: ItemInfo {
         public bool Excluded;
-        public string Path; // included path
         public string AssetName;
         public string description;
-        public string DateUpdated;
         public string[] Tags;
-        public string Author;
-        public DownloadStatus Status;
-        public string DownloadFailureReason;
     }
 
     public class LoadOrderConfig {
