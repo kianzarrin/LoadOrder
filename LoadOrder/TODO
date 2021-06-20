@@ -1,5 +1,5 @@
-- command line invokation
-- cache mod problems to show in tool.
+- LHT command lines
+- display WS item download status in tool
 - IMT like supports tab (including log file option)
 
 bugs:
@@ -12,9 +12,7 @@ bugs:
 - status bar
 
 - manage DLC's
-
-- profile to manage prefab skipping.
-
+- profile to manage prefab skipping file.
 
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 

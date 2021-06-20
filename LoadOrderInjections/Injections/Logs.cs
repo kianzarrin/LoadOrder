@@ -17,6 +17,7 @@ namespace LoadOrderInjections.Injections {
 
             BeforeUserModCtor(p);
             if (p.userModInstance == null) {
+                return; // no dll (like new Mod)
                 var asms = p.GetAssemblies().Select(_a => _a.Name()).Join(",");
                 Log.Exception(new Exception($"Mod caused error: [ {asms} ]"));
             }

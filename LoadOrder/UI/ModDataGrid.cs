@@ -120,6 +120,20 @@ namespace LoadOrderTool.UI {
                 col.SortMode = DataGridViewColumnSortMode.Programmatic;
         }
 
+        public void AddRow(int order, bool included, bool enabled, string id,
+            string author, string updated, string downloaded, string description) {
+            var row = new object[Columns.Count];
+            row[COrder.Index] = order;
+            row[CIsIncluded.Index] = included;
+            row[CEnabled.Index] = enabled;
+            row[CModID.Index] = id;
+            row[CAuthor.Index] = author;
+            row[CDateUpdated.Index] = updated;
+            row[CDateDownloaded.Index] = downloaded;
+            row[CDescription.Index] = description;
+            Rows.Add(row);
+        }
+
         private void ModDataGrid_DataError(object sender, DataGridViewDataErrorEventArgs e) {
             Log.Exception(e.Exception, $"at row:{e.RowIndex} col:{Columns[e.ColumnIndex]}");
             e.Cancel = true;
@@ -298,15 +312,15 @@ namespace LoadOrderTool.UI {
                     string id = mod.PublishedFileId.AsUInt64.ToString();
                     if (id == "0" || mod.PublishedFileId == PublishedFileId.invalid)
                         id = "Local";
-                    rows.Add(
-                        mod.LoadOrder,
-                        mod.IsIncludedPending,
-                        mod.IsEnabledPending,
-                        id,
-                        mod.ModInfo.Author ?? "",
-                        mod.StrDateUpdate ?? "",
-                        mod.StrDateSubscribed ?? "",
-                        mod.DisplayText ?? "");
+                    AddRow(
+                        order: mod.LoadOrder,
+                        included: mod.IsIncludedPending,
+                        enabled: mod.IsEnabledPending,
+                        id: id,
+                        author: mod.ModInfo.Author ?? "",
+                        updated:mod.StrDateUpdate ?? "",
+                        downloaded: mod.StrDateSubscribed ?? "",
+                        description: mod.DisplayText ?? "");
                 } catch (Exception ex) {
                     Log.Exception(new Exception(
                         $"failed to add mod to row: " +

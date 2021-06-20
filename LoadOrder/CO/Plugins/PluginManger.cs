@@ -101,8 +101,8 @@ namespace CO.Plugins {
             public string DisplayText {
                 get {
                     if (displayText_ == null) {
-                        if (ModInfo.Name.IsNullorEmpty() || DispalyPath.IsNullorEmpty())
-                            displayText_ = ModInfo.Name + DispalyPath.IsNullorEmpty();
+                        if (ModInfo.Name.IsNullorEmpty())
+                            displayText_ = DispalyPath;
                         else
                             displayText_ = string.Join(" | ", new[] { ModInfo.Name, DispalyPath });
                     }
