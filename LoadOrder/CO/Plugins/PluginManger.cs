@@ -451,15 +451,16 @@ namespace CO.Plugins {
 
         public event PluginManager.PluginsChangedHandler eventPluginsStateChanged;
 
-        public IEnumerable<PluginInfo> GetPluginsInfo() =>
+        public IEnumerable<PluginInfo> GetMods() =>
             m_Plugins.Where(p => p.HasUserMod);
 
         public IEnumerable<PluginInfo> GetCameraPluginInfos() =>
              m_Plugins.Where(p => p.isCameraScript);
 
-        public int modCount => GetPluginsInfo().Count();
+        public int modCount => GetMods().Count();
 
         public void LoadPlugins() {
+            Log.Info("Loading Plugins ...", true);
             string builtinModsPath = Path.Combine(DataLocation.gameContentPath, "Mods");
             string addonsModsPath = DataLocation.modsPath;
             m_Plugins = new List<PluginInfo>();
@@ -530,8 +531,27 @@ namespace CO.Plugins {
             }
         }
         public void ApplyPendingValues() {
-            foreach(var p in GetPluginsInfo())
+            foreach(var p in GetMods())
                 p.ApplyPendingValues();
+        }
+
+        public void LoadFromProfile(LoadOrderProfile profile, bool replace = true) {
+            foreach (var pluginInfo in GetMods()) {
+                var modProfile = profile.GetMod(pluginInfo.IncludedPath);
+                if (modProfile != null) {
+                    bool included0 = pluginInfo.IsIncludedPending;
+                    bool enabled0 = pluginInfo.IsEnabledPending;
+                    modProfile.WriteTo(pluginInfo); // wite load order.
+                    if (!replace) {
+                        pluginInfo.IsIncludedPending |= included0;
+                        pluginInfo.IsEnabledPending |= enabled0;
+                    }
+                } else if (replace) {
+                    Log.Info("mod profile with path not found: " + pluginInfo.IncludedPath);
+                    pluginInfo.LoadOrder = LoadOrderConfig.DefaultLoadOrder;
+                    pluginInfo.IsIncluded = false;
+                }
+            }
         }
 
         //private static int sUniqueCompilationID;

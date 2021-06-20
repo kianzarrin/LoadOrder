@@ -137,7 +137,7 @@ namespace LoadOrderMod.Settings {
                         Config.Mods = Config.Mods.AddToArray(modInfo);
                     }
                     modInfo.Description = pluginInfo.GetUserModInstance()?.Description;
-                    modInfo.ModName = pluginInfo.GetModName();
+                    modInfo.Name = pluginInfo.GetModName();
                     string author = pluginInfo.GetAuthor();
                     if (author.IsAuthorNameValid())
                         modInfo.Author = author;

@@ -194,7 +194,7 @@ namespace CO.Packaging {
 
         public void LoadPackages() {
             try {
-
+                Log.Info("Loading Assets ...", true);
                 m_Assets = new List<AssetInfo>();
 
                 //this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Maps"), PublishedFileId.invalid);

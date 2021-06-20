@@ -31,7 +31,8 @@ namespace LoadOrderTool.Data {
             Config = LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
                 ?? new LoadOrderConfig();
             Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
-            StartSaveThread();
+            if(!CommandLine.Parse.CommandLine)
+                StartSaveThread();
         }
 
         ~ConfigWrapper() => Terminate();
@@ -44,11 +45,17 @@ namespace LoadOrderTool.Data {
         }
 
         public bool AutoSave {
-            get => LoadOrderToolSettings.Instace.AutoSave;
+            get {
+                if(m_SaveThread == null)
+                    return false; // command line
+                else 
+                    return LoadOrderToolSettings.Instace.AutoSave;
+            }
             set {
                 LoadOrderToolSettings.Instace.AutoSave = value;
                 LoadOrderToolSettings.Instace.Serialize();
-                LoadOrderWindow.Instance.menuStrip.tsmiAutoSave.Checked = value;
+                if(LoadOrderWindow.Instance != null)
+                    LoadOrderWindow.Instance.menuStrip.tsmiAutoSave.Checked = value;
             }
         }
 
@@ -67,7 +74,7 @@ namespace LoadOrderTool.Data {
 
             Config.Serialize(DataLocation.localApplicationData);
 
-            foreach (var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
+            foreach (var pluginInfo in PluginManager.instance.GetMods()) {
                 try {
                     pluginInfo.ResetLoadOrder();
                     pluginInfo.IsIncluded = true;

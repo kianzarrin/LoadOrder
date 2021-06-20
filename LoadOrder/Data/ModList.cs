@@ -22,7 +22,7 @@ namespace LoadOrderTool {
         }
 
         public static ModList GetAllMods(Func<PluginInfo, bool> predicateCallback) {
-            return new ModList(PluginManager.instance.GetPluginsInfo(), predicateCallback);
+            return new ModList(PluginManager.instance.GetMods(), predicateCallback);
         }
 
         public void FilterIn() {
@@ -216,24 +216,8 @@ namespace LoadOrderTool {
         public PluginManager.PluginInfo GetPluginInfo(string path) =>
             this.FirstOrDefault(p => p.IncludedPath == path);
 
-        public void LoadFromProfile(LoadOrderProfile profile, bool replace = true) {
-            foreach (var pluginInfo in this) {
-                var modProfile = profile.GetMod(pluginInfo.IncludedPath);
-                if (modProfile != null) {
-                    bool included0 = pluginInfo.IsIncludedPending;
-                    bool enabled0 = pluginInfo.IsEnabledPending;
-                    modProfile.WriteTo(pluginInfo); // wite load order.
-                    if (!replace) {
-                        pluginInfo.IsIncludedPending |= included0;
-                        pluginInfo.IsEnabledPending |= enabled0;
-                    }
-                } else if (replace) {
-                    Log.Info("mod profile with path not found: " + pluginInfo.IncludedPath);
-                    pluginInfo.LoadOrder = DefaultLoadOrder;
-                    pluginInfo.IsIncluded = false;
-                }
-            }
-        }
+        public void LoadFromProfile(LoadOrderProfile profile, bool replace = true)
+            => LoadFromProfile(profile, replace);
 
         public void SaveToProfile(LoadOrderProfile profile) {
             var list = new List<LoadOrderProfile.Mod>(this.Count);

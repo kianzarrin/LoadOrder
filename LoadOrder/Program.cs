@@ -11,6 +11,7 @@ namespace LoadOrderTool {
     using System.Security.Principal;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using LoadOrderTool.CommandLine;
 
     static class Program {
         [DllImport("kernel32.dll")]
@@ -43,7 +44,6 @@ namespace LoadOrderTool {
                 AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
                 Application.ThreadException += UnhandledThreadExceptionHandler;
 
-                bool commandLine = Environment.GetCommandLineArgs().Contains("-commandLine");
 
                 if (IsAdministrator) {
                     string m = "Running this application as administrator can cause problems. Please quite and run this normally";
@@ -56,7 +56,7 @@ namespace LoadOrderTool {
 
 
                 var handle = GetConsoleWindow();
-                if (commandLine) {
+                if (Parse.CommandLine) {
                     ShowWindow(handle, SW_SHOW);// Show
                 } else {
                     ShowWindow(handle, SW_HIDE);// Hide
@@ -67,8 +67,8 @@ namespace LoadOrderTool {
                 _ = DataLocation.GamePath; // run DataLocation static constructor
                 _ = Log.LogFilePath; // run Log static constructor
 
-                if (commandLine) {
-                    Console.WriteLine("command line");
+                if (Parse.CommandLine) {
+                    Entry.Start();
                 } else {
                     Application.Run(new UI.LoadOrderWindow());
                 }
