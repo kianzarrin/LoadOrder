@@ -2,7 +2,7 @@ namespace LoadOrderMod.UI {
     extern alias Injections;
     using KianCommons;
     using System;
-    using static Injections.LoadOrderInjections.SteamUtilities.IsUGCUpToDateResult;
+    using static Injections.LoadOrderShared.DownloadStatus;
     using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
     using UnityEngine;
     using ColossalFramework.UI;

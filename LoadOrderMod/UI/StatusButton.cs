@@ -1,15 +1,14 @@
 namespace LoadOrderMod.UI {
     extern alias Injections;
-    using Injections.LoadOrderInjections;
-    using ColossalFramework;
+    using ColossalFramework.PlatformServices;
     using ColossalFramework.UI;
+    using Injections.LoadOrderShared;
     using KianCommons;
     using KianCommons.UI;
-    using System;
     using LoadOrderMod.Util;
+    using System;
     using UnityEngine;
     using static KianCommons.ReflectionHelpers;
-    using ColossalFramework.PlatformServices;
 
     public class StatusButton : UIButton {
         const string bgSpriteHoveredName = "Hovered";
@@ -43,14 +42,14 @@ namespace LoadOrderMod.UI {
             TextureUtil.EmbededResources = false;
             try {
                 string[] spriteNames = new string[] {
-                    nameof(SteamUtilities.IsUGCUpToDateResult.Gone) ,
-                    nameof(SteamUtilities.IsUGCUpToDateResult.NotDownloaded) ,
-                    nameof(SteamUtilities.IsUGCUpToDateResult.PartiallyDownloaded),
-                    nameof(SteamUtilities.IsUGCUpToDateResult.OutOfDate),
+                    nameof(DownloadStatus.Gone) ,
+                    nameof(DownloadStatus.NotDownloaded) ,
+                    nameof(DownloadStatus.PartiallyDownloaded),
+                    nameof(DownloadStatus.OutOfDate),
                     bgSpriteHoveredName,
                     bgSpritePressedName,
                 };
-                atlas = atlas_ ??= TextureUtil.CreateTextureAtlas("Resources/Status.png" , AtlasName, spriteNames);
+                atlas = atlas_ ??= TextureUtil.CreateTextureAtlas("Resources/Status.png", AtlasName, spriteNames);
 
                 hoveredBgSprite = bgSpriteHoveredName;
                 pressedBgSprite = bgSpritePressedName;
@@ -60,9 +59,9 @@ namespace LoadOrderMod.UI {
             }
         }
 
-        public void SetStatus(SteamUtilities.IsUGCUpToDateResult status, string result) {
+        public void SetStatus(DownloadStatus status, string result) {
             LogCalled(status, result);
-            isVisible = status != SteamUtilities.IsUGCUpToDateResult.DownloadOK;
+            isVisible = status != DownloadStatus.DownloadOK;
             disabledFgSprite = focusedFgSprite = normalFgSprite = hoveredFgSprite = pressedFgSprite = status.ToString();
             tooltip = result;
         }
@@ -70,7 +69,7 @@ namespace LoadOrderMod.UI {
         protected override void OnClick(UIMouseEventParameter p) {
             p.Use();
             return;
-            if(UGCDetails.publishedFileId.AsUInt64 != 0 && UGCDetails.publishedFileId != PublishedFileId.invalid) {
+            if (UGCDetails.publishedFileId.AsUInt64 != 0 && UGCDetails.publishedFileId != PublishedFileId.invalid) {
                 CheckSubsUtil.Instance.Resubscribe(UGCDetails.publishedFileId);
             }
 

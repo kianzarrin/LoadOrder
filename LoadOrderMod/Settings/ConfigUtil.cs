@@ -1,4 +1,6 @@
 namespace LoadOrderMod.Settings {
+    extern alias Injections;
+    using Injections.LoadOrderInjections;
     using ColossalFramework.IO;
     using ColossalFramework.Packaging;
     using ColossalFramework.PlatformServices;
@@ -143,7 +145,11 @@ namespace LoadOrderMod.Settings {
                     if (entry != null && entry.updated != default)
                         modInfo.DateUpdated = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
 
-                    // TODO: listen to events to get name.
+                    if (pluginInfo.publishedFileID != PublishedFileId.invalid&&
+                        entry.workshopDetails.publishedFileId == pluginInfo.publishedFileID) {
+                        modInfo.Status = (DownloadStatus)(int)
+                            SteamUtilities.IsUGCUpToDate(entry.workshopDetails, out modInfo.DownloadFailureReason);
+                    }
                 } catch (Exception ex) {
                     Log.Exception(ex);
                 }
@@ -188,6 +194,12 @@ namespace LoadOrderMod.Settings {
                         assetInfo.Tags = customAssetMetaData.Tags(asset.package.GetPublishedFileID(), asset.type);
                     } else {
                         assetInfo.Tags = assetType.Tags();
+                    }
+
+                    if (asset.package.GetPublishedFileID() != PublishedFileId.invalid &&
+                            entry.workshopDetails.publishedFileId == asset.package.GetPublishedFileID()) {
+                        assetInfo.Status = (DownloadStatus)(int)
+                            SteamUtilities.IsUGCUpToDate(entry.workshopDetails, out assetInfo.DownloadFailureReason);
                     }
                 }
             }

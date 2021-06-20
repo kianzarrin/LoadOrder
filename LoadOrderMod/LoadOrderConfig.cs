@@ -2,6 +2,15 @@ using System.IO;
 using System.Xml.Serialization;
 
 namespace LoadOrderShared {
+    public enum DownloadStatus {
+        DownloadOK,
+        OutOfDate,
+        NotDownloaded,
+        PartiallyDownloaded,
+        Gone,
+    }
+
+
     public class ModInfo {
         public string Path; // included path
         public int LoadOrder;
@@ -10,6 +19,8 @@ namespace LoadOrderShared {
         public string Description;
         public string Author;
         public string DateUpdated;
+        public DownloadStatus Status;
+        public string DownloadFailureReason;
     }
 
     public class AssetInfo {
@@ -20,6 +31,8 @@ namespace LoadOrderShared {
         public string DateUpdated;
         public string[] Tags;
         public string Author;
+        public DownloadStatus Status;
+        public string DownloadFailureReason;
     }
 
     public class LoadOrderConfig {

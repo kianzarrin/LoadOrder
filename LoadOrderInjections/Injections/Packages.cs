@@ -1,17 +1,18 @@
-﻿namespace LoadOrderInjections.Injections {
+namespace LoadOrderInjections.Injections {
     using System.Collections.Generic;
     using static LoadOrderInjections.Util.LoadOrderUtil;
     public static class Packages {
         static HashSet<string> excludedPaths_;
         static HashSet<string> Create() {
-            excludedPaths_ = new HashSet<string>();
-            if (Config?.Assets != null) {
-                foreach (var item in Config.Assets) {
+            var assets = Config?.Assets;
+            var excluded = new List<string>(assets?.Length ?? 0);
+            if (assets != null) {
+                foreach (var item in assets) {
                     if (item.Excluded)
-                        excludedPaths_.Add(item.Path);
+                        excluded.Add(item.Path);
                 }
             }
-            return excludedPaths_;
+            return excludedPaths_ = new HashSet<string>(excluded);
         }
         static HashSet<string> ExcludedPaths => excludedPaths_ ??= Create();
         public static bool IsPathExcluded(string path) {

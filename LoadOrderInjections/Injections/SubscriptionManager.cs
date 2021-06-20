@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static KianCommons.ReflectionHelpers;
 using ColossalFramework;
+using LoadOrderShared;
 
 namespace LoadOrderInjections {
     public class TestComponent : MonoBehaviour {
@@ -359,7 +360,7 @@ namespace LoadOrderInjections {
             //Log.Debug($"OnUGCRequestUGCDetailsCompleted(" +
             //    $"result:{result.ToSTR2()}, " +
             //    $"ioError:{ioError})");
-            bool good = IsUGCUpToDate(result, out string reason) == IsUGCUpToDateResult.DownloadOK;
+            bool good = IsUGCUpToDate(result, out string reason) == DownloadStatus.DownloadOK;
             if (!good) {
                 Log.Warning($"subscribed item not installed properly:{result.publishedFileId} {result.title} " +
                     $"reason={reason}. " +
@@ -432,38 +433,30 @@ namespace LoadOrderInjections {
 
         public static string ToAuthorName(this UserID userID) => new Friend(userID).personaName;
 
-        public enum IsUGCUpToDateResult {
-            DownloadOK,
-            OutOfDate,
-            NotDownloaded,
-            PartiallyDownloaded,
-            Gone,
-        }
-
         static string STR(DateTime time) {
             var local = time.ToLocalTime().ToString();
             var utc = time.ToUniversalTime().ToShortTimeString();
             return $"{local} (UTC {utc})";
         }
 
-        public static IsUGCUpToDateResult IsUGCUpToDate(UGCDetails det, out string reason) {
+        public static DownloadStatus IsUGCUpToDate(UGCDetails det, out string reason) {
             Assertion.Assert(det.publishedFileId != PublishedFileId.invalid,"invalid id");
             Assertion.Assert(det.publishedFileId.AsUInt64 != 0, "id 0");
             if (det.title.IsNullOrWhiteSpace()) {
                 reason = "could not get steam details (removed from workshop?)";
-                return IsUGCUpToDateResult.Gone;
+                return DownloadStatus.Gone;
             }
             string path = PlatformService.workshop.GetSubscribedItemPath(det.publishedFileId);
             if (path.IsNullOrWhiteSpace()) {
                 reason = "could not get item path (removed from workshop?)";
-                return IsUGCUpToDateResult.Gone;
+                return DownloadStatus.Gone;
             }
 
             string localPath = GetFinalPath(path);
             if (localPath == null) {
                 reason = "subscribed item is not downloaded. path does not exits: " +
                     PlatformService.workshop.GetSubscribedItemPath(det.publishedFileId);
-                return IsUGCUpToDateResult.NotDownloaded;
+                return DownloadStatus.NotDownloaded;
             }
 
             var updatedServer = det.timeUpdated.ToUTCTime();
@@ -477,17 +470,17 @@ namespace LoadOrderInjections {
                 string be = sure ? "is" : "may be";
                 reason = $"subscribed item {be} out of date.\n\t" +
                     $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
-                return IsUGCUpToDateResult.OutOfDate;
+                return DownloadStatus.OutOfDate;
             }
 
             if (localSize < sizeServer ) // could be smaller if user has its own files in there.
             {
                 reason = $"subscribed item download is incomplete. server-size={sizeServer}) local-size={localSize})";
-                return IsUGCUpToDateResult.PartiallyDownloaded;
+                return DownloadStatus.PartiallyDownloaded;
             }
 
             reason = null;
-            return IsUGCUpToDateResult.DownloadOK;
+            return DownloadStatus.DownloadOK;
         }
 
         public static long GetTotalSize(string path) {

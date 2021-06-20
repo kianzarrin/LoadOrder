@@ -9,6 +9,9 @@ namespace LoadOrderMod.Util {
     using System.IO;
     using System.Linq;
     using System;
+    using Injections.LoadOrderShared;
+    using Settings;
+    using ColossalFramework.IO;
 
     public class CheckSubsUtil : MonoBehaviour {
         static GameObject go_;
@@ -118,7 +121,7 @@ namespace LoadOrderMod.Util {
         private static void OnUGCRequestUGCDetailsCompleted(UGCDetails ugc, bool ioError) {
             try {
                 var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
-                if (status != SteamUtilities.IsUGCUpToDateResult.DownloadOK) {
+                if (status != DownloadStatus.DownloadOK) {
                     string m =
                         "subscribed item not installed properly:" +
                         $"{ugc.publishedFileId} {ugc.title}\n" +
@@ -126,7 +129,35 @@ namespace LoadOrderMod.Util {
                         $"try reinstalling the item.";
                     Log.DisplayWarning(m);
                 }
+                var mod = ConfigUtil.Config.Mods.FirstOrDefault(_mod => GetID1(_mod.Path) == ugc.publishedFileId);
+                if (mod != null) {
+                    mod.Status = (LoadOrderShared.DownloadStatus)(int)status;
+                    mod.DownloadFailureReason = reason;
+                    ConfigUtil.SaveConfig();
+                } else {
+                    var asset = ConfigUtil.Config.Assets.FirstOrDefault(_asset => GetID2(_asset.Path) == ugc.publishedFileId);
+                    if (asset != null) {
+                        asset.Status = (LoadOrderShared.DownloadStatus)(int)status;
+                        asset.DownloadFailureReason = reason;
+                        ConfigUtil.SaveConfig();
+                    }
+                }
             } catch (Exception ex) { ex.Log(); }
         }
+
+        public static bool IsWorkshop(string path) => path != null && path.Contains(ConfigUtil.Config.WorkShopContentPath);
+
+        public static PublishedFileId GetID1(string dir) {
+            if (dir != null && dir.Contains(ConfigUtil.Config.WorkShopContentPath)) {
+                string dirName = new DirectoryInfo(dir).Name;
+                if (ulong.TryParse(dirName, out ulong id)){
+                    return new PublishedFileId(id);
+                }
+            }
+            return PublishedFileId.invalid;
+        }
+        public static PublishedFileId GetID2(string file) =>
+            GetID1(new FileInfo(file).DirectoryName);
+
     }
 }

@@ -1,5 +1,5 @@
 - command line invokation
-- improve report mod error UI.
+- cache mod problems to show in tool.
 
 bugs:
     - if I build a new mod, and then press reload in tool, the enable is not always accurate.
