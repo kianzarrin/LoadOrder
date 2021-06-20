@@ -1,5 +1,6 @@
 - command line invokation
 - cache mod problems to show in tool.
+- IMT like supports tab (including log file option)
 
 bugs:
     - if I build a new mod, and then press reload in tool, the enable is not always accurate.

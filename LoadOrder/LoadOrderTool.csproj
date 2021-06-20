@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" DefaultTargets="Build;Publish">
-  <Import Project="../Version.props"/>
+  <Import Project="../Version.props" />
   <PropertyGroup>
     <Company>Kian Zarrin</Company>
     <Copyright>@2021 MIT license</Copyright>
@@ -8,7 +8,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <Deterministic>false</Deterministic>
-    <OutputType>WinExe</OutputType> 
+    <OutputType>Exe</OutputType> 
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

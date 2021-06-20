@@ -29,12 +29,6 @@ namespace CO.Plugins {
             Message
         }
 
-        public enum OverrideState {
-            None,
-            Disabled,
-            Enabled
-        }
-
         public delegate void AddMessageHandler(PluginManager.MessageType type, string message);
 
         public delegate void PluginsChangedHandler();
@@ -226,8 +220,9 @@ namespace CO.Plugins {
                     if (!success) {
                         // move failed. reverse value: 
                         isIncludedPending_ = IsIncluded; 
-                        var modGrid = LoadOrderWindow.Instance.dataGridMods;
-                        modGrid.GetRow(this).Cells[modGrid.CIsIncluded.Index].Value = isIncludedPending_;
+                        var modGrid = LoadOrderWindow.Instance?.dataGridMods;
+                        if(modGrid != null)
+                            modGrid.GetRow(this).Cells[modGrid.CIsIncluded.Index].Value = isIncludedPending_;
                     }
                 }
             }

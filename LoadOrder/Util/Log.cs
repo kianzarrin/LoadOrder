@@ -149,7 +149,6 @@ namespace LoadOrderTool {
         /// <param name="copyToGameLog">If <c>true</c> will copy to the main game log file.</param>
         public static void Error(string message, bool copyToGameLog = true) {
             LogImpl(message, LogLevel.Error, copyToGameLog);
-
         }
 
         internal static void Exception(Exception e, string m = "", bool showInPanel = true) {

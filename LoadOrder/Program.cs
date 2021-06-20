@@ -9,8 +9,19 @@ namespace LoadOrderTool {
     using System.Threading;
     using System.Diagnostics;
     using System.Security.Principal;
+    using System.Linq;
+    using System.Runtime.InteropServices;
 
     static class Program {
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
+
         public static bool IsMain { get; private set; }
 
         /// <summary>
@@ -19,11 +30,12 @@ namespace LoadOrderTool {
         [STAThread]
         static void Main() {
             try {
+
+                Console.WriteLine("Hello!");
                 IsMain = true;
                 Application.SetHighDpiMode(HighDpiMode.SystemAware);
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Console.WriteLine("Hello!");
 
                 AppDomain.CurrentDomain.TypeResolve += BuildConfig.CurrentDomain_AssemblyResolve;
                 AppDomain.CurrentDomain.AssemblyResolve += BuildConfig.CurrentDomain_AssemblyResolve;
@@ -31,19 +43,35 @@ namespace LoadOrderTool {
                 AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
                 Application.ThreadException += UnhandledThreadExceptionHandler;
 
-                if (IsAdministrator)
+                bool commandLine = Environment.GetCommandLineArgs().Contains("-commandLine");
+
+                if (IsAdministrator) {
+                    string m = "Running this application as administrator can cause problems. Please quite and run this normally";
+                    Console.WriteLine(m);
                     MessageBox.Show(
-                        text: "Running this application as administrator can cause problems. Please quite and run this normally",
+                        text: m,
                         caption: "Warning: Admin mode",
                         buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Warning);
+                }
 
-                new UI.ProgressWindow().Show();
+
+                var handle = GetConsoleWindow();
+                if (commandLine) {
+                    ShowWindow(handle, SW_SHOW);// Show
+                } else {
+                    ShowWindow(handle, SW_HIDE);// Hide
+                    new UI.ProgressWindow().Show();
+                }
+
 
                 _ = DataLocation.GamePath; // run DataLocation static constructor
                 _ = Log.LogFilePath; // run Log static constructor
 
-
-                Application.Run(new UI.LoadOrderWindow());
+                if (commandLine) {
+                    Console.WriteLine("command line");
+                } else {
+                    Application.Run(new UI.LoadOrderWindow());
+                }
             } catch (Exception ex) {
                 Log.Exception(ex);
             }

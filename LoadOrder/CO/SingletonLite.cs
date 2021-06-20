@@ -1,36 +1,22 @@
-﻿using LoadOrderTool;
+using LoadOrderTool;
 using System;
 
-namespace CO
-{
-	public abstract class SingletonLite<T> where T : new()
-	{
-		private static T sInstance;
+namespace CO {
+    public abstract class SingletonLite<T> where T : new() {
+        private static T sInstance;
 
-		public static T instance
-		{
-			get
-			{
-				if (SingletonLite<T>.sInstance == null)
-				{
-					SingletonLite<T>.sInstance = ((default(T) == null) ? Activator.CreateInstance<T>() : default(T));
-					Log.Debug("Creating singleton of type " + typeof(T).Name);
-				}
-				return SingletonLite<T>.sInstance;
-			}
-		}
+        public static T instance {
+            get {
+                if (sInstance == null) {
+                    sInstance = (default(T) == null) ? Activator.CreateInstance<T>() : default(T);
+                    Log.Debug("Creating singleton of type " + typeof(T).Name);
+                }
+                return sInstance;
+            }
+        }
 
-		public static bool exists
-		{
-			get
-			{
-				return SingletonLite<T>.sInstance != null;
-			}
-		}
+        public static bool exists => sInstance != null;
 
-		public static void Ensure()
-		{
-			T instance = SingletonLite<T>.instance;
-		}
-	}
+        public static void Ensure() =>_ = instance;
+    }
 }
