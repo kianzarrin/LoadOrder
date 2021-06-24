@@ -4,15 +4,15 @@
 
 bugs:
     - if I build a new mod, and then press reload in tool, the enable is not always accurate.
-    - phased causes errors.
+
+- manage DLC's
+- profile to manage prefab skipping file.
 
 - property display
 - group items
 - tool-bar
 - status bar
 
-- manage DLC's
-- profile to manage prefab skipping file.
 
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 
