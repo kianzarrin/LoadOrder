@@ -82,6 +82,9 @@ namespace LoadOrderTool.Data {
             [XmlIgnore]
             public string IncludedPathFinal;
 
+            /// <summary>
+            /// only for storage. use the final path instead
+            /// </summary>
             public string IncludedPath {
                 get => FromFinalPath(IncludedPathFinal);
                 set => IncludedPathFinal = ToFinalPath(value);

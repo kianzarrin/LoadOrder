@@ -1,3 +1,6 @@
+bug:
+    - run debug (F5) tool to eliminate access from other threads (replace with invoke).
+
 - LHT command lines
 - display WS item download status in tool
 - IMT like supports tab (including log file option)

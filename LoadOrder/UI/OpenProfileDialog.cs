@@ -75,8 +75,8 @@ namespace LoadOrderTool.UI {
             PackageManager.instance.GetAsset(includedPath) != null;
 
         private void Populate() {
-            var missingMods = Profile.Mods.Where(m => m.IsIncluded && !PluginExists(m.IncludedPathFinal));
-            var missingAssets = Profile.Assets.Where(m => m.IsIncluded && !AssetExists(m.IncludedPath));
+            var missingMods = Profile.Mods.Where(m => m.IsIncluded && !PluginExists(m.GetIncludedPath()));
+            var missingAssets = Profile.Assets.Where(m => m.IsIncluded && !AssetExists(m.GetIncludedPath()));
             MissingItems = missingMods.Concat<IProfileItem>(missingAssets).ToList();
             dataGridView1.Rows.Clear();
             dataGridView1.RowCount = MissingItems.Count;
