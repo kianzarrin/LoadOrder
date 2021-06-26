@@ -144,8 +144,9 @@ namespace LoadOrderTool.Util {
                 return false;
             }
             path = Path.GetRelativePath(DataLocation.WorkshopContentPath, path);
-            int i = Math.Min(path.IndexOf('\\'), path.IndexOf('/'));
-            var dirname = i< 0 ?path : path.Substring(0, i);
+            int i = path.IndexOf('\\');
+            var dirname = i< 0 ? path : path.Substring(0, i);
+            Log.Debug($"path={path} dirname={dirname}");
             return TryGetID(dirname, out id);
         }
 
