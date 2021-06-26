@@ -203,6 +203,7 @@ namespace LoadOrderTool.UI {
         }
 
         public void ApplyProfile(LoadOrderProfile profile, bool mods, bool assets, bool replace) {
+            Log.Called("mods:" + mods, "assets:" + assets, "replace:" + replace);
             if (mods) {
                 dataGridMods.ModList.LoadFromProfile(profile, replace);
                 dataGridMods.RefreshModList(true);

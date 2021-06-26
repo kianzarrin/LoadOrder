@@ -536,6 +536,7 @@ namespace CO.Plugins {
         }
 
         public void LoadFromProfile(LoadOrderProfile profile, bool replace = true) {
+            Log.Called("replace:" + replace);
             foreach (var pluginInfo in GetMods()) {
                 var modProfile = profile.GetMod(pluginInfo.IncludedPath);
                 if (modProfile != null) {

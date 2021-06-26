@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using static CO.Plugins.PluginManager;
+using CO.Plugins;
 using LoadOrderTool.Data;
 
 namespace LoadOrderTool {
@@ -217,7 +218,7 @@ namespace LoadOrderTool {
             this.FirstOrDefault(p => p.IncludedPath == path);
 
         public void LoadFromProfile(LoadOrderProfile profile, bool replace = true)
-            => LoadFromProfile(profile, replace);
+            => PluginManager.instance.LoadFromProfile(profile, replace);
 
         public void SaveToProfile(LoadOrderProfile profile) {
             var list = new List<LoadOrderProfile.Mod>(this.Count);

@@ -6,6 +6,7 @@ namespace LoadOrderTool.UI {
     using System.Diagnostics;
     using LoadOrderTool.Util;
     using LoadOrderTool.Data;
+    using System.ComponentModel;
 
     public partial class LaunchControl : UserControl {
         LoadOrderToolSettings settings_ => LoadOrderToolSettings.Instace;
@@ -62,6 +63,7 @@ namespace LoadOrderTool.UI {
 
         public void LoadSettings() {
             if (UIUtil.DesignMode) return;
+            Log.Called("usage mode=" + LicenseManager.UsageMode);
 
             checkBoxNoAssets.Checked = settings_.NoAssets;
             //checkBoxNoMods.Checked = settings_.NoMods;
