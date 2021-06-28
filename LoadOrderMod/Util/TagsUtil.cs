@@ -33,17 +33,15 @@ namespace LoadOrderMod.Util {
                 return new string[0];
         }
 
-        public static string[] Tags(this CustomAssetMetaData metadata, PublishedFileId publishedFileId, Package.AssetType assetType) {
+        public static string[] Tags(this CustomAssetMetaData metadata, PublishedFileId publishedFileId) {
             var tags = new List<string>();
             foreach(var tag in metadata.steamTags) {
                 if(Tag2Category.TryGetValue(tag, out var cat))
                     tags.Add(cat);
-                else tags.Add(tag);
+                else
+                    tags.Add(tag);
             }
 
-            if(assetType != null && Type2Category.TryGetValue(assetType, out string cat2))
-                tags.Add(cat2);
-            
             bool hasMod = publishedFileId != PublishedFileId.invalid &&
                 ContentManagerUtil.ModEntries.Any(item => item.publishedFileId == publishedFileId);
             if (hasMod) tags.Add("Mod");

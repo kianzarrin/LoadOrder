@@ -166,44 +166,44 @@ namespace LoadOrderMod.Settings {
                 UserAssetType.DistrictStyleMetaData,
             })) {
                 if (!asset.isMainAsset) continue;
-                string path = asset.package.packagePath;
                 var assetInfo = asset.GetAssetConfig();
                 if (assetInfo == null) {
                     assetInfo = new LoadOrderShared.AssetInfo { Path = asset.GetPath() };
                     Config.Assets = Config.Assets.AddToArray(assetInfo);
-                    assetInfo.AssetName = asset.name;
+                }
 
-                    // get asset name from file (which could be less complete)
-                    // if we don't already have a complete name
-                    bool fallback = !assetInfo.Author.IsAuthorNameValid();
-                    string author = asset.GetAuthor(fallback);
-                    if (author.IsAuthorNameValid())
-                        assetInfo.Author = author;
+                assetInfo.AssetName = asset.name;
 
-                    var assetType = asset.type;
-                    var entry = asset.GetEntryData();
+                // get asset name from file (which could be less complete)
+                // if we don't already have a complete name
+                bool fallback = !assetInfo.Author.IsAuthorNameValid();
+                string author = asset.GetAuthor(fallback);
+                if (author.IsAuthorNameValid())
+                    assetInfo.Author = author;
 
-                    MetaData metaData = asset.Instantiate() as MetaData;
-                    if (entry != null && entry.updated != default)
-                        assetInfo.DateUpdated = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
-                    else
-                        assetInfo.DateUpdated = metaData.getTimeStamp.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                var assetType = asset.type;
+                var entry = asset.GetEntryData();
 
-                    if (metaData is CustomAssetMetaData customAssetMetaData) {
-                        assetInfo.description = ContentManagerUtil.SafeGetAssetDesc(customAssetMetaData, asset.package);
-                        assetInfo.Tags = customAssetMetaData.Tags(asset.package.GetPublishedFileID(), asset.type);
-                    } else {
-                        assetInfo.Tags = assetType.Tags();
-                    }
+                MetaData metaData = asset.Instantiate() as MetaData;
+                if (entry != null && entry.updated != default)
+                    assetInfo.DateUpdated = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
+                else
+                    assetInfo.DateUpdated = metaData.getTimeStamp.ToLocalTime().ToString(CultureInfo.InvariantCulture);
 
-                    if (asset.package.GetPublishedFileID() != PublishedFileId.invalid &&
-                            entry.workshopDetails.publishedFileId == asset.package.GetPublishedFileID()) {
-                        assetInfo.Status = (DownloadStatus)(int)
-                            SteamUtilities.IsUGCUpToDate(entry.workshopDetails, out assetInfo.DownloadFailureReason);
-                    }
+                assetInfo.Tags = assetType.Tags();
+
+                if (metaData is CustomAssetMetaData customAssetMetaData) {
+                    assetInfo.description = ContentManagerUtil.SafeGetAssetDesc(customAssetMetaData, asset.package);
+                    var tags = customAssetMetaData.Tags(asset.package.GetPublishedFileID());
+                    assetInfo.Tags = assetInfo.Tags.Concat(tags).ToArray();
+                }
+
+                if (asset.package.GetPublishedFileID() != PublishedFileId.invalid &&
+                        entry.workshopDetails.publishedFileId == asset.package.GetPublishedFileID()) {
+                    assetInfo.Status = (DownloadStatus)(int)
+                        SteamUtilities.IsUGCUpToDate(entry.workshopDetails, out assetInfo.DownloadFailureReason);
                 }
             }
-
 
             foreach (var asset in PackageManager.FilterAssets(UserAssetType.MapThemeMetaData)) {
                 try {
