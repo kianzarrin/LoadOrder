@@ -47,15 +47,15 @@ namespace LoadOrderMod.UI {
                 Assertion.NotNull(packageEntry, "packageEntry");
                 var ugc = m_WorkshopDetails(packageEntry);
                 if (!packageEntry.publishedFileId.IsValid() || !ugc.publishedFileId.IsValid()) {
-                    Log.Debug("[p0] entry name=" + packageEntry.entryName);
+                    //Log.Debug("[p0] entry name=" + packageEntry.entryName);
                     RemoveDownloadStatusSprite(packageEntry);
                 } else {
                     var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
                     if (status == DownloadOK) {
-                        Log.Debug("[p1] entry name=" + packageEntry.entryName);
+                        //Log.Debug("[p1] entry name=" + packageEntry.entryName);
                         RemoveDownloadStatusSprite(packageEntry);
                     } else {
-                        Log.Debug("[p2] entry name=" + packageEntry.entryName);
+                        //Log.Debug("[p2] entry name=" + packageEntry.entryName);
                         GetorCreateStatusPanel(packageEntry).StatusButton.SetStatus(status, reason);
                     }
                 }

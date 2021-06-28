@@ -1,16 +1,16 @@
-﻿using Mono.Cecil;
+using Mono.Cecil;
 using System.Runtime.CompilerServices;
 using ILogger = Patch.API.ILogger;
-using System;
+using System.IO;
 using System.Diagnostics;
-using System.Linq;
+using System;
 
 namespace LoadOrderIPatch {
     internal static class Commons {
         internal const string InjectionsDLL = InjectionsAssemblyName + ".dll";
         internal const string InjectionsAssemblyName = "LoadOrderInjections";
         internal static AssemblyDefinition GetInjectionsAssemblyDefinition(string dir)
-            => CecilUtil.GetAssemblyDefinition(dir, InjectionsDLL);
+            => CecilUtil.ReadAssemblyDefinition(Path.Combine(dir, InjectionsDLL));
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal static void LogSucessfull(this ILogger logger)

@@ -85,6 +85,9 @@ namespace LoadOrderMod {
 
         public static void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
             Log.Info($"OnSceneLoaded({scene.name}, {mode})", true);
+            if(scene.name == "MainMenu") {
+                MonoStatus.Ensure();
+            }
             Log.Flush();
         }
 

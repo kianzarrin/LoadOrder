@@ -13,7 +13,6 @@ namespace LoadOrderMod.Settings.Tabs {
         static LoadOrderConfig Config => ConfigUtil.Config;
 
         public static void Make(ExtUITabstrip tabStrip) {
-            Log.Debug(Environment.StackTrace);
             UIHelper panelHelper = tabStrip.AddTabPage("Startup");
             panelHelper.AddLabel("restart required to take effect.", textColor: Color.yellow);
             panelHelper.AddSpace(10);

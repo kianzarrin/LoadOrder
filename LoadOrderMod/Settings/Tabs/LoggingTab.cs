@@ -9,7 +9,6 @@ namespace LoadOrderMod.Settings.Tabs {
         static UIComponent logAssetLoadingTimesToggle_;
 
         public static void Make(ExtUITabstrip tabStrip) {
-            Log.Debug(Environment.StackTrace);
             UIHelper panelHelper = tabStrip.AddTabPage("Logging");
             panelHelper.AddCheckbox(
                 "Log asset loading times",

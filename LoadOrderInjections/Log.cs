@@ -155,19 +155,19 @@ namespace KianCommons {
         static Log() {
             try {
                 var dir = Path.Combine(Application.dataPath, "Logs");
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+
                 LogFilePath = Path.Combine(dir, LogFileName);
                 TryDeleteFile(LogFilePath);
-                TryDeleteFile(Path.Combine(Application.dataPath, LogFileName)); 
-                TryDeleteFile(Path.Combine(dir, "LoadOrderMod.dll"));
-                TryDeleteFile(Path.Combine(dir, "LoadOrderInjections.dll"));
-                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                TryDeleteFile(Path.Combine(dir, "LoadOrderMod.log"));
+                TryDeleteFile(Path.Combine(dir, "LoadOrderInjections.log"));
 
                 if (ShowTimestamp) {
                     Timer = GetSharedTimer() ?? Stopwatch.StartNew();
                 }
 
                 AssemblyName details = typeof(Log).Assembly.GetName();
-                Info($"Log file at " + LogFilePath, true);
+                Info($"Log file at {LogFilePath} now={DateTime.Now}", true);
                 Info($"{details.Name} Version:{details.Version} " +
                      $"Commit:{ThisAssembly.Git.Commit} " +
                      $"CommitDate:{ThisAssembly.Git.CommitDate}", true);
