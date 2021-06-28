@@ -1,4 +1,4 @@
-﻿namespace LoadOrderIPatch.Patches {
+namespace LoadOrderIPatch.Patches {
     using System;
     using Mono.Cecil;
     using Patch.API;
@@ -6,8 +6,8 @@
     using System.Runtime.CompilerServices;
 
     public class Entry : IPatch {
-        public static ILogger logger;
-        public static IPaths gamePaths;
+        public static ILogger Logger { get; private set; }
+        public static IPaths GamePaths { get; private set; }
 
         public int PatchOrderAsc => 0;
         public AssemblyToPatch PatchTarget => null;
@@ -17,16 +17,16 @@
             ILogger logger,
             string patcherWorkingPath,
             IPaths gamePaths) {
-            ConfigUtil.LocalApplicationPath = gamePaths.AppDataPath;
+            Logger = logger;
+            GamePaths = gamePaths;
+            Log.Init();
 
             var args = Environment.GetCommandLineArgs();
-            logger.Info("comamnd line args are: " + string.Join(" ", args));
+            Log.Info("comamnd line args are: " + string.Join(" ", args));
             
-            if (IsDebugMono()) {
-                logger.Info("Warning! Debug mono is slow! use Load order tool to change it.");
-            }
-
-
+            if (IsDebugMono())
+                Log.Warning("Debug mono is slow! use Load order tool to change it.");
+            
             return assemblyDefinition;
         }
 
@@ -36,7 +36,7 @@
                 string file = new StackFrame(true).GetFileName();
                 return file?.EndsWith(".cs") ?? false;
             } catch (Exception ex) {
-                logger.Error(ex.ToString());
+                Logger.Error(ex.ToString());
                 return false;
             }
         }

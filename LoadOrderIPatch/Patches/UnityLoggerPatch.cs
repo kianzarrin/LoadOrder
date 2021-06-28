@@ -30,7 +30,7 @@ namespace LoadOrderIPatch.Patches {
 
         public AssemblyDefinition LogFormatPatch(AssemblyDefinition asmUnity)
         {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var module = asmUnity.Modules.First();
             var tDebugLogHandler = module.Types
                 .First(_t => _t.FullName == "UnityEngine.DebugLogHandler");
@@ -46,7 +46,7 @@ namespace LoadOrderIPatch.Patches {
             ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
             ilProcessor.InsertAfter(callFormat, callAddTimeStamp);
 
-            logger_.LogSucessfull();
+            Log.Successful();
             return asmUnity;
         }
 

@@ -56,25 +56,24 @@ namespace LoadOrderIPatch.Patches {
 
         public Assembly LoadDLL(string dllPath)
         {
-            void Log(string _m) => logger_.Info(_m);
             try {
                 Assembly assembly;
                 string symPath = dllPath + ".mdb";
                 if(File.Exists(symPath)) {
-                    Log("\nLoading " + dllPath + "\nSymbols " + symPath);
+                    Log.Info("\nLoading " + dllPath + "\nSymbols " + symPath);
                     assembly = Assembly.Load(File.ReadAllBytes(dllPath), File.ReadAllBytes(symPath));
                 } else {
-                    Log("Loading " + dllPath);
+                    Log.Info("Loading " + dllPath);
                     assembly = Assembly.Load(File.ReadAllBytes(dllPath));
                 }
                 if(assembly != null) {
-                    Log("Assembly " + assembly.FullName + " loaded.\n");
+                    Log.Info("Assembly " + assembly.FullName + " loaded.\n");
                 } else {
-                    Log("Assembly at " + dllPath + " failed to load.\n");
+                    Log.Info("Assembly at " + dllPath + " failed to load.\n");
                 }
                 return assembly;
             } catch(Exception ex) {
-                logger_.Error("Assembly at " + dllPath + " failed to load.\n" + ex.ToString());
+                Log.Error("Assembly at " + dllPath + " failed to load.\n" + ex.ToString());
                 return null;
             }
         }
@@ -84,7 +83,7 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         public AssemblyDefinition SubscriptionManagerPatch(AssemblyDefinition ASC)
         {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var module = ASC.Modules.First();
             MethodDefinition mTarget = module.GetMethod("Starter.Awake");
             var instructions = mTarget.Body.Instructions;
@@ -107,7 +106,7 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.Prefix(call2);
             /**********************************/
 
-            logger_.LogSucessfull();
+            Log.Successful();
             return ASC;
         }
 
@@ -116,19 +115,19 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         public void NoQueryPatch(AssemblyDefinition ASC)
         {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var module = ASC.Modules.First();
             var targetMethod = module.GetMethod("WorkshopAdPanel.Awake");
             var instructions = targetMethod.Body.Instructions;
             ILProcessor ilProcessor = targetMethod.Body.GetILProcessor();
             Instruction callQuery = instructions.First(_c => _c.Calls("QueryItems"));
             ilProcessor.Remove(callQuery); // the pop instruction after cancels out the load instruction before.
-            logger_.LogSucessfull();
+            Log.Successful();
         }
 
         public AssemblyDefinition ImproveLoggingPatch(AssemblyDefinition ASC)
         {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             ModuleDefinition module = ASC.Modules.First();
             var entryPoint = module.GetMethod("Starter.Awake");
             var mInjection = GetType().GetMethod(nameof(ApplyGameLoggingImprovements));
@@ -140,7 +139,7 @@ namespace LoadOrderIPatch.Patches {
             ILProcessor ilProcessor = entryPoint.Body.GetILProcessor();
             ilProcessor.InsertBefore(first, callInjection);
 
-            logger_.LogSucessfull();
+            Log.Successful();
             return ASC;
         }
 
@@ -159,7 +158,7 @@ namespace LoadOrderIPatch.Patches {
 
         public AssemblyDefinition BindEnableDisableAllPatch(AssemblyDefinition ASC)
         {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var module = ASC.MainModule;
             var mTarget = module.GetMethod("ContentManagerPanel.BindEnableDisableAll");
 
@@ -172,14 +171,14 @@ namespace LoadOrderIPatch.Patches {
             ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
             ilProcessor.InsertBefore(first, loadNull);
             ilProcessor.InsertAfter(loadNull, storeDisclaimerID);
-            logger_.LogSucessfull();
+            Log.Successful();
 
             return ASC;
         }
 
         public AssemblyDefinition NewsFeedPanelPatch(AssemblyDefinition ASC)
         {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var module = ASC.MainModule;
             Instruction ret = Instruction.Create(OpCodes.Ret);
             {
@@ -195,30 +194,30 @@ namespace LoadOrderIPatch.Patches {
                 ilProcessor.InsertBefore(first, ret);
             }
 
-            logger_.LogSucessfull();
+            Log.Successful();
             return ASC;
         }
 
         //        public AssemblyDefinition HandleResolve(AssemblyDefinition ASC) {
         //#if DEBUG
-        //            logger_.LogStartPatching();
+        //            Log.StartPatching();
         //            var module = ASC.Modules.First();
         //            var targetMethod = module.GetMethod("Starter.Awake");
         //            var instructions = targetMethod.Body.Instructions;
         //            ILProcessor ilProcessor = targetMethod.Body.GetILProcessor();
-        //            logger_.LogSucessfull();
+        //            Log.Successful();
         //#endif
         //            return ASC;
         //        }
 
         public void InstallResolverLog() {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             ResolveEventHandler resolver = Inject.Logs.ResolverLog;
             AppDomain.CurrentDomain.AssemblyResolve += resolver;
             AppDomain.CurrentDomain.TypeResolve += resolver;
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
-            logger_.LogSucessfull();
+            Log.Successful();
         }
 
         private static readonly Version MinHarmonyVersionToHandle = new Version(2, 0, 0, 8);
@@ -226,14 +225,14 @@ namespace LoadOrderIPatch.Patches {
         const string HarmonyName2 = "CitiesHarmony.Harmony";
 
         public void InstallHarmonyResolver() {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             ResolveEventHandler resolver = LoadOrderHarmonyResolver;
             AppDomain.CurrentDomain.AssemblyResolve += resolver;
             AppDomain.CurrentDomain.TypeResolve += resolver;
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
 
-            logger_.LogSucessfull();
+            Log.Successful();
         }
 
         public static Assembly LoadOrderHarmonyResolver(object sender, ResolveEventArgs args)

@@ -12,31 +12,61 @@ namespace LoadOrderIPatch {
 
     internal static class Log {
         const string FILENAME = "LoadOrderIPatch.log";
-        static string FilePath => Path.Combine(Entry.gamePaths.LogsPath, FILENAME);
-        static void Init() {
-            if(File.Exists(FilePath))
-                File.Delete(FilePath);
+        static string FilePath => Path.Combine(Entry.GamePaths.LogsPath, FILENAME);
+        public static void Init() {
+            if(File.Exists(FilePath)) File.Delete(FilePath);
+
+            var details = typeof(Log).Assembly.GetName();
+            Info($"Log file at {FilePath} now={DateTime.Now}");
+            Info($"{details.Name} Version:{details.Version} " +
+                 $"Commit:{ThisAssembly.Git.Commit} " +
+                 $"CommitDate:{ThisAssembly.Git.CommitDate}");
         }
 
-        static ILogger logger => Entry.logger;
-        static IPaths paths => Entry.gamePaths;
+        static ILogger iLogger_ => Entry.Logger;
 
         public static void Info(string text) {
-            logger.Info("[LoadOrderIPatch] " + text);
+            iLogger_.Info("[LoadOrderIPatch] " + text);
             LogImpl("Info", text);
         }
         public static void Warning(string text) {
-            logger.Info("[Warning] [LoadOrderIPatch] " + text);
+            iLogger_.Info("[Warning] [LoadOrderIPatch] " + text);
             LogImpl("Warning", text);
         }
 
         public static void Error(string text) {
-            logger.Error("[LoadOrderIPatch] " + text);
+            iLogger_.Error("[LoadOrderIPatch] " + text);
             LogImpl("Error", text + "\n" + Environment.StackTrace);
         }
         public static void Exception(this Exception ex) {
-            logger.Error("[Exception] [LoadOrderIPatch] " + ex.Message);
+            iLogger_.Error("[Exception] [LoadOrderIPatch] " + ex.Message);
             LogImpl("Exception", ex.ToString() + "\tException logged at:\n" + Environment.StackTrace);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void Successful() {
+            string caller = new StackFrame(1).GetMethod().Name;
+            Log.Info($"Successfuly applied {caller}!");
+
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void StartPatching() {
+            string caller = new StackFrame(1).GetMethod().Name;
+            Log.Info($"{caller} started ...");
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void Called(params object [] args) {
+            string caller = new StackFrame(1).GetMethod().Name;
+            Log.Info($"{caller}({JoinArgs(args)}) called ..." );
+        }
+
+        private static string JoinArgs(object[] args) {
+            if (args == null || !args.Any())
+                return "";
+            else
+                return string.Join(", ", args.Select(a => a.ToString()).ToArray());
         }
 
         static void LogImpl(string level, string text) {

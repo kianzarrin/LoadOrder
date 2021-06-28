@@ -3,10 +3,10 @@ namespace LoadOrderIPatch {
     using LoadOrderShared;
     using System;
     using System.Linq;
-
+    using LoadOrderIPatch.Patches;
     public static class ConfigUtil {
-        internal static string LocalApplicationPath;
-        
+        internal static string LocalApplicationPath => Entry.GamePaths.AppDataPath;
+
         internal static LoadOrderConfig config_;
         public static LoadOrderConfig Config =>
             config_ ??=

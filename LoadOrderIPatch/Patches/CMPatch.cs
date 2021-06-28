@@ -30,7 +30,6 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
-            ConfigUtil.LocalApplicationPath = gamePaths.AppDataPath;
             if (!poke && Config.SoftDLLDependancy) {
                 FindAssemblySoftPatch(assemblyDefinition);
             }
@@ -66,7 +65,7 @@ namespace LoadOrderIPatch.Patches {
         /// loads assembly with symbols
         /// </summary>
         public void LoadPluginPatch(AssemblyDefinition CM) {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var module = CM.MainModule;
             var tPluginManager = module.GetType("ColossalFramework.Plugins", "PluginManager");
 
@@ -77,7 +76,7 @@ namespace LoadOrderIPatch.Patches {
             string fpsMethod = "LoadOrScanAndPatch";
             bool touchedByFPS = instructions.Any(code => code.Calls(fpsMethod));
             if (touchedByFPS) {
-                logger_.Info("ignoring LoadPluginPatch because FPSBooster already loads symbols");
+                Log.Info("ignoring LoadPluginPatch because FPSBooster already loads symbols");
                 return;
             }
 
@@ -89,7 +88,7 @@ namespace LoadOrderIPatch.Patches {
                 Instruction.Create(OpCodes.Call, mrInjection),
                 Instruction.Create(OpCodes.Ret));
 
-            logger_.LogSucessfull();
+            Log.Successful();
         }
 
         public static Assembly LoadPlugingWithSymbols(string dllPath) {
@@ -121,7 +120,7 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         /// <param name="CM"></param>
         public void NoDoubleLoadPatch(AssemblyDefinition CM) {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var cm = CM.MainModule;
             var mTarget = cm.GetMethod(
                 "ColossalFramework.Plugins.PluginManager.LoadPlugin");
@@ -152,7 +151,7 @@ namespace LoadOrderIPatch.Patches {
              */
             ilProcessor.Prefix(loadDllPath, callExistingAssembly, storeResult, GotoToReturnResultIfNotNull);
 
-            logger_.LogSucessfull();
+            Log.Successful();
         }
 
         /// <summary>
@@ -160,7 +159,7 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         /// <param name="CM"></param>
         public void FindAssemblySoftPatch(AssemblyDefinition CM) {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var cm = CM.MainModule;
             var mTarget = cm.GetMethod(
                 "ColossalFramework.Plugins.PluginManager.FindPluginAssemblyByName");
@@ -189,13 +188,13 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertAfter(ldarg1, ldarg2);
             ilProcessor.InsertAfter(ldarg2, callInjection);
 
-            logger_.LogSucessfull();
+            Log.Successful();
         }
 
         public void AddAssemlyPatch(AssemblyDefinition CM) {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var module = CM.MainModule;
-            logger_.Info("PluginInfo is :" +  module.Types.FirstOrDefault(t => t.Name.EndsWith("PluginManager")).FullName);
+            Log.Info("PluginInfo is :" +  module.Types.FirstOrDefault(t => t.Name.EndsWith("PluginManager")).FullName);
 
             var type1 = module.GetType("ColossalFramework.Plugins.PluginManager");
             var type2 = type1.NestedTypes.Single(_t => _t.Name == "PluginInfo");
@@ -233,12 +232,12 @@ namespace LoadOrderIPatch.Patches {
                 ilProcessor.InsertBefore(callBeforeAddAssembliesGetExportedTypes, loadAsm);
             }
 
-            logger_.LogSucessfull();
+            Log.Successful();
         }
 
         public AssemblyDefinition NoCustomAssetsPatch(AssemblyDefinition CM)
         {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var module = CM.MainModule;
             var type = module.GetType("ColossalFramework.Packaging.PackageManager");
             var mTargets = type.Methods.Where(_m =>
@@ -251,7 +250,7 @@ namespace LoadOrderIPatch.Patches {
                 var instructions = mTarget.Body.Instructions;
                 var first = instructions.First();
 
-                logger_.Info("patching " + mTarget.Name);
+                Log.Info("patching " + mTarget.Name);
                 if (loadPath) {
                     // skip method only if path is asset path
                     var ret = instructions.Last();
@@ -267,7 +266,7 @@ namespace LoadOrderIPatch.Patches {
                 }
             }
 
-            logger_.LogSucessfull();
+            Log.Successful();
             return CM;
         }
 
@@ -280,7 +279,7 @@ namespace LoadOrderIPatch.Patches {
         /// moved folder to _folder if neccessary before calling getfiles.
         /// </summary>
         public void EnsureIncludedExcludedPackagePatch(AssemblyDefinition CM) {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var cm = CM.MainModule;
             var type = cm.GetType("ColossalFramework.Packaging.PackageManager");
             var mTargets = type.Methods.Where(_m => _m.Name == "LoadPackages");
@@ -291,13 +290,13 @@ namespace LoadOrderIPatch.Patches {
 
                 var callGetFiles = instructions.FirstOrDefault(_c => _c.Calls("GetFiles"));
                 if( callGetFiles != null) {
-                    logger_.Info($"patching {mTarget}");
+                    Log.Info($"patching {mTarget}");
                     var mCheckFiles = GetType().GetMethod(nameof(CheckFiles));
                     var callCheckFiles = Instruction.Create(OpCodes.Call, cm.ImportReference(mCheckFiles));
                     ilProcessor.InsertBefore(callGetFiles, callCheckFiles);
                 }
             }
-            logger_.LogSucessfull();
+            Log.Successful();
         }
 
         public static string CheckFiles(string path) {
@@ -306,7 +305,7 @@ namespace LoadOrderIPatch.Patches {
         }
 
         public void ExcludeAssetFilePatch(AssemblyDefinition CM) {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var module = CM.MainModule;
             var type = module.GetType("ColossalFramework.Packaging.PackageManager");
 
@@ -335,7 +334,7 @@ namespace LoadOrderIPatch.Patches {
                 ilProcessor.Prefix(new[] { LdArgPath, callIsExcluded, skipIfExcluded });
             }
 
-            logger_.LogSucessfull();
+            Log.Successful();
         }
 
         public static bool IsFileExcluded(string path) {
@@ -345,7 +344,7 @@ namespace LoadOrderIPatch.Patches {
         }
 
         public void ExcludeAssetDirPatch(AssemblyDefinition CM) {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var cm = CM.MainModule;
             var type = cm.GetType("ColossalFramework.Packaging.PackageManager");
             var mTarget = type.Methods.Single(
@@ -359,7 +358,7 @@ namespace LoadOrderIPatch.Patches {
             var callIsExcluded = Instruction.Create(OpCodes.Call, cm.ImportReference(mIsExcluded));
             var skipIfExcluded = Instruction.Create(OpCodes.Brtrue, ret);
             ilProcessor.Prefix(loadPath, callIsExcluded, skipIfExcluded);
-            logger_.LogSucessfull();
+            Log.Successful();
         }
 
         public static bool IsDirExcluded(string path) {
@@ -371,7 +370,7 @@ namespace LoadOrderIPatch.Patches {
         // modify this mehtod to print the desired stacktrace. 
         public AssemblyDefinition InsertPrintStackTrace(AssemblyDefinition CM)
         {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var module = CM.MainModule;
             var type = module.GetType("ColossalFramework.PlatformServices.PlatformServiceBehaviour");
             var mTarget = type.Methods.Single(_m => _m.Name == "Awake");
@@ -385,7 +384,7 @@ namespace LoadOrderIPatch.Patches {
 
             ilProcessor.InsertBefore(first, callInjection);
 
-            logger_.Info("PlatformServiceBehaviour_Awake_Patch applied successfully!");
+            Log.Info("PlatformServiceBehaviour_Awake_Patch applied successfully!");
             return CM;
         }
 #endif
@@ -401,7 +400,7 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         public AssemblyDefinition LoadAssembliesPatch(AssemblyDefinition CM)
         {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var tPluginManager = CM.MainModule.Types
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
@@ -421,7 +420,7 @@ namespace LoadOrderIPatch.Patches {
             Instruction first = mTarget.Body.Instructions.First();
             ilProcessor.InsertBefore(first, loadArg1); // load pluggins arg
             ilProcessor.InsertAfter(loadArg1, callInjection);
-            logger_.LogSucessfull();
+            Log.Successful();
             return CM;
         }
 
@@ -430,7 +429,7 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         public AssemblyDefinition LoadPluginsPatch(AssemblyDefinition CM)
         {
-            logger_.LogStartPatching();
+            Log.StartPatching();
             var tPluginManager = CM.MainModule.Types
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
@@ -450,7 +449,7 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertBefore(first, loadThis); // load pluggins arg
             ilProcessor.InsertAfter(loadThis, loadDllPath);
             ilProcessor.InsertAfter(loadDllPath, callInjection);
-            logger_.LogSucessfull();
+            Log.Successful();
             return CM;
         }
 
@@ -459,7 +458,7 @@ namespace LoadOrderIPatch.Patches {
         /// </summary>
         public AssemblyDefinition AddPluginsPatch(AssemblyDefinition CM)
         {
-            logger_.LogStartPatching();
+            Log.StartPatching();
                var tPluginManager = CM.MainModule.Types
                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
             MethodDefinition mTarget = tPluginManager.Methods
@@ -519,7 +518,7 @@ namespace LoadOrderIPatch.Patches {
             ilProcessor.InsertAfter(InvokeOnEnabled, callAfterEnable); // insert call
             ilProcessor.InsertBefore(callAfterEnable, LoadPluginInfo.Duplicate()); // load argument for the call
 
-            logger_.LogSucessfull();
+            Log.Successful();
             return CM;
         }
     }

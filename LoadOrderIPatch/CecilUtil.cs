@@ -11,8 +11,9 @@ namespace LoadOrderIPatch {
     public static class CecilUtil {
         internal static AssemblyDefinition ReadAssemblyDefinition(string dllpath) {
             try {
+                Log.Called(dllpath);
                 var r = new MyAssemblyResolver();
-                r.AddSearchDirectory(Entry.gamePaths.ManagedFolderPath);
+                r.AddSearchDirectory(Entry.GamePaths.ManagedFolderPath);
                 r.AddSearchDirectory(Path.GetDirectoryName(dllpath));
                 var readerParameters = new ReaderParameters {
                     ReadWrite = false,

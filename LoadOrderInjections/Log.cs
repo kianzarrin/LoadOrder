@@ -171,9 +171,6 @@ namespace KianCommons {
                 Info($"{details.Name} Version:{details.Version} " +
                      $"Commit:{ThisAssembly.Git.Commit} " +
                      $"CommitDate:{ThisAssembly.Git.CommitDate}", true);
-                string oldPath = Path.Combine(Application.dataPath, LogFileName);
-                if (File.Exists(oldPath))
-                    File.Delete(oldPath);
             } catch (Exception ex) {
                 Log.LogUnityException(ex);
             }
