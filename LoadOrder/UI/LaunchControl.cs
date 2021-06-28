@@ -277,12 +277,12 @@ namespace LoadOrderTool.UI {
         }
 
         private void btnTerminate_Click(object sender, EventArgs e) {
-
-            foreach (var proc in Process.GetProcessesByName("Cities")) {
-                Log.Info("killing " + proc);
-                proc.Kill();
-            }
+            try {
+                foreach (var proc in Process.GetProcessesByName("Cities")) {
+                    Log.Info("killing " + proc);
+                    proc.Kill();
+                }
+            } catch(Exception ex) { ex.Log(); }
         }
-
     }
 }
