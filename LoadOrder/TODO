@@ -25,30 +25,28 @@ bugs:
 
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild
 
+====================================================
 
 Load only the latest version of shared dlls. (*.API *.Integration)
-	do this with control over refrenced or used, asset or mod:
-	    - sub/enable all
-	    - unsub/disable unused
-	    - list/activate required DLC.
-	    - deactivate unused DLCs.
+    do this with control over refrenced or used, asset or mod:
+	- sub/enable all
+	- unsub/disable unused
+	- list/activate required DLC.
+	- deactivate unused DLCs.
 
-	sub to all items referenced by saved city.
-	enable all items referenced by saved city.
-	sub to all referenced mods and used assets by saved city.
-	enable to all referenced mods and used assets by saved city.
-	disable unreferenced/unsued items by a saved city.
-	detect all DLCs referenced by assets used/referenced by a saved city.
-
-
---------------------------------------------
+    sub to all items referenced by saved city.
+    enable all items referenced by saved city.
+    sub to all referenced mods and used assets by saved city.
+    enable to all referenced mods and used assets by saved city.
+    disable unreferenced/unsued items by a saved city.
+    detect all DLCs referenced by assets used/referenced by a saved city.
 	city:
-		C mods   
-		C assets 
-			C all 
-			C ?used only 
-		What to do with your old subscriptions?
-			C Disable  C Exclude  C UnSub
+	    C mods   
+	    C assets 
+		    C all 
+		    C ?used only 
+	    What to do with your old subscriptions?
+		    C Disable  C Exclude  C UnSub
 
-		B (Subscribe and Enable)
+	    B (Subscribe and Enable)
 
