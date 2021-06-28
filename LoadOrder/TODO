@@ -1,5 +1,8 @@
 Caveat:
-    - it takes a long time to load game with LOM. (is it searching for mods?). maybe create hashtable?
+    - it takes a long time to load game with LOM.
+        - is it searching for mods?. maybe create hashtable?
+        - is it checking included/excluded mods?
+
 
 bug:
     - run debug (F5) tool to eliminate access from other threads (replace with invoke).
