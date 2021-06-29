@@ -242,7 +242,9 @@ namespace CO.Plugins {
                         Log.Debug($"FAILED!");
                         throw new Exception($"failed to move directory from {m_Path} to {targetPath}");
                     }
-                    m_Path = targetPath;
+
+                    dllPath_ = dllPath_.Replace(m_Path, targetPath); // update dllPAth
+                    m_Path = targetPath; // must be done last because we need m_Path to know what old path was.
                 } catch (Exception ex) {
                     //string assemblyName = userModImplementation.GetType().Assembly.GetName().Name;
                     if ( dllName == "LoadOrderMod")
