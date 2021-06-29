@@ -96,14 +96,15 @@ namespace LoadOrderMod.Util {
         public IEnumerator ResubscribeCoroutine(PublishedFileId id) {
             Log.Called(id);
             if (id != PublishedFileId.invalid) {
-                try {
-                    string path = PlatformService.workshop.GetSubscribedItemPath(id);
-                    if (Directory.Exists(path))
-                        Directory.Delete(path, true);
-                    PlatformService.workshop.Unsubscribe(id);
-                } catch(Exception ex) { ex.Log(); }
+                try { PlatformService.workshop.Unsubscribe(id); } catch(Exception ex) { ex.Log(); }
 
-                yield return new WaitForSeconds(20);
+                yield return new WaitForSeconds(3);
+
+                try {
+                    //string path = PlatformService.workshop.GetSubscribedItemPath(id);
+                    //if (Directory.Exists(path))
+                    //    Directory.Delete(path, true);
+                } catch(Exception ex) { ex.Log(); }
 
                 try { PlatformService.workshop.Subscribe(id); } catch (Exception ex) { ex.Log(); }
             }

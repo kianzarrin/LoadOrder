@@ -3,9 +3,10 @@ Caveat:
         - is it searching for mods?. maybe create hashtable?
         - is it checking included/excluded mods?
 
-
 bug:
     - run debug (F5) tool to eliminate access from other threads (replace with invoke).
+    - cannot open folder when changing included/excluded
+
 
 - LHT command lines
 - display WS item download status in tool
