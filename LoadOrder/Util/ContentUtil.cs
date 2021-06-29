@@ -41,6 +41,7 @@ namespace LoadOrderTool.Util {
         /// </summary>
         public static Process OpenPath(string path)
         {
+            Log.Called(path);
             try
             {
                 if (File.Exists(path))

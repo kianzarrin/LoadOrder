@@ -63,7 +63,6 @@ namespace LoadOrderTool.UI {
 
         public void LoadSettings() {
             if (UIUtil.DesignMode) return;
-            Log.Called("usage mode=" + LicenseManager.UsageMode);
 
             checkBoxNoAssets.Checked = settings_.NoAssets;
             //checkBoxNoMods.Checked = settings_.NoMods;

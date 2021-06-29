@@ -12,7 +12,8 @@ namespace LoadOrderTool.UI {
     }
 
     public static class UIUtil {
-        public static bool DesignMode => LicenseManager.UsageMode == LicenseUsageMode.Designtime;
+        public static bool DesignMode =>
+            LicenseManager.UsageMode == LicenseUsageMode.Designtime || !Program.IsMain;
         public static void U32TextBox_KeyPress(object sender, KeyPressEventArgs e) {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) {
                 e.Handled = true;
