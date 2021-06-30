@@ -20,18 +20,20 @@ namespace LoadOrderMod.Settings.Tabs {
             button = panelHelper.AddButton("Refresh workshop items (checks for bad items)", RequestItemDetails) as UIButton;
             button.tooltip = "checks for missing/partially downloaded/outdated items";
 
-            //checkBox = panelHelper.AddCheckbox(
-            //    "Delete unsubscibed items on startup",
-            //    Config.DeleteUnsubscribedItemsOnLoad,
-            //    val => {
-            //        ConfigUtil.Config.DeleteUnsubscribedItemsOnLoad = val;
-            //        ConfigUtil.SaveConfig();
-            //    }) as UICheckBox;
+            button = panelHelper.AddButton("[experimental] unsubscribe from depricated workshop items", () => CheckSubsUtil.Instance.UnsubDepricated()) as UIButton;
+            button.tooltip = "if steam does not return item path, i assume its depricated.";
 
-            //button = panelHelper.AddButton("Delete Now", () => CheckSubsUtil.Instance.DeleteUnsubbed()) as UIButton;
-            //Settings.Pairup(checkBox, button);
-            panelHelper.AddButton("delete unsubscribed items from disk", () => CheckSubsUtil.Instance.DeleteUnsubbed());
-            panelHelper.AddButton("unsubscribe from depricated workshop items", () => CheckSubsUtil.Instance.DeleteDepricated());
+            checkBox = panelHelper.AddCheckbox(
+                "Delete unsubscibed items on startup",
+                Config.DeleteUnsubscribedItemsOnLoad,
+                val => {
+                    ConfigUtil.Config.DeleteUnsubscribedItemsOnLoad = val;
+                    ConfigUtil.SaveConfig();
+                }) as UICheckBox;
+
+            button = panelHelper.AddButton("Delete Now", () => CheckSubsUtil.Instance.DeleteUnsubbed()) as UIButton;
+            Settings.Pairup(checkBox, button);
+
 
             //b = g.AddButton("delete duplicates", OnPerformAllClicked) as UIButton;
             //b.tooltip = "when excluded mod is updated, and included duplicate of it is created";

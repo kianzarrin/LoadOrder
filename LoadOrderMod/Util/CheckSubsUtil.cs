@@ -47,7 +47,7 @@ namespace LoadOrderMod.Util {
 
         public Coroutine RequestItemDetails() => StartCoroutine(RequiestItemDetailsCoroutine());
         public IEnumerator RequiestItemDetailsCoroutine() {
-            Log.Called();
+            Log.DisplayMesage($"Checking all items ...");
             var items = PlatformService.workshop.GetSubscribedItems();
             int counter = 0;
             foreach (var id in items) {
@@ -63,17 +63,20 @@ namespace LoadOrderMod.Util {
         public Coroutine UnsubDepricated() => StartCoroutine(UnsubDepricatedCoroutine());
 
         public IEnumerator UnsubDepricatedCoroutine() {
-            Log.Called();
+            Log.DisplayMesage($"Unsubscribing from depricated items ...");
+
             var items = PlatformService.workshop.GetSubscribedItems();
             if (items == null || items.Length == 0)
                 yield break;
 
             int counter = 0;
+            int nUnsubbed = 0;
             foreach(var item in items) {
                 string path = PlatformService.workshop.GetSubscribedItemPath(item);
                 if(path == null) {
+                    Log.DisplayWarning($"Depricated item will be unsubbed: {item}");
                     PlatformService.workshop.Unsubscribe(item);
-                    Log.DisplayMesage($"unsubbed from depricated item {item}");
+                    nUnsubbed++;
                 }
 
                 if (counter >= 100) {
@@ -81,13 +84,15 @@ namespace LoadOrderMod.Util {
                     yield return 0;
                 }
             }
+
+            Log.DisplayMesage($"Unsubscribing from {nUnsubbed} depricated items.");
         }
 
 
         public Coroutine DeleteUnsubbed() => StartCoroutine(DeleteUnsubbedCoroutine());
 
         public IEnumerator DeleteUnsubbedCoroutine() {
-            Log.Called();
+            Log.DisplayMesage($"Deleting unsubscribed items.");
             var items = PlatformService.workshop.GetSubscribedItems();
             if (items == null || items.Length == 0)
                 yield break;
@@ -96,6 +101,7 @@ namespace LoadOrderMod.Util {
             path = Path.GetDirectoryName(path);
 
             int counter = 0;
+            int n = 0;
             foreach (var dir in Directory.GetDirectories(path)) {
                 ulong id;
                 string strID = Path.GetFileName(dir);
@@ -107,6 +113,7 @@ namespace LoadOrderMod.Util {
                 if (deleted) {
                     Log.DisplayWarning("unsubbed item will be deleted: " + dir);
                     Directory.Delete(dir, true);
+                    n++;
                 }
 
                 if (counter >= 100) {
@@ -114,6 +121,8 @@ namespace LoadOrderMod.Util {
                     yield return 0;
                 }
             }
+
+            Log.DisplayMesage($"Deleted {n} unsubscribed items.");
         }
 
         public Coroutine Resubscribe(PublishedFileId id) => StartCoroutine(ResubscribeCoroutine(id));

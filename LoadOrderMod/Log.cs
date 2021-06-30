@@ -60,9 +60,6 @@ namespace KianCommons {
 
         public static void Exception(this Exception ex, string m = "", bool showInPanel = true) => LogMain.Exception(ex, m, showInPanel);
 
-        public static void ShowModalException(string title, string message, bool error = false) =>
-            ShowModalException(title, message, error);
-
         public static void Called(params object[] args) => Info(ReflectionHelpers.CurrentMethod(2, args) + " called.", false);
         public static void Succeeded() => Info(ReflectionHelpers.CurrentMethod(2) + " succeeded!", false);
     }
