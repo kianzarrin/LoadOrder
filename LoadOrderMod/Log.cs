@@ -55,6 +55,7 @@ namespace KianCommons {
         public static void DisplayMesage(string message) {
             Info(message, true);
             DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Message, message);
+            DebugOutputPanel.Show();
         }
 
         public static void Exception(this Exception ex, string m = "", bool showInPanel = true) => LogMain.Exception(ex, m, showInPanel);

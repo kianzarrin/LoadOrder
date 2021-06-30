@@ -60,10 +60,34 @@ namespace LoadOrderMod.Util {
             }
         }
 
+        public Coroutine UnsubDepricated() => StartCoroutine(UnsubDepricatedCoroutine());
+
+        public IEnumerator UnsubDepricatedCoroutine() {
+            Log.Called();
+            var items = PlatformService.workshop.GetSubscribedItems();
+            if (items == null || items.Length == 0)
+                yield break;
+
+            int counter = 0;
+            foreach(var item in items) {
+                string path = PlatformService.workshop.GetSubscribedItemPath(item);
+                if(path == null) {
+                    PlatformService.workshop.Unsubscribe(item);
+                    Log.DisplayMesage($"unsubbed from depricated item {item}");
+                }
+
+                if (counter >= 100) {
+                    counter = 0;
+                    yield return 0;
+                }
+            }
+        }
+
+
         public Coroutine DeleteUnsubbed() => StartCoroutine(DeleteUnsubbedCoroutine());
 
         public IEnumerator DeleteUnsubbedCoroutine() {
-            Log.Info("DeleteUnsubbed called ...");
+            Log.Called();
             var items = PlatformService.workshop.GetSubscribedItems();
             if (items == null || items.Length == 0)
                 yield break;
@@ -81,7 +105,7 @@ namespace LoadOrderMod.Util {
                     continue;
                 bool deleted = !items.Any(item => item.AsUInt64 == id);
                 if (deleted) {
-                    Log.Warning("unsubbed item will be deleted: " + dir);
+                    Log.DisplayWarning("unsubbed item will be deleted: " + dir);
                     Directory.Delete(dir, true);
                 }
 
