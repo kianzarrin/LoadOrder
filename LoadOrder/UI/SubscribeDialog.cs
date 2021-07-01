@@ -1,4 +1,4 @@
-﻿using LoadOrderTool.Util;
+using LoadOrderTool.Util;
 using System;
 using System.Data;
 using System.Drawing;
@@ -71,8 +71,8 @@ namespace LoadOrderTool.UI {
         public static string[] GetIDsFromFile(string filePath) {
             Log.Called(filePath);
             string text = File.ReadAllText(filePath);
-            int i1 = text.IndexOf("Assets that are missing");
-            int i2 = text.IndexOf("Duplicate asset names");
+            int i1 = text.IndexOf("The following custom assets are used in this city");
+            int i2 = text.IndexOf("The following enabled assets are currently unnecessary");
             text = text.Substring(i1, i2 - i1); // cout out the desired text;
             return GetHTMLIDs(text);
         }
