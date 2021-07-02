@@ -61,7 +61,7 @@ namespace LoadOrderInjections {
 
             }
         }
-        // TODO: detect/resub to problematic items.
+
         public static bool SteamInitialized;
 
         DateTime LastEventTime = default;

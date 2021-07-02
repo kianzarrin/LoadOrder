@@ -1,13 +1,10 @@
-﻿namespace GameState {
+namespace GameState {
     using System.IO;
     using System;
+    using LoadOrderIPatch.Patches;
     public static class GameStateUtil {
-        //TODO: remove
-        internal static Patch.API.ILogger logger;
-        internal static string localAppDataPath = Path.Combine(Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Colossal Order"),
-            "Cities_Skylines");
+        internal static Patch.API.ILogger logger => Entry.Logger;
+        internal static string localAppDataPath => Entry.GamePaths.AppDataPath;
 
         public static bool? IsModEnabled(string workingPath) {
             string name = Path.GetFileNameWithoutExtension(workingPath);

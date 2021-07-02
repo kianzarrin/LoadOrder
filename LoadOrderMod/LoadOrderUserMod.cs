@@ -28,7 +28,7 @@ namespace LoadOrderMod {
 
                 Log.ShowGap = true;
 #if DEBUG
-                Log.Buffered = false; // TODO BUFFER
+                Log.Buffered = true; 
 #else
                 Log.Buffered = true;
 #endif
