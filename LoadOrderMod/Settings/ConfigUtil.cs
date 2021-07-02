@@ -127,7 +127,7 @@ namespace LoadOrderMod.Settings {
             LogCalled();
             foreach (var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
                 try {
-                    if (pluginInfo.userModInstance == null) continue;
+                    if (pluginInfo?.userModInstance == null) continue;
                     var modInfo = pluginInfo.GetModConfig();
                     if (modInfo == null) {
                         modInfo = new LoadOrderShared.ModInfo {
@@ -136,6 +136,8 @@ namespace LoadOrderMod.Settings {
                         };
                         Config.Mods = Config.Mods.AddToArray(modInfo);
                     }
+                    Assertion.NotNull(modInfo);
+
                     modInfo.Description = pluginInfo.GetUserModInstance()?.Description;
                     modInfo.Name = pluginInfo.GetModName();
                     string author = pluginInfo.GetAuthor();
@@ -145,13 +147,14 @@ namespace LoadOrderMod.Settings {
                     if (entry != null && entry.updated != default)
                         modInfo.DateUpdated = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
 
-                    if (pluginInfo.publishedFileID != PublishedFileId.invalid&&
+                    if (pluginInfo.publishedFileID != PublishedFileId.invalid &&
+                        entry != null &&
                         entry.workshopDetails.publishedFileId == pluginInfo.publishedFileID) {
                         modInfo.Status = (DownloadStatus)(int)
                             SteamUtilities.IsUGCUpToDate(entry.workshopDetails, out modInfo.DownloadFailureReason);
                     }
                 } catch (Exception ex) {
-                    Log.Exception(ex);
+                    ex.Log("pluginInfo=" + pluginInfo);
                 }
             }
         }
@@ -165,73 +168,53 @@ namespace LoadOrderMod.Settings {
                 UserAssetType.ColorCorrection,
                 UserAssetType.DistrictStyleMetaData,
             })) {
-                if (!asset.isMainAsset) continue;
-                var assetInfo = asset.GetAssetConfig();
-                if (assetInfo == null) {
-                    assetInfo = new LoadOrderShared.AssetInfo { Path = asset.GetPath() };
-                    Config.Assets = Config.Assets.AddToArray(assetInfo);
-                }
-
-                assetInfo.AssetName = asset.name;
-
-                // get asset name from file (which could be less complete)
-                // if we don't already have a complete name
-                bool fallback = !assetInfo.Author.IsAuthorNameValid();
-                string author = asset.GetAuthor(fallback);
-                if (author.IsAuthorNameValid())
-                    assetInfo.Author = author;
-
-                var assetType = asset.type;
-                var entry = asset.GetEntryData();
-
-                MetaData metaData = asset.Instantiate() as MetaData;
-                if (entry != null && entry.updated != default)
-                    assetInfo.DateUpdated = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
-                else
-                    assetInfo.DateUpdated = metaData.getTimeStamp.ToLocalTime().ToString(CultureInfo.InvariantCulture);
-
-                assetInfo.Tags = assetType.Tags();
-
-                if (metaData is CustomAssetMetaData customAssetMetaData) {
-                    assetInfo.description = ContentManagerUtil.SafeGetAssetDesc(customAssetMetaData, asset.package);
-                    var tags = customAssetMetaData.Tags(asset.package.GetPublishedFileID());
-                    assetInfo.Tags = assetInfo.Tags.Concat(tags).ToArray();
-                }
-
-                if (asset.package.GetPublishedFileID() != PublishedFileId.invalid &&
-                        entry.workshopDetails.publishedFileId == asset.package.GetPublishedFileID()) {
-                    assetInfo.Status = (DownloadStatus)(int)
-                        SteamUtilities.IsUGCUpToDate(entry.workshopDetails, out assetInfo.DownloadFailureReason);
-                }
-            }
-
-            foreach (var asset in PackageManager.FilterAssets(UserAssetType.MapThemeMetaData)) {
                 try {
+                    Assertion.NotNull(asset, "asset");
                     if (!asset.isMainAsset) continue;
-                    string path = asset.package.packagePath;
                     var assetInfo = asset.GetAssetConfig();
                     if (assetInfo == null) {
                         assetInfo = new LoadOrderShared.AssetInfo { Path = asset.GetPath() };
                         Config.Assets = Config.Assets.AddToArray(assetInfo);
                     }
-                    MapThemeMetaData metaData = asset.Instantiate<MapThemeMetaData>();
+                    Assertion.NotNull(assetInfo, "assetInfo");
+                    Assertion.NotNull(asset.package, "asset.package");
+
                     assetInfo.AssetName = asset.name;
 
                     // get asset name from file (which could be less complete)
                     // if we don't already have a complete name
                     bool fallback = !assetInfo.Author.IsAuthorNameValid();
-                    string author = asset.GetAuthor(fallback);
-                    if (author.IsAuthorNameValid())
-                        assetInfo.Author = author;
+                    {
+                        string author = asset.GetAuthor(fallback);
+                        if (author.IsAuthorNameValid())
+                            assetInfo.Author = author;
+                    }
 
                     var entry = asset.GetEntryData();
+
+                    MetaData metaData = asset.Instantiate() as MetaData;
                     if (entry != null && entry.updated != default)
                         assetInfo.DateUpdated = entry.updated.ToLocalTime().ToString(CultureInfo.InvariantCulture);
                     else
                         assetInfo.DateUpdated = metaData.getTimeStamp.ToLocalTime().ToString(CultureInfo.InvariantCulture);
-                    assetInfo.Tags = new[] { "Theme" };
-                } catch (Exception ex) {
-                    Log.Exception(ex);
+
+                    assetInfo.Tags = asset.type.Tags();
+                    Assertion.NotNull(assetInfo.Tags, "assetInfo.Tags");
+
+                    if (metaData is CustomAssetMetaData customAssetMetaData) {
+                        assetInfo.description = ContentManagerUtil.SafeGetAssetDesc(customAssetMetaData, asset.package);
+                        var tags = customAssetMetaData.Tags(asset.package.GetPublishedFileID());
+                        assetInfo.Tags = assetInfo.Tags.Concat(tags).ToArray();
+                    }
+
+                    if (asset.package.GetPublishedFileID() != PublishedFileId.invalid &&
+                        entry != null &&
+                        entry.workshopDetails.publishedFileId == asset.package.GetPublishedFileID()) {
+                        assetInfo.Status = (DownloadStatus)(int)
+                            SteamUtilities.IsUGCUpToDate(entry.workshopDetails, out assetInfo.DownloadFailureReason);
+                    }
+                } catch(Exception ex) {
+                    ex.Log($"asset: {asset}");
                 }
             }
         }
