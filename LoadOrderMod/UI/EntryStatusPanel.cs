@@ -41,7 +41,6 @@ namespace LoadOrderMod.UI {
             relativePosition = pos;
         }
 
-
         public static void UpdateDownloadStatusSprite(PackageEntry packageEntry) {
             try {
                 Assertion.NotNull(packageEntry, "packageEntry");
