@@ -26,8 +26,6 @@ namespace KianCommons {
         /// </summary>
         private static readonly bool ShowTimestamp = true;
 
-        private static string assemblyName_ = Assembly.GetExecutingAssembly().GetName().Name;
-
         /// <summary>
         /// File name for log file.
         /// </summary>
@@ -346,7 +344,7 @@ namespace KianCommons {
                     // copying to game log is slow anyways so
                     // this is a good time to flush if neccessary.
                     Flush();
-                    m = assemblyName_ + " | " + m;
+                    m = " LoadOrder | " + m;
                     m = RemoveExtraNewLine(m);
                     switch (level) {
                         case LogLevel.Error:
