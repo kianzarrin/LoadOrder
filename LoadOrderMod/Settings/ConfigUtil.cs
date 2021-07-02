@@ -17,8 +17,11 @@ namespace LoadOrderMod.Settings {
     using static ColossalFramework.Plugins.PluginManager;
     using static KianCommons.ReflectionHelpers;
     using System.Globalization;
+    using System.Collections;
 
     public static class ConfigUtil {
+        private static Hashtable assetsTable_;
+
         private static LoadOrderConfig config_;
         public static LoadOrderConfig Config {
             get {
@@ -33,11 +36,17 @@ namespace LoadOrderMod.Settings {
         }
 
         private static void Init() {
-            if (config_ != null) return; //already initialized.
+            if (config_ != null) return; // already initialized.
             LogCalled();
             config_ =
                 LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
                 ?? new LoadOrderConfig();
+
+            int n = Math.Max(PlatformService.workshop.GetSubscribedItemCount(),  config_.Assets.Length);
+            assetsTable_ = new Hashtable(n * 10);
+            foreach(var assetInfo in config_.Assets)
+                assetsTable_[assetInfo.Path] = assetInfo;
+                
             SaveThread.Init();
         }
 
@@ -173,8 +182,8 @@ namespace LoadOrderMod.Settings {
                     if (!asset.isMainAsset) continue;
                     var assetInfo = asset.GetAssetConfig();
                     if (assetInfo == null) {
-                        assetInfo = new LoadOrderShared.AssetInfo { Path = asset.GetPath() };
-                        Config.Assets = Config.Assets.AddToArray(assetInfo);
+                        assetInfo = new AssetInfo { Path = asset.GetPath() };
+                        AddAssetConfig(assetInfo);
                     }
                     Assertion.NotNull(assetInfo, "assetInfo");
                     Assertion.NotNull(asset.package, "asset.package");
@@ -248,8 +257,14 @@ namespace LoadOrderMod.Settings {
         internal static LoadOrderShared.ModInfo GetModConfig(this PluginInfo p) =>
             Config?.Mods?.FirstOrDefault(item => item.Path == p.modPath);
 
+        internal static void AddAssetConfig(AssetInfo assetInfo) {
+            Config.Assets = Config.Assets.AddToArray(assetInfo);
+            assetsTable_[assetInfo.Path] = assetInfo;
+        }
+
         internal static LoadOrderShared.AssetInfo GetAssetConfig(this Package.Asset a) =>
-            Config?.Assets?.FirstOrDefault(item => item.Path == a.GetPath());
+            assetsTable_[a.GetPath()] as AssetInfo;
+        
         internal static string GetPath(this Package.Asset a) => a.package.packagePath;
 
         internal static void SetAuthor(this Package.Asset a, string author) {

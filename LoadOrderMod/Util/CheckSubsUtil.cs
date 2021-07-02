@@ -169,11 +169,13 @@ namespace LoadOrderMod.Util {
                     mod.DownloadFailureReason = reason;
                     ConfigUtil.SaveConfig();
                 } else {
-                    var asset = ConfigUtil.Config.Assets.FirstOrDefault(_asset => GetID2(_asset.Path) == ugc.publishedFileId);
-                    if (asset != null) {
-                        asset.Status = (LoadOrderShared.DownloadStatus)(int)status;
-                        asset.DownloadFailureReason = reason;
-                        ConfigUtil.SaveConfig();
+                    // TODO: this might take long. only check this when ready. (maybe in a parallel thread?)
+                    if (false) {
+                        foreach (var assetInfo in ConfigUtil.Config.Assets.Where(_asset => GetID2(_asset.Path) == ugc.publishedFileId)) {
+                            assetInfo.Status = (LoadOrderShared.DownloadStatus)(int)status;
+                            assetInfo.DownloadFailureReason = reason;
+                            ConfigUtil.SaveConfig();
+                        }
                     }
                 }
             } catch (Exception ex) { ex.Log(); }
