@@ -49,7 +49,7 @@ namespace LoadOrderMod.Settings {
 
         public static void SaveConfig() {
             try {
-                LogCalled();
+                //LogCalled();
                 SaveThread.Dirty = false;
                 if (config_ == null) return;
                 lock (SaveThread.LockObject)

@@ -59,7 +59,7 @@ namespace LoadOrderMod.UI {
                         GetorCreateStatusPanel(packageEntry).StatusButton.SetStatus(status, reason);
                     }
                 }
-                Log.Succeeded();
+                //Log.Succeeded();
             } catch (Exception ex) { ex.Log(); }
         }
 
@@ -67,7 +67,7 @@ namespace LoadOrderMod.UI {
             try {
                 Assertion.NotNull(packageEntry, "packageEntry");
                 Destroy(GetStatusPanel(packageEntry)?.gameObject);
-                Log.Succeeded();
+                //Log.Succeeded();
             } catch (Exception ex) { ex.Log(); }
         }
 

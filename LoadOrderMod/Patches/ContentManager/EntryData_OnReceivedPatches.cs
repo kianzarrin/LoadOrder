@@ -14,7 +14,7 @@ namespace LoadOrderMod.Patches.ContentManager {
         static void OnDetailsReceived_Postfix(EntryData __instance, UGCDetails details) {
             if (__instance.publishedFileId == details.publishedFileId) {
 #if DEBUG
-                Log.Called(details.publishedFileId);
+                //Log.Called(details.publishedFileId);
 #endif
                 __instance.OnAuthorRecieved();
                 if (__instance.updated != default) {
