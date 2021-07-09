@@ -203,7 +203,12 @@ namespace LoadOrderTool.UI {
                 if (e.ColumnIndex == CDescription.Index && e.Value != null) {
                     cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
                 } else if (e.ColumnIndex == CModID.Index) {
-                    cell.ToolTipText = ContentUtil.GetItemURL((string)cell.Value) ?? ModList.Filtered[e.RowIndex].ModPath;
+                    var mod = ModList.Filtered[e.RowIndex];
+                    if (mod.IsWorkshop) {
+                        cell.ToolTipText = ContentUtil.GetItemURL(mod.PublishedFileId);
+                    } else {
+                        cell.ToolTipText = ModList.Filtered[e.RowIndex].ModPath;
+                    }
                 } else {
                     cell.ToolTipText = null;
                 }
