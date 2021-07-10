@@ -150,6 +150,7 @@ namespace LoadOrderIPatch.Patches {
         static bool logImproved_ = false;
         public static void ApplyGameLoggingImprovements()
         {
+            Debug.Log("Starter.Awake() called.");
             if (logImproved_) return;
             logImproved_ = true;
             Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
