@@ -95,7 +95,7 @@ namespace CO.Plugins {
             private string dispalyPath_;
 
             public string DispalyPath =>
-                dispalyPath_ ??= IsWorkshop ? $"{dllName}.dll" : $"{dirName}\\{dllName}.dll";
+                dispalyPath_ ??= IsWorkshop ? $"{dllName}.dll" : $"{ContentUtil.ToIncludedPath(dirName)}\\{dllName}.dll";
 
             string displayText_;
             public string DisplayText {
