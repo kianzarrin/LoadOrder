@@ -147,8 +147,11 @@ namespace LoadOrderIPatch.Patches {
         /// Reconfigure Unity logger to remove empty lines of call stack.
         /// Stacktrace is disabled by Unity when game runs in Build mode anyways.
         /// </summary>
+        static bool logImproved_ = false;
         public static void ApplyGameLoggingImprovements()
         {
+            if (logImproved_) return;
+            logImproved_ = true;
             Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
             Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
             Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
