@@ -180,6 +180,8 @@ namespace LoadOrderMod.Settings {
                 try {
                     Assertion.NotNull(asset, "asset");
                     if (!asset.isMainAsset) continue;
+                    if (asset.GetPath().IsNullorEmpty())
+                        continue; // TODO support LUT .png
                     var assetInfo = asset.GetAssetConfig();
                     if (assetInfo == null) {
                         assetInfo = new AssetInfo { Path = asset.GetPath() };
