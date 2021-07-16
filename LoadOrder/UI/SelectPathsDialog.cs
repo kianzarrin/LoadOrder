@@ -1,11 +1,11 @@
-﻿namespace LoadOrderTool.UI {
+namespace LoadOrderTool.UI {
     using System;
     using System.IO;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using static CO.IO.DataLocation.Util;
     using static CO.IO.PathUtils;
-
+    using CO.IO;
     public partial class SelectPathsDialog : Form {
         public SelectPathsDialog() {
             InitializeComponent();
@@ -72,23 +72,23 @@
             if (IsSteamExePath(path))
                 return path;
             else if (IsSteamPath(path))
-                return Path.Combine(path, "Steam.exe");
+                return Path.Combine(path, DataLocation.SteamExe);
             else
-                return Path.Combine(ToSteamPath(path), "Steam.exe");
+                return Path.Combine(ToSteamPath(path), DataLocation.SteamExe);
         }
         public static string ToCitiesExePath(string path) {
             if (IsCitiesExePath(path))
                 return path;
             else if (IsGamePath(path))
-                return Path.Combine(path, "Cities.exe");
+                return Path.Combine(path, DataLocation.CitiesExe);
             else
-                return Path.Combine(ToGamePath(path), "Cities.exe");
+                return Path.Combine(ToGamePath(path), DataLocation.CitiesExe);
         }
 
         private void ButtonSteamPath_Click(object sender, EventArgs e) {
             using (var ofd = new OpenFileDialog()) {
-                ofd.Title = "Find Steam.exe";
-                ofd.Filter = "Steam.exe|Steam.exe";
+                ofd.Title = $"Find {DataLocation.SteamExe}";
+                ofd.Filter = $"{DataLocation.SteamExe}|{DataLocation.SteamExe}";
                 ofd.CheckFileExists = true;
                 ofd.Multiselect = false;
                 var path = textBoxSteamPath.Text;
@@ -103,8 +103,8 @@
 
         private void ButtonCitiesPath_Click(object sender, EventArgs e) {
             using (var ofd = new OpenFileDialog()) {
-                ofd.Title = "Find Cities.exe";
-                ofd.Filter = "Cities.exe|Cities.exe";
+                ofd.Title = "Find " + DataLocation.CitiesExe;
+                ofd.Filter = $"{DataLocation.CitiesExe}|{DataLocation.CitiesExe}";
                 ofd.CheckFileExists = true;
                 ofd.Multiselect = false;
                 var path = textBoxCitiesPath.Text;

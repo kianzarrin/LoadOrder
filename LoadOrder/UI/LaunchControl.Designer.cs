@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+using System.Windows.Forms;
+using CO.IO;
 
 namespace LoadOrderTool.UI {
     partial class LaunchControl {
@@ -358,7 +359,7 @@ namespace LoadOrderTool.UI {
             this.radioButtonSteamExe.Size = new System.Drawing.Size(79, 19);
             this.radioButtonSteamExe.TabIndex = 1;
             this.radioButtonSteamExe.TabStop = true;
-            this.radioButtonSteamExe.Text = "Steam.exe";
+            this.radioButtonSteamExe.Text = DataLocation.SteamExe;
             this.radioButtonSteamExe.UseVisualStyleBackColor = true;
             // 
             // radioButtonCitiesExe
@@ -369,7 +370,7 @@ namespace LoadOrderTool.UI {
             this.radioButtonCitiesExe.Size = new System.Drawing.Size(75, 19);
             this.radioButtonCitiesExe.TabIndex = 0;
             this.radioButtonCitiesExe.TabStop = true;
-            this.radioButtonCitiesExe.Text = "Cities.exe";
+            this.radioButtonCitiesExe.Text = DataLocation.CitiesExe;
             this.radioButtonCitiesExe.UseVisualStyleBackColor = true;
             // 
             // flowLayoutPanelMono

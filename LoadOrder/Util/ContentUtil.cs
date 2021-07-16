@@ -96,7 +96,7 @@ namespace LoadOrderTool.Util {
         public static Process Subscribe(IEnumerable<string> ids) {
             if (!ids.Any()) return null;
             var ids2 = string.Join(";", ids);
-            return Execute(CO.IO.DataLocation.GamePath, "Cities.exe", $"--subscribe {ids2}");
+            return Execute(DataLocation.GamePath, DataLocation.CitiesExe, $"--subscribe {ids2}");
         }
 
         public static bool IsPathIncluded(string fullPath) {

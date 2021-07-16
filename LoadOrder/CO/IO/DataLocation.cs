@@ -25,6 +25,7 @@ namespace CO.IO {
 
         private static bool m_IsEditor = false;
 
+        public static bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         public static bool isMacOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
         public static bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
@@ -173,7 +174,7 @@ namespace CO.IO {
             Log.Info("Steam Path: " + DataLocation.SteamPath);
             Log.Info("Temp Folder: " + DataLocation.tempFolder);
             Log.Info("Local Application Data: " + DataLocation.localApplicationData);
-            Log.Info("Executable Directory(Cities.exe): " + DataLocation.executableDirectory);
+            Log.Info($"Executable Directory({DataLocation.CitiesExe}): " + DataLocation.executableDirectory);
             Log.Info("Save Location: " + DataLocation.saveLocation);
             Log.Info("Application base: " + DataLocation.applicationBase);
             Log.Info("Addons path: " + DataLocation.addonsPath);
@@ -189,7 +190,7 @@ namespace CO.IO {
             ret += "\nSteam Path: " + DataLocation.SteamPath;
             ret += "\nTemp Folder: " + DataLocation.tempFolder;
             ret += "\nLocal Application Data: " + DataLocation.localApplicationData;
-            ret += "\nExecutable Directory(Cities.exe): " + DataLocation.executableDirectory;
+            ret += $"\nExecutable Directory({DataLocation.CitiesExe}): " + DataLocation.executableDirectory;
             ret += "\nSave Location: " + DataLocation.saveLocation;
             ret += "\nApplication base: " + DataLocation.applicationBase;
             ret += "\nAddons path: " + DataLocation.addonsPath;
@@ -228,22 +229,22 @@ namespace CO.IO {
             public static bool IsGamePath(string path) {
                 if (string.IsNullOrEmpty(path))
                     return false;
-                path = Path.Combine(path, "Cities.exe");
+                path = Path.Combine(path, DataLocation.CitiesExe);
                 return IsCitiesExePath(path);
             }
 
             public static bool IsSteamPath(string path) {
                 if (string.IsNullOrEmpty(path))
                     return false;
-                path = Path.Combine(path, "Steam.exe");
+                path = Path.Combine(path, DataLocation.SteamExe);
                 return IsSteamExePath(path);
             }
 
             public static bool IsSteamExePath(string path) {
-                return File.Exists(path) && string.Equals(Path.GetFileName(path), "Steam.exe", StringComparison.OrdinalIgnoreCase);
+                return File.Exists(path) && string.Equals(Path.GetFileName(path), DataLocation.SteamExe, StringComparison.OrdinalIgnoreCase);
             }
             public static bool IsCitiesExePath(string path) {
-                return File.Exists(path) && string.Equals(Path.GetFileName(path), "Cities.exe", StringComparison.OrdinalIgnoreCase);
+                return File.Exists(path) && string.Equals(Path.GetFileName(path), DataLocation.CitiesExe, StringComparison.OrdinalIgnoreCase);
             }
 
             public static bool IsWSPath(string path) {
@@ -292,6 +293,31 @@ namespace CO.IO {
             }
             return false;
 
+        }
+
+        public static string CitiesExe {
+            get {
+                if(isWindows)
+                    return "Cities.exe";
+                else if (isLinux)
+                    return "Cities.x64";
+                else if (isMacOSX)
+                    return "Cities";
+                else
+                    return "Cities"; // unknow platform.
+            }
+        }
+        public static string SteamExe {
+            get {
+                if (isWindows)
+                    return "Steam.exe";
+                else if (isLinux)
+                    return "Steam";
+                else if (isMacOSX)
+                    return "Steam";
+                else
+                    return "Steam"; // unknow platform.
+            }
         }
 
         public static string GamePath { get; private set; } = @"C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines";

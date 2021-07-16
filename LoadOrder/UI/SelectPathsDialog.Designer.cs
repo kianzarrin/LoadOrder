@@ -1,5 +1,5 @@
-﻿namespace LoadOrderTool.UI {
-
+namespace LoadOrderTool.UI {
+    using CO.IO;
     partial class SelectPathsDialog {
         /// <summary>
         ///  Required designer variable.
@@ -93,7 +93,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(65, 17);
             this.label2.TabIndex = 0;
-            this.label2.Text = "Cities.exe:";
+            this.label2.Text = $"{DataLocation.CitiesExe}:";
             // 
             // label3
             // 
@@ -102,7 +102,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(70, 17);
             this.label3.TabIndex = 1;
-            this.label3.Text = "Steam.exe:";
+            this.label3.Text = $"{DataLocation.SteamExe}:";
             // 
             // textBoxCitiesPath
             // 

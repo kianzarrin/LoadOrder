@@ -152,7 +152,7 @@ namespace LoadOrderTool.UI {
         }
 
         private void UpdateCommand() {
-            string fileExe = radioButtonSteamExe.Checked ? "Steam.exe" : "Cities.exe";
+            string fileExe = radioButtonSteamExe.Checked ? DataLocation.SteamExe : DataLocation.CitiesExe;
             labelCommand.Text = fileExe + " " + string.Join(" ", GetCommandArgs());
         }
 
@@ -269,7 +269,7 @@ namespace LoadOrderTool.UI {
             else if(radioButtonReleaseMono.Checked)
                 AssemblyUtil.UseReleaseMono();
 
-            string fileExe = radioButtonSteamExe.Checked ? "Steam.exe" : "Cities.exe";
+            string fileExe = radioButtonSteamExe.Checked ? DataLocation.SteamExe : DataLocation.CitiesExe;
             string dir = radioButtonSteamExe.Checked ? DataLocation.SteamPath : DataLocation.GamePath;
 
             ContentUtil.Execute(dir, fileExe, string.Join(" ", args));
