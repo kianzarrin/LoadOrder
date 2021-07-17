@@ -26,20 +26,21 @@ namespace LoadOrderMod.Settings.Tabs {
                     ConfigUtil.Config.TurnOffSteamPanels = val;
                     ConfigUtil.SaveConfig();
                 });
-            panelHelper.AddCheckbox(
+            var c2 = panelHelper.AddCheckbox(
                 "Improve content manager",
                 ConfigUtil.Config.FastContentManager,
                 val => {
                     ConfigUtil.Config.FastContentManager = val;
                     ConfigUtil.SaveConfig();
-                });
-            panelHelper.AddCheckbox(
+                }) as UIComponent;
+            c2.tooltip = "faster content manager";
+            var c3 = panelHelper.AddCheckbox(
                 "Add harmony resolver",
                 ConfigUtil.Config.AddHarmonyResolver,
                 val => {
                     ConfigUtil.Config.AddHarmonyResolver = val;
                     ConfigUtil.SaveConfig();
-                });
+                }) as UICheckBox;
         }
 
         static void OnResetLoadOrdersClicked() {

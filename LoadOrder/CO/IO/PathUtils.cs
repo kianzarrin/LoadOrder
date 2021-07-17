@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using LoadOrderTool;
 using System.Linq;
@@ -50,7 +50,7 @@ namespace CO.IO {
             try {
                 path = Path.GetFullPath(path);
                 var ret = Path.GetPathRoot(path).ToUpper();
-                foreach (var name in path.Substring(ret.Length).Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)) {
+                foreach (var name in path.Substring(ret.Length).Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)) {
                     var entries = Directory.GetFileSystemEntries(ret);
                     ret = entries.First(
                         p => string.Equals(Path.GetFileName(p), name, StringComparison.OrdinalIgnoreCase));
