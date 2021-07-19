@@ -61,6 +61,10 @@
     <EmbeddedResource Include="Resources\mono-debug._dll" />
   </ItemGroup>
   
+  <ItemGroup>
+    <ProjectReference Include="..\CheckBoxComboBox\CheckBoxComboBox.csproj" />
+  </ItemGroup>
+  
 
   <Target Name="DeployToModDirectory" AfterTargets="Build">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">

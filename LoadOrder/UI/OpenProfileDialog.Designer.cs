@@ -47,8 +47,9 @@ namespace LoadOrderTool.UI {
             this.lblMissingItems.AutoSize = true;
             this.lblMissingItems.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblMissingItems.Location = new System.Drawing.Point(0, 0);
+            this.lblMissingItems.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblMissingItems.Name = "lblMissingItems";
-            this.lblMissingItems.Size = new System.Drawing.Size(83, 15);
+            this.lblMissingItems.Size = new System.Drawing.Size(125, 25);
             this.lblMissingItems.TabIndex = 0;
             this.lblMissingItems.Text = "Missing items:";
             // 
@@ -66,30 +67,37 @@ namespace LoadOrderTool.UI {
             this.cType,
             this.cName});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 15);
+            this.dataGridView1.Location = new System.Drawing.Point(0, 25);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
+            this.dataGridView1.RowHeadersWidth = 62;
             this.dataGridView1.RowTemplate.Height = 27;
-            this.dataGridView1.Size = new System.Drawing.Size(712, 524);
+            this.dataGridView1.Size = new System.Drawing.Size(1017, 873);
             this.dataGridView1.TabIndex = 1;
             // 
             // cID
             // 
             this.cID.HeaderText = "ID";
+            this.cID.MinimumWidth = 8;
             this.cID.Name = "cID";
             this.cID.ReadOnly = true;
+            this.cID.Width = 150;
             // 
             // cType
             // 
             this.cType.HeaderText = "Type";
+            this.cType.MinimumWidth = 8;
             this.cType.Name = "cType";
             this.cType.ReadOnly = true;
+            this.cType.Width = 150;
             // 
             // cName
             // 
             this.cName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.cName.HeaderText = "Name";
+            this.cName.MinimumWidth = 8;
             this.cName.Name = "cName";
             this.cName.ReadOnly = true;
             // 
@@ -106,18 +114,20 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanel1.Controls.Add(this.SubscribeAll);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 508);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 853);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(712, 31);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1017, 45);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // btnCancel
             // 
             this.btnCancel.AutoSize = true;
             this.btnCancel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnCancel.Location = new System.Drawing.Point(656, 3);
+            this.btnCancel.Location = new System.Drawing.Point(940, 5);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(53, 25);
+            this.btnCancel.Size = new System.Drawing.Size(73, 35);
             this.btnCancel.TabIndex = 0;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -126,9 +136,10 @@ namespace LoadOrderTool.UI {
             // 
             this.btnAppend.AutoSize = true;
             this.btnAppend.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnAppend.Location = new System.Drawing.Point(591, 3);
+            this.btnAppend.Location = new System.Drawing.Point(846, 5);
+            this.btnAppend.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnAppend.Name = "btnAppend";
-            this.btnAppend.Size = new System.Drawing.Size(59, 25);
+            this.btnAppend.Size = new System.Drawing.Size(86, 35);
             this.btnAppend.TabIndex = 2;
             this.btnAppend.Text = "Append";
             this.btnAppend.UseVisualStyleBackColor = true;
@@ -137,9 +148,10 @@ namespace LoadOrderTool.UI {
             // 
             this.btnReplace.AutoSize = true;
             this.btnReplace.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnReplace.Location = new System.Drawing.Point(527, 3);
+            this.btnReplace.Location = new System.Drawing.Point(756, 5);
+            this.btnReplace.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnReplace.Name = "btnReplace";
-            this.btnReplace.Size = new System.Drawing.Size(58, 25);
+            this.btnReplace.Size = new System.Drawing.Size(82, 35);
             this.btnReplace.TabIndex = 3;
             this.btnReplace.Text = "Replace";
             this.btnReplace.UseVisualStyleBackColor = true;
@@ -148,9 +160,10 @@ namespace LoadOrderTool.UI {
             // 
             this.btnReload.AutoSize = true;
             this.btnReload.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnReload.Location = new System.Drawing.Point(468, 3);
+            this.btnReload.Location = new System.Drawing.Point(672, 5);
+            this.btnReload.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnReload.Name = "btnReload";
-            this.btnReload.Size = new System.Drawing.Size(53, 25);
+            this.btnReload.Size = new System.Drawing.Size(76, 35);
             this.btnReload.TabIndex = 4;
             this.btnReload.Text = "Reload";
             this.btnReload.UseVisualStyleBackColor = true;
@@ -159,9 +172,10 @@ namespace LoadOrderTool.UI {
             // 
             this.cbItemType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbItemType.FormattingEnabled = true;
-            this.cbItemType.Location = new System.Drawing.Point(313, 3);
+            this.cbItemType.Location = new System.Drawing.Point(453, 5);
+            this.cbItemType.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbItemType.Name = "cbItemType";
-            this.cbItemType.Size = new System.Drawing.Size(149, 23);
+            this.cbItemType.Size = new System.Drawing.Size(211, 33);
             this.cbItemType.TabIndex = 1;
             // 
             // flowLayoutPanel2
@@ -169,7 +183,7 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanel2.AutoSize = true;
             this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(310, 0);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(449, 0);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(0, 0);
@@ -179,10 +193,10 @@ namespace LoadOrderTool.UI {
             // 
             this.SubscribeAll.AutoSize = true;
             this.SubscribeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.SubscribeAll.Location = new System.Drawing.Point(162, 3);
-            this.SubscribeAll.Margin = new System.Windows.Forms.Padding(3, 3, 20, 3);
+            this.SubscribeAll.Location = new System.Drawing.Point(231, 5);
+            this.SubscribeAll.Margin = new System.Windows.Forms.Padding(4, 5, 29, 5);
             this.SubscribeAll.Name = "SubscribeAll";
-            this.SubscribeAll.Size = new System.Drawing.Size(128, 25);
+            this.SubscribeAll.Size = new System.Drawing.Size(189, 35);
             this.SubscribeAll.TabIndex = 6;
             this.SubscribeAll.Text = "Subscribe To all in CS";
             this.SubscribeAll.UseVisualStyleBackColor = true;
@@ -190,12 +204,13 @@ namespace LoadOrderTool.UI {
             // 
             // OpenProfileDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(712, 539);
+            this.ClientSize = new System.Drawing.Size(1017, 898);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.lblMissingItems);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "OpenProfileDialog";
             this.Text = "Open Profile";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
