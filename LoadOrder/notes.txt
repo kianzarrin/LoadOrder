@@ -1,4 +1,4 @@
-﻿to get local last updated time:
+to get local last updated time:
 	ISteamUGC.GetItemInstallInfo
 	ISteamUGC.GetItemState( PublishedFileId_t nPublishedFileID );
 
@@ -11,3 +11,19 @@ mass disabling mods will do the above but also additionally
 
 TriggerEventPluginsChanged checks PluginManager.m_EventsEnabled == 0 to avoid trigering events.
 	so m_EventsEnabled++ can be used to prevent calling OnSettingsUI too many times.
+
+
+
+tests:
+    DLC
+        save/load failed
+            save passed
+            load failed
+        save/load profile passed
+        excluded dlc is excluded in game
+
+    skip file
+        save/load 
+            load passed
+            save ?
+        save/load profile
