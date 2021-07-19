@@ -18,7 +18,6 @@ namespace LoadOrderShared {
         public string DateUpdated;
         public DownloadStatus Status;
         public string DownloadFailureReason;
-
     }
 
     public class ModInfo : ItemInfo {
@@ -56,6 +55,8 @@ namespace LoadOrderShared {
 
         public ModInfo[] Mods = new ModInfo[0];
         public AssetInfo[] Assets = new AssetInfo[0];
+        public string[] ExcludedDLCs;
+        
 
         public void Serialize(string dir) {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));

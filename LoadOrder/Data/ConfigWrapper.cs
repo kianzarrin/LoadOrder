@@ -102,6 +102,7 @@ namespace LoadOrderTool.Data {
             Dirty = false;
             PluginManager.instance.ApplyPendingValues();
             PackageManager.instance.ApplyPendingValues();
+            DLCManager.instance.Save();
             Config.Serialize(DataLocation.localApplicationData);
             Log.Info($"SaveConfigImpl() done. (Dirty={Dirty})");
         }

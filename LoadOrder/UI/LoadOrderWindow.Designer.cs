@@ -56,6 +56,10 @@ namespace LoadOrderTool.UI
             this.ComboBoxAssetTags = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.TextFilterAsset = new System.Windows.Forms.TextBox();
+            this.DLCTab = new System.Windows.Forms.TabPage();
+            this.DLCControl = new LoadOrderTool.UI.DLCControl();
+            this.LSMTab = new System.Windows.Forms.TabPage();
+            //this.LSMControl = new LoadOrderTool.UI.LSMControl();
             this.LaunchTab = new System.Windows.Forms.TabPage();
             this.launchControl = new LoadOrderTool.UI.LaunchControl();
             this.menuStrip = new LoadOrderTool.UI.LoadOrderWindowMenuStrip();
@@ -69,6 +73,8 @@ namespace LoadOrderTool.UI
             ((System.ComponentModel.ISupportInitialize)(this.dataGridAssets)).BeginInit();
             this.AssetsActionPanel.SuspendLayout();
             this.tableLayoutPanelAssetFilters.SuspendLayout();
+            DLCTab.SuspendLayout();
+            LSMTab.SuspendLayout();
             this.LaunchTab.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -76,6 +82,8 @@ namespace LoadOrderTool.UI
             // 
             this.TabContainer.Controls.Add(this.ModsTab);
             this.TabContainer.Controls.Add(this.AssetsTab);
+            this.TabContainer.Controls.Add(this.DLCTab);
+            this.TabContainer.Controls.Add(this.LSMTab);
             this.TabContainer.Controls.Add(this.LaunchTab);
             this.TabContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabContainer.Location = new System.Drawing.Point(0, 24);
@@ -390,6 +398,45 @@ namespace LoadOrderTool.UI
             this.TextFilterAsset.Name = "TextFilterAsset";
             this.TextFilterAsset.Size = new System.Drawing.Size(426, 23);
             this.TextFilterAsset.TabIndex = 4;
+
+            // 
+            // DLCTab
+            // 
+            this.DLCTab.BackColor = System.Drawing.Color.Transparent;
+            this.DLCTab.Controls.Add(this.DLCControl);
+            this.DLCTab.Location = new System.Drawing.Point(4, 24);
+            this.DLCTab.Name = "DLCTab";
+            this.DLCTab.Padding = new System.Windows.Forms.Padding(3);
+            this.DLCTab.Size = new System.Drawing.Size(948, 499);
+            this.DLCTab.TabIndex = 2;
+            this.DLCTab.Text = "DLC";
+            // 
+            // DLCControl
+            // 
+            this.DLCControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DLCControl.Name = "DLCControl";
+            //this.DLCControl.AutoSize = true;
+
+            // 
+            // LSMTab
+            // 
+            this.LSMTab.BackColor = System.Drawing.Color.Transparent;
+            this.LSMTab.Location = new System.Drawing.Point(4, 24);
+            this.LSMTab.Name = "LSMTab";
+            this.LSMTab.Padding = new System.Windows.Forms.Padding(3);
+            this.LSMTab.Size = new System.Drawing.Size(948, 499);
+            this.LSMTab.TabIndex = 2;
+            this.LSMTab.Text = "LSM";
+            //this.LSMTab.Controls.Add(this.LSMControl);
+            //// 
+            //// LSMControl
+            //// 
+            //this.LSMControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            //this.LSMControl.Location = new System.Drawing.Point(3, 3);
+            //this.LSMControl.Name = "LSMControl";
+            //this.LSMControl.Size = new System.Drawing.Size(942, 493);
+            //this.LSMControl.TabIndex = 0;
+
             // 
             // LaunchTab
             // 
@@ -453,7 +500,16 @@ namespace LoadOrderTool.UI
             this.AssetsActionPanel.PerformLayout();
             this.tableLayoutPanelAssetFilters.ResumeLayout(false);
             this.tableLayoutPanelAssetFilters.PerformLayout();
+
+            this.DLCTab.ResumeLayout(false);
+            this.DLCTab.PerformLayout();
+
+            this.LSMTab.ResumeLayout();
+            this.LSMTab.PerformLayout();
+
             this.LaunchTab.ResumeLayout(false);
+            this.LaunchTab.PerformLayout();
+
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -488,7 +544,13 @@ namespace LoadOrderTool.UI
         public LoadOrderWindowMenuStrip menuStrip;
 
         private TabPage LaunchTab;
+        private TabPage DLCTab;
+        private TabPage LSMTab;
+
         private UI.LaunchControl launchControl;
+        private UI.DLCControl DLCControl;
+        //private UI.LSMControl LSMControl;
+
         private StatusStrip statusStrip;
     }
 }
