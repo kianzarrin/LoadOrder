@@ -220,13 +220,7 @@ namespace LoadOrderTool {
         public void LoadFromProfile(LoadOrderProfile profile, bool replace = true)
             => PluginManager.instance.LoadFromProfile(profile, replace);
 
-        public void SaveToProfile(LoadOrderProfile profile) {
-            var list = new List<LoadOrderProfile.Mod>(this.Count);
-            foreach (var pluginInfo in this) {
-                var modProfile = new LoadOrderProfile.Mod(pluginInfo);
-                list.Add(modProfile);
-            }
-            profile.Mods = list.ToArray();
-        }
+        public void SaveToProfile(LoadOrderProfile profile)
+            => PluginManager.instance.SaveToProfile(profile);
     }
 }

@@ -11,6 +11,7 @@ namespace LoadOrderTool.Data {
 
     public class ConfigWrapper : SingletonLite<ConfigWrapper> {
         public LoadOrderConfig Config;
+        public LoadingScreenMod.Settings LSMConfig;
 
         bool dirty_;
         public bool Dirty {
@@ -31,6 +32,7 @@ namespace LoadOrderTool.Data {
             Config = LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
                 ?? new LoadOrderConfig();
             Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
+            LSMConfig = LoadingScreenMod.Settings.Deserialize();
             if(!CommandLine.Parse.CommandLine)
                 StartSaveThread();
         }
@@ -103,7 +105,9 @@ namespace LoadOrderTool.Data {
             PluginManager.instance.ApplyPendingValues();
             PackageManager.instance.ApplyPendingValues();
             DLCManager.instance.Save();
+            LSMManager.instance.Save();
             Config.Serialize(DataLocation.localApplicationData);
+            LSMConfig.Serialize();
             Log.Info($"SaveConfigImpl() done. (Dirty={Dirty})");
         }
 

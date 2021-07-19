@@ -19,9 +19,13 @@ namespace CO.Packaging {
     using LoadOrderTool.Data;
     using System.Globalization;
 
-    public class PackageManager : SingletonLite<PackageManager> {
+    public class PackageManager : SingletonLite<PackageManager>, IDataManager {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
         static LoadOrderConfig Config => ConfigWrapper.Config;
+
+        public bool IsLoading { get; private set; }
+        public bool IsLoaded { get; private set; }
+        public event Action EventLoaded;
 
         public AssetInfo GetAsset(string path) =>
             m_Assets.FirstOrDefault(a => a.AssetPath == path);
@@ -192,9 +196,13 @@ namespace CO.Packaging {
             return ret;
         }
 
+        public void Load() => LoadPackages();
         public void LoadPackages() {
             try {
                 Log.Info("Loading Assets ...", true);
+                IsLoading = true;
+                IsLoaded = false;
+
                 m_Assets = new List<AssetInfo>();
 
                 //this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Maps"), PublishedFileId.invalid);
@@ -214,6 +222,8 @@ namespace CO.Packaging {
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
+
+            try { EventLoaded?.Invoke(); } catch (Exception ex) { ex.Log(); }
         }
 
         public void LoadWorkshopPackages() {
@@ -274,6 +284,7 @@ namespace CO.Packaging {
             m_Assets.Add(package);
         }
 
+        public void Save() => ApplyPendingValues();
         public void ApplyPendingValues() {
             foreach (var p in GetAssets())
                 p.ApplyPendingValues();

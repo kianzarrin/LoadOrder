@@ -19,9 +19,12 @@ namespace CO.Plugins {
     using LoadOrderTool.UI;
     using System.Globalization;
 
-    public class PluginManager : SingletonLite<PluginManager> {
+    public class PluginManager : SingletonLite<PluginManager>, IDataManager {
         public static ConfigWrapper ConfigWrapper = ConfigWrapper.instance;
         static LoadOrderConfig Config => ConfigWrapper.Config;
+        public bool IsLoading { get; private set; }
+        public bool IsLoaded { get; private set; }
+        public event Action EventLoaded;
 
         public enum MessageType {
             Error,
@@ -461,8 +464,12 @@ namespace CO.Plugins {
 
         public int modCount => GetMods().Count();
 
+        public void Load() => LoadPlugins();
         public void LoadPlugins() {
             Log.Info("Loading Plugins ...", true);
+            IsLoading = true;
+            IsLoaded = false;
+
             string builtinModsPath = Path.Combine(DataLocation.gameContentPath, "Mods");
             string addonsModsPath = DataLocation.modsPath;
             m_Plugins = new List<PluginInfo>();
@@ -501,6 +508,7 @@ namespace CO.Plugins {
                 Log.Exception(ex);
             } finally {
                 //this.CreateReporters(modsPath);
+                try { EventLoaded?.Invoke(); } catch (Exception ex) { ex.Log(); }
             }
         }
 
@@ -532,6 +540,9 @@ namespace CO.Plugins {
                 }
             }
         }
+
+        public void Save() { } // writing to game settings file or moving dirs is considered serialization not saving.
+
         public void ApplyPendingValues() {
             foreach(var p in GetMods())
                 p.ApplyPendingValues();
@@ -555,6 +566,15 @@ namespace CO.Plugins {
                     pluginInfo.IsIncluded = false;
                 }
             }
+        }
+
+        public void SaveToProfile(LoadOrderProfile profile) {
+            var list = new List<LoadOrderProfile.Mod>(this.m_Plugins.Count);
+            foreach (var pluginInfo in m_Plugins) {
+                var modProfile = new LoadOrderProfile.Mod(pluginInfo);
+                list.Add(modProfile);
+            }
+            profile.Mods = list.ToArray();
         }
 
         //private static int sUniqueCompilationID;

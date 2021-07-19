@@ -40,10 +40,14 @@ namespace LoadOrderTool.Data {
 
     }
 
-    public class DLCManager :  SingletonLite<DLCManager> {
+    public class DLCManager :  SingletonLite<DLCManager>, IDataManager {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
 
         public List<DLCInfo> DLCs = new List<DLCInfo>();
+
+        public bool IsLoading { get; private set; }
+        public bool IsLoaded { get; private set; }
+        public event Action EventLoaded;
 
         public class DLCInfo {
 
@@ -94,12 +98,42 @@ namespace LoadOrderTool.Data {
         }
 
         public void Load() {
-            DLCs = LoadImpl(ConfigWrapper.Config.ExcludedDLCs);
+            try {
+                Log.Called();
+                IsLoading = true;
+                IsLoaded = false;
+                DLCs = LoadImpl(ConfigWrapper.Config.ExcludedDLCs);
+            } catch (Exception ex) { ex.Log(); }
+            try { EventLoaded?.Invoke(); } catch (Exception ex) { ex.Log(); }
         }
 
         public void Save() {
-            ConfigWrapper.Config.ExcludedDLCs = SaveImpl();
+            try {
+                Log.Called();
+                ConfigWrapper.Config.ExcludedDLCs = SaveImpl();
+            } catch (Exception ex) { ex.Log(); }
         }
 
+        public void LoadFromProfile(LoadOrderProfile profile, bool replace = true) {
+            foreach (var item in DLCs) {
+                {
+                    bool included = (profile.ExcludedDLCs & item.DLC) == 0; // == 0 because excluded
+                    if (replace) {
+                        item.IsIncluded = included;
+                    } else {
+                        item.IsIncluded |= included;
+                    }
+                }
+            }
+        }
+
+        public void SaveToProfile(LoadOrderProfile profile) {
+            var excludedDLCs = DLC.None;
+            foreach (var item in DLCs) {
+                if (!item.IsIncluded)
+                    excludedDLCs |= item.DLC;
+            }
+            profile.ExcludedDLCs = excludedDLCs;
+        }
     }
 }

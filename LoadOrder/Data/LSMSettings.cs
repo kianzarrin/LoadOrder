@@ -1,0 +1,51 @@
+using System;
+using System.IO;
+using System.Xml.Serialization;
+using CO.IO;
+using LoadOrderTool;
+using LoadOrderTool.Util;
+
+namespace LoadingScreenMod {
+    public class Settings {
+        const string FILENAME = "LoadingScreenMod.xml";
+        static string FilePath => Path.Combine(DataLocation.GamePath, FILENAME);
+        public static string DefaultSkipPath => Path.Combine(DataLocation.mapLocation, "SkippedPrefabs");
+        public static string DefaultSkipFile => Path.Combine(DefaultSkipPath, "skip.txt");
+
+        public int version = 6;
+        public bool loadEnabled = true;
+        public bool loadUsed = true;
+        public bool shareTextures = true;
+        public bool shareMaterials = true;
+        public bool shareMeshes = true;
+        public bool reportAssets = false;
+        public string reportDir = string.Empty;
+        public bool skipPrefabs = false;
+        public string skipFile = string.Empty;
+
+
+        public static Settings Deserialize() {
+            Settings s;
+
+            try {
+                XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+
+                using (StreamReader reader = new StreamReader(FilePath))
+                    s = (Settings)serializer.Deserialize(reader);
+            } catch (Exception) { s = new Settings(); }
+
+            s.version = 6;
+            return s;
+        }
+
+        public void Serialize() {
+            try {
+                XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+                using (StreamWriter writer = new StreamWriter(FilePath))
+                    serializer.Serialize(writer, this);
+            } catch (Exception ex) {
+                ex.Log();
+            }
+        }
+    }
+}

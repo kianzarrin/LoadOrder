@@ -36,12 +36,14 @@ namespace LoadOrderTool.CommandLine {
             PackageManager.instance.LoadPackages();
             PluginManager.instance.LoadPlugins();
             DLCManager.instance.Load();
+            LSMManager.instance.Load();
 
             if (Profile != null) {
                 Log.Info("loading profile ...");
                 PluginManager.instance.LoadFromProfile(Profile, replace: true);
                 PackageManager.instance.LoadFromProfile(Profile, replace: true);
                 //DLCManager.instance.LoadFromProfile(Profile, replace: true);
+                //LSMManager.instance.LoadFromProfile(Profile, replace: true);
                 Log.Info("saving profile ...");
                 ConfigWrapper.instance.SaveConfig();
                 Log.Info("Successful!");

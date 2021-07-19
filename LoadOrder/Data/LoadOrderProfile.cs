@@ -34,15 +34,10 @@ namespace LoadOrderTool.Data {
                 .Replace(WS_CONTENT_PATH, DataLocation.WorkshopContentPath);
         }
 
-        public interface IItemProfile {
-
-        }
-
         public class Mod : IProfileItem {
 
             [XmlIgnore]
             public string IncludedPathFinal;
-
             public string IncludedPath {
                 get => FromFinalPath(IncludedPathFinal);
                 set => IncludedPathFinal = ToFinalPath(value);
@@ -125,6 +120,15 @@ namespace LoadOrderTool.Data {
 
         public Mod[] Mods = new Mod[0];
         public Asset[] Assets = new Asset[0];
+        public CO.DLC ExcludedDLCs;
+
+        [XmlIgnore]
+        public string SkipFilePathFinal;
+        public string SkipFilePath {
+            get => FromFinalPath(SkipFilePathFinal);
+            set => SkipFilePathFinal = ToFinalPath(value);
+        }
+
 
         public Mod GetMod(string includedPath) => Mods.FirstOrDefault(m => m.IncludedPathFinal == includedPath);
         public Asset GetAsset(string includedPath) => Assets.FirstOrDefault(m => m.IncludedPathFinal == includedPath);

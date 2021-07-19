@@ -33,7 +33,7 @@ namespace LoadOrderTool.UI {
 
             checkBoxLSM.Hide();
             checkBoxNoMods.Hide();
-            checkBoxNewAsset.SetTooltip("");
+            checkBoxNewAsset.SetTooltip("Create asset based on existing asset, as opposed to loading asset.");
             checkBoxLHT.SetTooltip("Traffic drives on left.");
 
             string loadSaveTooltip =
@@ -233,7 +233,6 @@ namespace LoadOrderTool.UI {
                 }
             }
             return null;
-
         }
 
         private void buttonLaunch_Click(object sender, EventArgs e) {
