@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using LoadOrderTool.Data;
 using LoadOrderTool.UI;
+using System.Threading;
 
 namespace LoadOrderTool.UI {
     public partial class LoadOrderWindow : Form {
@@ -44,11 +45,21 @@ namespace LoadOrderTool.UI {
             set {
                 if (dirty_ == value) return;
                 dirty_ = value;
+                Action act;
                 if (value) {
-                    Text += "*";
+                    act = new Action(delegate () { Text += "*"; });
                 } else {
-                    Text = Text[0..^1]; // drop dirty
+                    act = new Action(delegate () { Text = Text[0..^1]; }); // drop dirty *
                 }
+                ExecuteThreadSafe(act);
+            }
+        }
+
+        public void ExecuteThreadSafe(Action act) {
+            if (InvokeRequired) {
+                Invoke(act);
+            } else {
+                act.Invoke();
             }
         }
 
