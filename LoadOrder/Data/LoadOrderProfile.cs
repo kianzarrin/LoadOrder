@@ -120,7 +120,7 @@ namespace LoadOrderTool.Data {
 
         public Mod[] Mods = new Mod[0];
         public Asset[] Assets = new Asset[0];
-        public CO.DLC ExcludedDLCs;
+        public CO.DLC []ExcludedDLCs = new CO.DLC[0];
 
         [XmlIgnore]
         public string SkipFilePathFinal;

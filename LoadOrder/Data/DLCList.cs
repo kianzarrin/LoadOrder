@@ -1,8 +1,8 @@
 namespace LoadOrderTool.Data {
+    using CO;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using CO;
 
     public class DLCList {
         public List<DLCManager.DLCInfo> Original { get; private set; }
@@ -40,7 +40,7 @@ namespace LoadOrderTool.Data {
 
     }
 
-    public class DLCManager :  SingletonLite<DLCManager>, IDataManager {
+    public class DLCManager : SingletonLite<DLCManager>, IDataManager {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
 
         public List<DLCInfo> DLCs = new List<DLCInfo>();
@@ -116,24 +116,20 @@ namespace LoadOrderTool.Data {
 
         public void LoadFromProfile(LoadOrderProfile profile, bool replace = true) {
             foreach (var item in DLCs) {
-                {
-                    bool included = (profile.ExcludedDLCs & item.DLC) == 0; // == 0 because excluded
-                    if (replace) {
-                        item.IsIncluded = included;
-                    } else {
-                        item.IsIncluded |= included;
-                    }
+                bool included = !profile.ExcludedDLCs.Contains(item.DLC);
+                if (replace) {
+                    item.IsIncluded = included;
+                } else {
+                    item.IsIncluded |= included;
                 }
             }
         }
 
         public void SaveToProfile(LoadOrderProfile profile) {
-            var excludedDLCs = DLC.None;
-            foreach (var item in DLCs) {
-                if (!item.IsIncluded)
-                    excludedDLCs |= item.DLC;
-            }
-            profile.ExcludedDLCs = excludedDLCs;
+            profile.ExcludedDLCs = DLCs
+                .Where(item => !item.IsIncluded)
+                .Select(item => item.DLC)
+                .ToArray();
         }
     }
 }
