@@ -63,18 +63,6 @@ namespace LoadOrderTool.Data {
 
         }
 
-        public void ApplyProfile(LoadOrderProfile profile, LoadOrderProfile., bool replace) {
-            Log.Called("mods:" + mods, "assets:" + assets, "replace:" + replace);
-            if (mods) {
-                dataGridMods.ModList.LoadFromProfile(profile, replace);
-                dataGridMods.RefreshModList(true);
-            }
-            if (assets) {
-                PackageManager.instance.LoadFromProfile(profile, replace);
-                PopulateAssets();
-            }
-        }
-
         public void Save() {
             try {
                 Log.Called();
