@@ -188,8 +188,7 @@ namespace LoadOrderTool.UI {
             diaglog.InitialDirectory = LoadOrderProfile.DIR;
             if (diaglog.ShowDialog() == DialogResult.OK) {
                 LoadOrderProfile profile = new LoadOrderProfile();
-                dataGridMods.ModList.SaveToProfile(profile);
-                PackageManager.instance.SaveToProfile(profile);
+                ManagerList.instance.SaveToProfile(profile);
                 profile.Serialize(diaglog.FileName);
             }
         }
@@ -201,27 +200,32 @@ namespace LoadOrderTool.UI {
                 if (ofd.ShowDialog() == DialogResult.OK) {
                     var profile = LoadOrderProfile.Deserialize(ofd.FileName);
                     using (var opd = new OpenProfileDialog(profile)) {
-                        opd.ShowDialog();
-                        bool mods = opd.ItemType != OpenProfileDialog.ItemTypeT.AssetsOnly;
-                        bool assets = opd.ItemType != OpenProfileDialog.ItemTypeT.ModsOnly;
-                        if (opd.DialogResult == OpenProfileDialog.RESULT_REPLACE)
-                            ApplyProfile(profile, mods: mods, assets: assets, replace: true);
-                        else if (opd.DialogResult == OpenProfileDialog.RESULT_APPEND)
-                            ApplyProfile(profile, mods: mods, assets: assets, replace: false);
+                        if (DialogResult.Cancel == opd.ShowDialog())
+                            return;
+                        bool replace = opd.DialogResult == OpenProfileDialog.RESULT_REPLACE;
+                        ApplyProfile(profile, types: opd.ItemTypes, replace: replace);
                     }
                 }
             }
         }
 
-        public void ApplyProfile(LoadOrderProfile profile, bool mods, bool assets, bool replace) {
-            Log.Called("mods:" + mods, "assets:" + assets, "replace:" + replace);
-            if (mods) {
+        public void ApplyProfile(LoadOrderProfile profile, OpenProfileDialog.ItemTypeT types, bool replace) {
+            Log.Called("types:" + types, "replace:" + replace);
+            if ((types & OpenProfileDialog.ItemTypeT.Mods) != 0) {
                 dataGridMods.ModList.LoadFromProfile(profile, replace);
                 dataGridMods.RefreshModList(true);
             }
-            if (assets) {
+            if ((types & OpenProfileDialog.ItemTypeT.Assets) != 0) {
                 PackageManager.instance.LoadFromProfile(profile, replace);
                 PopulateAssets();
+            }
+            if ((types & OpenProfileDialog.ItemTypeT.DLCs) != 0) {
+                DLCManager.instance.LoadFromProfile(profile, replace);
+                DLCControl.PopulateDLCs();
+            }
+            if ((types & OpenProfileDialog.ItemTypeT.SkipFile) != 0) {
+                LSMManager.instance.LoadFromProfile(profile, replace);
+                LSMControl.Populate();
             }
         }
 

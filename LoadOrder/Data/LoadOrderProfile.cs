@@ -134,10 +134,13 @@ namespace LoadOrderTool.Data {
         public Asset GetAsset(string includedPath) => Assets.FirstOrDefault(m => m.IncludedPathFinal == includedPath);
 
         public void Serialize(string path) {
-            XmlSerializer ser = new XmlSerializer(typeof(LoadOrderProfile));
-            using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write)) {
-                ser.Serialize(fs, this);
-            }
+            try {
+                Log.Called();
+                XmlSerializer ser = new XmlSerializer(typeof(LoadOrderProfile));
+                using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write)) {
+                    ser.Serialize(fs, this);
+                }
+            } catch (Exception ex) { ex.Log(); }
         }
 
         public static LoadOrderProfile Deserialize(string path) {

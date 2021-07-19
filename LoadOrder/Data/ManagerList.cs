@@ -1,11 +1,8 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
 using CO;
-using CO.PlatformServices;
 using CO.Packaging;
 using CO.Plugins;
+using System;
+using System.Linq;
 
 namespace LoadOrderTool.Data {
     public interface IDataManager {
@@ -40,30 +37,58 @@ namespace LoadOrderTool.Data {
         public event Action EventLoaded;
 
         private void OnLoadCallBack() {
-            if (IsLoaded)
-                EventLoaded?.Invoke();
+            try {
+                Log.Called();
+                if (IsLoaded)
+                    EventLoaded?.Invoke();
+            } catch (Exception ex) { ex.Log(); }
         }
 
         public void Load() {
-            foreach (IDataManager m in Managers) {
-                m.EventLoaded += OnLoadCallBack;
-                m.Load();
-            }
+            try {
+                Log.Called();
+                foreach (IDataManager m in Managers) {
+                    m.EventLoaded += OnLoadCallBack;
+                    m.Load();
+                }
+            } catch (Exception ex) { ex.Log(); }
         }
 
         public void LoadFromProfile(LoadOrderProfile profile, bool replace = true) {
-            foreach (IDataManager m in Managers)
-                m.LoadFromProfile(profile, replace);
+            try {
+                Log.Called();
+                foreach (IDataManager m in Managers)
+                    m.LoadFromProfile(profile, replace);
+            } catch (Exception ex) { ex.Log(); }
+
+        }
+
+        public void ApplyProfile(LoadOrderProfile profile, LoadOrderProfile., bool replace) {
+            Log.Called("mods:" + mods, "assets:" + assets, "replace:" + replace);
+            if (mods) {
+                dataGridMods.ModList.LoadFromProfile(profile, replace);
+                dataGridMods.RefreshModList(true);
+            }
+            if (assets) {
+                PackageManager.instance.LoadFromProfile(profile, replace);
+                PopulateAssets();
+            }
         }
 
         public void Save() {
-            foreach (IDataManager m in Managers)
-                m.Save();
+            try {
+                Log.Called();
+                foreach (IDataManager m in Managers)
+                    m.Save();
+            } catch (Exception ex) { ex.Log(); }
         }
 
         public void SaveToProfile(LoadOrderProfile profile) {
-            foreach (IDataManager m in Managers)
-                m.SaveToProfile(profile);
+            try {
+                Log.Called();
+                foreach (IDataManager m in Managers)
+                    m.SaveToProfile(profile);
+            } catch (Exception ex) { ex.Log(); }
         }
     }
 }

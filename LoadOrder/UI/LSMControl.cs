@@ -15,14 +15,14 @@ namespace LoadOrderTool.UI {
             bSkipPath.SetTooltip("Choose Skip file");
 
             LSMManager.instance.Load();
-            LoadValues();
+            Populate();
 
             bSkipPath.Click += BSkipPath_Click;
             tbSkipPath.TextChanged += TbSkipPath_TextChanged;
             rbSkip.CheckedChanged += RbSkip_CheckedChanged;
         }
 
-        public void LoadValues() {
+        public void Populate() {
             tbSkipPath.Text = ConfigWrapper.LSMConfig.skipFile;
             rbSkip.Checked = LSMManager.instance.SkipPrefabs; // off if file does not exist or LSM toggle is off.
         }

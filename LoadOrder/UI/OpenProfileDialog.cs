@@ -10,10 +10,13 @@ namespace LoadOrderTool.UI {
     using LoadOrderTool.Data;
 
     public partial class OpenProfileDialog : Form {
+        [Flags]
         public enum ItemTypeT {
-            [Text("All items")] AllItems,
-            [Text("Mods only")] ModsOnly,
-            [Text("Assets only")] AssetsOnly,
+            All = Mods | Assets | DLCs| SkipFile,
+            Mods = 1,
+            Assets = 2,
+            DLCs = 4,
+            [Text("Skip file")] SkipFile = 8,
         }
 
         public const DialogResult RESULT_APPEND = DialogResult.Yes;
@@ -23,7 +26,7 @@ namespace LoadOrderTool.UI {
 
         List<IProfileItem> MissingItems;
 
-        public ItemTypeT ItemType => cbItemType.GetSelectedItem<ItemTypeT>();
+        public ItemTypeT ItemTypes => cbItemType.GetSelectedItem<ItemTypeT>();
 
         public OpenProfileDialog(LoadOrderProfile profile) {
             Profile = profile;
