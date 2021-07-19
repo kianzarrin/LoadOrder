@@ -51,6 +51,7 @@ namespace LoadOrderTool.Data {
         }
 
         static List<DLCInfo> LoadImpl(string[] excluded) {
+            excluded ??= new string[0]; // gaurd against null exception.
             CO.DLC[] dlcValues = Enum.GetValues(typeof(CO.DLC)) as CO.DLC[];
             return dlcValues.
                 Where(item => item != DLC.None)

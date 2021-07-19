@@ -103,7 +103,7 @@ namespace LoadOrderTool.Data {
         private void SaveConfigImpl() {
             Dirty = false;
             ManagerList.instance.Save(); // saves but not serialize
-            PackageManager.instance.ApplyPendingValues(); // saves to game config and moves folders.
+            PluginManager.instance.ApplyPendingValues(); // saves to game config and moves folders.
             Config.Serialize(DataLocation.localApplicationData);
             LSMConfig.Serialize();
             Log.Info($"SaveConfigImpl() done. (Dirty={Dirty})");
