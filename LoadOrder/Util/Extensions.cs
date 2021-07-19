@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -81,7 +81,6 @@ namespace LoadOrderTool.Util {
         public static string Join(this IEnumerable<string> strings, string del) => string.Join(del, strings.ToArray());
         public static string Join(this string[] strings, string del) => string.Join(del, strings);
 
-
         internal static string ToSTR(this object obj) {
             if (obj is null) return "<null>";
             if (obj is string str)
@@ -106,12 +105,33 @@ namespace LoadOrderTool.Util {
         /// prints all items of the list with the given format.
         /// throws exception if T.ToString(format) does not exists.
         /// </summary>
-        internal static string ToSTR<T>(this IEnumerable<T> list, string format) {
-            MethodInfo mToString = typeof(T).GetMethod("ToString", new[] { typeof(string) })
-                ?? throw new Exception($"{typeof(T).Name}.ToString(string) was not found");
+        internal static string ToSTR(this IEnumerable list) {
+            if (list is null)
+                return "<null>";
+            string ret = "{ ";
+            foreach (object item in list) {
+                MethodInfo mToString = item.GetType().GetMethod("ToString", new Type[0])
+                    ?? throw new Exception($"{item.GetType().Name}.ToString() was not found");
+                var s = mToString.Invoke(item, null);
+                ret += $"{s}, ";
+            }
+            ret = ret.Remove(ret.Length - 2, 2);
+            ret += " }";
+            return ret;
+        }
+
+        /// <summary>
+        /// prints all items of the list with the given format.
+        /// throws exception if T.ToString(format) does not exists.
+        /// </summary>
+        internal static string ToSTR(this IEnumerable list, string format) {
+            if (list is null)
+                return "<null>";
             var arg = new object[] { format };
             string ret = "{ ";
-            foreach (T item in list) {
+            foreach (object item in list) {
+                MethodInfo mToString = item.GetType().GetMethod("ToString", new[] { typeof(string) })
+                    ?? throw new Exception($"{item.GetType().Name}.ToString(string) was not found");
                 var s = mToString.Invoke(item, arg);
                 ret += $"{s}, ";
             }

@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using CO;
-using System.Linq;
-
 namespace LoadOrderTool.Data {
+    using System;
+    using System.Collections.Generic;
+    using CO;
+    using System.Linq;
+    using LoadOrderTool.Util;
+
     public class DLCManager : SingletonLite<DLCManager>, IDataManager {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
 
@@ -28,14 +29,17 @@ namespace LoadOrderTool.Data {
                 }
             }
 
-            public DLCInfo(CO.DLC dlc) {
+            public DLCInfo(CO.DLC dlc, bool included) {
                 DLC = dlc;
                 var att = dlc.GetDLCInfo();
                 if (att != null) {
                     Text = att.Text;
                     DLCType = att.Type;
                 }
+                isIncluded_ = included;
             }
+
+            public override string ToString() => $"{DLC} included:{IsIncluded} type:{DLCType}";
         }
 
 
@@ -48,17 +52,12 @@ namespace LoadOrderTool.Data {
 
         static List<DLCInfo> LoadImpl(string[] excluded) {
             CO.DLC[] dlcValues = Enum.GetValues(typeof(CO.DLC)) as CO.DLC[];
-            var dlcs = dlcValues.
+            return dlcValues.
                 Where(item => item != DLC.None)
-                .Select(item => new DLCInfo(item));
-
-            if (excluded != null && excluded.Any()) {
-                foreach (var dlc in dlcs) {
-                    dlc.IsIncluded = !excluded.Contains(dlc.DLC.ToString());
-                }
-            }
-
-            return dlcs.ToList();
+                .Select(item => NewItem(item))
+                .ToList();
+            bool IsIncluded(DLC _dlc) => !excluded.Contains(_dlc.ToString());
+            DLCInfo NewItem(DLC _dlc) => new DLCInfo(_dlc, IsIncluded(_dlc));
         }
 
         public void Load() {

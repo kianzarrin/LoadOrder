@@ -57,7 +57,6 @@ namespace CO {
         [DLCInfo("Sunset Harbour", DLCType.Main)]
         UrbanDLC = 1146930,
 
-
         [DLCInfo("Pearls from the east", DLCType.Misc)]
         OrientalBuildings = 563850,
 
