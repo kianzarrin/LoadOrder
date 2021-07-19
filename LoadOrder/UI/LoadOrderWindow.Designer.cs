@@ -59,7 +59,7 @@ namespace LoadOrderTool.UI
             this.DLCTab = new System.Windows.Forms.TabPage();
             this.DLCControl = new LoadOrderTool.UI.DLCControl();
             this.LSMTab = new System.Windows.Forms.TabPage();
-            //this.LSMControl = new LoadOrderTool.UI.LSMControl();
+            this.LSMControl = new LoadOrderTool.UI.LSMControl();
             this.LaunchTab = new System.Windows.Forms.TabPage();
             this.launchControl = new LoadOrderTool.UI.LaunchControl();
             this.menuStrip = new LoadOrderTool.UI.LoadOrderWindowMenuStrip();
@@ -427,15 +427,15 @@ namespace LoadOrderTool.UI
             this.LSMTab.Size = new System.Drawing.Size(948, 499);
             this.LSMTab.TabIndex = 2;
             this.LSMTab.Text = "LSM";
-            //this.LSMTab.Controls.Add(this.LSMControl);
-            //// 
-            //// LSMControl
-            //// 
-            //this.LSMControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            //this.LSMControl.Location = new System.Drawing.Point(3, 3);
-            //this.LSMControl.Name = "LSMControl";
-            //this.LSMControl.Size = new System.Drawing.Size(942, 493);
-            //this.LSMControl.TabIndex = 0;
+            this.LSMTab.Controls.Add(this.LSMControl);
+            // 
+            // LSMControl
+            // 
+            this.LSMControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LSMControl.Location = new System.Drawing.Point(3, 3);
+            this.LSMControl.Name = "LSMControl";
+            this.LSMControl.Size = new System.Drawing.Size(942, 493);
+            this.LSMControl.TabIndex = 0;
 
             // 
             // LaunchTab
@@ -549,7 +549,7 @@ namespace LoadOrderTool.UI
 
         private UI.LaunchControl launchControl;
         private UI.DLCControl DLCControl;
-        //private UI.LSMControl LSMControl;
+        private UI.LSMControl LSMControl;
 
         private StatusStrip statusStrip;
     }
