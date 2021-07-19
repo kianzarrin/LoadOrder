@@ -14,10 +14,13 @@ namespace LoadOrderTool.Data {
         public string SkipPath {
             get => skipPath_;
             set {
+                Log.Called(value);
                 if (value == skipPath_)
                     return;
-                if(!File.Exists(value?.Trim()))
+                if (!File.Exists(value?.Trim())) {
                     value = null;
+                    Log.Warning($"{value} does not exist");
+                }
                 skipPath_ = value;
                 ConfigWrapper.Dirty = true;
             }
@@ -47,9 +50,10 @@ namespace LoadOrderTool.Data {
         }
 
         public void LoadFromProfile(LoadOrderProfile profile, bool replace = true) {
+            Log.Called("replaced" + replace);
             if (replace) {
-                SkipPath = profile.SkipFilePath;
-            } else if(SkipPath != profile.SkipFilePath) {
+                SkipPath = profile.SkipFilePathFinal;
+            } else if(SkipPath != profile.SkipFilePathFinal) {
                 // merge can only take place if skip files are the same.
                 // other wise just include everything to be safe.
                 SkipPath = null; 
@@ -57,7 +61,7 @@ namespace LoadOrderTool.Data {
         }
 
         public void SaveToProfile(LoadOrderProfile profile) {
-            profile.SkipFilePath = SkipPath;
+            profile.SkipFilePathFinal = SkipPath;
         }
     }
 }

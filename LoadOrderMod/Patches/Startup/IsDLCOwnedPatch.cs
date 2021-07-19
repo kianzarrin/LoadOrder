@@ -12,8 +12,9 @@ namespace LoadOrderMod.Patches.Startup {
     [HarmonyPatch(typeof(SteamHelper), nameof(SteamHelper.IsDLCOwned))]
     public static class IsDLCOwnedPatch {
         static SteamHelper.DLC[] ExcludedDLCs;
-        static void Prepair(MethodBase original) {
-            if (original != null) return;
+        static void Prepare(MethodBase original) {
+            Log.Called(original);
+            if (ExcludedDLCs != null) return;
             var dlcs = new List<SteamHelper.DLC>();
             foreach(string item in ConfigUtil.Config.ExcludedDLCs) {
                 if(item == "MusicDLCs") {
@@ -31,6 +32,7 @@ namespace LoadOrderMod.Patches.Startup {
                     dlcs.Add((SteamHelper.DLC)Enum.Parse(typeof(SteamHelper.DLC), item));
                 }
             }
+            ExcludedDLCs = dlcs.ToArray();
         }
 
 

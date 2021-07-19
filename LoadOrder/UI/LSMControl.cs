@@ -10,7 +10,7 @@ namespace LoadOrderTool.UI {
 
         public LSMControl() {
             InitializeComponent();
-            rbSkip.SetTooltip("Turn on for LSM to use skip file");
+            cbSkip.SetTooltip("Turn on for LSM to use skip file");
             tbSkipPath.SetTooltip("Path to skip file");
             bSkipPath.SetTooltip("Choose Skip file");
 
@@ -19,18 +19,18 @@ namespace LoadOrderTool.UI {
 
             bSkipPath.Click += BSkipPath_Click;
             tbSkipPath.TextChanged += TbSkipPath_TextChanged;
-            rbSkip.CheckedChanged += RbSkip_CheckedChanged;
+            cbSkip.CheckedChanged += RbSkip_CheckedChanged;
         }
 
         public void Populate() {
-            tbSkipPath.Text = ConfigWrapper.LSMConfig.skipFile;
-            rbSkip.Checked = LSMManager.instance.SkipPrefabs; // off if file does not exist or LSM toggle is off.
+            tbSkipPath.Text = LSMManager.instance.SkipPath ?? ConfigWrapper.LSMConfig.skipFile;
+            cbSkip.Checked = LSMManager.instance.SkipPrefabs; // off if file does not exist or LSM toggle is off.
         }
 
         private void RbSkip_CheckedChanged(object sender, EventArgs e) {
-            if (rbSkip.Checked) {
+            if (cbSkip.Checked) {
                 LSMManager.instance.SkipPath = tbSkipPath.Text;
-                rbSkip.Checked = LSMManager.instance.SkipPrefabs; // turn back off if file does not exist.
+                cbSkip.Checked = LSMManager.instance.SkipPrefabs; // turn back off if file does not exist.
             } else {
                 LSMManager.instance.SkipPath = null;
             }
@@ -38,7 +38,7 @@ namespace LoadOrderTool.UI {
 
         private void TbSkipPath_TextChanged(object sender, EventArgs e) {
             LSMManager.instance.SkipPath = tbSkipPath.Text;
-            rbSkip.Checked = LSMManager.instance.SkipPrefabs;
+            cbSkip.Checked = LSMManager.instance.SkipPrefabs;
         }
 
         private void BSkipPath_Click(object sender, EventArgs e) {

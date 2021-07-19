@@ -1,4 +1,4 @@
-﻿
+
 namespace LoadOrderTool.UI {
     partial class LSMControl {
         /// <summary> 
@@ -27,7 +27,7 @@ namespace LoadOrderTool.UI {
             this.tableLayoutPanelLunchMode = new System.Windows.Forms.TableLayoutPanel();
             this.tbSkipPath = new System.Windows.Forms.TextBox();
             this.bSkipPath = new System.Windows.Forms.Button();
-            this.rbSkip = new System.Windows.Forms.RadioButton();
+            this.cbSkip = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanelLunchMode.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -39,7 +39,7 @@ namespace LoadOrderTool.UI {
             this.tableLayoutPanelLunchMode.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelLunchMode.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanelLunchMode.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelLunchMode.Controls.Add(this.rbSkip, 0, 0);
+            this.tableLayoutPanelLunchMode.Controls.Add(this.cbSkip, 0, 0);
             this.tableLayoutPanelLunchMode.Controls.Add(this.tbSkipPath, 1, 0);
             this.tableLayoutPanelLunchMode.Controls.Add(this.bSkipPath, 2, 0);
             this.tableLayoutPanelLunchMode.Dock = System.Windows.Forms.DockStyle.Top;
@@ -73,17 +73,17 @@ namespace LoadOrderTool.UI {
             this.bSkipPath.Text = "…";
             this.bSkipPath.UseVisualStyleBackColor = true;
             // 
-            // rbSkip
+            // cbSkip
             // 
-            this.rbSkip.AutoSize = true;
-            this.rbSkip.Location = new System.Drawing.Point(4, 5);
-            this.rbSkip.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.rbSkip.Name = "rbSkip";
-            this.rbSkip.Size = new System.Drawing.Size(71, 29);
-            this.rbSkip.TabIndex = 5;
-            this.rbSkip.TabStop = true;
-            this.rbSkip.Text = "Skip";
-            this.rbSkip.UseVisualStyleBackColor = true;
+            this.cbSkip.AutoSize = true;
+            this.cbSkip.Location = new System.Drawing.Point(4, 5);
+            this.cbSkip.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.cbSkip.Name = "cbSkip";
+            this.cbSkip.Size = new System.Drawing.Size(71, 29);
+            this.cbSkip.TabIndex = 5;
+            this.cbSkip.TabStop = true;
+            this.cbSkip.Text = "Skip";
+            this.cbSkip.UseVisualStyleBackColor = true;
             // 
             // LSMControl
             // 
@@ -102,7 +102,7 @@ namespace LoadOrderTool.UI {
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelLunchMode;
-        private System.Windows.Forms.RadioButton rbSkip;
+        private System.Windows.Forms.CheckBox cbSkip;
         private System.Windows.Forms.TextBox tbSkipPath;
         private System.Windows.Forms.Button bSkipPath;
     }
