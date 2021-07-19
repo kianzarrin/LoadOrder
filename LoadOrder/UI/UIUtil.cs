@@ -1,4 +1,5 @@
 namespace LoadOrderTool.UI {
+    using PresentationControls;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -51,6 +52,37 @@ namespace LoadOrderTool.UI {
                 return values[combo.SelectedIndex];
             } catch (Exception ex) {
                 Log.Exception(ex, $"SelectedIndex={combo?.SelectedIndex} values={string.Join(", ", values)}");
+                throw ex;
+            }
+        }
+
+        public static void SetItems<T>(this CheckBoxComboBox combo) where T : Enum {
+            var items = typeof(T).GetEnumNames()
+                .Select(item => typeof(T).GetMember(item)[0])
+                .Select(item => item.GetMemberDisplayText());
+
+            combo.Items.Clear();
+            combo.Items.AddRange(items.ToArray());
+            combo.AutoSize();
+        }
+        public static T[] GetSelectedItems<T>(this CheckBoxComboBox combo) where T : Enum {
+            T[] values = typeof(T).GetEnumValues() as T[];
+            try {
+                List<T> ret = new List<T>();
+                // skip first item which is empty.
+                for(int i=1;i< combo.CheckBoxItems.Count;  ++i) {
+                    if (combo.CheckBoxItems[i].Checked) {
+                        ret.Add(values[i-1]);
+                    }
+                    
+                }
+                return ret.ToArray();
+            } catch (Exception ex) {
+                var items = combo.CheckBoxItems.Select(item => item.Text).ToArray();
+                Log.Exception(ex,
+                    $"items={string.Join(", ", items)}  " +
+                    $"values={string.Join(", ", values)} " +
+                    $"names={string.Join(", ", typeof(T).GetEnumNames())}");
                 throw ex;
             }
         }

@@ -12,7 +12,6 @@ namespace LoadOrderTool.UI {
     public partial class OpenProfileDialog : Form {
         [Flags]
         public enum ItemTypeT {
-            All = Mods | Assets | DLCs| SkipFile,
             Mods = 1,
             Assets = 2,
             DLCs = 4,
@@ -26,7 +25,15 @@ namespace LoadOrderTool.UI {
 
         List<IProfileItem> MissingItems;
 
-        public ItemTypeT ItemTypes => cbItemType.GetSelectedItem<ItemTypeT>();
+        public ItemTypeT ItemTypes {
+            get {
+                ItemTypeT ret = 0;
+                foreach (ItemTypeT item in cbItemType.GetSelectedItems<ItemTypeT>()) {
+                    ret |= item;
+                }
+                return ret;
+            }
+        }
 
         public OpenProfileDialog(LoadOrderProfile profile) {
             Profile = profile;
@@ -38,7 +45,8 @@ namespace LoadOrderTool.UI {
             dataGridView1.VisibleChanged += DataGridView1_VisibleChanged;
             dataGridView1.DataError += DataGridView1_DataError;
             cbItemType.SetItems<ItemTypeT>();
-            cbItemType.SelectedIndex = 0;
+            foreach (var item in cbItemType.CheckBoxItems)
+                item.Checked = true;
 
             Populate();
 

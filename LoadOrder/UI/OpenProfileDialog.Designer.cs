@@ -1,3 +1,5 @@
+using PresentationControls;
+
 namespace LoadOrderTool.UI {
 
     partial class OpenProfileDialog {
@@ -35,7 +37,7 @@ namespace LoadOrderTool.UI {
             this.btnAppend = new System.Windows.Forms.Button();
             this.btnReplace = new System.Windows.Forms.Button();
             this.btnReload = new System.Windows.Forms.Button();
-            this.cbItemType = new System.Windows.Forms.ComboBox();
+            this.cbItemType = new CheckBoxComboBox();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.SubscribeAll = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -227,7 +229,7 @@ namespace LoadOrderTool.UI {
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.ComboBox cbItemType;
+        private CheckBoxComboBox cbItemType;
         private System.Windows.Forms.Button btnAppend;
         private System.Windows.Forms.Button btnReplace;
         private System.Windows.Forms.DataGridViewLinkColumn cID;
