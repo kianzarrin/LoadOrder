@@ -43,6 +43,17 @@ namespace LoadOrderTool.UI {
             combo.Items.AddRange(items.ToArray());
             combo.AutoSize();
         }
+        public static T GetSelectedItem<T>(this ComboBox combo) where T : Enum {
+            T[] values = typeof(T).GetEnumValues() as T[];
+            if (combo.SelectedIndex < 0)
+                throw new IndexOutOfRangeException("combo.SelectedIndex=" + combo.SelectedIndex);
+            try {
+                return values[combo.SelectedIndex];
+            } catch (Exception ex) {
+                Log.Exception(ex, $"SelectedIndex={combo?.SelectedIndex} values={string.Join(", ", values)}");
+                throw ex;
+            }
+        }
 
         public static void AutoSize(this ComboBox combo) {
             combo.Width = combo.MeasureMaxItemWidth() + SystemInformation.VerticalScrollBarWidth;
@@ -58,18 +69,6 @@ namespace LoadOrderTool.UI {
                 maxWidth = Math.Max(w, maxWidth);
             }
             return maxWidth;
-        }
-
-        public static T GetSelectedItem<T>(this ComboBox combo) where T : Enum {
-            T[] values = typeof(T).GetEnumValues() as T[];
-            if (combo.SelectedIndex < 0)
-                throw new IndexOutOfRangeException("combo.SelectedIndex=" + combo.SelectedIndex);
-            try {
-                return values[combo.SelectedIndex];
-            } catch(Exception ex) {
-                Log.Exception(ex, $"SelectedIndex={combo?.SelectedIndex} values={string.Join(", ", values)}");
-                throw ex;
-            }
         }
 
         public static IEnumerable<Type> GetAll<Type>(this Control control) where Type : Control {
