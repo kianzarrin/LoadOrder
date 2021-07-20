@@ -34,7 +34,7 @@ namespace LoadOrderTool.UI {
             this.panel1 = new System.Windows.Forms.Panel();
             this.dgDLCs = new System.Windows.Forms.DataGridView();
             this.CInclude = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.CName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.CName = new System.Windows.Forms.DataGridViewLinkColumn();
             this.CDLCType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableLayoutPanelDLCFilters.SuspendLayout();
             this.DLCActionPanel.SuspendLayout();
@@ -185,6 +185,7 @@ namespace LoadOrderTool.UI {
             this.CName.ReadOnly = true;
             this.CName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.CName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.CName.VisitedLinkColor = System.Drawing.Color.Blue;
             this.CName.Width = 95;
             // 
             // CDLCType
@@ -230,7 +231,7 @@ namespace LoadOrderTool.UI {
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.DataGridView dgDLCs;
         private System.Windows.Forms.DataGridViewCheckBoxColumn CInclude;
-        private System.Windows.Forms.DataGridViewTextBoxColumn CName;
+        private System.Windows.Forms.DataGridViewLinkColumn CName;
         private System.Windows.Forms.DataGridViewTextBoxColumn CDLCType;
     }
 }

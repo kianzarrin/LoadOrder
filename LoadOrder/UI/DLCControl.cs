@@ -1,6 +1,8 @@
 namespace LoadOrderTool.UI {
     using CO;
+    using CO.PlatformServices;
     using LoadOrderTool.Data;
+    using LoadOrderTool.Util;
     using System;
     using System.Drawing;
     using System.Linq;
@@ -42,6 +44,8 @@ namespace LoadOrderTool.UI {
             dgDLCs.CellValuePushed += DgDLCs_CellValuePushed;
             dgDLCs.CurrentCellDirtyStateChanged += DgDLCs_CurrentCellDirtyStateChanged;
             dgDLCs.ColumnHeaderMouseClick += DgDLCs_ColumnHeaderMouseClick;
+            dgDLCs.CellContentClick += DgDLCs_OnCellContentClick;
+            dgDLCs.CellToolTipTextNeeded += DgDLCs_OnCellToolTipTextNeeded;
             dgDLCs.DataError += DgDLCs_DataError;
             dgDLCs.VisibleChanged += DgDLCs_VisibleChanged;
         }
@@ -127,7 +131,7 @@ namespace LoadOrderTool.UI {
 
         #region DataGrid
         //read
-        public void DgDLCs_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
+        void DgDLCs_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
             try {
                 if (DLCList == null) return;
                 if (e.RowIndex >= DLCList.Filtered.Count) return;
@@ -145,7 +149,7 @@ namespace LoadOrderTool.UI {
         }
 
         //write
-        public void DgDLCs_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
+        void DgDLCs_CellValuePushed(object sender, DataGridViewCellValueEventArgs e) {
             if (DLCList == null) return;
             var DLCInfo = DLCList.Filtered[e.RowIndex];
             if (e.ColumnIndex == CInclude.Index) {
@@ -165,7 +169,7 @@ namespace LoadOrderTool.UI {
         }
 
         // sort
-        public void DgDLCs_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+        void DgDLCs_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
             try {
                 if (DLCList == null) return;
                 if (e.ColumnIndex == prevSortCol_) {
@@ -194,6 +198,44 @@ namespace LoadOrderTool.UI {
                 DgDLCs_Refresh();
             } catch (Exception ex) {
                 Log.Exception(ex);
+            }
+        }
+
+        // click link/button
+        void DgDLCs_OnCellContentClick(object sender, DataGridViewCellEventArgs e) {
+            try {
+                if (DLCList == null) return;
+                if (e.RowIndex < 0 || e.RowIndex >= DLCList.Filtered.Count) return;
+                var dlc = DLCList.Filtered[e.RowIndex];
+
+                if (e.ColumnIndex == CName.Index) {
+                    var id = new PublishedFileId((ulong)dlc.DLC);
+                    string url = ContentUtil.GetDLCURL(id);
+                    if (url != null)
+                        ContentUtil.OpenURL(url);
+                }
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
+        }
+
+        // tooltip
+        void DgDLCs_OnCellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e) {
+            try {
+                if (DLCList == null) return;
+                if (e.RowIndex < 0 || e.RowIndex >= DLCList.Filtered.Count) return;
+                var dlc = DLCList.Filtered[e.RowIndex];
+
+                if (e.ColumnIndex == CName.Index) {
+                    var id = new PublishedFileId((ulong)dlc.DLC);
+                    string url = ContentUtil.GetDLCURL(id);
+                    if (url != null) {
+                        e.ToolTipText = url;
+                    }
+                }
+            } catch (Exception ex) {
+                Log.Exception(ex, $"rowIndex={e.RowIndex}");
+                e.ToolTipText = ex.ToString();
             }
         }
 

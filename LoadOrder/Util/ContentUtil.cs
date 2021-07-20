@@ -9,6 +9,7 @@ namespace LoadOrderTool.Util {
 
     public static class ContentUtil {
         public const string WS_URL_PREFIX = @"https://steamcommunity.com/sharedfiles/filedetails/?id=";
+        public const string DLC_URL_PREFIX = @"https://store.steampowered.com/app/";
 
         public static string GetItemURL(PublishedFileId id) {
             if (id == PublishedFileId.invalid || id.AsUInt64 == 0)
@@ -19,6 +20,12 @@ namespace LoadOrderTool.Util {
             if (string.IsNullOrEmpty(id)) 
                 return null;
             return WS_URL_PREFIX + id;
+        }
+
+        public static string GetDLCURL(PublishedFileId id) {
+            if (id == PublishedFileId.invalid || id.AsUInt64 == 0)
+                return null;
+            return DLC_URL_PREFIX + id.AsUInt64;
         }
 
         public static Process OpenURL(string url) {
