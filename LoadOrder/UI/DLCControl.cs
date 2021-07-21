@@ -51,6 +51,7 @@ namespace LoadOrderTool.UI {
         }
 
         public void LoadDLCs() {
+            if (UIUtil.DesignMode) return;
             DLCManager.instance.Load();
             PopulateDLCs();
         }

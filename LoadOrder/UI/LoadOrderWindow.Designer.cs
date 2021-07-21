@@ -95,7 +95,6 @@ namespace LoadOrderTool.UI
             // ModsTab
             // 
             this.ModsTab.BackColor = System.Drawing.SystemColors.Control;
-            this.ModsTab.Controls.Add(this.statusStrip);
             this.ModsTab.Controls.Add(this.dataGridMods);
             this.ModsTab.Controls.Add(this.ModActionPanel);
             this.ModsTab.Controls.Add(this.tableLayoutPanelModFilters);
@@ -472,6 +471,7 @@ namespace LoadOrderTool.UI
             this.statusStrip.Size = new System.Drawing.Size(863, 22);
             this.statusStrip.TabIndex = 3;
             this.statusStrip.Text = "statusStrip1";
+            this.statusStrip.Visible = false; //until i find some use for it.
             // 
             // LoadOrderWindow
             // 
@@ -479,6 +479,7 @@ namespace LoadOrderTool.UI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(956, 551);
             this.Controls.Add(this.TabContainer);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(524, 299);
