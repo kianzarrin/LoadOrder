@@ -22,16 +22,16 @@ namespace LoadOrderTool.Data {
 
         static string FromFinalPath(string path) {
             return path
-                .Replace(DataLocation.localApplicationData, LOCAL_APP_DATA_PATH)
-                .Replace(DataLocation.GamePath, CITIES_PATH)
-                .Replace(DataLocation.WorkshopContentPath, WS_CONTENT_PATH);
+                ?.Replace(DataLocation.localApplicationData, LOCAL_APP_DATA_PATH)
+                ?.Replace(DataLocation.GamePath, CITIES_PATH)
+                ?.Replace(DataLocation.WorkshopContentPath, WS_CONTENT_PATH);
         }
 
         static string ToFinalPath(string path) {
             return path
-                .Replace(LOCAL_APP_DATA_PATH, DataLocation.localApplicationData)
-                .Replace(CITIES_PATH, DataLocation.GamePath)
-                .Replace(WS_CONTENT_PATH, DataLocation.WorkshopContentPath);
+                ?.Replace(LOCAL_APP_DATA_PATH, DataLocation.localApplicationData)
+                ?.Replace(CITIES_PATH, DataLocation.GamePath)
+                ?.Replace(WS_CONTENT_PATH, DataLocation.WorkshopContentPath);
         }
 
         public class Mod : IProfileItem {
