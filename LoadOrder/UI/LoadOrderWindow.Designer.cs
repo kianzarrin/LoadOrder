@@ -484,7 +484,7 @@ namespace LoadOrderTool.UI
             this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(524, 299);
             this.Name = "LoadOrderWindow";
-            this.Text = "LoadOrder";
+            this.Text = "Load Order Tool";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoadOrderWindow_FormClosing);
             this.TabContainer.ResumeLayout(false);
             this.ModsTab.ResumeLayout(false);

@@ -45,7 +45,7 @@ namespace CO {
         [DLCInfo("Green Cities", DLCType.Main)]
         GreenCitiesDLC = 614580,
 
-        [DLCInfo("Park Life", DLCType.Main)]
+        [DLCInfo("Parklife", DLCType.Main)]
         ParksDLC = 715191,
 
         [DLCInfo("Industries", DLCType.Main)]
@@ -57,10 +57,10 @@ namespace CO {
         [DLCInfo("Sunset Harbour", DLCType.Main)]
         UrbanDLC = 1146930,
 
-        [DLCInfo("Pearls from the east", DLCType.Misc)]
+        [DLCInfo("Pearls From the East", DLCType.Misc)]
         OrientalBuildings = 563850,
 
-        [DLCInfo("Match day (Footbal)", DLCType.Misc)]
+        [DLCInfo("Match Day (Footbal)", DLCType.Misc)]
         Football = 456200,
 
         [DLCInfo("Concerts (music festivals)", DLCType.Misc)]
@@ -69,34 +69,34 @@ namespace CO {
         [DLCInfo("Carols, Candles and Candy (Christmas)", DLCType.Misc)]
         Christmas = 715192,
 
-        [DLCInfo("Delux Pack", DLCType.Misc)]
+        [DLCInfo("Deluxe Pack", DLCType.Misc)]
         DeluxeDLC = 346791,
 
         [DLCInfo("Music DLCs", DLCType.Misc)]
         MusicDLCs = 547501,
 
-        [DLCInfo("CC: Art Deco", DLCType.ContentCreator)]
+        [DLCInfo("CCP: Art Deco", DLCType.ContentCreator)]
         ModderPack1 = 515190,
 
-        [DLCInfo("CC: High-tech", DLCType.ContentCreator)]
+        [DLCInfo("CCP: High-Tech", DLCType.ContentCreator)]
         ModderPack2 = 547500,
 
-        [DLCInfo("CC: European", DLCType.ContentCreator)]
+        [DLCInfo("CCP: European Suburbia", DLCType.ContentCreator)]
         ModderPack3 = 715190,
 
-        [DLCInfo("CC: University City", DLCType.ContentCreator)]
+        [DLCInfo("CCP: University City", DLCType.ContentCreator)]
         ModderPack4 = 1059820,
 
-        [DLCInfo("CC: Modern City Center", DLCType.ContentCreator)]
+        [DLCInfo("CCP: Modern City Center", DLCType.ContentCreator)]
         ModderPack5 = 1148020,
 
-        [DLCInfo("CC: Japan", DLCType.ContentCreator)]
+        [DLCInfo("CCP: Modern Japan", DLCType.ContentCreator)]
         ModderPack6 = 1148022,
 
-        [DLCInfo("CC: Train Stations", DLCType.ContentCreator)]
+        [DLCInfo("CCP: Train Stations", DLCType.ContentCreator)]
         ModderPack7 = 1531470,
 
-        [DLCInfo("CC: Bridges & Piers", DLCType.ContentCreator)]
+        [DLCInfo("CCP: Bridges & Piers", DLCType.ContentCreator)]
         ModderPack8,
 
     }

@@ -23,6 +23,7 @@ namespace LoadOrderTool.UI {
         }
 
         public void Populate() {
+            if (UIUtil.DesignMode) return;
             tbSkipPath.Text = LSMManager.instance.SkipPath ?? ConfigWrapper.LSMConfig.skipFile;
             cbSkip.Checked = LSMManager.instance.SkipPrefabs; // off if file does not exist or LSM toggle is off.
         }

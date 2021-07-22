@@ -47,9 +47,15 @@ namespace LoadOrderTool.UI {
                 dirty_ = value;
                 Action act;
                 if (value) {
-                    act = new Action(delegate () { Text += "*"; });
+                    act = new Action(delegate () {
+                        if (Text[Text.Length - 1] != '*')
+                            Text += "*";
+                    });
                 } else {
-                    act = new Action(delegate () { Text = Text[0..^1]; }); // drop dirty *
+                    act = new Action(delegate () {
+                        if(Text[Text.Length -1] == '*')
+                            Text = Text[0..^1];
+                    }); // drop dirty *
                 }
                 ExecuteThreadSafe(act);
             }
