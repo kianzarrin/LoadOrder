@@ -55,7 +55,7 @@ namespace LoadOrderShared {
 
         public ModInfo[] Mods = new ModInfo[0];
         public AssetInfo[] Assets = new AssetInfo[0];
-        public string[] ExcludedDLCs;
+        public string[] ExcludedDLCs = new string[0];
         
 
         public void Serialize(string dir) {
