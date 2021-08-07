@@ -48,13 +48,11 @@ namespace LoadOrderTool.UI {
                 Action act;
                 if (value) {
                     act = new Action(delegate () {
-                        if (Text[Text.Length - 1] != '*')
-                            Text += "*";
+                        Text = "Load Order Tool*";
                     });
                 } else {
                     act = new Action(delegate () {
-                        if(Text[Text.Length -1] == '*')
-                            Text = Text[0..^1];
+                        Text = "Load Order Tool";
                     }); // drop dirty *
                 }
                 ExecuteThreadSafe(act);
