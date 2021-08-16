@@ -606,5 +606,39 @@ namespace LoadOrderInjections {
             }
         }
 
+
+        public static DirectoryInfo FindWSDir() {
+            foreach (var id in PlatformService.workshop.GetSubscribedItems()) {
+                var path = PlatformService.workshop.GetSubscribedItemPath(id);
+                if (path != null) {
+                    return new DirectoryInfo(path).Parent;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// I think GetFiles/GetDirectories is cached and therefore the normal EnsureIncludedOrExcluded should work fast
+        /// but just in case it doesn't for some OS then I should use this method
+        /// </summary>
+        /// <param name="WSDir"></param>
+        public static void EnsureIncludedOrExcludedAllFast(DirectoryInfo WSDir) {
+            try {
+                Log.Called();
+                var dirs = new HashSet<string>(WSDir.GetDirectories().Select(item => item.FullName));
+                foreach (var dir in dirs) {
+                    string path1 = ToIncludedPath(dir);
+                    string path2 = ToExcludedPath(dir);
+                    if(dirs.Contains(path1) && dirs.Contains(path2)) {
+                        Assertion.Assert(Directory.Exists(path1), "path1 exists");
+                        Assertion.Assert(Directory.Exists(path1), "path2 exists");
+                        Directory.Delete(path2, true);
+                        Directory.Move(path1, path2);
+                    }
+                }
+            } catch (Exception ex) {
+                Log.Exception(ex, $"EnsureIncludedOrExcluded({WSDir})", showInPanel: false);
+            }
+        }
     }
 }
