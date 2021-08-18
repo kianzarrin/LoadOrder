@@ -31,7 +31,6 @@ namespace LoadOrderTool {
         [STAThread]
         static void Main() {
             try {
-
                 Console.WriteLine("Hello!");
                 IsMain = true;
                 Application.SetHighDpiMode(HighDpiMode.SystemAware);
@@ -44,8 +43,12 @@ namespace LoadOrderTool {
                 AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
                 Application.ThreadException += UnhandledThreadExceptionHandler;
 
+                Console.WriteLine("OS:" + RuntimeInformation.OSArchitecture);
+                Console.WriteLine("OS:" + RuntimeInformation.OSDescription);
+                Console.WriteLine("app folder:" + Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
 
-                if (IsAdministrator) {
+
+                if (!Parse.Linux && IsAdministrator) {
                     string m = "Running this application as administrator can cause problems. Please quite and run this normally";
                     Console.WriteLine(m);
                     MessageBox.Show(

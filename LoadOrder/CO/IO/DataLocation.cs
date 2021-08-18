@@ -14,6 +14,7 @@ namespace CO.IO {
     using System.Windows.Forms;
     using LoadOrderShared;
     using static CO.IO.PathUtils;
+    using LoadOrderTool.CommandLine;
 
     public static class DataLocation {
         const string installLocationSubKey_ = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 255710";
@@ -25,9 +26,9 @@ namespace CO.IO {
 
         private static bool m_IsEditor = false;
 
-        public static bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        public static bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !Parse.Linux;
         public static bool isMacOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-        public static bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+        public static bool isLinux = Parse.Linux || RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
         static DataLocation()
         {

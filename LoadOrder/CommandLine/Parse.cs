@@ -4,6 +4,8 @@ namespace LoadOrderTool.CommandLine {
     public static class Parse {
         public static bool CommandLine = ParseCommandLine("c|commandLine", out _);
 
+        public static bool Linux = ParseCommandLine("linux", out _);
+
         public static bool LoadProfile(out string path) => ParseCommandLine("loadProfile", out path);
         
 

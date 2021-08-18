@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using LoadOrderTool.Data;
 using LoadOrderTool.UI;
 using System.Threading;
+using LoadOrderTool.CommandLine;
 
 namespace LoadOrderTool.UI {
     public partial class LoadOrderWindow : Form {
@@ -96,6 +97,10 @@ namespace LoadOrderTool.UI {
                 menuStrip.tsmiImport.Click += Import_Click;
 
                 ProgressWindow.Instance?.SetProgress(90, "Loading UI ...");
+
+                if (Parse.Linux) {
+                    LaunchTab.Hide();
+                }
             } catch (Exception ex) {
                 ex.Log();
             }
