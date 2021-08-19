@@ -26,9 +26,9 @@ namespace CO.IO {
 
         private static bool m_IsEditor = false;
 
-        public static bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !Parse.Linux;
+        public static bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         public static bool isMacOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-        public static bool isLinux = Parse.Linux || RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+        public static bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
         static DataLocation()
         {
@@ -300,7 +300,7 @@ namespace CO.IO {
             get {
                 if(isWindows)
                     return "Cities.exe";
-                else if (isLinux)
+                else if (isLinux || Parse.Linux)
                     return "Cities.x64";
                 else if (isMacOSX)
                     return "Cities";
@@ -312,7 +312,7 @@ namespace CO.IO {
             get {
                 if (isWindows)
                     return "Steam.exe";
-                else if (isLinux)
+                else if (isLinux || Parse.Linux)
                     return "Steam";
                 else if (isMacOSX)
                     return "Steam";
