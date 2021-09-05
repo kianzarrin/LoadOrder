@@ -12,16 +12,20 @@ namespace LoadingScreenMod {
         public static string DefaultSkipPath => Path.Combine(DataLocation.mapLocation, "SkippedPrefabs");
         public static string DefaultSkipFile => Path.Combine(DefaultSkipPath, "skip.txt");
 
-        public int version = 6;
+        public int version = 10;
         public bool loadEnabled = true;
         public bool loadUsed = true;
         public bool shareTextures = true;
         public bool shareMaterials = true;
         public bool shareMeshes = true;
-        public bool reportAssets = false;
+        public bool optimizeThumbs = true;
+        public bool reportAssets;
+        public bool checkAssets;
         public string reportDir = string.Empty;
-        public bool skipPrefabs = false;
+        public bool skipPrefabs;
         public string skipFile = string.Empty;
+        public bool hideAssets;
+        public bool useReportDate = true;
 
 
         public static Settings Deserialize() {
