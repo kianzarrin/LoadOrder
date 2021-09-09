@@ -166,6 +166,7 @@ namespace LoadOrderMod.Settings {
                     ex.Log("pluginInfo=" + pluginInfo);
                 }
             }
+            LogSucceeded();
         }
 
         public static void AquireAssetsDetails() {
