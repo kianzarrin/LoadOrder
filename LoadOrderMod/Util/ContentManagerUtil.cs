@@ -32,11 +32,19 @@ namespace LoadOrderMod.Util {
             throw new Exception($"CategoryContentPanel for '{name}' was not found");
         }
         
-        public static List<EntryData> GetEntries(this CategoryContentPanel instance) =>
-            GetFieldValue(instance, "m_Assets") as List<EntryData>;
+        private static CategoryContentPanel assetCategory_;
+        private static CategoryContentPanel modCategory_;
+        public static CategoryContentPanel AssetCategory => assetCategory_ ??= GetCategory(ASSET_CATEGORY_NAME);
+        public static CategoryContentPanel ModCategory => modCategory_ ??= GetCategory(MOD_CATEGORY_NAME);
 
-        public static CategoryContentPanel AssetCategory => GetCategory(ASSET_CATEGORY_NAME);
-        public static CategoryContentPanel ModCategory => GetCategory(MOD_CATEGORY_NAME);
+
+        private static object fieldRef_Assets_;
+        public static List<EntryData> GetEntries(this CategoryContentPanel instance) {
+            fieldRef_Assets_ ??= AccessTools.FieldRefAccess<CategoryContentPanel, List<EntryData>>("m_Assets");
+            var assets = fieldRef_Assets_ as AccessTools.FieldRef<CategoryContentPanel, List<EntryData>>;
+            return assets(instance);
+        }
+
         public static List<EntryData> AssetEntries => AssetCategory?.GetEntries();
         public static List<EntryData> ModEntries => ModCategory?.GetEntries();
         public static IEnumerable<EntryData> EntryDatas =>
