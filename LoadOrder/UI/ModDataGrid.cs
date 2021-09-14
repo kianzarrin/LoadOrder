@@ -343,7 +343,6 @@ namespace LoadOrderTool.UI {
                         updated:mod.StrDateUpdate ?? "",
                         downloaded: mod.StrDateDownloaded ?? "",
                         description: mod.DisplayText ?? "");
-                    Log.Debug("F");
                 } catch (Exception ex) {
                     Log.Exception(new Exception(
                         $"failed to add mod to row: " +
@@ -359,11 +358,8 @@ namespace LoadOrderTool.UI {
                         ));
                 }
             }
-            Log.Info("P1");
             ResumeLayout();
-            Log.Info("P2");
             this.AutoResizeFirstColumn();
-            Log.Info("P3");
         }
     }
 }

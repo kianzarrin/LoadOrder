@@ -1,4 +1,5 @@
 namespace LoadOrderTool.Util {
+    using CO.Packaging;
     using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace LoadOrderTool.Util {
     using System.Threading;
     using System.Threading.Tasks;
 
-    class SteamUtil {
+    public class SteamUtil {
         public static PublishedFileDTO[] HttpResponse2DTOs(string httpResponse) {
             try {
                 File.WriteAllText("httpResult.json", httpResponse);
@@ -84,7 +85,7 @@ namespace LoadOrderTool.Util {
             public EResult Result;
             public ulong PublishedFileID;
             public string Title;
-            public string Author;
+            public ulong AuthorID;
             public DateTime Updated;
             public ulong Size;
             public string PreviewURL;
@@ -95,11 +96,11 @@ namespace LoadOrderTool.Util {
                     PublishedFileID = publishedfiledetail.publishedfileid;
                     Size = publishedfiledetail.file_size;
                     PreviewURL = publishedfiledetail.preview_url;
-                    Author = publishedfiledetail.creator;
+                    AuthorID = publishedfiledetail.creator;
                     Updated = new DateTime((long)publishedfiledetail.time_updated);
                     Tags = (publishedfiledetail.tags as JArray)
                         ?.Select(item => (string)item["tag"])
-                        ?.Where(item => item.Contains("compatible", StringComparison.OrdinalIgnoreCase))
+                        ?.Where(item => !item.Contains("compatible", StringComparison.OrdinalIgnoreCase))
                         ?.ToArray();
                 }
             }

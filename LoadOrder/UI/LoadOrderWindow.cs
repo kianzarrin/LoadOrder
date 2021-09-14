@@ -82,13 +82,11 @@ namespace LoadOrderTool.UI {
 
         public async Task LoadAsync() {
             try {
-                ProgressWindow.Instance?.SetProgress(20, "Loading Mods ...");
+                menuStrip.tsmiAutoSave.Checked = ConfigWrapper.AutoSave;
+
                 var modTask = InitializeModTab();
-                ProgressWindow.Instance?.SetProgress(50, "Loading Assets ...");
                 var assetTask = InitializeAssetTab();
                 //ProgressWindow.Instance?.SetProgress(80, "Assets Loaded.");
-
-                menuStrip.tsmiAutoSave.Checked = ConfigWrapper.AutoSave;
 
                 await Task.WhenAll(modTask, assetTask);
 
@@ -105,6 +103,9 @@ namespace LoadOrderTool.UI {
 
                 Dirty = ConfigWrapper.Dirty;
                 ConfigWrapper.Resume();
+                ConfigWrapper.SaveConfig();
+
+                await CacheInfo();
                 ConfigWrapper.SaveConfig();
             } catch (Exception ex) {
                 ex.Log();
@@ -249,14 +250,77 @@ namespace LoadOrderTool.UI {
             ConfigWrapper.SaveConfig();
         }
 
-        private void ReloadAll_Click(object sender, EventArgs e) {
-            ReloadAll();
+        private async void ReloadAll_Click(object sender, EventArgs e) {
+            await ReloadAll();
         }
 
-        public void ReloadAll() {
-            dataGridMods.LoadMods(ModPredicate);
-            LoadAsssets();
+        public async Task ReloadAll() {
+            try {
+                var modTask = dataGridMods.LoadModsAsync(ModPredicate);
+                var AssetTask = LoadAssets();
+                await Task.WhenAll(modTask, AssetTask);
+                await CacheInfo();
+            } catch (Exception ex) { ex.Log(); }
         }
+
+        public async Task CacheInfo() {
+            var ids = await Task.Run(ContentUtil.GetSubscribedItems);
+            var ppl = await SteamUtil.LoadDataAsync();
+            await Task.Run(() => DTO2Cache(ppl));
+            dataGridMods.RefreshModList();
+            dataGridAssets.Refresh();
+
+            await CacheAuthors();
+            dataGridMods.RefreshModList();
+            dataGridAssets.Refresh();
+        }
+
+        public void DTO2Cache(SteamUtil.PublishedFileDTO[] ppl) {
+            foreach(var asset in PackageManager.instance.GetAssets()) {
+                if (!asset.IsWorkshop) continue;
+                var person = ppl.FirstOrDefault(p => p.PublishedFileID == asset.PublishedFileId.AsUInt64);
+                if (person != null) {
+                    asset.AssetCache.Read(person);
+                    asset.ResetCache();
+                }
+            }
+            foreach (var mod in PluginManager.instance.GetMods()) {
+                if (!mod.IsWorkshop) continue;
+                var person = ppl.FirstOrDefault(p => p.PublishedFileID == mod.PublishedFileId.AsUInt64);
+                if (person != null) {
+                    mod.ModCache.Read(person);
+                    mod.ResetCache();
+                }
+            }
+        }
+
+        public async Task CacheAuthors() {
+            var assets = PackageManager.instance.GetAssets();
+            var mods = PluginManager.instance.GetMods();
+
+            var missingAuthors1 = assets
+                .Where(item => item.AssetCache.Author.IsNullorEmpty())
+                .Select(item => item.AssetCache.AuthorID);
+            var missingAuthors2 = mods
+                .Where(item => item.ModCache.Author.IsNullorEmpty())
+                .Select(item => item.ModCache.AuthorID);
+
+            foreach(var authorId in missingAuthors1.Concat(missingAuthors2)) {
+                var authorName = await SteamUtil.GetPersonaName(authorId);
+                ConfigWrapper.Cache.People.Add(new LoadOrderCache.Persona { ID = authorId, Name = authorName });
+            }
+
+            ConfigWrapper.Cache.RebuildPeopleIndeces();
+
+            foreach (var asset in assets) 
+                asset.AssetCache.UpdateAuthor();
+            
+            foreach (var mod in mods)
+                mod.ModCache.UpdateAuthor();
+
+
+        }
+
 
         #endregion
 
@@ -435,13 +499,13 @@ namespace LoadOrderTool.UI {
         public async Task LoadAssetsAsync() {
             try {
                 AssetProgressBar.Visible = true;
-                await Task.Run(LoadAsssets);
+                await LoadAssets();
                 AssetProgressBar.Visible = false;
             } catch (Exception ex) { ex.Log(); }
         }
 
-        public void LoadAsssets() {
-            PackageManager.instance.LoadPackages();
+        public async Task LoadAssets() {
+            await Task.Run(PackageManager.instance.LoadPackages);
             AssetDataGrid.SetProgress(100);
             PopulateAssets();
         }

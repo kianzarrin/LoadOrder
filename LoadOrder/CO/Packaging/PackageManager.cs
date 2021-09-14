@@ -53,7 +53,7 @@ namespace CO.Packaging {
             public string DisplayText {
                 get {
                     if (string.IsNullOrEmpty(displayText_)) {
-                        displayText_ = AssetCache.AssetName;
+                        displayText_ = AssetCache.Name;
                         if (string.IsNullOrEmpty(displayText_))
                             displayText_ = AssetName;
                     }
@@ -150,14 +150,13 @@ namespace CO.Packaging {
                     Config.Assets.FirstOrDefault(item => item.Path == includedPath)
                     ?? new LoadOrderShared.AssetInfo {Path = includedPath};
                 this.AssetCache =
-                    Cache.Assets.FirstOrDefault(item => item.Path == includedPath)
+                    Cache.GetAsset(this.IncludedPath)
                     ?? new LoadOrderCache.Asset { Path = includedPath };
                 isIncludedPending_ = IsIncluded;
             }
 
             public void ResetCache() {
-                this.AssetCache = Cache.Assets.FirstOrDefault(
-                    item => item.Path == this.IncludedPath);
+                this.AssetCache = Cache.GetAsset(this.IncludedPath);
                 this.strDateDownloaded_ = null;
                 this.dateDownloaded_ = null;
                 this.strDateUpdated_ = null;

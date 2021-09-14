@@ -262,7 +262,7 @@ namespace CO.Plugins {
                     Config.Mods.FirstOrDefault(item => item.Path == IncludedPath)
                     ?? new LoadOrderShared.ModInfo { Path = IncludedPath };
                 this.ModCache =
-                    Cache.Mods.FirstOrDefault(item => item.Path == IncludedPath)
+                    Cache.GetMod(IncludedPath)
                     ?? new LoadOrderCache.Mod { Path = IncludedPath };
 
                 isIncludedPending_ = IsIncluded;
@@ -270,7 +270,7 @@ namespace CO.Plugins {
             }
 
             public void ResetCache() {
-                this.ModCache = Cache.Mods.FirstOrDefault(item => item.Path == IncludedPath);
+                this.ModCache = Cache.GetMod(IncludedPath);
                 this.strDateDownloaded_ = null;
                 this.dateDownloaded_ = null;
                 this.strDateUpdated_ = null;

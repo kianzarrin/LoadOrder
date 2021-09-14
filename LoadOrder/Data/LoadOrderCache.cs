@@ -5,6 +5,8 @@ namespace LoadOrderTool.Data {
     using System.Xml.Serialization;
     using LoadOrderTool.Helpers;
     using System.Linq;
+    using System.Collections.Generic;
+
     public class LoadOrderCache {
         public class Persona {
             public ulong ID;
@@ -28,21 +30,41 @@ namespace LoadOrderTool.Data {
             public DateTime DateUpdated;
             public DownloadStatus Status;
             public string DownloadFailureReason;
+
+            public void SetAuthor(ulong authorID) {
+                AuthorID = authorID;
+                UpdateAuthor();
+            }
+
+            public void UpdateAuthor() {
+                var person = ConfigWrapper.instance.Cache.GetPersona(AuthorID);
+                Author = person?.Name;
+            }
+
+
+            public virtual void Read(Util.SteamUtil.PublishedFileDTO dto) {
+                Name = dto.Title;
+                DateUpdated = dto.Updated;
+                SetAuthor(dto.AuthorID);
+            }
         }
 
         public class Mod : Item {
-            public string AssemblyName;
+            // public string AssemblyName;
         }
 
         public class Asset : Item {
-            public string AssetName;
-            public string description;
             public string[] Tags;
+
+            public override void Read(Util.SteamUtil.PublishedFileDTO dto) {
+                base.Read(dto);
+                Tags = dto.Tags;
+            }
         }
 
         public Mod[] Mods = new Mod[0];
         public Asset[] Assets = new Asset[0];
-        public Persona[] People = new Persona[0];
+        public List<Persona> People = new List<Persona>(100);
 
         private Hashtable<string, Mod> modTable_;
         private Hashtable<string, Asset> assetTable_;
@@ -83,6 +105,7 @@ namespace LoadOrderTool.Data {
             peopleTable_ = new Hashtable<ulong, Persona>(People.ToDictionary(persona => persona.ID));
         }
 
-
+        public void RebuildPeopleIndeces() =>
+            peopleTable_ = new Hashtable<ulong, Persona>(People.ToDictionary(persona => persona.ID));
     }
 }
