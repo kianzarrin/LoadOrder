@@ -10,8 +10,18 @@ using UnityEngine.UI;
 using static KianCommons.ReflectionHelpers;
 using ColossalFramework;
 using LoadOrderShared;
+using ColossalFramework.Threading;
+using System.Threading;
 
 namespace LoadOrderInjections {
+    public enum DownloadStatus {
+        DownloadOK,
+        OutOfDate,
+        NotDownloaded,
+        PartiallyDownloaded,
+        Gone,
+    }
+
     public class TestComponent : MonoBehaviour {
         void Awake() => Log.Debug("TestComponent.Awake() was called");
         void Start() => Log.Debug("TestComponent.Start() was called");
@@ -356,19 +366,17 @@ namespace LoadOrderInjections {
         }
 
         public static void OnUGCRequestUGCDetailsCompleted(UGCDetails result, bool ioError) {
-            // called after RequestItemDetails
-            //Log.Debug($"OnUGCRequestUGCDetailsCompleted(" +
-            //    $"result:{result.ToSTR2()}, " +
-            //    $"ioError:{ioError})");
-            bool good = IsUGCUpToDate(result, out string reason) == DownloadStatus.DownloadOK;
-            if (!good) {
-                Log.Warning($"subscribed item not installed properly:{result.publishedFileId} {result.title} " +
-                    $"reason={reason}. " +
-                    $"try reinstalling the item.",
-                    true);
-            } else {
-                Log.Debug($"subscribed item is good:{result.publishedFileId} {result.title}");
-            }
+            ThreadPool.QueueUserWorkItem((_) => {
+                bool good = IsUGCUpToDate(result, out string reason) == DownloadStatus.DownloadOK;
+                if (!good) {
+                    Log.Warning($"subscribed item not installed properly:{result.publishedFileId} {result.title} " +
+                        $"reason={reason}. " +
+                        $"try reinstalling the item.",
+                        true);
+                } else {
+                    Log.Debug($"subscribed item is good:{result.publishedFileId} {result.title}");
+                }
+            });
         }
 
         public static string ToSTR(this ref UGCDetails result)
@@ -535,6 +543,7 @@ namespace LoadOrderInjections {
         }
 
         public static void EnsureIncludedOrExcluded(PublishedFileId id) {
+            Log.Called();
             try {
                 string path1 = PlatformService.workshop.GetSubscribedItemPath(id);
                 if (path1.IsNullorEmpty()) {
@@ -550,6 +559,7 @@ namespace LoadOrderInjections {
             } catch (Exception ex) {
                 Log.Exception(ex, $"EnsureIncludedOrExcluded({id})", showInPanel: false);
             }
+            Log.Succeeded();
         }
 
         public static void EnsureIncludedOrExcludedFiles(string path) {

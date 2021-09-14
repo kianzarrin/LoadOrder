@@ -111,7 +111,7 @@ namespace LoadOrderTool.Data {
 
         public static string DIR {
             get {
-                var dir = Path.Combine(DataLocation.localApplicationData, "LOMProfiles");
+                var dir = Path.Combine(DataLocation.LocalLOMData, "LOMProfiles");
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
                 return dir;

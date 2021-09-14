@@ -20,6 +20,8 @@ namespace LoadOrderTool.Data {
         /// </summary>
         void Save();
         void SaveToProfile(LoadOrderProfile profile);
+        public void ResetCache();
+
     }
 
     public class ManagerList : SingletonLite<ManagerList>, IDataManager {
@@ -76,6 +78,14 @@ namespace LoadOrderTool.Data {
                 Log.Called();
                 foreach (IDataManager m in Managers)
                     m.SaveToProfile(profile);
+            } catch (Exception ex) { ex.Log(); }
+        }
+
+        public void ResetCache() {
+            try {
+                Log.Called();
+                foreach (IDataManager m in Managers)
+                    m.ResetCache();
             } catch (Exception ex) { ex.Log(); }
         }
     }

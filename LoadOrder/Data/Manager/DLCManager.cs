@@ -95,6 +95,8 @@ namespace LoadOrderTool.Data {
                 .Select(item => item.DLC)
                 .ToArray();
         }
+
+        public void ResetCache() { }
     }
 
 }

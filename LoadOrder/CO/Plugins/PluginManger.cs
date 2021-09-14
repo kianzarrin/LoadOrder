@@ -22,6 +22,8 @@ namespace CO.Plugins {
     public class PluginManager : SingletonLite<PluginManager>, IDataManager {
         public static ConfigWrapper ConfigWrapper = ConfigWrapper.instance;
         static LoadOrderConfig Config => ConfigWrapper.Config;
+        static LoadOrderCache Cache => ConfigWrapper.Cache;
+
         public bool IsLoading { get; private set; }
         public bool IsLoaded { get; private set; }
         public event Action EventLoaded;
@@ -61,7 +63,7 @@ namespace CO.Plugins {
             public string dllPath {
                 get {
                     if(dllPath_ == null) 
-                        _ = userModImplementation;
+                        _ = userModImplementation; // also initializes dllPath_
                     return dllPath_;
                 }
             }
@@ -104,35 +106,16 @@ namespace CO.Plugins {
             public string DisplayText {
                 get {
                     if (displayText_ == null) {
-                        if (ModInfo.Name.IsNullorEmpty())
+                        if (ModCache.Name.IsNullorEmpty())
                             displayText_ = DispalyPath;
                         else
-                            displayText_ = string.Join(" | ", new[] { ModInfo.Name, DispalyPath });
+                            displayText_ = string.Join(" | ", new[] { ModCache.Name, DispalyPath });
                     }
                     return displayText_;
                 }
             }
 
-            DateTime? dateUpdate_;
-            public DateTime DateUpdated {
-                get {
-                    if (dateUpdate_ == null) {
-                        if (string.IsNullOrWhiteSpace(ModInfo.DateUpdated))
-                            dateUpdate_ = default(DateTime);
-                        else if (DateTime.TryParse(
-                            ModInfo.DateUpdated,
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
-                            out var date))
-                            dateUpdate_ = date;
-                        else {
-                            Log.Warning($"could not parse {ModInfo.DateUpdated}");
-                            dateUpdate_ = default(DateTime);
-                        }
-                    }
-                    return dateUpdate_.Value;
-                }
-            }
+            public DateTime DateUpdated => ModCache.DateUpdated;
 
             string strDateUpdated_;
             public string StrDateUpdate {
@@ -146,35 +129,37 @@ namespace CO.Plugins {
                 }
             }
 
-            DateTime? dateSubscribed_;
-            public DateTime DateSubscribed {
+            DateTime? dateDownloaded_;
+            public DateTime DateDownloaded {
                 get {
-                    if (dateSubscribed_ == null) {
+                    if (dateDownloaded_ == null) {
                         if (File.Exists(dllPath)){
-                            dateSubscribed_ = File.GetCreationTimeUtc(dllPath);
+                            dateDownloaded_ = File.GetCreationTimeUtc(dllPath);
                         } else {
-                            dateSubscribed_ = default(DateTime);
+                            dateDownloaded_ = default(DateTime);
                         }
                     }
-                    return dateSubscribed_.Value;
+                    return dateDownloaded_.Value;
                 }
             }
 
-            string strDateSubscribed_;
-            public string StrDateSubscribed {
+            string strDateDownloaded_;
+            public string StrDateDownloaded {
                 get {
-                    if (strDateSubscribed_ != null)
-                        return strDateSubscribed_;
-                    else if (DateSubscribed == default)
-                        return strDateSubscribed_ = "";
+                    if (strDateDownloaded_ != null)
+                        return strDateDownloaded_;
+                    else if (DateDownloaded == default)
+                        return strDateDownloaded_ = "";
                     else
-                        return strDateSubscribed_ = DateSubscribed.ToString("d", CultureInfo.CurrentCulture);
+                        return strDateDownloaded_ = DateDownloaded.ToString("d", CultureInfo.CurrentCulture);
                 }
             }
+
+            public string Author => ModCache.Author;
 
             string searchText_;
             public string SearchText => searchText_ ??=
-                $"{DisplayText} {PublishedFileId} {ModInfo.Author}".Trim();
+                $"{DisplayText} {PublishedFileId} {Author}".Trim();
 
             public string[] DllPaths =>
                 Directory.GetFiles(ModPath, "*.dll", SearchOption.AllDirectories);
@@ -272,14 +257,25 @@ namespace CO.Plugins {
                 //this.m_Assemblies = new List<Assembly>();
                 this.m_IsBuiltin = builtin;
                 this.m_PublishedFileId = id;
-                this.ModInfo = Config.Mods.FirstOrDefault(
-                    _mod => _mod.Path == IncludedPath);
-                this.ModInfo ??= new LoadOrderShared.ModInfo {
-                    Path = IncludedPath,
-                    LoadOrder = LoadOrderConfig.DefaultLoadOrder,
-                };
+
+                this.ModInfo =
+                    Config.Mods.FirstOrDefault(item => item.Path == IncludedPath)
+                    ?? new LoadOrderShared.ModInfo { Path = IncludedPath };
+                this.ModCache =
+                    Cache.Mods.FirstOrDefault(item => item.Path == IncludedPath)
+                    ?? new LoadOrderCache.Mod { Path = IncludedPath };
+
                 isIncludedPending_ = IsIncluded;
                 isEnabledPending_ = isEnabled;
+            }
+
+            public void ResetCache() {
+                this.ModCache = Cache.Mods.FirstOrDefault(item => item.Path == IncludedPath);
+                this.strDateDownloaded_ = null;
+                this.dateDownloaded_ = null;
+                this.strDateUpdated_ = null;
+                this.displayText_ = null;
+                this.searchText_ = null;
             }
 
             //public bool ContainsAssembly(Assembly asm)
@@ -340,6 +336,7 @@ namespace CO.Plugins {
             }
 
             public LoadOrderShared.ModInfo ModInfo { get; private set; }
+            public LoadOrderTool.Data.LoadOrderCache.Mod ModCache { get; private set; }
 
             public void ResetLoadOrder() => LoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
 
@@ -482,28 +479,27 @@ namespace CO.Plugins {
                 }
                 //this.LoadAssemblies();
                 Log.Debug($"{m_Plugins.Count} pluggins loaded.");
+                ModDataGrid.SetProgress(50);
 
                 // purge plugins without a IUserMod Implementation. this also filters out non-cs mods.
                 // all dependent assemblies must be loaded before doing this.
-                foreach (var p in m_Plugins) {
+                for (int i = 0; i < m_Plugins.Count; ++i) {
+                    var p = m_Plugins[i];
                     Log.Info($"hasUserMod:{p.HasUserMod} " + p);
+                    ModDataGrid.SetProgress(50 + (i * 40) / m_Plugins.Count);
                 }
+
                 m_Plugins = m_Plugins.Where(p => p.HasUserMod).ToList();
                 Log.Debug($"{m_Plugins.Count} pluggins remained after purging non-cs or non-mods.");
 
-                //var mods = Config.Mods.ToList();
+                Config.Mods = Config.Mods
+                    .Union(m_Plugins.Select(item => item.ModInfo))
+                    .ToArray();
+                Cache.Mods = Cache.Mods
+                    .Union(m_Plugins.Select(item => item.ModCache))
+                    .ToArray();
 
-                //foreach (var plugin in m_Plugins) {
-                //    plugin.ModInfo.AssemblyName = plugin.dllName;
-                //    if (!mods.Any(_mod => _mod == plugin.ModInfo))
-                //        mods.Add(plugin.ModInfo);
-                //}
-
-                var mods = Config.Mods.Union(
-                     m_Plugins.Select(item => item.ModInfo));
-                Config.Mods = mods.ToArray();
                 ConfigWrapper.SaveConfig();
-
             } catch (Exception ex) {
                 Log.Exception(ex);
             } finally {
@@ -525,18 +521,19 @@ namespace CO.Plugins {
         }
 
         private void LoadWorkshopPluginInfos() {
-            var subscribedItems = ContentUtil.GetSubscribedItems();
+            var subscribedItems = ContentUtil.GetSubscribedItems()?.ToArray();
             Log.Debug($"subscribed items are: " + string.Join(", ", subscribedItems));
             if (subscribedItems != null) {
-                foreach (var id in subscribedItems) {
+                for (int i = 0; i < subscribedItems.Length; ++i) {
+                    var id = subscribedItems[i];
                     string subscribedItemPath = ContentUtil.GetSubscribedItemPath(id);
                     if (subscribedItemPath != null && Directory.Exists(subscribedItemPath)) {
                         //Log.Debug("scanned: " + subscribedItemPath);
                         m_Plugins.Add(new PluginInfo(subscribedItemPath, false, id));
+                        ModDataGrid.SetProgress((i * 50) / subscribedItems.Length);
                     } else {
                         Log.Debug("direcotry does not exist: " + subscribedItemPath);
                     }
-
                 }
             }
         }
@@ -665,6 +662,12 @@ namespace CO.Plugins {
             }
             if (type == PluginManager.MessageType.Message) {
                 Log.Info(message);
+            }
+        }
+
+        public void ResetCache() {
+            foreach (var mod in GetMods()) {
+                mod.ResetCache();
             }
         }
 

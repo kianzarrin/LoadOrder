@@ -52,9 +52,7 @@ namespace LoadOrderMod {
                 LoadingManager.instance.m_introLoaded += LoadOrderUtil.TurnOffSteamPanels;
                 LoadOrderUtil.TurnOffSteamPanels();
 
-                LoadingManager.instance.m_introLoaded += Settings.ConfigUtil.StoreConfigDetails;
-                if (SceneManager.GetActiveScene().name == "IntroScreen")
-                    Settings.ConfigUtil.StoreConfigDetails();
+                Settings.ConfigUtil.StoreConfigDetails();
 
                 CheckSubsUtil.RegisterEvents();
                 Log.Flush();
@@ -70,7 +68,6 @@ namespace LoadOrderMod {
                 }
 
                 LoadingManager.instance.m_introLoaded -= LoadOrderUtil.TurnOffSteamPanels;
-                LoadingManager.instance.m_introLoaded -= Settings.ConfigUtil.StoreConfigDetails;
                 HarmonyUtil.UninstallHarmony(HARMONY_ID);
                 MonoStatus.Release();
                 LOMAssetDataExtension.Release();

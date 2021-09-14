@@ -29,8 +29,7 @@ namespace CO.IO {
         public static bool isMacOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
         public static bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
-        static DataLocation()
-        {
+        static DataLocation() {
             var sw = System.Diagnostics.Stopwatch.StartNew();
             string m = "Delayed messages: "; // delayed message;
             try {
@@ -38,7 +37,7 @@ namespace CO.IO {
                 sw.Stop();
 
                 try {
-                    m += "\ndata is "+ (data is null ? "null" : "not null");
+                    m += "\ndata is " + (data is null ? "null" : "not null");
                     m += $"\ndata?.GamePath={data?.GamePath ?? "<null>"}";
                     if (Util.IsGamePath(data?.GamePath)) {
                         m += "\ngame path found: " + data.GamePath;
@@ -53,8 +52,7 @@ namespace CO.IO {
                         }
                     }
                     m += "\n[P1] game path so far is:" + GamePath;
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     Log.Exception(ex);
                 }
 
@@ -73,8 +71,7 @@ namespace CO.IO {
                         }
                     }
                     m += "\n[P2] SteamPath so far is:" + SteamPath;
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     Log.Exception(ex);
                 }
 
@@ -127,8 +124,7 @@ namespace CO.IO {
                     throw new Exception("failed to get GamePath : " + GamePath);
                 if (!Directory.Exists(WorkshopContentPath))
                     throw new Exception("failed to get SteamContentPath : " + WorkshopContentPath);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 Log.Exception(ex);
             } finally {
                 Log.Info(m);
@@ -167,8 +163,7 @@ namespace CO.IO {
         //	}
         //}
 
-        public static void DisplayStatus()
-        {
+        public static void DisplayStatus() {
             Log.Info("GamePath: " + DataLocation.GamePath);
             Log.Info("Workshop Content Path: " + DataLocation.WorkshopContentPath);
             Log.Info("Steam Path: " + DataLocation.SteamPath);
@@ -183,8 +178,7 @@ namespace CO.IO {
             //Log.Debug("Executing assembly: " + Assembly.GetExecutingAssembly().Location);
         }
 
-        public static string PrintPaths()
-        {
+        public static string PrintPaths() {
             string ret = "GamePath: " + DataLocation.GamePath;
             ret += "\nWorkshop Content Path: " + DataLocation.WorkshopContentPath;
             ret += "\nSteam Path: " + DataLocation.SteamPath;
@@ -220,7 +214,7 @@ namespace CO.IO {
                         ret = Path.Combine(GoUpToDirectory(path, "Steam"), "steamapps");
                     }
                     return Directory.Exists(ret) ? ret : "";
-                }catch(Exception ex) {
+                } catch (Exception ex) {
                     Log.Exception(ex);
                     return "";
                 }
@@ -275,10 +269,8 @@ namespace CO.IO {
             }
         }
 
-        public static bool VerifyPaths()
-        {
-            try
-            {
+        public static bool VerifyPaths() {
+            try {
                 bool good =
                     Util.IsGamePath(GamePath) &&
                     Util.IsWSPath(WorkshopContentPath) &&
@@ -286,8 +278,7 @@ namespace CO.IO {
                 if (good)
                     return true;
                 MessageBox.Show("could not find paths\n" + PrintPaths()); ;
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 MessageBox.Show("could not find paths\n" + PrintPaths()); ;
                 ex.Log();
             }
@@ -297,7 +288,7 @@ namespace CO.IO {
 
         public static string CitiesExe {
             get {
-                if(isWindows)
+                if (isWindows)
                     return "Cities.exe";
                 else if (isLinux)
                     return "Cities.x64";
@@ -476,6 +467,16 @@ namespace CO.IO {
                     Directory.CreateDirectory(text2);
                 }
                 return text2;
+            }
+        }
+
+        public static string LocalLOMData {
+            get {
+                var ret = Path.Combine(DataLocation.localApplicationData, "Saves");
+                if (!Directory.Exists(ret)) {
+                    Directory.CreateDirectory(ret);
+                }
+                return ret;
             }
         }
 

@@ -50,6 +50,7 @@ namespace LoadOrderTool {
         /// </summary>
         static Log() {
             try {
+                if (UIUtil.DesignMode) return;
                 string logfileDir;
                 if (DataLocation.Util.IsGamePath(DataLocation.GamePath)) {
                     logfileDir = Path.Combine(DataLocation.DataPath, "Logs");
@@ -183,7 +184,7 @@ namespace LoadOrderTool {
         /// <param name="level">Logging level. If set to <see cref="LogLevel.Error"/> a stack trace will be appended.</param>
         private static void LogImpl(string message, LogLevel level, bool copyToGameLog) {
             try {
-                var ticks = Timer.ElapsedTicks;
+                var ticks = Timer?.ElapsedTicks ?? 0;
                 string m = "";
                 if (ShowLevel) {
                     int maxLen = Enum.GetNames(typeof(LogLevel)).Select(str => str.Length).Max();
@@ -198,13 +199,15 @@ namespace LoadOrderTool {
 
                 m += message + nl;
 
-                if (level == LogLevel.Error || level == LogLevel.Exception) {
-                    m += new StackTrace(true).ToString() + nl + nl;
-                }
+                if (!UIUtil.DesignMode) {
+                    if (level == LogLevel.Error || level == LogLevel.Exception) {
+                        m += new StackTrace(true).ToString() + nl + nl;
+                    }
 
-                lock (fileLock) {
-                    using (StreamWriter w = File.AppendText(LogFilePath)) {
-                        w.Write(m);
+                    lock (fileLock) {
+                        using (StreamWriter w = File.AppendText(LogFilePath)) {
+                            w.Write(m);
+                        }
                     }
                 }
 
@@ -226,8 +229,8 @@ namespace LoadOrderTool {
             }
         }
 
-        internal static void Called(params object[] args) => Log.Info(Helpers.CurrentMethod(2, args) + " called.", false);
-        internal static void Succeeded() => Log.Info(Helpers.CurrentMethod(2) + " succeeded!", false);
+        internal static void Called(params object[] args) => Log.Info(Util.Helpers.CurrentMethod(2, args) + " called.", false);
+        internal static void Succeeded() => Log.Info(Util.Helpers.CurrentMethod(2) + " succeeded!", false);
     }
 
     internal static class LogExtensions {

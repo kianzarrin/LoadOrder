@@ -116,6 +116,11 @@ namespace LoadOrderTool.UI {
             }
         }
 
+        public static void SetProgress(float percent) {
+            LoadOrderWindow.Instance.ExecuteThreadSafe(
+                () => LoadOrderWindow.Instance.AssetProgressBar.Value = (int)percent);
+        }
+
         //read
         protected override void OnCellValueNeeded(DataGridViewCellValueEventArgs e) {
             base.OnCellValueNeeded(e);
@@ -133,11 +138,11 @@ namespace LoadOrderTool.UI {
                 } else if (e.ColumnIndex == cName.Index) {
                     e.Value = asset.DisplayText ?? "";
                 } else if (e.ColumnIndex == cAuthor.Index) {
-                    e.Value = asset.ConfigAssetInfo.Author ?? "";
+                    e.Value = asset.AssetCache.Author ?? "";
                 } else if (e.ColumnIndex == cDateUpdated.Index) {
                     e.Value = asset.StrDateUpdated;
                 } else if (e.ColumnIndex == cDateDownloaded.Index) {
-                    e.Value = asset.StrDateSubscribed;
+                    e.Value = asset.StrDateDownloaded;
                 } else if (e.ColumnIndex == cTags.Index) {
                     e.Value = asset.StrTags;
                 }
@@ -232,11 +237,11 @@ namespace LoadOrderTool.UI {
                     AssetList.SortItemsBy(item => item.DisplayText, sortAssending_);
                 } else if (e.ColumnIndex == cAuthor.Index) {
                     // "[unknown" is sorted before "[unknown]". This puts empty before unknown author.
-                    AssetList.SortItemsBy(item => item.ConfigAssetInfo.Author ?? "[unknown", sortAssending_);
+                    AssetList.SortItemsBy(item => item.Author ?? "[unknown", sortAssending_);
                 } else if (e.ColumnIndex == cDateUpdated.Index) {
                     AssetList.SortItemsBy(item => item.DateUpdated, sortAssending_);
                 } else if (e.ColumnIndex == cDateDownloaded.Index) {
-                    AssetList.SortItemsBy(item => item.DateSubscribed, sortAssending_);
+                    AssetList.SortItemsBy(item => item.DateDownloaded, sortAssending_);
                 } else if (e.ColumnIndex == cTags.Index) {
                     AssetList.SortItemsBy(item => item.StrTags, sortAssending_);
                 }

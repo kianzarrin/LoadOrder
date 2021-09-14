@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.Data {
+namespace LoadOrderTool.Data {
     using System;
     using System.Collections.Generic;
     using System.Text;
@@ -18,5 +18,9 @@
         public string IncludedPath { get; }
 
         public bool IsIncludedPending { get; }
+
+        public string Author { get; }
+
+        public void ResetCache();
     }
 }

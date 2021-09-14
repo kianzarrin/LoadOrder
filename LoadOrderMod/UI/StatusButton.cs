@@ -2,7 +2,7 @@ namespace LoadOrderMod.UI {
     extern alias Injections;
     using ColossalFramework.PlatformServices;
     using ColossalFramework.UI;
-    using Injections.LoadOrderShared;
+    using Injections::LoadOrderInjections;
     using KianCommons;
     using KianCommons.UI;
     using LoadOrderMod.Util;

@@ -9,9 +9,10 @@ namespace LoadOrderMod.Util {
     using System.IO;
     using System.Linq;
     using System;
-    using Injections.LoadOrderShared;
+    using Injections.LoadOrderInjections;
     using Settings;
-    using ColossalFramework.IO;
+    using System.Threading;
+    using ColossalFramework.Threading;
 
     public class CheckSubsUtil : MonoBehaviour {
         static GameObject go_;
@@ -152,33 +153,19 @@ namespace LoadOrderMod.Util {
             PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnUGCRequestUGCDetailsCompleted;
         }
 
+
         private static void OnUGCRequestUGCDetailsCompleted(UGCDetails ugc, bool ioError) {
-            try {
-                var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
-                if (status != DownloadStatus.DownloadOK) {
-                    string m =
-                        "subscribed item not installed properly:" +
-                        $"{ugc.publishedFileId} {ugc.title}\n" +
-                        $"reason={reason}. " +
-                        $"try reinstalling the item.";
-                    Log.DisplayWarning(m);
-                }
-                var mod = ConfigUtil.Config.Mods.FirstOrDefault(_mod => GetID1(_mod.Path) == ugc.publishedFileId);
-                if (mod != null) {
-                    mod.Status = (LoadOrderShared.DownloadStatus)(int)status;
-                    mod.DownloadFailureReason = reason;
-                    ConfigUtil.SaveConfig();
-                } else {
-                    // TODO: this might take long. only check this when ready. (maybe in a parallel thread?)
-                    if (false) {
-                        foreach (var assetInfo in ConfigUtil.Config.Assets.Where(_asset => GetID2(_asset.Path) == ugc.publishedFileId)) {
-                            assetInfo.Status = (LoadOrderShared.DownloadStatus)(int)status;
-                            assetInfo.DownloadFailureReason = reason;
-                            ConfigUtil.SaveConfig();
-                        }
+            ThreadPool.QueueUserWorkItem((_) => {
+                try {
+                    var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
+                    if (status != DownloadStatus.DownloadOK) {
+                        string m =
+                            $"'{ugc.publishedFileId} {ugc.title}' is not installed properly. Please try reinstalling it!" +
+                            $"\t(reason={reason})";
+                        ThreadHelper.dispatcher.Dispatch(() => Log.DisplayWarning(m));
                     }
-                }
-            } catch (Exception ex) { ex.Log(); }
+                } catch (Exception ex) { ex.Log(); }
+            });
         }
 
         public static bool IsWorkshop(string path) => path != null && path.Contains(ConfigUtil.Config.WorkShopContentPath);

@@ -11,6 +11,7 @@ namespace LoadOrderTool.Data {
 
     public class ConfigWrapper : SingletonLite<ConfigWrapper> {
         public LoadOrderConfig Config;
+        public LoadOrderCache Cache;
         public LoadingScreenMod.Settings LSMConfig;
 
         bool dirty_;
@@ -29,8 +30,9 @@ namespace LoadOrderTool.Data {
 
         public ConfigWrapper() {
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            Config = LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+            Config = LoadOrderConfig.Deserialize(DataLocation.LocalLOMData)
                 ?? new LoadOrderConfig();
+            Cache = LoadOrderCache.Deserialize() ?? new LoadOrderCache();
             Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
             LSMConfig = LoadingScreenMod.Settings.Deserialize();
             if(!CommandLine.Parse.CommandLine)
@@ -73,8 +75,10 @@ namespace LoadOrderTool.Data {
                 GamePath = DataLocation.GamePath,
                 SteamPath = DataLocation.SteamPath,
             };
+            Config.Serialize(DataLocation.LocalLOMData);
 
-            Config.Serialize(DataLocation.localApplicationData);
+            Cache = new LoadOrderCache();
+            Cache.Serialize();
 
             foreach (var pluginInfo in PluginManager.instance.GetMods()) {
                 try {
@@ -104,7 +108,8 @@ namespace LoadOrderTool.Data {
             Dirty = false;
             ManagerList.instance.Save(); // saves but not serialize
             PluginManager.instance.ApplyPendingValues(); // saves to game config and moves folders.
-            Config.Serialize(DataLocation.localApplicationData);
+            Config.Serialize(DataLocation.LocalLOMData);
+            Cache.Serialize();
             LSMConfig.Serialize();
             Log.Info($"SaveConfigImpl() done. (Dirty={Dirty})");
         }

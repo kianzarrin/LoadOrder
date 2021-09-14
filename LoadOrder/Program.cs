@@ -60,7 +60,7 @@ namespace LoadOrderTool {
                     ShowWindow(handle, SW_SHOW);// Show
                 } else {
                     ShowWindow(handle, SW_HIDE);// Hide
-                    new UI.ProgressWindow().Show();
+                    //new UI.ProgressWindow().Show();
                 }
 
 

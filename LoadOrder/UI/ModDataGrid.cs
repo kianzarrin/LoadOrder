@@ -5,6 +5,7 @@ namespace LoadOrderTool.UI {
     using System;
     using System.ComponentModel;
     using System.Drawing;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
     using System.Windows.Forms.Design;
 
@@ -201,7 +202,7 @@ namespace LoadOrderTool.UI {
                 if (e.RowIndex >= ModList.Filtered.Count || e.RowIndex >= Rows.Count) return;
                 var cell = Rows[e.RowIndex].Cells[e.ColumnIndex];
                 if (e.ColumnIndex == CDescription.Index && e.Value != null) {
-                    cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
+                    // cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
                 } else if (e.ColumnIndex == CModID.Index) {
                     var mod = ModList.Filtered[e.RowIndex];
                     if (mod.IsWorkshop) {
@@ -244,36 +245,40 @@ namespace LoadOrderTool.UI {
         // sort
         protected override void OnColumnHeaderMouseClick(DataGridViewCellMouseEventArgs e) {
             base.OnColumnHeaderMouseClick(e);
-            try {
-                if (ModList == null) return;
-                if (e.ColumnIndex == prevSortCol_) {
-                    sortAssending_ = e.ColumnIndex == COrder.Index ? true :!sortAssending_;
-                } else {
-                    sortAssending_ = true;
-                    foreach (DataGridViewColumn col in Columns)
-                        col.HeaderCell.SortGlyphDirection = SortOrder.None;
-                }
-                var sortOrder = sortAssending_ ? SortOrder.Ascending : SortOrder.Descending;
-                Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = sortOrder;
-                prevSortCol_ = e.ColumnIndex;
+            if (ModList == null) return;
+            if (e.ColumnIndex == prevSortCol_) {
+                sortAssending_ = e.ColumnIndex == COrder.Index ? true : !sortAssending_;
+            } else {
+                sortAssending_ = true;
+                foreach (DataGridViewColumn col in Columns)
+                    col.HeaderCell.SortGlyphDirection = SortOrder.None;
+            }
+            var sortOrder = sortAssending_ ? SortOrder.Ascending : SortOrder.Descending;
+            Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = sortOrder;
+            prevSortCol_ = e.ColumnIndex;
+            Sort();
+        }
 
-                if (e.ColumnIndex == COrder.Index) {
+        void Sort() {
+            try {
+                int columnIndex = prevSortCol_;
+                if (columnIndex == COrder.Index || prevSortCol_ == -1) {
                     ModList.DefaultSort();
-                } else if (e.ColumnIndex == CIsIncluded.Index) {
+                } else if (columnIndex == CIsIncluded.Index) {
                     ModList.SortItemsBy(item => item.IsIncludedPending, sortAssending_);
-                } else if (e.ColumnIndex == CEnabled.Index) {
+                } else if (columnIndex == CEnabled.Index) {
                     ModList.SortItemsBy(item => item.IsEnabledPending, sortAssending_);
-                } else if (e.ColumnIndex == CModID.Index) {
+                } else if (columnIndex == CModID.Index) {
                     ModList.SortItemsBy(item => item.PublishedFileId.AsUInt64, sortAssending_);
-                } else if (e.ColumnIndex == CDescription.Index) {
+                } else if (columnIndex == CDescription.Index) {
                     ModList.SortItemsBy(item => item.DisplayText, sortAssending_);
-                } else if (e.ColumnIndex == CAuthor.Index) {
+                } else if (columnIndex == CAuthor.Index) {
                     // "[unknown" is sorted before "[unknown]". This puts empty before unknown author.
-                    ModList.SortItemsBy(item => item.ModInfo.Author ?? "[unknown", sortAssending_);
-                } else if (e.ColumnIndex == this.CDateUpdated.Index) {
+                    ModList.SortItemsBy(item => item.Author ?? "[unknown", sortAssending_);
+                } else if (columnIndex == this.CDateUpdated.Index) {
                     ModList.SortItemsBy(item => item.DateUpdated, sortAssending_);
-                } else if (e.ColumnIndex == this.CDateDownloaded.Index) {
-                    ModList.SortItemsBy(item => item.DateSubscribed, sortAssending_);
+                } else if (columnIndex == this.CDateDownloaded.Index) {
+                    ModList.SortItemsBy(item => item.DateDownloaded, sortAssending_);
                 }
 
                 RefreshModList(sort: false);
@@ -282,10 +287,22 @@ namespace LoadOrderTool.UI {
             }
         }
 
-        public void LoadMods(Func<PluginManager.PluginInfo, bool> predicateCallback) {
-            PluginManager.instance.LoadPlugins();
+        public async Task LoadMods(Func<PluginManager.PluginInfo, bool> predicateCallback) {
+            await Task.Run(PluginManager.instance.LoadPlugins);
             ModList = ModList.GetAllMods(predicateCallback);
-            RefreshModList(true);
+            SetProgress(100);
+            Sort(); // also refreshes mod list.
+        }
+
+        public static void SetProgress(float percent) {
+            LoadOrderWindow.Instance.ExecuteThreadSafe(
+                () => LoadOrderWindow.Instance.ModProgressBar.Value = (int)percent);
+        }
+
+        public async Task LoadModsAsync(Func<PluginManager.PluginInfo, bool> predicateCallback) {
+            LoadOrderWindow.Instance.ModProgressBar.Visible = true;
+            await LoadMods(predicateCallback);
+            LoadOrderWindow.Instance.ModProgressBar.Visible = false;
         }
 
         public void RefreshModList(bool sort = false) {
@@ -306,12 +323,12 @@ namespace LoadOrderTool.UI {
             SuspendLayout();
             var rows = Rows;
             rows.Clear();
-            Log.Info("Populating");
-            foreach (var p in ModList.Filtered) {
-                string savedKey = p.savedEnabledKey_;
-                //Log.Debug($"plugin info: dllName={p.dllName} harmonyVersion={ ModList.GetHarmonyOrder(p)} " +
-                //     $"savedKey={savedKey} modPath={p.ModPath}");
-            }
+            Log.Info(Util.Helpers.ThisMethod + " Populating ...");
+            //foreach (var p in ModList.Filtered) {
+            //    string savedKey = p.savedEnabledKey_;
+            //    //Log.Debug($"plugin info: dllName={p.dllName} harmonyVersion={ ModList.GetHarmonyOrder(p)} " +
+            //    //     $"savedKey={savedKey} modPath={p.ModPath}");
+            //}
             foreach (var mod in ModList.Filtered) {
                 try {
                     string id = mod.PublishedFileId.AsUInt64.ToString();
@@ -322,10 +339,11 @@ namespace LoadOrderTool.UI {
                         included: mod.IsIncludedPending,
                         enabled: mod.IsEnabledPending,
                         id: id,
-                        author: mod.ModInfo.Author ?? "",
+                        author: mod.Author ?? "",
                         updated:mod.StrDateUpdate ?? "",
-                        downloaded: mod.StrDateSubscribed ?? "",
+                        downloaded: mod.StrDateDownloaded ?? "",
                         description: mod.DisplayText ?? "");
+                    Log.Debug("F");
                 } catch (Exception ex) {
                     Log.Exception(new Exception(
                         $"failed to add mod to row: " +
@@ -333,16 +351,19 @@ namespace LoadOrderTool.UI {
                         $"IsIncludedPending={mod.IsIncludedPending} " +
                         $"IsEnabledPending={mod.IsEnabledPending} " +
                         $"id={mod.PublishedFileId} " +
-                        $"Author={mod.ModInfo.Author} " +
-                        $"DateUpdated={mod.StrDateUpdate} " +
-                        $"DateSubscribed={mod.StrDateSubscribed} " +
+                        $"Author={mod.Author} " +
+                        $"updated={mod.StrDateUpdate} " +
+                        $"downloaded={mod.StrDateDownloaded} " +
                         $"DisplayText={mod.DisplayText}",
                         innerException: ex
                         ));
                 }
             }
+            Log.Info("P1");
             ResumeLayout();
+            Log.Info("P2");
             this.AutoResizeFirstColumn();
+            Log.Info("P3");
         }
     }
 }

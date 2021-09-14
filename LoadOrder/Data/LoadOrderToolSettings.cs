@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool {
+namespace LoadOrderTool {
     using System.IO;
     using System.Xml.Serialization;
     using CO.IO;
@@ -27,7 +27,7 @@
 
 
         const string FILE_NAME = "LoadOrderToolSettings.xml";
-        static string PATH => Path.Combine(DataLocation.localApplicationData, FILE_NAME);
+        static string PATH => Path.Combine(DataLocation.LocalLOMData, FILE_NAME);
 
         static LoadOrderToolSettings instance_;
         public static LoadOrderToolSettings Instace =>

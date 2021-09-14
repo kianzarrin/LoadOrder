@@ -64,6 +64,9 @@ namespace LoadOrderTool.UI
             this.launchControl = new LoadOrderTool.UI.LaunchControl();
             this.menuStrip = new LoadOrderTool.UI.LoadOrderWindowMenuStrip();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
+            ModProgressBar = new ProgressBar();
+            AssetProgressBar = new ProgressBar();
+
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMods)).BeginInit();
@@ -77,6 +80,9 @@ namespace LoadOrderTool.UI
             LSMTab.SuspendLayout();
             this.LaunchTab.SuspendLayout();
             this.SuspendLayout();
+            ModProgressBar.SuspendLayout();
+            AssetProgressBar.SuspendLayout();
+
             // 
             // TabContainer
             // 
@@ -95,6 +101,7 @@ namespace LoadOrderTool.UI
             // ModsTab
             // 
             this.ModsTab.BackColor = System.Drawing.SystemColors.Control;
+            this.ModsTab.Controls.Add(ModProgressBar);
             this.ModsTab.Controls.Add(this.dataGridMods);
             this.ModsTab.Controls.Add(this.ModActionPanel);
             this.ModsTab.Controls.Add(this.tableLayoutPanelModFilters);
@@ -185,6 +192,13 @@ namespace LoadOrderTool.UI
             this.DisableAllMods.TabIndex = 6;
             this.DisableAllMods.Text = "Disable All";
             this.DisableAllMods.UseVisualStyleBackColor = true;
+
+            //
+            // mod progress bar
+            //
+            ModProgressBar.Name = "modProgressBar";
+            ModProgressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+
             // 
             // tableLayoutPanelModFilters
             // 
@@ -259,6 +273,7 @@ namespace LoadOrderTool.UI
             // AssetsTab
             // 
             this.AssetsTab.BackColor = System.Drawing.SystemColors.Control;
+            AssetsTab.Controls.Add(AssetProgressBar);
             this.AssetsTab.Controls.Add(this.dataGridAssets);
             this.AssetsTab.Controls.Add(this.AssetsActionPanel);
             this.AssetsTab.Controls.Add(this.tableLayoutPanelAssetFilters);
@@ -289,6 +304,12 @@ namespace LoadOrderTool.UI
             this.dataGridAssets.Size = new System.Drawing.Size(863, 464);
             this.dataGridAssets.TabIndex = 0;
             this.dataGridAssets.VirtualMode = true;
+            //
+            // asset progress bar
+            //
+            AssetProgressBar.Name = "AssetProgressBar";
+            AssetProgressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+
             // 
             // AssetsActionPanel
             // 
@@ -553,5 +574,9 @@ namespace LoadOrderTool.UI
         private UI.LSMControl LSMControl;
 
         private StatusStrip statusStrip;
+
+        public ProgressBar ModProgressBar;
+        public ProgressBar AssetProgressBar;
+
     }
 }

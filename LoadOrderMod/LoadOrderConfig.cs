@@ -1,35 +1,16 @@
-using System.IO;
-using System.Xml.Serialization;
-
 namespace LoadOrderShared {
-    public enum DownloadStatus {
-        DownloadOK,
-        OutOfDate,
-        NotDownloaded,
-        PartiallyDownloaded,
-        Gone,
-    }
-
+    using System.IO;
+    using System.Xml.Serialization;
     public class ItemInfo {
         public string Path; // included path
-        public string Name;
-        public string Description;
-        public string Author;
-        public string DateUpdated;
-        public DownloadStatus Status;
-        public string DownloadFailureReason;
     }
 
     public class ModInfo : ItemInfo {
         public int LoadOrder;
-        public string AssemblyName;
     }
 
     public class AssetInfo: ItemInfo {
         public bool Excluded;
-        public string AssetName;
-        public string description;
-        public string[] Tags;
     }
 
     public class LoadOrderConfig {
@@ -52,11 +33,9 @@ namespace LoadOrderShared {
         public float StatusX = 1000;
         public float StatusY = 10;
 
-
         public ModInfo[] Mods = new ModInfo[0];
         public AssetInfo[] Assets = new AssetInfo[0];
         public string[] ExcludedDLCs = new string[0];
-        
 
         public void Serialize(string dir) {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));

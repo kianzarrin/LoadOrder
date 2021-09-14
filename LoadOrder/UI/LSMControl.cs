@@ -49,7 +49,7 @@ namespace LoadOrderTool.UI {
                 ofd.AddExtension = true;
                 ofd.Title = "OpenSkipFile";
 
-                string skipPath = Path.Combine(DataLocation.mapLocation, "SkippedPrefabs");
+                string skipPath = Path.Combine(DataLocation.localApplicationData, "SkippedPrefabs");
                 ofd.CustomPlaces.Add(DataLocation.localApplicationData);
                 if (Directory.Exists(skipPath)) {
                     ofd.CustomPlaces.Add(skipPath);

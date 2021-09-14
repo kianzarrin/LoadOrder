@@ -63,5 +63,7 @@ namespace LoadOrderTool.Data {
         public void SaveToProfile(LoadOrderProfile profile) {
             profile.SkipFilePathFinal = SkipPath;
         }
+
+        public void ResetCache() { }
     }
 }

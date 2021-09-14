@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using LoadOrderTool.Data;
 using LoadOrderTool.UI;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace LoadOrderTool.UI {
     public partial class LoadOrderWindow : Form {
@@ -74,18 +75,23 @@ namespace LoadOrderTool.UI {
                 ProgressWindow.Instance?.SetProgress(10, "Initializing UI ...");
                 InitializeComponent();
                 LoadSize();
+            } catch (Exception ex) {
+                ex.Log();
+            }
+        }
 
+        public async Task LoadAsync() {
+            try {
                 ProgressWindow.Instance?.SetProgress(20, "Loading Mods ...");
-                InitializeModTab();
+                var modTask = InitializeModTab();
                 ProgressWindow.Instance?.SetProgress(50, "Loading Assets ...");
-                InitializeAssetTab();
-                ProgressWindow.Instance?.SetProgress(80, "Assets Loaded.");
-
-                Dirty = ConfigWrapper.Dirty;
-                ConfigWrapper.Resume();
-                ConfigWrapper.SaveConfig();
+                var assetTask = InitializeAssetTab();
+                //ProgressWindow.Instance?.SetProgress(80, "Assets Loaded.");
 
                 menuStrip.tsmiAutoSave.Checked = ConfigWrapper.AutoSave;
+
+                await Task.WhenAll(modTask, assetTask);
+
                 menuStrip.tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
                 menuStrip.tsmiAutoSave.Click += TsmiAutoSave_Click;
 
@@ -96,14 +102,20 @@ namespace LoadOrderTool.UI {
                 menuStrip.tsmiImport.Click += Import_Click;
 
                 ProgressWindow.Instance?.SetProgress(90, "Loading UI ...");
+
+                Dirty = ConfigWrapper.Dirty;
+                ConfigWrapper.Resume();
+                ConfigWrapper.SaveConfig();
             } catch (Exception ex) {
                 ex.Log();
             }
         }
 
+
         protected override void OnLoad(EventArgs e) {
             base.OnLoad(e);
             ProgressWindow.Instance?.SetProgress(90, "UI Loaded");
+            LoadAsync();
         }
         protected override void OnVisibleChanged(EventArgs e) {
             base.OnVisibleChanged(e);
@@ -249,13 +261,20 @@ namespace LoadOrderTool.UI {
         #endregion
 
         #region Mod tab
-        void InitializeModTab() {
+        async Task InitializeModTab() {
             ComboBoxIncluded.SetItems<IncludedFilter>();
             ComboBoxIncluded.SelectedIndex = 0;
             ComboBoxEnabled.SetItems<EnabledFilter>();
             ComboBoxEnabled.SelectedIndex = 0;
             ComboBoxWS.SetItems<WSFilter>();
             ComboBoxWS.SelectedIndex = 0;
+
+            var buttons = ModActionPanel.Controls.OfType<Button>();
+            var maxwidth = buttons.Max(b => b.Width);
+            foreach (var b in buttons)
+                b.MinimumSize = new Size(maxwidth, 0);
+
+            await dataGridMods.LoadModsAsync(ModPredicate);
 
             ComboBoxIncluded.SelectedIndexChanged += RefreshModList;
             ComboBoxEnabled.SelectedIndexChanged += RefreshModList;
@@ -272,54 +291,59 @@ namespace LoadOrderTool.UI {
             EnableAllMods.Click += EnableAllMods_Click;
             DisableAllMods.Click += DisableAllMods_Click;
 
-
-            var buttons = ModActionPanel.Controls.OfType<Button>();
-            var maxwidth = buttons.Max(b => b.Width);
-            foreach (var b in buttons)
-                b.MinimumSize = new Size(maxwidth, 0);
-
-            dataGridMods.LoadMods(ModPredicate);
-
             dataGridMods.CellMouseClick += DataGridMods_CellMouseClick;
         }
 
-        private void RefreshModList(object sender, EventArgs e) => dataGridMods.RefreshModList();
+        private void RefreshModList(object sender, EventArgs e) {
+            RefreshModPredicate();
+            dataGridMods.RefreshModList();
+        }
+
+        #region predicate
+        IncludedFilter modIncludedFilter_;
+        EnabledFilter modEnabledFilter_;
+        WSFilter modWSFilter_;
+        string [] modTextFilter_;
+
+        public void RefreshModPredicate() {
+            modIncludedFilter_ = ComboBoxIncluded.GetSelectedItem<IncludedFilter>();
+            modEnabledFilter_ = ComboBoxEnabled.GetSelectedItem<EnabledFilter>();
+            modWSFilter_ = ComboBoxWS.GetSelectedItem<WSFilter>();
+            modTextFilter_ = TextFilterMods.Text?.Split(" ");
+        }
 
         public bool ModPredicate(PluginManager.PluginInfo p) {
             {
-                var filter = ComboBoxIncluded.GetSelectedItem<IncludedFilter>();
-                if (filter != IncludedFilter.None) {
-                    bool b = filter == IncludedFilter.Included;
+                if (modIncludedFilter_ != IncludedFilter.None) {
+                    bool b = modIncludedFilter_ == IncludedFilter.Included;
                     if (p.IsIncludedPending != b)
                         return false;
                 }
             }
             {
-                var filter = ComboBoxEnabled.GetSelectedItem<EnabledFilter>();
-                if (filter != EnabledFilter.None) {
-                    bool b = filter == EnabledFilter.Enabled;
+                if (modEnabledFilter_ != EnabledFilter.None) {
+                    bool b = modEnabledFilter_ == EnabledFilter.Enabled;
                     if (p.IsEnabledPending != b)
                         return false;
                 }
             }
             {
-                var filter = ComboBoxWS.GetSelectedItem<WSFilter>();
-                if (filter != WSFilter.None) {
-                    bool b = filter == WSFilter.Workshop;
+                if (modWSFilter_ != WSFilter.None) {
+                    bool b = modWSFilter_ == WSFilter.Workshop;
                     if (p.IsWorkshop != b)
                         return false;
                 }
             }
             {
-                var words = TextFilterMods.Text?.Split(" ");
-                if (words != null && words.Length > 0) {
-                    if (!ContainsWords(p.SearchText, words))
+                if (modTextFilter_ != null && modTextFilter_.Length > 0) {
+                    if (!ContainsWords(p.SearchText, modTextFilter_))
                         return false;
                 }
             }
 
             return true;
         }
+        #endregion
 
         private void TabContainer_SelectedIndexChanged(object sender, EventArgs e) =>
             menuStrip.tsmiOrder.Visible = dataGridMods.Visible;
@@ -384,7 +408,7 @@ namespace LoadOrderTool.UI {
         #endregion
 
         #region AssetTab
-        void InitializeAssetTab() {
+        async Task InitializeAssetTab() {
             ComboBoxAssetIncluded.SetItems<IncludedFilter>();
             ComboBoxAssetIncluded.SelectedIndex = 0;
             ComboBoxAssetWS.SetItems<WSFilter>();
@@ -403,14 +427,22 @@ namespace LoadOrderTool.UI {
             foreach (var b in buttons)
                 b.MinimumSize = new Size(maxwidth, 0);
 
-            LoadAsssets();
+            await LoadAssetsAsync();
 
             dataGridAssets.CellMouseClick += DataGridAssets_CellMouseClick;
         }
 
-        public void LoadAsssets() {
+        public async Task LoadAssetsAsync() {
+            try {
+                AssetProgressBar.Visible = true;
+                await Task.Run(LoadAsssets);
+                AssetProgressBar.Visible = false;
+            } catch (Exception ex) { ex.Log(); }
+        }
 
+        public void LoadAsssets() {
             PackageManager.instance.LoadPackages();
+            AssetDataGrid.SetProgress(100);
             PopulateAssets();
         }
 

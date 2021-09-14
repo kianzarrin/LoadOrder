@@ -18,10 +18,12 @@ namespace CO.Packaging {
     using LoadOrderShared;
     using LoadOrderTool.Data;
     using System.Globalization;
+    using LoadOrderTool.UI;
 
     public class PackageManager : SingletonLite<PackageManager>, IDataManager {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
         static LoadOrderConfig Config => ConfigWrapper.Config;
+        static LoadOrderCache Cache => ConfigWrapper.Cache;
 
         public bool IsLoading { get; private set; }
         public bool IsLoaded { get; private set; }
@@ -51,7 +53,7 @@ namespace CO.Packaging {
             public string DisplayText {
                 get {
                     if (string.IsNullOrEmpty(displayText_)) {
-                        displayText_ = ConfigAssetInfo.AssetName;
+                        displayText_ = AssetCache.AssetName;
                         if (string.IsNullOrEmpty(displayText_))
                             displayText_ = AssetName;
                     }
@@ -61,30 +63,11 @@ namespace CO.Packaging {
 
             string strTags_;
             public string StrTags => strTags_ ??=
-                ConfigAssetInfo.Tags != null
-                ? string.Join(", ", ConfigAssetInfo.Tags)
+                AssetCache.Tags != null
+                ? string.Join(", ", AssetCache.Tags)
                 : "";
 
-            DateTime ?dateUpdated_;
-            public DateTime DateUpdated {
-                get {
-                    if (dateUpdated_ == null) {
-                        if (string.IsNullOrWhiteSpace(ConfigAssetInfo.DateUpdated))
-                            dateUpdated_ = default(DateTime);
-                        else if (DateTime.TryParse(
-                            ConfigAssetInfo.DateUpdated,
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
-                            out var date))
-                            dateUpdated_ = date;
-                        else {
-                            Log.Warning($"could not parse {ConfigAssetInfo.DateUpdated}");
-                            dateUpdated_ = default(DateTime);
-                        }
-                    }
-                    return dateUpdated_.Value;
-                }
-            }
+            public DateTime DateUpdated => AssetCache.DateUpdated;
 
             string strDateUpdated_;
             public string StrDateUpdated {
@@ -98,35 +81,37 @@ namespace CO.Packaging {
                 }
             }
 
-            DateTime? dateSubscribed_;
-            public DateTime DateSubscribed {
+            DateTime? dateDownloaded_;
+            public DateTime DateDownloaded {
                 get {
-                    if (dateSubscribed_ == null) {
+                    if (dateDownloaded_ == null) {
                         if (File.Exists(AssetPath)) {
-                            dateSubscribed_ = File.GetCreationTimeUtc(AssetPath);
+                            dateDownloaded_ = File.GetCreationTimeUtc(AssetPath);
                         } else {
-                            dateSubscribed_ = default(DateTime);
+                            dateDownloaded_ = default(DateTime);
                         }
                     }
-                    return dateSubscribed_.Value;
+                    return dateDownloaded_.Value;
                 }
             }
 
-            string strDateSubscribed_;
-            public string StrDateSubscribed {
+            string strDateDownloaded_;
+            public string StrDateDownloaded {
                 get {
-                    if (strDateSubscribed_ != null)
-                        return strDateSubscribed_;
-                    else if (DateSubscribed == default)
-                        return strDateSubscribed_ = "";
+                    if (strDateDownloaded_ != null)
+                        return strDateDownloaded_;
+                    else if (DateDownloaded == default)
+                        return strDateDownloaded_ = "";
                     else
-                        return strDateSubscribed_ = DateSubscribed.ToString("d", CultureInfo.CurrentCulture);
+                        return strDateDownloaded_ = DateDownloaded.ToString("d", CultureInfo.CurrentCulture);
                 }
             }
+
+            public string Author => AssetCache.Author;
 
             string searchText_;
             public string SearchText => searchText_ ??=
-                $"{DisplayText} {PublishedFileId} {ConfigAssetInfo.Author}".Trim();
+                $"{DisplayText} {PublishedFileId} {Author}".Trim();
 
             public PublishedFileId PublishedFileId => this.m_PublishedFileId;
 
@@ -151,8 +136,8 @@ namespace CO.Packaging {
 
             private PublishedFileId m_PublishedFileId = PublishedFileId.invalid;
 
-            public IEnumerable<string> GetTags() => 
-                ConfigAssetInfo?.Tags ?? new string[] { };
+            public IEnumerable<string> GetTags() =>
+                AssetCache?.Tags ?? new string[] { };
 
             private AssetInfo() { }
 
@@ -161,15 +146,28 @@ namespace CO.Packaging {
                 this.m_Path = includedPath;
                 //this.m_IsBuiltin = builtin;
                 this.m_PublishedFileId = id;
-                this.ConfigAssetInfo = Config.Assets.FirstOrDefault(
-                    item => item.Path == includedPath);
-                this.ConfigAssetInfo ??= new LoadOrderShared.AssetInfo {
-                    Path = includedPath,
-                };
+                this.ConfigAssetInfo =
+                    Config.Assets.FirstOrDefault(item => item.Path == includedPath)
+                    ?? new LoadOrderShared.AssetInfo {Path = includedPath};
+                this.AssetCache =
+                    Cache.Assets.FirstOrDefault(item => item.Path == includedPath)
+                    ?? new LoadOrderCache.Asset { Path = includedPath };
                 isIncludedPending_ = IsIncluded;
             }
 
+            public void ResetCache() {
+                this.AssetCache = Cache.Assets.FirstOrDefault(
+                    item => item.Path == this.IncludedPath);
+                this.strDateDownloaded_ = null;
+                this.dateDownloaded_ = null;
+                this.strDateUpdated_ = null;
+                this.displayText_ = null;
+                this.searchText_ = null;
+                this.strTags_ = null;
+            }
+
             public LoadOrderShared.AssetInfo ConfigAssetInfo { get; private set; }
+            public LoadOrderTool.Data.LoadOrderCache.Asset AssetCache { get; private set; }
 
             public override string ToString() {
                 return
@@ -208,16 +206,22 @@ namespace CO.Packaging {
                 //this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Maps"), PublishedFileId.invalid);
                 //this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Scenarios"), PublishedFileId.invalid);
                 this.LoadWorkshopPackages();
+                AssetDataGrid.SetProgress(80);
                 this.LoadPackages(DataLocation.stylesPath, PublishedFileId.invalid);
                 this.LoadPackages(DataLocation.assetsPath, PublishedFileId.invalid);
                 //this.LoadPackages(DataLocation.mapLocation, PublishedFileId.invalid);
                 //this.LoadPackages(DataLocation.saveLocation, PublishedFileId.invalid);
                 this.LoadPackages(DataLocation.mapThemesPath, PublishedFileId.invalid);
                 //this.LoadPackages(DataLocation.scenarioLocation, PublishedFileId.invalid);
+                AssetDataGrid.SetProgress(90);
 
-                var assets = Config.Assets.Union(
-                    m_Assets.Select(item => item.ConfigAssetInfo));
-                Config.Assets = assets.ToArray();
+                Config.Assets = Config.Assets
+                    .Union(m_Assets.Select(item => item.ConfigAssetInfo))
+                    .ToArray();
+                Cache.Assets =  Cache.Assets
+                    .Union(m_Assets.Select(item => item.AssetCache))
+                    .ToArray();
+
                 ConfigWrapper.Dirty = true;
             } catch (Exception ex) {
                 Log.Exception(ex);
@@ -227,13 +231,15 @@ namespace CO.Packaging {
         }
 
         public void LoadWorkshopPackages() {
-            var subscribedItems = ContentUtil.GetSubscribedItems();
+            var subscribedItems = ContentUtil.GetSubscribedItems()?.ToArray();
             if (subscribedItems != null) {
-                foreach (var id in subscribedItems) {
+                for (int i = 0; i < subscribedItems.Length; ++i) {
+                    var id = subscribedItems[i];
                     string subscribedItemPath = ContentUtil.GetSubscribedItemPath(id);
                     if (subscribedItemPath != null && Directory.Exists(subscribedItemPath)) {
                         //Log.Debug("scanned: " + subscribedItemPath);
                         LoadPackages(subscribedItemPath, id);
+                        ModDataGrid.SetProgress((i * 80) / subscribedItems.Length);
                     } else {
                         //Log.Debug("direcotry does not exist: " + subscribedItemPath);
                     }
@@ -316,6 +322,12 @@ namespace CO.Packaging {
                 list.Add(assetProfile);
             }
             profile.Assets = list.ToArray();
+        }
+
+        public void ResetCache() {
+            foreach (var assetInfo in m_Assets) {
+                assetInfo.ResetCache();
+            }
         }
     }
 }
