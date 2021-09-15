@@ -33,7 +33,7 @@ namespace CO.IO {
             var sw = System.Diagnostics.Stopwatch.StartNew();
             string m = "Delayed messages: "; // delayed message;
             try {
-                var data = LoadOrderConfig.Deserialize(localApplicationData);
+                var data = LoadOrderConfig.Deserialize(LocalLOMData);
                 sw.Stop();
 
                 try {
@@ -472,13 +472,37 @@ namespace CO.IO {
 
         public static string LocalLOMData {
             get {
-                var ret = Path.Combine(DataLocation.localApplicationData, "LoadOrder");
-                if (!Directory.Exists(ret)) {
-                    Directory.CreateDirectory(ret);
-                }
+                var appData = DataLocation.localApplicationData;
+                var ret = Path.Combine(appData, "LoadOrder");
+                try {
+                    if (!Directory.Exists(ret)) {
+                        Directory.CreateDirectory(ret);
+
+                        // move files first time for backward compatibility.
+                        TryMoveFile("LoadOrderConfig.xml");
+                        TryMoveFile("LoadOrderToolSettings.xml");
+                        TryMoveDir("LOMProfiles");
+                    }
+                } catch(Exception ex) { ex.Log(); }
                 return ret;
+
+                void TryMoveFile(string fileName) {
+                    var source = Path.Combine(appData, fileName);
+                    var dest = Path.Combine(ret, fileName);
+                    if (File.Exists(source)) {
+                        File.Move(source, dest);
+                    }
+                }
+                void TryMoveDir(string dirName) {
+                    var source = Path.Combine(appData, dirName);
+                    var dest = Path.Combine(ret, dirName);
+                    if (Directory.Exists(source)) {
+                        Directory.Move(source, dest);
+                    }
+                }
             }
         }
+
 
         public static string saveLocation {
             get {

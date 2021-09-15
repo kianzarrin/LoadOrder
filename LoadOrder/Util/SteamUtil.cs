@@ -64,7 +64,7 @@ namespace LoadOrderTool.Util {
         }
 
         public static async Task<PublishedFileDTO[]> LoadDataAsync(PublishedFileId[] ids) {
-            using (var httpClient = LoggingHandler.CreateTracedHttpClient()) {
+            using (var httpClient = new HttpClient()) {
                 var url = @"https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/";
 
                 var dict = new Dictionary<string, string>();

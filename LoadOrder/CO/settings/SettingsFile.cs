@@ -72,7 +72,7 @@ namespace CO {
                 return Path.GetFileNameWithoutExtension(this.m_PathName);
             }
             set {
-                this.m_PathName = Path.Combine(DataLocation.LocalLOMData, PathUtils.AddExtension(value, GameSettings.extension));
+                this.m_PathName = Path.Combine(DataLocation.localApplicationData, PathUtils.AddExtension(value, GameSettings.extension));
             }
         }
 
