@@ -67,31 +67,31 @@ namespace CO.Packaging {
                 ? string.Join(", ", AssetCache.Tags)
                 : "";
 
-            public DateTime DateUpdated => AssetCache.DateUpdated;
+            public DateTime DateUpdatedUTC => AssetCache.DateUpdatedUTC;
 
             string strDateUpdated_;
             public string StrDateUpdated {
                 get {
                     if (strDateUpdated_ != null)
                         return strDateUpdated_;
-                    else if (DateUpdated == default)
+                    else if (DateUpdatedUTC == default)
                         return strDateUpdated_ = "";
                     else
-                        return strDateUpdated_ = DateUpdated.ToString("d", CultureInfo.CurrentCulture);
+                        return strDateUpdated_ = DateUpdatedUTC.ToLocalTime().ToString("d", CultureInfo.CurrentCulture);
                 }
             }
 
-            DateTime? dateDownloaded_;
-            public DateTime DateDownloaded {
+            DateTime? dateDownloadedUTC_;
+            public DateTime DateDownloadedUTC {
                 get {
-                    if (dateDownloaded_ == null) {
+                    if (dateDownloadedUTC_ == null) {
                         if (File.Exists(AssetPath)) {
-                            dateDownloaded_ = File.GetCreationTimeUtc(AssetPath);
+                            dateDownloadedUTC_ = File.GetCreationTimeUtc(AssetPath);
                         } else {
-                            dateDownloaded_ = default(DateTime);
+                            dateDownloadedUTC_ = default(DateTime);
                         }
                     }
-                    return dateDownloaded_.Value;
+                    return dateDownloadedUTC_.Value;
                 }
             }
 
@@ -100,10 +100,10 @@ namespace CO.Packaging {
                 get {
                     if (strDateDownloaded_ != null)
                         return strDateDownloaded_;
-                    else if (DateDownloaded == default)
+                    else if (DateDownloadedUTC == default)
                         return strDateDownloaded_ = "";
                     else
-                        return strDateDownloaded_ = DateDownloaded.ToString("d", CultureInfo.CurrentCulture);
+                        return strDateDownloaded_ = DateDownloadedUTC.ToLocalTime().ToString("d", CultureInfo.CurrentCulture);
                 }
             }
 
@@ -158,7 +158,7 @@ namespace CO.Packaging {
             public void ResetCache() {
                 this.AssetCache = Cache.GetAsset(this.IncludedPath);
                 this.strDateDownloaded_ = null;
-                this.dateDownloaded_ = null;
+                this.dateDownloadedUTC_ = null;
                 this.strDateUpdated_ = null;
                 this.displayText_ = null;
                 this.searchText_ = null;

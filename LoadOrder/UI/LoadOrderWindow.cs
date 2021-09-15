@@ -11,6 +11,7 @@ using LoadOrderTool.Data;
 using LoadOrderTool.UI;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace LoadOrderTool.UI {
     public partial class LoadOrderWindow : Form {
@@ -264,19 +265,23 @@ namespace LoadOrderTool.UI {
         }
 
         public async Task CacheInfo() {
-            var ids = await Task.Run(ContentUtil.GetSubscribedItems);
-            var ppl = await SteamUtil.LoadDataAsync();
-            await Task.Run(() => DTO2Cache(ppl));
-            dataGridMods.RefreshModList();
-            dataGridAssets.Refresh();
+            try {
+                var ids = await Task.Run(ContentUtil.GetSubscribedItems);
+                var ppl = await SteamUtil.LoadDataAsync();
+                Assertion.NotNull(ppl);
+                await Task.Run(() => DTO2Cache(ppl));
+                dataGridMods.RefreshModList();
+                dataGridAssets.Refresh();
 
-            await CacheAuthors();
-            dataGridMods.RefreshModList();
-            dataGridAssets.Refresh();
+                await CacheAuthors();
+                dataGridMods.RefreshModList();
+                dataGridAssets.Refresh();
+            } catch(Exception ex) { ex.Log(); }
         }
 
         public void DTO2Cache(SteamUtil.PublishedFileDTO[] ppl) {
-            foreach(var asset in PackageManager.instance.GetAssets()) {
+            Assertion.NotNull(ppl);
+            foreach (var asset in PackageManager.instance.GetAssets()) {
                 if (!asset.IsWorkshop) continue;
                 var person = ppl.FirstOrDefault(p => p.PublishedFileID == asset.PublishedFileId.AsUInt64);
                 if (person != null) {

@@ -13,8 +13,8 @@ namespace LoadOrderTool.Util {
     public class SteamUtil {
         public static PublishedFileDTO[] HttpResponse2DTOs(string httpResponse) {
             try {
-                File.WriteAllText("httpResult.json", httpResponse);
-                Console.WriteLine("parsing response to json ...");
+                //File.WriteAllText("httpResult.json", httpResponse);
+                Log.Info("parsing response to json ...");
                 dynamic json;
                 try {
                     json = JContainer.Parse(httpResponse);
@@ -24,7 +24,7 @@ namespace LoadOrderTool.Util {
                     return null;
                 }
 
-                Console.WriteLine($"result:{json.response.result}\nconverting json to DTO ... ");
+                Log.Info($"result:{json.response.result}\nconverting json to DTO ... ");
                 if (json.response.result == EResult.k_EResultOK) {
                     JArray publishedfiledetails = json.response.publishedfiledetails;
                     return publishedfiledetails
@@ -33,7 +33,7 @@ namespace LoadOrderTool.Util {
                         .ToArray();
                 }
             } catch (Exception ex) {
-                Console.WriteLine(ex);
+                ex.Log();
             }
             return null;
         }
@@ -63,6 +63,7 @@ namespace LoadOrderTool.Util {
                     string httpResponse2 = await httpResponse.Content.ReadAsStringAsync();
                     return await Task.Run(() => HttpResponse2DTOs(httpResponse2));
                 }
+                Log.Error("failed to get httpResponse");
                 return null;
             }
         }
@@ -82,11 +83,15 @@ namespace LoadOrderTool.Util {
         }
 
         public class PublishedFileDTO {
+            public static DateTime kEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            public static DateTime ToUTCTime(ulong time) => kEpoch.AddSeconds(time);
+
+
             public EResult Result;
             public ulong PublishedFileID;
             public string Title;
             public ulong AuthorID;
-            public DateTime Updated;
+            public DateTime UpdatedUTC;
             public ulong Size;
             public string PreviewURL;
             public string[] Tags;
@@ -97,11 +102,12 @@ namespace LoadOrderTool.Util {
                     Size = publishedfiledetail.file_size;
                     PreviewURL = publishedfiledetail.preview_url;
                     AuthorID = publishedfiledetail.creator;
-                    Updated = new DateTime((long)publishedfiledetail.time_updated);
+                    UpdatedUTC = ToUTCTime((ulong)publishedfiledetail.time_updated);
                     Tags = (publishedfiledetail.tags as JArray)
                         ?.Select(item => (string)item["tag"])
                         ?.Where(item => !item.Contains("compatible", StringComparison.OrdinalIgnoreCase))
                         ?.ToArray();
+                    //Log.Debug($"item[{PublishedFileID}]: Date Updated = {publishedfiledetail.time_updated}ticks =>  {Updated}");
                 }
             }
         }

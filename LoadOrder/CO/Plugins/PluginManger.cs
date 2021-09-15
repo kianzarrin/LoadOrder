@@ -115,31 +115,31 @@ namespace CO.Plugins {
                 }
             }
 
-            public DateTime DateUpdated => ModCache.DateUpdated;
+            public DateTime DateUpdatedUTC => ModCache.DateUpdatedUTC;
 
             string strDateUpdated_;
             public string StrDateUpdate {
                 get {
                     if (strDateUpdated_ != null)
                         return strDateUpdated_;
-                    else if (DateUpdated == default)
+                    else if (DateUpdatedUTC == default)
                         return strDateUpdated_ = "";
                     else
-                        return strDateUpdated_ = DateUpdated.ToString("d", CultureInfo.CurrentCulture);
+                        return strDateUpdated_ = DateUpdatedUTC.ToLocalTime().ToString("d", CultureInfo.CurrentCulture);
                 }
             }
 
-            DateTime? dateDownloaded_;
-            public DateTime DateDownloaded {
+            DateTime? dateDownloadedUTC_;
+            public DateTime DateDownloadedUTC {
                 get {
-                    if (dateDownloaded_ == null) {
+                    if (dateDownloadedUTC_ == null) {
                         if (File.Exists(dllPath)){
-                            dateDownloaded_ = File.GetCreationTimeUtc(dllPath);
+                            dateDownloadedUTC_ = File.GetCreationTimeUtc(dllPath);
                         } else {
-                            dateDownloaded_ = default(DateTime);
+                            dateDownloadedUTC_ = default(DateTime);
                         }
                     }
-                    return dateDownloaded_.Value;
+                    return dateDownloadedUTC_.Value;
                 }
             }
 
@@ -148,10 +148,10 @@ namespace CO.Plugins {
                 get {
                     if (strDateDownloaded_ != null)
                         return strDateDownloaded_;
-                    else if (DateDownloaded == default)
+                    else if (DateDownloadedUTC == default)
                         return strDateDownloaded_ = "";
                     else
-                        return strDateDownloaded_ = DateDownloaded.ToString("d", CultureInfo.CurrentCulture);
+                        return strDateDownloaded_ = DateDownloadedUTC.ToLocalTime().ToString("d", CultureInfo.CurrentCulture);
                 }
             }
 
@@ -272,7 +272,7 @@ namespace CO.Plugins {
             public void ResetCache() {
                 this.ModCache = Cache.GetMod(IncludedPath);
                 this.strDateDownloaded_ = null;
-                this.dateDownloaded_ = null;
+                this.dateDownloadedUTC_ = null;
                 this.strDateUpdated_ = null;
                 this.displayText_ = null;
                 this.searchText_ = null;

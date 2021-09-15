@@ -276,9 +276,9 @@ namespace LoadOrderTool.UI {
                     // "[unknown" is sorted before "[unknown]". This puts empty before unknown author.
                     ModList.SortItemsBy(item => item.Author ?? "[unknown", sortAssending_);
                 } else if (columnIndex == this.CDateUpdated.Index) {
-                    ModList.SortItemsBy(item => item.DateUpdated, sortAssending_);
+                    ModList.SortItemsBy(item => item.DateUpdatedUTC, sortAssending_);
                 } else if (columnIndex == this.CDateDownloaded.Index) {
-                    ModList.SortItemsBy(item => item.DateDownloaded, sortAssending_);
+                    ModList.SortItemsBy(item => item.DateDownloadedUTC, sortAssending_);
                 }
 
                 RefreshModList(sort: false);

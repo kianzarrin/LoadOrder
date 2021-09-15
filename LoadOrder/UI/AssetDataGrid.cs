@@ -239,9 +239,9 @@ namespace LoadOrderTool.UI {
                     // "[unknown" is sorted before "[unknown]". This puts empty before unknown author.
                     AssetList.SortItemsBy(item => item.Author ?? "[unknown", sortAssending_);
                 } else if (e.ColumnIndex == cDateUpdated.Index) {
-                    AssetList.SortItemsBy(item => item.DateUpdated, sortAssending_);
+                    AssetList.SortItemsBy(item => item.DateUpdatedUTC, sortAssending_);
                 } else if (e.ColumnIndex == cDateDownloaded.Index) {
-                    AssetList.SortItemsBy(item => item.DateDownloaded, sortAssending_);
+                    AssetList.SortItemsBy(item => item.DateDownloadedUTC, sortAssending_);
                 } else if (e.ColumnIndex == cTags.Index) {
                     AssetList.SortItemsBy(item => item.StrTags, sortAssending_);
                 }

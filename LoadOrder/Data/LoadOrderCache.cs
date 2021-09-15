@@ -27,7 +27,7 @@ namespace LoadOrderTool.Data {
             public string Description;
             public string Author;
             public ulong AuthorID;
-            public DateTime DateUpdated;
+            public DateTime DateUpdatedUTC;
             public DownloadStatus Status;
             public string DownloadFailureReason;
 
@@ -44,7 +44,7 @@ namespace LoadOrderTool.Data {
 
             public virtual void Read(Util.SteamUtil.PublishedFileDTO dto) {
                 Name = dto.Title;
-                DateUpdated = dto.Updated;
+                DateUpdatedUTC = dto.UpdatedUTC;
                 SetAuthor(dto.AuthorID);
             }
         }
