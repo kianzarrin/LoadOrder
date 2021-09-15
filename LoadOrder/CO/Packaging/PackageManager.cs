@@ -166,7 +166,10 @@ namespace CO.Packaging {
             }
 
             public LoadOrderShared.AssetInfo ConfigAssetInfo { get; private set; }
-            public LoadOrderTool.Data.LoadOrderCache.Asset AssetCache { get; private set; }
+            public LoadOrderShared.ItemInfo ItemConfig => ConfigAssetInfo;
+
+            public LoadOrderCache.Asset AssetCache { get; private set; }
+            public LoadOrderCache.Item ItemCache => AssetCache;
 
             public override string ToString() {
                 return
@@ -220,6 +223,8 @@ namespace CO.Packaging {
                 Cache.Assets =  Cache.Assets
                     .Union(m_Assets.Select(item => item.AssetCache))
                     .ToArray();
+
+                Cache.RebuildIndeces();
 
                 ConfigWrapper.Dirty = true;
             } catch (Exception ex) {

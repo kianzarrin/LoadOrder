@@ -1,5 +1,6 @@
 namespace LoadOrderTool.Util {
     using CO.Packaging;
+    using CO.PlatformServices;
     using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
@@ -39,16 +40,32 @@ namespace LoadOrderTool.Util {
         }
 
         public static string ExtractPersonaNameFromHTML(string html) {
-            //<span class="actual_persona_name">macsergey</span>
-            string pattern = "<span class=\"actual_persona_name\">([w]+)</span>";
-            MatchCollection mc = Regex.Matches(html, pattern);
-            return mc.Select(m => m.Groups[1].Value).FirstOrDefault();
+            try {
+                Log.Called(/*html*/);
+
+                //<span class="actual_persona_name">macsergey</span>
+                string pattern = "<span class=\"actual_persona_name\">(\\w+)</span>";
+                var match = Regex.Matches(html, pattern).FirstOrDefault();
+                if (match != null) {
+                    var ret = match.Groups[1].Value;
+                    ret.LogRet(match.Groups[0].Value);
+                    return ret;
+                } else {
+                    Log.Error(
+                        $"No match found!\n" +
+                        $"Pattern= {pattern}\n" +
+                        $"html={html}");
+                }
+
+            } catch (Exception ex) { ex.Log(); }
+            return null;
+            
+
         }
 
-        public static async Task<PublishedFileDTO[]> LoadDataAsync() {
+        public static async Task<PublishedFileDTO[]> LoadDataAsync(PublishedFileId[] ids) {
             using (var httpClient = LoggingHandler.CreateTracedHttpClient()) {
                 var url = @"https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/";
-                var ids = (await Task.Run(ContentUtil.GetSubscribedItems)).ToArray();
 
                 var dict = new Dictionary<string, string>();
                 dict["itemcount"] = ids.Length.ToString();
@@ -69,15 +86,15 @@ namespace LoadOrderTool.Util {
         }
 
         public static async Task<string> GetPersonaName(ulong personaID) {
-            // https://steamcommunity.com/profiles/{personaID}
-            string url = $@"https://steamcommunity.com/profiles/{personaID}";
-            using (var httpClient = new HttpClient()) {
-                var httpResponse = await httpClient.GetAsync(url);
-
-                if (httpResponse.IsSuccessStatusCode) {
-                    string httpResponse2 = await httpResponse.Content.ReadAsStringAsync();
-                    return await Task.Run(() => ExtractPersonaNameFromHTML(httpResponse2));
+            try {
+                // https://steamcommunity.com/profiles/{personaID}
+                string url = $@"https://steamcommunity.com/profiles/{personaID}";
+                using (var httpClient = new HttpClient()) {
+                    var http = await httpClient.GetStringAsync(url);
+                    return await Task.Run(() => ExtractPersonaNameFromHTML(http));
                 }
+            } catch(Exception ex) {
+                ex.Log();
                 return null;
             }
         }

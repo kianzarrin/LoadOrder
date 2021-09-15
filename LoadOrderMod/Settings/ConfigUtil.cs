@@ -39,7 +39,7 @@ namespace LoadOrderMod.Settings {
             if (config_ != null) return; // already initialized.
             LogCalled();
             config_ =
-                LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+                LoadOrderConfig.Deserialize(Path.Combine(DataLocation.localApplicationData, "LoadOrder"))
                 ?? new LoadOrderConfig();
 
             int n = Math.Max(PlatformService.workshop.GetSubscribedItemCount(),  config_.Assets.Length);
@@ -62,7 +62,7 @@ namespace LoadOrderMod.Settings {
                 SaveThread.Dirty = false;
                 if (config_ == null) return;
                 lock (SaveThread.LockObject)
-                    config_.Serialize(DataLocation.localApplicationData);
+                    config_.Serialize(Path.Combine(DataLocation.localApplicationData, "LoadOrder"));
             } catch (Exception ex) {
                 Log.Exception(ex);
             }

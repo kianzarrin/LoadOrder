@@ -336,7 +336,11 @@ namespace CO.Plugins {
             }
 
             public LoadOrderShared.ModInfo ModInfo { get; private set; }
+            public LoadOrderShared.ItemInfo ItemConfig => ModInfo;
+
             public LoadOrderTool.Data.LoadOrderCache.Mod ModCache { get; private set; }
+            public LoadOrderCache.Item ItemCache => ModCache;
+
 
             public void ResetLoadOrder() => LoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
 
@@ -499,6 +503,7 @@ namespace CO.Plugins {
                     .Union(m_Plugins.Select(item => item.ModCache))
                     .ToArray();
 
+                Cache.RebuildIndeces();
                 ConfigWrapper.SaveConfig();
             } catch (Exception ex) {
                 Log.Exception(ex);

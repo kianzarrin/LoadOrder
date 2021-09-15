@@ -116,10 +116,18 @@ namespace LoadOrderTool.UI {
             }
         }
 
-        public static void SetProgress(float percent) {
-            LoadOrderWindow.Instance.ExecuteThreadSafe(
-                () => LoadOrderWindow.Instance.AssetProgressBar.Value = (int)percent);
+        public static void SetProgress(float percent) => SetProgress(percent, UIUtil.WIN32Color.Normal);
+        public static void SetProgress(float percent, UIUtil.WIN32Color color) {
+            LoadOrderWindow.Instance.ExecuteThreadSafe(delegate () {
+                var p = LoadOrderWindow.Instance.AssetProgressBar;
+                p.Visible = percent >=0;
+                if (percent >= 0) {
+                    p.Value = (int)percent;
+                    p.SetColor(color);
+                }
+            });
         }
+
 
         //read
         protected override void OnCellValueNeeded(DataGridViewCellValueEventArgs e) {

@@ -294,15 +294,25 @@ namespace LoadOrderTool.UI {
             Sort(); // also refreshes mod list.
         }
 
-        public static void SetProgress(float percent) {
-            LoadOrderWindow.Instance.ExecuteThreadSafe(
-                () => LoadOrderWindow.Instance.ModProgressBar.Value = (int)percent);
+        public static void SetProgress(float percent) => SetProgress(percent, UIUtil.WIN32Color.Normal);
+
+        // set color and progress
+        // percent < 0 -> hide
+        public static void SetProgress(float percent, UIUtil.WIN32Color color) {
+            LoadOrderWindow.Instance.ExecuteThreadSafe(delegate () {
+                var p = LoadOrderWindow.Instance.ModProgressBar;
+                p.Visible = percent >= 0;
+                if (percent >= 0) {
+                    p.Value = (int)percent;
+                    p.SetColor(color);
+                }
+            });
         }
 
         public async Task LoadModsAsync(Func<PluginManager.PluginInfo, bool> predicateCallback) {
-            LoadOrderWindow.Instance.ModProgressBar.Visible = true;
+            SetProgress(0);
             await LoadMods(predicateCallback);
-            LoadOrderWindow.Instance.ModProgressBar.Visible = false;
+            SetProgress(-1);
         }
 
         public void RefreshModList(bool sort = false) {

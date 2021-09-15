@@ -5,6 +5,7 @@ namespace LoadOrderTool.UI {
     using System.ComponentModel;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.InteropServices;
     using System.Windows.Forms;
 
     public class TextAttribute : Attribute {
@@ -152,5 +153,17 @@ namespace LoadOrderTool.UI {
             col0.Width = Math.Max(col0.Width, col0.HeaderCell.Size.Width + SystemInformation.Border3DSize.Width);
 
         }
+
+        public enum WIN32Color {
+            Normal = 1,
+            Error = 2,
+            Warning = 3,
+        }
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr w, IntPtr l);
+        public static void SetColor(this ProgressBar p, WIN32Color color) {
+            SendMessage(p.Handle, 1040, (IntPtr)(int)color, IntPtr.Zero);
+        }
+
     }
 }

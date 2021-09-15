@@ -472,7 +472,7 @@ namespace CO.IO {
 
         public static string LocalLOMData {
             get {
-                var ret = Path.Combine(DataLocation.localApplicationData, "Saves");
+                var ret = Path.Combine(DataLocation.localApplicationData, "LoadOrder");
                 if (!Directory.Exists(ret)) {
                     Directory.CreateDirectory(ret);
                 }

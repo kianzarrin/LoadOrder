@@ -102,10 +102,29 @@ namespace LoadOrderTool.Data {
         public void RebuildIndeces() {
             modTable_ = new Hashtable<string, Mod>(Mods.ToDictionary(mod => mod.Path));
             assetTable_ = new Hashtable<string, Asset>(Assets.ToDictionary(asset => asset.Path));
-            peopleTable_ = new Hashtable<ulong, Persona>(People.ToDictionary(persona => persona.ID));
+            RebuildPeopleIndeces();
         }
 
-        public void RebuildPeopleIndeces() =>
-            peopleTable_ = new Hashtable<ulong, Persona>(People.ToDictionary(persona => persona.ID));
+        public void AddPerson(ulong id, string name) {
+            var p = peopleTable_[id];
+            if (p != null)
+                p.Name = name;
+            else
+                People.Add(new Persona { ID = id, Name = name });
+        }
+
+        public void RebuildPeopleIndeces() {
+            try {
+                peopleTable_ = new Hashtable<ulong, Persona>(People.ToDictionary(persona => persona.ID));
+            } catch {
+                // fix duplicate key error : new value replace old.
+                var ppl2 = new Dictionary<ulong, Persona>();
+                foreach(var person in People) {
+                    ppl2[person.ID] = person;
+                }
+                People = ppl2.Values.ToList();
+                peopleTable_ = new Hashtable<ulong, Persona>(ppl2);
+            }
+        }
     }
 }

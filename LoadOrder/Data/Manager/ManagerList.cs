@@ -2,6 +2,7 @@ using CO;
 using CO.Packaging;
 using CO.Plugins;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LoadOrderTool.Data {
@@ -25,6 +26,13 @@ namespace LoadOrderTool.Data {
     }
 
     public class ManagerList : SingletonLite<ManagerList>, IDataManager {
+        public static IEnumerable<IWSItem> GetItems() =>
+            PackageManager.instance.GetAssets()
+            .Concat<IWSItem>(PluginManager.instance.GetMods());
+
+        public static IEnumerable<IWSItem> GetWSItems() =>
+            GetItems().Where(item => item.IsWorkshop);
+
         public IDataManager[] Managers = {
             DLCManager.instance,
             LSMManager.instance,

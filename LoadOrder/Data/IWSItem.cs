@@ -21,6 +21,9 @@ namespace LoadOrderTool.Data {
 
         public string Author { get; }
 
+        public LoadOrderCache.Item ItemCache { get; }
+        public LoadOrderShared.ItemInfo ItemConfig { get; }
+
         public void ResetCache();
     }
 }

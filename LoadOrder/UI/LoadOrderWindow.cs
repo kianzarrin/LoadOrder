@@ -73,7 +73,6 @@ namespace LoadOrderTool.UI {
             try {
                 Instance = this;
                 ConfigWrapper.Suspend();
-                ProgressWindow.Instance?.SetProgress(10, "Initializing UI ...");
                 InitializeComponent();
                 LoadSize();
             } catch (Exception ex) {
@@ -87,7 +86,6 @@ namespace LoadOrderTool.UI {
 
                 var modTask = InitializeModTab();
                 var assetTask = InitializeAssetTab();
-                //ProgressWindow.Instance?.SetProgress(80, "Assets Loaded.");
 
                 await Task.WhenAll(modTask, assetTask);
 
@@ -100,13 +98,11 @@ namespace LoadOrderTool.UI {
                 menuStrip.tsmiExport.Click += Export_Click;
                 menuStrip.tsmiImport.Click += Import_Click;
 
-                ProgressWindow.Instance?.SetProgress(90, "Loading UI ...");
-
                 Dirty = ConfigWrapper.Dirty;
                 ConfigWrapper.Resume();
                 ConfigWrapper.SaveConfig();
 
-                await CacheInfo();
+                await CacheWSDetails();
                 ConfigWrapper.SaveConfig();
             } catch (Exception ex) {
                 ex.Log();
@@ -116,12 +112,7 @@ namespace LoadOrderTool.UI {
 
         protected override void OnLoad(EventArgs e) {
             base.OnLoad(e);
-            ProgressWindow.Instance?.SetProgress(90, "UI Loaded");
             LoadAsync();
-        }
-        protected override void OnVisibleChanged(EventArgs e) {
-            base.OnVisibleChanged(e);
-            if (Visible) ProgressWindow.Instance?.Close();
         }
 
         protected override void OnResizeEnd(EventArgs e) {
@@ -260,24 +251,41 @@ namespace LoadOrderTool.UI {
                 var modTask = dataGridMods.LoadModsAsync(ModPredicate);
                 var AssetTask = LoadAssets();
                 await Task.WhenAll(modTask, AssetTask);
-                await CacheInfo();
+                await CacheWSDetails();
             } catch (Exception ex) { ex.Log(); }
         }
 
-        public async Task CacheInfo() {
+        void SetCacheProgress(float percent) {
+            ModDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
+            AssetDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
+        }
+
+        public async Task CacheWSDetails() {
             try {
-                var ids = await Task.Run(ContentUtil.GetSubscribedItems);
-                var ppl = await SteamUtil.LoadDataAsync();
+                SetCacheProgress(0);
+                var ids = ManagerList.GetWSItems()
+                    .Select(item => item.PublishedFileId)
+                    .Distinct()
+                    .ToArray();
+
+                SetCacheProgress(10);
+                var ppl = await SteamUtil.LoadDataAsync(ids);
+                SetCacheProgress(40);
                 Assertion.NotNull(ppl);
                 await Task.Run(() => DTO2Cache(ppl));
+                SetCacheProgress(45);
                 dataGridMods.RefreshModList();
                 dataGridAssets.Refresh();
+                SetCacheProgress(50);
 
                 await CacheAuthors();
-                dataGridMods.RefreshModList();
-                dataGridAssets.Refresh();
-            } catch(Exception ex) { ex.Log(); }
+                SetCacheProgress(100);
+                RefreshAuthors();
+                SetCacheProgress(-1);
+            } catch (Exception ex) { ex.Log(); }
         }
+
+
 
         public void DTO2Cache(SteamUtil.PublishedFileDTO[] ppl) {
             Assertion.NotNull(ppl);
@@ -299,31 +307,58 @@ namespace LoadOrderTool.UI {
             }
         }
 
+        int nAuthors_;
+        int iAuthors_;
+        DateTime lastRefreshUpdate;
+
         public async Task CacheAuthors() {
-            var assets = PackageManager.instance.GetAssets();
-            var mods = PluginManager.instance.GetMods();
+            Log.Called();
+            var missingAuthors = ManagerList.GetItems()
+                .Where(item => item.IsWorkshop && item.ItemCache.Author == "" && item.ItemCache.AuthorID != 0)
+                .Select(item => item.ItemCache.AuthorID)
+                .Distinct();
+            var tasks = missingAuthors.Select(authorId => GetAndApplyPersonaName(authorId));
+            SetCacheProgress(60);
+            nAuthors_ = tasks.Count();
+            iAuthors_ = 0;
+            await Task.WhenAll(tasks);
+            SetCacheProgress(100);
+            Log.Succeeded();
+        }
 
-            var missingAuthors1 = assets
-                .Where(item => item.AssetCache.Author.IsNullorEmpty())
-                .Select(item => item.AssetCache.AuthorID);
-            var missingAuthors2 = mods
-                .Where(item => item.ModCache.Author.IsNullorEmpty())
-                .Select(item => item.ModCache.AuthorID);
-
-            foreach(var authorId in missingAuthors1.Concat(missingAuthors2)) {
+        public async Task GetAndApplyPersonaName(ulong authorId) {
+            try {
                 var authorName = await SteamUtil.GetPersonaName(authorId);
-                ConfigWrapper.Cache.People.Add(new LoadOrderCache.Persona { ID = authorId, Name = authorName });
+                if (authorName.IsNullorEmpty()) return;
+                Log.Debug($"Author recieved: {authorId} -> {authorName}");
+                AddAuthorAndRefresh(authorId, authorName);
+                Log.Succeeded();
+                SetCacheProgress(60 + iAuthors_ * 40 / nAuthors_);
+            } catch(Exception ex) {
+                ex.Log();
+            } finally {
+                iAuthors_++;
             }
+        }
 
-            ConfigWrapper.Cache.RebuildPeopleIndeces();
+        public void AddAuthorAndRefresh(ulong id, string name) {
+            ConfigWrapper.Cache.AddPerson(id,name);
 
-            foreach (var asset in assets) 
-                asset.AssetCache.UpdateAuthor();
-            
-            foreach (var mod in mods)
-                mod.ModCache.UpdateAuthor();
+            //if(DateTime.Now - lastRefreshUpdate > TimeSpan.FromSeconds(1))
+            //    RefreshAuthors();
+        }
+        public void RefreshAuthors() {
+            try {
+                lastRefreshUpdate = DateTime.Now;
 
+                ConfigWrapper.Cache.RebuildPeopleIndeces();
 
+                foreach (var item in ManagerList.GetItems())
+                    item.ItemCache.UpdateAuthor();
+
+                dataGridMods.PopulateMods();
+                dataGridAssets.Refresh();
+            } catch(Exception ex) { ex.Log(); } 
         }
 
 
@@ -365,7 +400,7 @@ namespace LoadOrderTool.UI {
 
         private void RefreshModList(object sender, EventArgs e) {
             RefreshModPredicate();
-            dataGridMods.RefreshModList();
+            dataGridMods.RefreshModList(); // filter and populate
         }
 
         #region predicate
@@ -503,9 +538,9 @@ namespace LoadOrderTool.UI {
 
         public async Task LoadAssetsAsync() {
             try {
-                AssetProgressBar.Visible = true;
+                AssetDataGrid.SetProgress(0);
                 await LoadAssets();
-                AssetProgressBar.Visible = false;
+                AssetDataGrid.SetProgress(-1);
             } catch (Exception ex) { ex.Log(); }
         }
 

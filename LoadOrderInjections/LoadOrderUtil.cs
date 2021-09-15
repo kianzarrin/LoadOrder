@@ -17,7 +17,7 @@ namespace LoadOrderInjections.Util {
             get {
                 try {
                     return config_ ??=
-                        LoadOrderConfig.Deserialize(DataLocation.localApplicationData)
+                        LoadOrderConfig.Deserialize(Path.Combine(DataLocation.localApplicationData, "LoadOrder"))
                         ?? new LoadOrderConfig();
                 } catch (Exception ex) {
                     Log.Exception(ex);
