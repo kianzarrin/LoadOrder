@@ -11,6 +11,7 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
     using ColossalFramework.Plugins;
     using System.Linq;
     using LoadOrderMod.Settings;
+    using LoadOrderMod.UI;
 
     [HarmonyPatch(typeof(LoadingWrapper))]
     [HarmonyPatch("OnLevelLoaded")]
@@ -85,6 +86,7 @@ namespace LoadOrderMod.Patches._LoadingWrapper {
         public static void Postfix() {
             sw_total.Stop();
             var ms = sw_total.ElapsedMilliseconds;
+            MonoStatus.Ensure();
             Log.Info($"LoadingWrapper.OnLevelLoaded() finished (before other postfixes). total duration = {ms:#,0}ms ", true);
             Log.Flush();
         }
