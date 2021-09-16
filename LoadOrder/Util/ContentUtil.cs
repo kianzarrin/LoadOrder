@@ -175,56 +175,61 @@ namespace LoadOrderTool.Util {
             return ret;
         }
 
+        static object ensureLock_ = new object();
         public static void EnsureSubscribedItems() {
-            List<string> includedPaths = new List<string>();
-            List<string> excludedPaths = new List<string>();
-            foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath)) {
-                var dirName = Path.GetFileName(path);
-                if (!TryGetID(dirName, out ulong id)) continue;
-                if (dirName.StartsWith("_"))
-                    excludedPaths.Add(path);
-                else
-                    includedPaths.Add(path);
-            }
+            lock (ensureLock_) {
+                List<string> includedPaths = new List<string>();
+                List<string> excludedPaths = new List<string>();
+                foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath)) {
+                    var dirName = Path.GetFileName(path);
+                    if (!TryGetID(dirName, out ulong id)) continue;
+                    if (dirName.StartsWith("_"))
+                        excludedPaths.Add(path);
+                    else
+                        includedPaths.Add(path);
+                }
 
-            foreach (var excludedPath in excludedPaths) {
-                var excludedID = Path2ID(excludedPath);
-                foreach (var includedPath in includedPaths) {
-                    var includedID = Path2ID(includedPath);
-                    if (excludedID == includedID) {
-                        Directory.Delete(excludedPath, recursive: true);
-                        Directory.Move(includedPath, excludedPath);
-                        break;
+                foreach (var excludedPath in excludedPaths) {
+                    var excludedID = Path2ID(excludedPath);
+                    foreach (var includedPath in includedPaths) {
+                        var includedID = Path2ID(includedPath);
+                        if (excludedID == includedID) {
+                            Log.Info($"moving '{includedPath}' to '{excludedPath}'");
+                            Directory.Delete(excludedPath, recursive: true);
+                            Directory.Move(includedPath, excludedPath);
+                            break;
+                        }
                     }
                 }
             }
         }
 
         public static void EnsureLocalItemsAt(string parentDir) {
-            List<string> includedPaths = new List<string>();
-            List<string> excludedPaths = new List<string>();
-            foreach (var path in Directory.GetDirectories(parentDir)) {
-                var dirName = Path.GetFileName(path);
-                if (dirName.StartsWith("_"))
-                    excludedPaths.Add(path);
-                else
-                    includedPaths.Add(path);
-            }
+            lock (ensureLock_) {
+                List<string> includedPaths = new List<string>();
+                List<string> excludedPaths = new List<string>();
+                foreach (var path in Directory.GetDirectories(parentDir)) {
+                    var dirName = Path.GetFileName(path);
+                    if (dirName.StartsWith("_"))
+                        excludedPaths.Add(path);
+                    else
+                        includedPaths.Add(path);
+                }
 
-            foreach (var excludedPath in excludedPaths) {
-                var excludedDir = Path.GetFileName(excludedPath);
-                var includedDir = excludedDir.Substring(1);
-                foreach (var includedPath in includedPaths) {
-                    if (Path.GetFileName(includedPath) == includedDir) {
-                        Directory.Delete(excludedPath, recursive: true);
-                        break;
+                foreach (var excludedPath in excludedPaths) {
+                    var excludedDir = Path.GetFileName(excludedPath);
+                    var includedDir = excludedDir.Substring(1);
+                    foreach (var includedPath in includedPaths) {
+                        if (Path.GetFileName(includedPath) == includedDir) {
+                            Directory.Delete(excludedPath, recursive: true);
+                            break;
+                        }
                     }
                 }
             }
         }
 
         public static IEnumerable<PublishedFileId> GetSubscribedItems() {
-            EnsureSubscribedItems();
             foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath)) {
                 var dirName = Path.GetFileName(path);
                 if (!TryGetID(dirName, out ulong id)) continue;

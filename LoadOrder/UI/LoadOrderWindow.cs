@@ -84,9 +84,9 @@ namespace LoadOrderTool.UI {
             try {
                 menuStrip.tsmiAutoSave.Checked = ConfigWrapper.AutoSave;
 
+                await Task.Run(ContentUtil.EnsureSubscribedItems);
                 var modTask = InitializeModTab();
                 var assetTask = InitializeAssetTab();
-
                 await Task.WhenAll(modTask, assetTask);
 
                 menuStrip.tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
@@ -248,6 +248,7 @@ namespace LoadOrderTool.UI {
 
         public async Task ReloadAll() {
             try {
+                await Task.Run(ContentUtil.EnsureSubscribedItems);
                 var modTask = dataGridMods.LoadModsAsync(ModPredicate);
                 var AssetTask = LoadAssets();
                 await Task.WhenAll(modTask, AssetTask);
@@ -256,6 +257,7 @@ namespace LoadOrderTool.UI {
         }
 
         void SetCacheProgress(float percent) {
+            if (percent > 100) Log.Warning($"percent={percent} nAuthors={nAuthors_} iAuthor={iAuthor_}");
             ModDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
             AssetDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
         }
@@ -278,9 +280,10 @@ namespace LoadOrderTool.UI {
                 dataGridAssets.Refresh();
                 SetCacheProgress(50);
 
-                await CacheAuthors();
+                bool authorsUpdated = await CacheAuthors();
                 SetCacheProgress(100);
-                RefreshAuthors();
+                if(authorsUpdated)
+                    RefreshAuthors();
                 SetCacheProgress(-1);
             } catch (Exception ex) { ex.Log(); }
         }
@@ -308,22 +311,27 @@ namespace LoadOrderTool.UI {
         }
 
         int nAuthors_;
-        int iAuthors_;
+        int iAuthor_;
         DateTime lastRefreshUpdate;
 
-        public async Task CacheAuthors() {
+        public async Task<bool> CacheAuthors() {
             Log.Called();
-            var missingAuthors = ManagerList.GetItems()
-                .Where(item => item.IsWorkshop && item.ItemCache.Author == "" && item.ItemCache.AuthorID != 0)
+            var missingAuthors = ManagerList.GetWSItems()
+                .Where(item => item.ItemCache.Author.IsNullorEmpty() && item.ItemCache.AuthorID != 0)
                 .Select(item => item.ItemCache.AuthorID)
                 .Distinct();
+            Log.Info("Geting author names : " + missingAuthors.ToSTR());
+            if (!missingAuthors.Any())
+                return false;
+
             var tasks = missingAuthors.Select(authorId => GetAndApplyPersonaName(authorId));
             SetCacheProgress(60);
             nAuthors_ = tasks.Count();
-            iAuthors_ = 0;
+            iAuthor_ = 0;
             await Task.WhenAll(tasks);
             SetCacheProgress(100);
             Log.Succeeded();
+            return true;
         }
 
         public async Task GetAndApplyPersonaName(ulong authorId) {
@@ -331,22 +339,18 @@ namespace LoadOrderTool.UI {
                 var authorName = await SteamUtil.GetPersonaName(authorId);
                 if (authorName.IsNullorEmpty()) return;
                 Log.Debug($"Author recieved: {authorId} -> {authorName}");
-                AddAuthorAndRefresh(authorId, authorName);
+                AddAuthor(authorId, authorName);
                 Log.Succeeded();
-                SetCacheProgress(60 + iAuthors_ * 40 / nAuthors_);
-            } catch(Exception ex) {
+                SetCacheProgress(60 + (40 * iAuthor_++) / nAuthors_);
+            } catch (Exception ex) {
                 ex.Log();
-            } finally {
-                iAuthors_++;
             }
         }
 
-        public void AddAuthorAndRefresh(ulong id, string name) {
+        public void AddAuthor(ulong id, string name) {
             ConfigWrapper.Cache.AddPerson(id,name);
-
-            //if(DateTime.Now - lastRefreshUpdate > TimeSpan.FromSeconds(1))
-            //    RefreshAuthors();
         }
+
         public void RefreshAuthors() {
             try {
                 lastRefreshUpdate = DateTime.Now;

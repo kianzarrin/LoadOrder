@@ -121,13 +121,10 @@ namespace LoadOrderTool.UI {
             LoadOrderWindow.Instance.ExecuteThreadSafe(delegate () {
                 var p = LoadOrderWindow.Instance.AssetProgressBar;
                 p.Visible = percent >=0;
-                if (percent >= 0) {
-                    p.Value = (int)percent;
-                    p.SetColor(color);
-                }
+                p.Value = Math.Clamp((int)percent, 0, 100);
+                p.SetColor(color);
             });
         }
-
 
         //read
         protected override void OnCellValueNeeded(DataGridViewCellValueEventArgs e) {

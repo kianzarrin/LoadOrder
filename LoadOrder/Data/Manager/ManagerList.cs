@@ -1,9 +1,11 @@
 using CO;
 using CO.Packaging;
 using CO.Plugins;
+using LoadOrderTool.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LoadOrderTool.Data {
     public interface IDataManager {
@@ -57,6 +59,7 @@ namespace LoadOrderTool.Data {
         public void Load() {
             try {
                 Log.Called();
+                ContentUtil.EnsureSubscribedItems();
                 foreach (IDataManager m in Managers) {
                     m.EventLoaded += OnLoadCallBack;
                     m.Load();

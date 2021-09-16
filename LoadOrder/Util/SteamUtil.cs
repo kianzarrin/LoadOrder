@@ -44,7 +44,7 @@ namespace LoadOrderTool.Util {
                 Log.Called(/*html*/);
 
                 //<span class="actual_persona_name">macsergey</span>
-                string pattern = "<span class=\"actual_persona_name\">(\\w+)</span>";
+                string pattern = "<span class=\"actual_persona_name\">([^<>]+)</span>";
                 var match = Regex.Matches(html, pattern).FirstOrDefault();
                 if (match != null) {
                     var ret = match.Groups[1].Value;

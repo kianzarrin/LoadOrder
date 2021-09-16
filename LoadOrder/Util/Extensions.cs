@@ -109,13 +109,16 @@ namespace LoadOrderTool.Util {
             if (list is null)
                 return "<null>";
             string ret = "{ ";
+            int count = 0;
             foreach (object item in list) {
+                count++;
                 MethodInfo mToString = item.GetType().GetMethod("ToString", new Type[0])
                     ?? throw new Exception($"{item.GetType().Name}.ToString() was not found");
                 var s = mToString.Invoke(item, null);
                 ret += $"{s}, ";
             }
-            ret = ret.Remove(ret.Length - 2, 2);
+            if(count > 0 )
+                ret = ret.Remove(ret.Length - 2, 2);
             ret += " }";
             return ret;
         }

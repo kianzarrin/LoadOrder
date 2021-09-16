@@ -70,7 +70,7 @@ namespace CO.Plugins {
 
             public bool isBuiltin => m_IsBuiltin;
 
-            public bool IsLocal => PublishedFileId == PublishedFileId.invalid;
+            public bool IsLocal => PublishedFileId == PublishedFileId.invalid || PublishedFileId.AsUInt64 == 0;
             public bool IsWorkshop => !IsLocal;
 
             public string ModPath => m_Path;
