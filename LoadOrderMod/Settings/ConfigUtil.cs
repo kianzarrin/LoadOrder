@@ -112,8 +112,6 @@ namespace LoadOrderMod.Settings {
             }
         }
 
-
-
         public static void AquirePathDetails() {
             try {
                 LogCalled();
