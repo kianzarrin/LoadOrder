@@ -319,15 +319,17 @@ namespace LoadOrderTool.UI {
             var missingAuthors = ManagerList.GetWSItems()
                 .Where(item => item.ItemCache.Author.IsNullorEmpty() && item.ItemCache.AuthorID != 0)
                 .Select(item => item.ItemCache.AuthorID)
-                .Distinct();
+                .Distinct()
+                .ToArray();
             Log.Info("Geting author names : " + missingAuthors.ToSTR());
             if (!missingAuthors.Any())
                 return false;
 
+            iAuthor_ = 0;
+            nAuthors_ = missingAuthors.Length;
             var tasks = missingAuthors.Select(authorId => GetAndApplyPersonaName(authorId));
             SetCacheProgress(60);
-            nAuthors_ = tasks.Count();
-            iAuthor_ = 0;
+
             await Task.WhenAll(tasks);
             SetCacheProgress(100);
             Log.Succeeded();
@@ -340,8 +342,9 @@ namespace LoadOrderTool.UI {
                 if (authorName.IsNullorEmpty()) return;
                 Log.Debug($"Author recieved: {authorId} -> {authorName}");
                 AddAuthor(authorId, authorName);
+                SetCacheProgress(60 + (40 * iAuthor_) / nAuthors_);
+                iAuthor_++;
                 Log.Succeeded();
-                SetCacheProgress(60 + (40 * iAuthor_++) / nAuthors_);
             } catch (Exception ex) {
                 ex.Log();
             }

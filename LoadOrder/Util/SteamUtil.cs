@@ -94,7 +94,7 @@ namespace LoadOrderTool.Util {
                     return await Task.Run(() => ExtractPersonaNameFromHTML(http));
                 }
             } catch(Exception ex) {
-                ex.Log();
+                new Exception("personaID: " + personaID, ex).Log();
                 return null;
             }
         }
