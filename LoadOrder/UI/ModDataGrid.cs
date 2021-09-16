@@ -26,7 +26,6 @@ namespace LoadOrderTool.UI {
         public DataGridViewTextBoxColumn CDescription;
         public DataGridViewTextBoxColumn CStatus;
 
-
         public ModDataGrid() {
             COrder = new DataGridViewTextBoxColumn();
             CIsIncluded = new DataGridViewCheckBoxColumn();
@@ -56,9 +55,11 @@ namespace LoadOrderTool.UI {
             AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            MultiSelect = false;
             RowHeadersVisible = false;
             AllowUserToResizeColumns = false;
+
+            MultiSelect = false;
+            SelectionMode = DataGridViewSelectionMode.CellSelect;
 
             // 
             // COrder

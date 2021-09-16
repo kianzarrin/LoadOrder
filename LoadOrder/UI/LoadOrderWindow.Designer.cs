@@ -124,7 +124,6 @@ namespace LoadOrderTool.UI
             this.dataGridMods.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridMods.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridMods.Location = new System.Drawing.Point(3, 32);
-            this.dataGridMods.MultiSelect = false;
             this.dataGridMods.Name = "dataGridMods";
             this.dataGridMods.RowHeadersVisible = false;
             this.dataGridMods.Size = new System.Drawing.Size(863, 464);
@@ -297,7 +296,6 @@ namespace LoadOrderTool.UI
             this.dataGridAssets.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridAssets.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridAssets.Location = new System.Drawing.Point(3, 32);
-            this.dataGridAssets.MultiSelect = false;
             this.dataGridAssets.Name = "dataGridAssets";
             this.dataGridAssets.RowHeadersVisible = false;
             this.dataGridAssets.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;

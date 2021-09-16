@@ -40,12 +40,13 @@ namespace LoadOrderTool.UI {
             AllowUserToDeleteRows = false;
             AllowUserToOrderColumns = true;
             AllowUserToResizeRows = false;
-            MultiSelect = false;
             RowHeadersVisible = false;
             AlternatingRowsDefaultCellStyle = new DataGridViewCellStyle { BackColor = Color.Beige };
             AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+            MultiSelect = false;
             SelectionMode = DataGridViewSelectionMode.CellSelect;
 
             Columns.AddRange(new DataGridViewColumn[] {
