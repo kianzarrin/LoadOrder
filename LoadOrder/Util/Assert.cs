@@ -14,35 +14,34 @@ namespace LoadOrderTool.Util {
                 throw new Exception(Concat("Assertion failed.", m));
         }
 
-        public static void NotNull<T>(T condition, string m = null) {
-            if (condition is null)
+        public static void NotNull(object obj, string m = null) {
+            if (obj == null)
                 throw new Exception(Concat("Assertion.NotNull failed.", m));
-
         }
 
-        public static void Neq<T>(dynamic a, dynamic b, string m = null) {
+        public static void Neq(dynamic a, dynamic b, string m = null) {
             if (a == b)
                 throw new Exception(Concat($"Assertion failed : {a} != {b} ", m));
         }
 
-        public static void Eq<T>(dynamic a, dynamic b, string m = null) {
+        public static void Eq(dynamic a, dynamic b, string m = null) {
             if (a != b)
                 throw new Exception(Concat($"Assertion failed : {a} == {b} ", m));
         }
 
-        public static void GT<T>(dynamic a, dynamic b, string m = null) {
+        public static void GT(dynamic a, dynamic b, string m = null) {
             if (!(a > b))
                 throw new Exception(Concat($"Assertion failed : {a} > {b} ", m));
         }
-        public static void GTEq<T>(dynamic a, dynamic b, string m = null) {
+        public static void GTEq(dynamic a, dynamic b, string m = null) {
             if (!(a >= b))
                 throw new Exception(Concat($"Assertion failed : {a} >= {b} ", m));
         }
-        public static void LT<T>(dynamic a, dynamic b, string m = null) {
+        public static void LT(dynamic a, dynamic b, string m = null) {
             if (!(a < b))
                 throw new Exception(Concat($"Assertion failed : {a} < {b} ", m));
         }
-        public static void LTEq<T>(dynamic a, dynamic b, string m = null) {
+        public static void LTEq(dynamic a, dynamic b, string m = null) {
             if (!(a <= b))
                 throw new Exception(Concat($"Assertion failed : {a} <= {b} ", m));
         }

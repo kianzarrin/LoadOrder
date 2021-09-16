@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace LoadOrderTool.Util {
     public static class Helpers {
@@ -142,5 +143,10 @@ namespace LoadOrderTool.Util {
             ret += " }";
             return ret;
         }
+
+        internal static bool IsNullOrWhiteSpace(this string str) => string.IsNullOrWhiteSpace(str);
+
+        internal static string SpaceCamelCase(this string camelCase) =>
+            Regex.Replace(camelCase, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ");
     }
 }

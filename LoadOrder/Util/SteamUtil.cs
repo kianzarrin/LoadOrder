@@ -42,10 +42,8 @@ namespace LoadOrderTool.Util {
         public static string ExtractPersonaNameFromHTML(string html) {
             try {
                 Log.Called(/*html*/);
-
-                //<span class="actual_persona_name">macsergey</span>
-                string pattern = "<span class=\"actual_persona_name\">([^<>]+)</span>";
-                var match = Regex.Matches(html, pattern).FirstOrDefault();
+                var pattern = "<span class=\"actual_persona_name\">([^<>]+)</span>";
+                var match = Regex.Matches(html, "<span class=\"actual_persona_name\">([^<>]+)</span>").FirstOrDefault();
                 if (match != null) {
                     var ret = match.Groups[1].Value;
                     ret.LogRet(match.Groups[0].Value);
@@ -94,7 +92,10 @@ namespace LoadOrderTool.Util {
                     return await Task.Run(() => ExtractPersonaNameFromHTML(http));
                 }
             } catch(Exception ex) {
-                new Exception("personaID: " + personaID, ex).Log();
+                UI.LoadOrderWindow.Instance.ExecuteThreadSafe(delegate() {
+                    new Exception("personaID: " + personaID, ex).Log();
+                });
+
                 return null;
             }
         }
@@ -115,6 +116,7 @@ namespace LoadOrderTool.Util {
             public PublishedFileDTO(dynamic publishedfiledetail) {
                 Result = (EResult)publishedfiledetail.result;
                 if (Result == EResult.k_EResultOK) {
+                    Title = publishedfiledetail.title;
                     PublishedFileID = publishedfiledetail.publishedfileid;
                     Size = publishedfiledetail.file_size;
                     PreviewURL = publishedfiledetail.preview_url;

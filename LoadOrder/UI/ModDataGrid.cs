@@ -1,6 +1,7 @@
 namespace LoadOrderTool.UI {
     using CO.PlatformServices;
     using CO.Plugins;
+    using LoadOrderTool.Data;
     using LoadOrderTool.Util;
     using System;
     using System.ComponentModel;
@@ -23,6 +24,7 @@ namespace LoadOrderTool.UI {
         public DataGridViewTextBoxColumn CDateUpdated;
         public DataGridViewTextBoxColumn CDateDownloaded;
         public DataGridViewTextBoxColumn CDescription;
+        public DataGridViewTextBoxColumn CStatus;
 
 
         public ModDataGrid() {
@@ -31,6 +33,7 @@ namespace LoadOrderTool.UI {
             CEnabled = new DataGridViewCheckBoxColumn();
             CModID = new DataGridViewLinkColumn();
             CDescription = new DataGridViewTextBoxColumn();
+            CStatus = new DataGridViewTextBoxColumn();
             CAuthor = new DataGridViewTextBoxColumn();
             CDateUpdated = new DataGridViewTextBoxColumn();
             CDateDownloaded = new DataGridViewTextBoxColumn();
@@ -40,6 +43,7 @@ namespace LoadOrderTool.UI {
             CIsIncluded,
             CEnabled,
             CModID,
+            CStatus,
             CAuthor,
             CDateUpdated,
             CDateDownloaded,
@@ -115,6 +119,13 @@ namespace LoadOrderTool.UI {
             CDescription.HeaderText = "Description";
             CDescription.Name = "CDescription";
             CDescription.ReadOnly = true;
+            // 
+            // CStatus
+            // 
+            CStatus.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            CStatus.HeaderText = "Status";
+            CStatus.Name = "CStatus";
+            CStatus.ReadOnly = true;
 
             DataError += ModDataGrid_DataError;
             foreach (DataGridViewColumn col in Columns)
@@ -122,12 +133,13 @@ namespace LoadOrderTool.UI {
         }
 
         public void AddRow(int order, bool included, bool enabled, string id,
-            string author, string updated, string downloaded, string description) {
+            string author, string updated, string downloaded, string description, string status) {
             var row = new object[Columns.Count];
             row[COrder.Index] = order;
             row[CIsIncluded.Index] = included;
             row[CEnabled.Index] = enabled;
             row[CModID.Index] = id;
+            row[CStatus.Index] = status;
             row[CAuthor.Index] = author;
             row[CDateUpdated.Index] = updated;
             row[CDateDownloaded.Index] = downloaded;
@@ -203,6 +215,9 @@ namespace LoadOrderTool.UI {
                 var cell = Rows[e.RowIndex].Cells[e.ColumnIndex];
                 if (e.ColumnIndex == CDescription.Index && e.Value != null) {
                     // cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
+                } else if (e.ColumnIndex == CStatus.Index && e.Value != null) {
+                    var mod = ModList.Filtered[e.RowIndex];
+                    cell.ToolTipText = mod.ItemCache.DownloadFailureReason;
                 } else if (e.ColumnIndex == CModID.Index) {
                     var mod = ModList.Filtered[e.RowIndex];
                     if (mod.IsWorkshop) {
@@ -279,6 +294,8 @@ namespace LoadOrderTool.UI {
                     ModList.SortItemsBy(item => item.DateUpdatedUTC, sortAssending_);
                 } else if (columnIndex == this.CDateDownloaded.Index) {
                     ModList.SortItemsBy(item => item.DateDownloadedUTC, sortAssending_);
+                }else if (columnIndex == CStatus.Index) {
+                    ModList.SortItemsBy(item => item.ItemCache.Status, sortAssending_);
                 }
 
                 RefreshModList(sort: false);
@@ -342,13 +359,15 @@ namespace LoadOrderTool.UI {
                     string id = mod.PublishedFileId.AsUInt64.ToString();
                     if (id == "0" || mod.PublishedFileId == PublishedFileId.invalid)
                         id = "Local";
+
                     AddRow(
                         order: mod.LoadOrder,
                         included: mod.IsIncludedPending,
                         enabled: mod.IsEnabledPending,
                         id: id,
+                        status: mod.StrStatus,
                         author: mod.Author ?? "",
-                        updated:mod.StrDateUpdate ?? "",
+                        updated: mod.StrDateUpdate ?? "",
                         downloaded: mod.StrDateDownloaded ?? "",
                         description: mod.DisplayText ?? "");
                 } catch (Exception ex) {

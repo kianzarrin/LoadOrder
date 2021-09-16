@@ -6,6 +6,7 @@ namespace LoadOrderTool.Util {
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using static LoadOrderTool.Data.LoadOrderCache;
 
     public static class ContentUtil {
         public const string WS_URL_PREFIX = @"https://steamcommunity.com/sharedfiles/filedetails/?id=";
@@ -238,14 +239,80 @@ namespace LoadOrderTool.Util {
             }
         }
 
-        public static string GetSubscribedItemPath(PublishedFileId id) {
-            var ret = Path.Combine(DataLocation.WorkshopContentPath, id.AsUInt64.ToString());
+        public static string GetSubscribedItemPath(PublishedFileId id) => GetSubscribedItemPath(id.AsUInt64);
+        public static string GetSubscribedItemPath(ulong id) {
+            var ret = Path.Combine(DataLocation.WorkshopContentPath, id.ToString());
             if (Directory.Exists(ret))
                 return ret;
-            ret = Path.Combine(DataLocation.WorkshopContentPath, "_" + id.AsUInt64.ToString());
+            ret = Path.Combine(DataLocation.WorkshopContentPath, "_" + id.ToString());
             if (Directory.Exists(ret))
                 return ret;
             return null;
+        }
+
+        public static DownloadStatus IsUGCUpToDate(SteamUtil.PublishedFileDTO det, out string reason) {
+            Assertion.Neq(det.PublishedFileID , 0ul, "id");
+            if (det.Title.IsNullOrWhiteSpace()) {
+                reason = "could not get steam details. result:" + det.Result;
+                return DownloadStatus.Gone;
+            }
+            string localPath = GetSubscribedItemPath(det.PublishedFileID);
+
+            if (localPath == null) {
+                reason = "subscribed item is not downloaded. path does not exits: " + localPath;
+                return DownloadStatus.NotDownloaded;
+            }
+
+            var updatedServer = det.UpdatedUTC;
+            var updatedLocal = GetLocalTimeUpdated(localPath).ToUniversalTime();
+            var sizeServer = det.Size;
+            var localSize = GetTotalSize(localPath);
+            if (updatedLocal < updatedServer) {
+                bool sure =
+                    localSize < sizeServer ||
+                    updatedLocal < updatedServer.AddHours(-24);
+                string be = sure ? "is" : "may be";
+                reason = $"subscribed item {be} out of date.\n\t" +
+                    $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
+                return DownloadStatus.OutOfDate;
+            }
+
+            if (localSize < sizeServer) // could be smaller if user has its own files in there.
+            {
+                reason = $"subscribed item download is incomplete. server-size={sizeServer}) local-size={localSize})";
+                return DownloadStatus.PartiallyDownloaded;
+            }
+
+            reason = null;
+            return DownloadStatus.OK;
+        }
+
+        public static DateTime GetLocalTimeUpdated(string path) {
+            DateTime dateTime = DateTime.MinValue;
+            if (Directory.Exists(path)) {
+                foreach (string filePAth in Directory.GetFiles(path)) {
+                    string ext = Path.GetExtension(filePAth);
+                    //if (ext == ".dll" || ext == ".crp" || ext == ".png")
+                    {
+                        DateTime lastWriteTimeUtc = File.GetLastWriteTimeUtc(filePAth);
+                        if (lastWriteTimeUtc > dateTime) {
+                            dateTime = lastWriteTimeUtc;
+                        }
+                    }
+                }
+            }
+            return dateTime;
+        }
+
+        public static ulong GetTotalSize(string path) {
+            var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
+            return (ulong)files.Sum(_f => new FileInfo(_f).Length);
+        }
+
+        static string STR(DateTime time) {
+            var local = time.ToLocalTime().ToString();
+            var utc = time.ToUniversalTime().ToShortTimeString();
+            return $"{local} (UTC {utc})";
         }
     }
 }

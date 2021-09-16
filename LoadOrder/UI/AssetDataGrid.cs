@@ -24,6 +24,7 @@ namespace LoadOrderTool.UI {
         private DataGridViewTextBoxColumn cDateUpdated;
         private DataGridViewTextBoxColumn cDateDownloaded;
         private DataGridViewTextBoxColumn cTags;
+        private DataGridViewTextBoxColumn cStatus;
 
         public AssetDataGrid() {
             cIncluded = new DataGridViewCheckBoxColumn();
@@ -33,6 +34,7 @@ namespace LoadOrderTool.UI {
             cDateUpdated = new DataGridViewTextBoxColumn();
             cDateDownloaded = new DataGridViewTextBoxColumn();
             cTags = new DataGridViewTextBoxColumn();
+            cStatus = new DataGridViewTextBoxColumn();
 
             AllowUserToAddRows = false;
             AllowUserToDeleteRows = false;
@@ -49,6 +51,7 @@ namespace LoadOrderTool.UI {
             Columns.AddRange(new DataGridViewColumn[] {
             cIncluded,
             cAssetID,
+            cStatus,
             cName,
             cAuthor,
             cDateUpdated,
@@ -108,8 +111,15 @@ namespace LoadOrderTool.UI {
             cTags.Name = "cTags";
             cTags.ReadOnly = true;
             cTags.Width = 60;
+            // 
+            // CStatus
+            // 
+            cStatus.HeaderText = "Status";
+            cStatus.Name = "CStatus";
+            cStatus.ReadOnly = true;
 
             VirtualMode = true;
+
             foreach (DataGridViewColumn col in Columns) {
                 col.SortMode = DataGridViewColumnSortMode.Programmatic;
                 col.Width += 1; // workaround : show Glyph
@@ -140,6 +150,8 @@ namespace LoadOrderTool.UI {
                     if (id == "0" || asset.PublishedFileId == PublishedFileId.invalid)
                         id = "Local";
                     e.Value = id;
+                } else if (e.ColumnIndex == cStatus.Index) {
+                    e.Value = asset.StrStatus;
                 } else if (e.ColumnIndex == cName.Index) {
                     e.Value = asset.DisplayText ?? "";
                 } else if (e.ColumnIndex == cAuthor.Index) {
@@ -167,7 +179,10 @@ namespace LoadOrderTool.UI {
                     var id = asset.PublishedFileId;
                     string url = ContentUtil.GetItemURL(asset.PublishedFileId);
                     e.ToolTipText = url ?? asset.AssetPath;
+                } else if (e.ColumnIndex == cStatus.Index) {
+                    e.ToolTipText = asset.ItemCache.DownloadFailureReason;
                 }
+
             } catch (Exception ex) {
                 Log.Exception(ex, $"rowIndex={e.RowIndex}");
             }
@@ -249,6 +264,8 @@ namespace LoadOrderTool.UI {
                     AssetList.SortItemsBy(item => item.DateDownloadedUTC, sortAssending_);
                 } else if (e.ColumnIndex == cTags.Index) {
                     AssetList.SortItemsBy(item => item.StrTags, sortAssending_);
+                } else if (e.ColumnIndex == cStatus.Index) {
+                    AssetList.SortItemsBy(item => item.ItemCache.Status, sortAssending_);
                 }
 
                 Rows.Clear();

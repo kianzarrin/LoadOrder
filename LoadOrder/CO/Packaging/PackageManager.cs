@@ -107,6 +107,10 @@ namespace CO.Packaging {
                 }
             }
 
+            public string StrStatus => ItemCache.Status == default
+                ? ""
+                : ItemCache.Status.ToString().SpaceCamelCase();
+
             public string Author => AssetCache.Author;
 
             string searchText_;

@@ -361,6 +361,10 @@ namespace CO.Plugins {
                     $"cachedName={m_CachedName}"; /*assemblies={assembliesString}"*/
             }
 
+            public string StrStatus => ItemCache.Status == default
+                ? ""
+                : ItemCache.Status.ToString().SpaceCamelCase();
+
             //public string assembliesString {
             //    get {
             //        int assemblyCount = this.assemblyCount;

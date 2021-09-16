@@ -6,6 +6,7 @@ namespace LoadOrderTool.Data {
     using LoadOrderTool.Helpers;
     using System.Linq;
     using System.Collections.Generic;
+    using LoadOrderTool.Util;
 
     public class LoadOrderCache {
         public class Persona {
@@ -14,7 +15,8 @@ namespace LoadOrderTool.Data {
         }
 
         public enum DownloadStatus {
-            DownloadOK,
+            None,
+            OK,
             OutOfDate,
             NotDownloaded,
             PartiallyDownloaded,
@@ -41,11 +43,11 @@ namespace LoadOrderTool.Data {
                 Author = person?.Name;
             }
 
-
-            public virtual void Read(Util.SteamUtil.PublishedFileDTO dto) {
+            public virtual void Read(SteamUtil.PublishedFileDTO dto) {
                 Name = dto.Title;
                 DateUpdatedUTC = dto.UpdatedUTC;
                 SetAuthor(dto.AuthorID);
+                Status = ContentUtil.IsUGCUpToDate(dto, out DownloadFailureReason);
             }
         }
 
@@ -56,7 +58,7 @@ namespace LoadOrderTool.Data {
         public class Asset : Item {
             public string[] Tags;
 
-            public override void Read(Util.SteamUtil.PublishedFileDTO dto) {
+            public override void Read(SteamUtil.PublishedFileDTO dto) {
                 base.Read(dto);
                 Tags = dto.Tags;
             }
