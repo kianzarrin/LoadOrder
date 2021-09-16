@@ -30,7 +30,7 @@ namespace CO {
     public enum DLC {
         None = 0,
 
-        [DLCInfo("Afeter Dark", DLCType.Main)]
+        [DLCInfo("After Dark", DLCType.Main)]
         AfterDarkDLC = 369150,
 
         [DLCInfo("Snow Fall", DLCType.Main)]
@@ -60,7 +60,7 @@ namespace CO {
         [DLCInfo("Pearls From the East", DLCType.Misc)]
         OrientalBuildings = 563850,
 
-        [DLCInfo("Match Day (Footbal)", DLCType.Misc)]
+        [DLCInfo("Match Day (Football)", DLCType.Misc)]
         Football = 456200,
 
         [DLCInfo("Concerts (music festivals)", DLCType.Misc)]

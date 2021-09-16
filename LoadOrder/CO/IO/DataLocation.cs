@@ -472,8 +472,8 @@ namespace CO.IO {
 
         public static string LocalLOMData {
             get {
-                var appData = DataLocation.localApplicationData;
-                var ret = Path.Combine(appData, "LoadOrder");
+                var localAppData = DataLocation.localApplicationData;
+                var ret = Path.Combine(localAppData, "LoadOrder");
                 try {
                     if (!Directory.Exists(ret)) {
                         Directory.CreateDirectory(ret);
@@ -482,24 +482,24 @@ namespace CO.IO {
                         TryMoveFile("LoadOrderConfig.xml");
                         TryMoveFile("LoadOrderToolSettings.xml");
                         TryMoveDir("LOMProfiles");
+
+                        void TryMoveFile(string fileName) {
+                            var source = Path.Combine(localAppData, fileName);
+                            var dest = Path.Combine(ret, fileName);
+                            if (File.Exists(source)) {
+                                File.Move(source, dest, false);
+                            }
+                        }
+                        void TryMoveDir(string dirName) {
+                            var source = Path.Combine(localAppData, dirName);
+                            var dest = Path.Combine(ret, dirName);
+                            if (Directory.Exists(source) && !Directory.Exists(dest)) {
+                                Directory.Move(source, dest);
+                            }
+                        }
                     }
                 } catch(Exception ex) { ex.Log(); }
                 return ret;
-
-                void TryMoveFile(string fileName) {
-                    var source = Path.Combine(appData, fileName);
-                    var dest = Path.Combine(ret, fileName);
-                    if (File.Exists(source)) {
-                        File.Move(source, dest);
-                    }
-                }
-                void TryMoveDir(string dirName) {
-                    var source = Path.Combine(appData, dirName);
-                    var dest = Path.Combine(ret, dirName);
-                    if (Directory.Exists(source)) {
-                        Directory.Move(source, dest);
-                    }
-                }
             }
         }
 
