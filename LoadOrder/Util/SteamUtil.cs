@@ -1,10 +1,8 @@
 namespace LoadOrderTool.Util {
-    using CO.Packaging;
     using CO.PlatformServices;
     using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Net.Http;
     using System.Text.RegularExpressions;
@@ -13,52 +11,36 @@ namespace LoadOrderTool.Util {
 
     public class SteamUtil {
         public static PublishedFileDTO[] HttpResponse2DTOs(string httpResponse) {
-            try {
-                //File.WriteAllText("httpResult.json", httpResponse);
-                Log.Info("parsing response to json ...");
-                dynamic json;
-                try {
-                    json = JContainer.Parse(httpResponse);
-                } catch (Exception ex) {
-                    Console.WriteLine(ex);
-                    Console.WriteLine(httpResponse);
-                    return null;
-                }
+            Log.Info("parsing response to json ...");
+            dynamic json = JContainer.Parse(httpResponse);
 
-                Log.Info($"result:{json.response.result}\nconverting json to DTO ... ");
-                if (json.response.result == EResult.k_EResultOK) {
-                    JArray publishedfiledetails = json.response.publishedfiledetails;
-                    return publishedfiledetails
-                        .Select(item => new PublishedFileDTO(item))
-                        .Where(item=> item.Result == EResult.k_EResultOK) // ignore deleted WS items
-                        .ToArray();
-                }
-            } catch (Exception ex) {
-                ex.Log();
+            Log.Info($"result:{json.response.result}\nconverting json to DTO ... ");
+            if (json.response.result == EResult.k_EResultOK) {
+                JArray publishedfiledetails = json.response.publishedfiledetails;
+                return publishedfiledetails
+                    .Select(item => new PublishedFileDTO(item))
+                    .Where(item => item.Result == EResult.k_EResultOK) // ignore deleted WS items
+                    .ToArray();
             }
             return null;
         }
 
         public static string ExtractPersonaNameFromHTML(string html) {
-            try {
-                Log.Called(/*html*/);
-                var pattern = "<span class=\"actual_persona_name\">([^<>]+)</span>";
-                var match = Regex.Matches(html, "<span class=\"actual_persona_name\">([^<>]+)</span>").FirstOrDefault();
-                if (match != null) {
-                    var ret = match.Groups[1].Value;
-                    ret.LogRet(match.Groups[0].Value);
-                    return ret;
-                } else {
-                    Log.Error(
-                        $"No match found!\n" +
-                        $"Pattern= {pattern}\n" +
-                        $"html={html}");
-                }
+            Log.Called(/*html*/);
+            var pattern = "<span class=\"actual_persona_name\">([^<>]+)</span>";
+            var match = Regex.Matches(html, "<span class=\"actual_persona_name\">([^<>]+)</span>").FirstOrDefault();
+            if (match != null) {
+                var ret = match.Groups[1].Value;
+                ret.LogRet(match.Groups[0].Value);
+                return ret;
+            } else {
+                Log.Error(
+                    $"No match found!\n" +
+                    $"Pattern= {pattern}\n" +
+                    $"html={html}");
+            }
 
-            } catch (Exception ex) { ex.Log(); }
             return null;
-            
-
         }
 
         public static async Task<PublishedFileDTO[]> LoadDataAsync(PublishedFileId[] ids) {
@@ -84,19 +66,11 @@ namespace LoadOrderTool.Util {
         }
 
         public static async Task<string> GetPersonaName(ulong personaID) {
-            try {
-                // https://steamcommunity.com/profiles/{personaID}
-                string url = $@"https://steamcommunity.com/profiles/{personaID}";
-                using (var httpClient = new HttpClient()) {
-                    var http = await httpClient.GetStringAsync(url);
-                    return await Task.Run(() => ExtractPersonaNameFromHTML(http));
-                }
-            } catch(Exception ex) {
-                UI.LoadOrderWindow.Instance.ExecuteThreadSafe(delegate() {
-                    new Exception("personaID: " + personaID, ex).Log();
-                });
-
-                return null;
+            // https://steamcommunity.com/profiles/{personaID}
+            string url = $@"https://steamcommunity.com/profiles/{personaID}";
+            using (var httpClient = new HttpClient()) {
+                var http = await httpClient.GetStringAsync(url);
+                return await Task.Run(() => ExtractPersonaNameFromHTML(http));
             }
         }
 
