@@ -65,12 +65,19 @@ namespace LoadOrderTool.Util {
             }
         }
 
+
+        const int MAX_HTTP_CONNECTIONS = 6;
+        static SemaphoreSlim httpSem = new SemaphoreSlim(MAX_HTTP_CONNECTIONS, MAX_HTTP_CONNECTIONS);
         public static async Task<string> GetPersonaName(ulong personaID) {
-            // https://steamcommunity.com/profiles/{personaID}
             string url = $@"https://steamcommunity.com/profiles/{personaID}";
-            using (var httpClient = new HttpClient()) {
-                var http = await httpClient.GetStringAsync(url);
-                return await Task.Run(() => ExtractPersonaNameFromHTML(http));
+            httpSem.Wait();
+            try {
+                using (var httpClient = new HttpClient()) {
+                    var http = await httpClient.GetStringAsync(url);
+                    return await Task.Run(() => ExtractPersonaNameFromHTML(http));
+                }
+            } finally {
+                httpSem.Release();
             }
         }
 
