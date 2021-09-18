@@ -4,12 +4,13 @@ namespace LoadOrderTool.Util {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class SteamUtil {
+    public static class SteamUtil {
         public static PublishedFileDTO[] HttpResponse2DTOs(string httpResponse) {
             Log.Info("parsing response to json ...");
             dynamic json = JContainer.Parse(httpResponse);
@@ -34,13 +35,11 @@ namespace LoadOrderTool.Util {
                 ret.LogRet(match.Groups[0].Value);
                 return ret;
             } else {
-                Log.Error(
+                throw new Exception(
                     $"No match found!\n" +
                     $"Pattern= {pattern}\n" +
                     $"html={html}");
             }
-
-            return null;
         }
 
         public static async Task<PublishedFileDTO[]> LoadDataAsync(PublishedFileId[] ids) {
@@ -61,23 +60,64 @@ namespace LoadOrderTool.Util {
                     return await Task.Run(() => HttpResponse2DTOs(httpResponse2));
                 }
                 Log.Error("failed to get httpResponse");
+                new Dictionary<object, object>();
                 return null;
             }
         }
 
 
-        const int MAX_HTTP_CONNECTIONS = 6;
-        static SemaphoreSlim httpSem = new SemaphoreSlim(MAX_HTTP_CONNECTIONS, MAX_HTTP_CONNECTIONS);
-        public static async Task<string> GetPersonaName(ulong personaID) {
-            string url = $@"https://steamcommunity.com/profiles/{personaID}";
-            httpSem.Wait();
-            try {
-                using (var httpClient = new HttpClient()) {
-                    var http = await httpClient.GetStringAsync(url);
-                    return await Task.Run(() => ExtractPersonaNameFromHTML(http));
+        public class HttpWrapper : IDisposable {
+            public readonly int MaxConnections;
+            public HttpClient HttpClient { get; private set; } = new HttpClient();
+            public SemaphoreSlim HttpSem { get; private set; }
+            public int FailureCount;
+
+            public HttpWrapper(int connections = 6) {
+                MaxConnections = connections;
+                HttpSem = new SemaphoreSlim(MaxConnections);
+                ServicePointManager.FindServicePoint(new Uri("https://steamcommunity.com/profiles/")).ConnectionLimit = MaxConnections;
+            }
+
+            private bool disposedValue;
+
+            protected virtual void Dispose(bool disposing) {
+                if (!disposedValue) {
+                    if (disposing) {
+                        HttpClient.Dispose();
+                        HttpSem.Dispose();
+                    }
+
+                    HttpClient = null;
+                    HttpSem = null;
+
+                    disposedValue = true;
                 }
+            }
+
+            ~HttpWrapper() {
+                Dispose(disposing: false);
+            }
+
+            public void Dispose() {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
+        }
+
+        public static async Task<string> GetPersonaName(this HttpWrapper httpWrapper, ulong personaID) {
+            if (httpWrapper.FailureCount >= httpWrapper.MaxConnections) return null;
+            await httpWrapper.HttpSem.WaitAsync();
+            try {
+                string url = $@"https://steamcommunity.com/profiles/{personaID}";
+                var http = await httpWrapper.HttpClient.GetStringAsync(url);
+                var ret = await Task.Run(() => ExtractPersonaNameFromHTML(http));
+                httpWrapper.FailureCount--; // hope is restored!
+                return ret;
+            } catch (Exception ex) {
+                httpWrapper.FailureCount++; // hope is fading!
+                throw new Exception($"GetPersonaName({personaID}) failed", ex);
             } finally {
-                httpSem.Release();
+                httpWrapper.HttpSem.Release();
             }
         }
 

@@ -164,9 +164,12 @@ namespace LoadOrderTool {
                     message = message.Replace("\n", Environment.NewLine);
                     var prompt = ThreadExceptionDialogUtil.Create(e, message);
                     var res = prompt.ShowDialog();
-                    if (res == DialogResult.Abort || res == DialogResult.Cancel) {
+                    Log.Info("ThreadExceptionDialog result = " + res);
+                    if (res == DialogResult.Abort) {
+                        Log.Info("Killing processs");
                         Process.GetCurrentProcess().Kill();
                     }
+                    Log.Info("Continueing after ThreadExceptionDialog ...");
                 }
             } catch(Exception ex) {
                 new ThreadExceptionDialog(new Exception("could not show advanced exception panel.", ex)).ShowDialog();

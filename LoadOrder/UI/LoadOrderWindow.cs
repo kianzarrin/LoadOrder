@@ -257,14 +257,14 @@ namespace LoadOrderTool.UI {
         }
 
         void SetCacheProgress(float percent) {
-            if (percent > 100) Log.Warning($"percent={percent} nAuthors={nAuthors_} iAuthor={iAuthor_}");
+            if (percent > 100) Log.Error($"percent={percent} nAuthors={nAuthors_} iAuthor={iAuthor_}");
             ModDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
             AssetDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
         }
 
         public async Task CacheWSDetails() {
             try {
-                SetCacheProgress(0);
+                SetCacheProgress(5);
                 var ids = ManagerList.GetWSItems()
                     .Select(item => item.PublishedFileId)
                     .Distinct()
@@ -280,10 +280,14 @@ namespace LoadOrderTool.UI {
                 dataGridAssets.Refresh();
                 SetCacheProgress(50);
 
-                bool authorsUpdated = await CacheAuthors();
+                bool authorsUpdated = true;
+                try {
+                    authorsUpdated = CacheAuthors();
+                } catch (Exception ex) {
+                    ex.Log();
+                }
                 SetCacheProgress(100);
-                if(authorsUpdated)
-                    RefreshAuthors();
+                if(authorsUpdated) RefreshAuthors();
                 SetCacheProgress(-1);
             } catch (Exception ex) { ex.Log(); }
         }
@@ -314,7 +318,7 @@ namespace LoadOrderTool.UI {
         int iAuthor_;
         DateTime lastRefreshUpdate;
 
-        public async Task<bool> CacheAuthors() {
+        public bool CacheAuthors() {
             Log.Called();
             var missingAuthors = ManagerList.GetWSItems()
                 .Where(item => item.ItemCache.Author.IsNullorEmpty() && item.ItemCache.AuthorID != 0)
@@ -327,17 +331,17 @@ namespace LoadOrderTool.UI {
 
             iAuthor_ = 0;
             nAuthors_ = missingAuthors.Length;
-            var tasks = missingAuthors.Select(authorId => GetAndApplyPersonaName(authorId));
-            SetCacheProgress(60);
-
-            await Task.WhenAll(tasks);
-            SetCacheProgress(100);
+            using (var httpWrapper = new SteamUtil.HttpWrapper()) {
+                var tasks = missingAuthors.Select(authorId => GetAndApplyPersonaName(httpWrapper, authorId));
+                SetCacheProgress(55);
+                Task.WaitAll(tasks.ToArray());
+            }
             Log.Succeeded();
             return true;
         }
 
-        public async Task GetAndApplyPersonaName(ulong authorId) {
-            var authorName = await SteamUtil.GetPersonaName(authorId);
+        public async Task GetAndApplyPersonaName(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
+            var authorName = await SteamUtil.GetPersonaName(httpWrapper, authorId);
             if (authorName.IsNullorEmpty()) return;
             Log.Debug($"Author recieved: {authorId} -> {authorName}");
             AddAuthor(authorId, authorName);
