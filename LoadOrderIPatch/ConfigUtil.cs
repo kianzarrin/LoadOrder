@@ -4,13 +4,15 @@ namespace LoadOrderIPatch {
     using System;
     using System.Linq;
     using LoadOrderIPatch.Patches;
+    using System.IO;
+
     public static class ConfigUtil {
         internal static string LocalApplicationPath => Entry.GamePaths.AppDataPath;
 
         internal static LoadOrderConfig config_;
         public static LoadOrderConfig Config =>
             config_ ??=
-                LoadOrderConfig.Deserialize(LocalApplicationPath)
+                LoadOrderConfig.Deserialize(Path.Combine(LocalApplicationPath, "LoadOrder"))
                 ?? new LoadOrderConfig();
         
         public static bool HasArg(string arg) =>

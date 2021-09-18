@@ -47,7 +47,7 @@
     <Compile Remove="KianCommons\**" />
     <EmbeddedResource Remove="KianCommons\**" />
     <None Remove="KianCommons\**" />
-    <Compile Include="..\LoadOrderMod\LoadOrderConfig.cs" Link="LoadOrderConfig.cs" />
+    <Compile Include="..\LoadOrderMod\Data\LoadOrderConfig.cs" Link="LoadOrderConfig.cs" />
     <Compile Include="KianCommons\KianCommons\UI\UIHelperExtension.cs" />
     <Compile Include="KianCommons\KianCommons\Util\EnumerationExtensions.cs" />
     <Compile Include="KianCommons\KianCommons\Util\ReflectionHelpers.cs" />

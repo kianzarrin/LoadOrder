@@ -8,6 +8,7 @@ namespace LoadOrderMod {
     using LoadOrderMod.UI;
     using UnityEngine;
     using ColossalFramework;
+    using LoadOrderMod.Data;
 
     public class LoadOrderUserMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderUserMod).Assembly.GetName().Version;
@@ -52,7 +53,7 @@ namespace LoadOrderMod {
                 LoadingManager.instance.m_introLoaded += LoadOrderUtil.TurnOffSteamPanels;
                 LoadOrderUtil.TurnOffSteamPanels();
 
-                Settings.ConfigUtil.StoreConfigDetails();
+                CacheUtil.CacheData();
 
                 CheckSubsUtil.RegisterEvents();
                 Log.Flush();

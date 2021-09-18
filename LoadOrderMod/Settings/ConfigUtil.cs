@@ -20,6 +20,8 @@ namespace LoadOrderMod.Settings {
     using System.Collections;
 
     public static class ConfigUtil {
+        public static string LocalLoadOrderPath => Path.Combine(DataLocation.localApplicationData, "LoadOrder");
+
         private static Hashtable assetsTable_;
 
         private static LoadOrderConfig config_;
@@ -39,7 +41,7 @@ namespace LoadOrderMod.Settings {
             if (config_ != null) return; // already initialized.
             LogCalled();
             config_ =
-                LoadOrderConfig.Deserialize(Path.Combine(DataLocation.localApplicationData, "LoadOrder"))
+                LoadOrderConfig.Deserialize(LocalLoadOrderPath)
                 ?? new LoadOrderConfig();
 
             int n = Math.Max(PlatformService.workshop.GetSubscribedItemCount(),  config_.Assets.Length);
@@ -62,7 +64,7 @@ namespace LoadOrderMod.Settings {
                 SaveThread.Dirty = false;
                 if (config_ == null) return;
                 lock (SaveThread.LockObject)
-                    config_.Serialize(Path.Combine(DataLocation.localApplicationData, "LoadOrder"));
+                    config_.Serialize(LocalLoadOrderPath);
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
@@ -112,34 +114,6 @@ namespace LoadOrderMod.Settings {
             }
         }
 
-        public static void AquirePathDetails() {
-            try {
-                LogCalled();
-                Config.GamePath = DataLocation.applicationBase;
-                Log.Info("Config.GamePath=" + Config.GamePath,true);
-                foreach (var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
-                    if (pluginInfo.publishedFileID != PublishedFileId.invalid) {
-                        Config.WorkShopContentPath = Path.GetDirectoryName(pluginInfo.modPath);
-                        Log.Info("Config.WorkShopContentPath=" + Config.WorkShopContentPath,true);
-                        break;
-                    }
-                }
-                
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
-        public static void StoreConfigDetails() {
-            LogCalled();
-            try {
-                AquirePathDetails();
-                SaveConfig();
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
         internal static bool HasLoadOrder(this PluginInfo p) {
             var mod = p.GetModConfig();
             if (mod == null)
@@ -156,11 +130,6 @@ namespace LoadOrderMod.Settings {
 
         internal static LoadOrderShared.ModInfo GetModConfig(this PluginInfo p) =>
             Config?.Mods?.FirstOrDefault(item => item.Path == p.modPath);
-
-        internal static void AddAssetConfig(AssetInfo assetInfo) {
-            Config.Assets = Config.Assets.AddToArray(assetInfo);
-            assetsTable_[assetInfo.Path] = assetInfo;
-        }
 
         internal static LoadOrderShared.AssetInfo GetAssetConfig(this Package.Asset a) =>
             assetsTable_[a.GetPath()] as AssetInfo;
