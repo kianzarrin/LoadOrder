@@ -215,7 +215,7 @@ namespace LoadOrderTool.UI {
                 if (e.RowIndex >= ModList.Filtered.Count || e.RowIndex >= Rows.Count) return;
                 var cell = Rows[e.RowIndex].Cells[e.ColumnIndex];
                 if (e.ColumnIndex == CDescription.Index && e.Value != null) {
-                    // cell.ToolTipText = ModList.Filtered[e.RowIndex].ModInfo.Description;
+                    cell.ToolTipText = ModList.Filtered[e.RowIndex].Description;
                 } else if (e.ColumnIndex == CStatus.Index && e.Value != null) {
                     var mod = ModList.Filtered[e.RowIndex];
                     cell.ToolTipText = mod.ItemCache.DownloadFailureReason;

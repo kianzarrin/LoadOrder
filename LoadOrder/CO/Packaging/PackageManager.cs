@@ -53,7 +53,7 @@ namespace CO.Packaging {
             public string DisplayText {
                 get {
                     if (string.IsNullOrEmpty(displayText_)) {
-                        displayText_ = AssetCache.Name;
+                        displayText_ = CSAssetCache?.Name ?? AssetCache.Name;
                         if (string.IsNullOrEmpty(displayText_))
                             displayText_ = AssetName;
                     }
@@ -61,11 +61,11 @@ namespace CO.Packaging {
                 }
             }
 
+            public string Description => CSItemCache?.Description;
+
             string strTags_;
-            public string StrTags => strTags_ ??=
-                AssetCache.Tags != null
-                ? string.Join(", ", AssetCache.Tags)
-                : "";
+            public string StrTags =>
+                strTags_ ??= string.Join(", ", GetTags());
 
             public DateTime DateUpdatedUTC => AssetCache.DateUpdatedUTC;
 
@@ -140,8 +140,12 @@ namespace CO.Packaging {
 
             private PublishedFileId m_PublishedFileId = PublishedFileId.invalid;
 
-            public IEnumerable<string> GetTags() =>
-                AssetCache?.Tags ?? new string[] { };
+            public IEnumerable<string> GetTags() {
+                return
+                    CSAssetCache?.Tags?.Union(AssetCache.Tags)
+                    ?? AssetCache.Tags
+                    ?? new string[0];
+            }
 
             private AssetInfo() { }
 
@@ -156,11 +160,13 @@ namespace CO.Packaging {
                 this.AssetCache =
                     Cache.GetAsset(this.IncludedPath)
                     ?? new SteamCache.Asset { Path = includedPath };
+                this.CSAssetCache = ConfigWrapper.CSCache?.GetItem(includedPath) as CSCache.Asset;
                 isIncludedPending_ = IsIncluded;
             }
 
             public void ResetCache() {
                 this.AssetCache = Cache.GetAsset(this.IncludedPath);
+                this.CSAssetCache = ConfigWrapper.CSCache?.GetItem(this.IncludedPath) as CSCache.Asset;
                 this.strDateDownloaded_ = null;
                 this.dateDownloadedUTC_ = null;
                 this.strDateUpdated_ = null;
@@ -174,6 +180,9 @@ namespace CO.Packaging {
 
             public SteamCache.Asset AssetCache { get; private set; }
             public SteamCache.Item ItemCache => AssetCache;
+
+            public CSCache.Asset CSAssetCache { get; private set; }
+            public CSCache.Item CSItemCache => CSAssetCache;
 
             public override string ToString() {
                 return

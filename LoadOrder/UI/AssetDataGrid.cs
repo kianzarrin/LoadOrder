@@ -176,7 +176,9 @@ namespace LoadOrderTool.UI {
                 if (AssetList == null) return;
                 if (e.RowIndex < 0 || e.RowIndex >= AssetList.Filtered.Count) return;
                 var asset = AssetList.Filtered[e.RowIndex];
-                if (e.ColumnIndex == cAssetID.Index) {
+                if (e.ColumnIndex == cName.Index) {
+                    e.ToolTipText = AssetList.Filtered[e.RowIndex].Description;
+                } else if (e.ColumnIndex == cAssetID.Index) {
                     var id = asset.PublishedFileId;
                     string url = ContentUtil.GetItemURL(asset.PublishedFileId);
                     e.ToolTipText = url ?? asset.AssetPath;

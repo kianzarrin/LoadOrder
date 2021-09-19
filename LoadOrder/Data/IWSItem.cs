@@ -3,6 +3,7 @@ namespace LoadOrderTool.Data {
     using System.Collections.Generic;
     using System.Text;
     using CO.PlatformServices;
+    using LoadOrderShared;
 
     public interface IWSItem {
         public bool IsWorkshop { get; }
@@ -13,7 +14,7 @@ namespace LoadOrderTool.Data {
 
         public string DisplayText { get; }
 
-        //public string Author { get; }
+        public string Description { get; }
 
         public string IncludedPath { get; }
 
@@ -22,6 +23,7 @@ namespace LoadOrderTool.Data {
         public string Author { get; }
 
         public SteamCache.Item ItemCache { get; }
+        public CSCache.Item CSItemCache { get; }
         public LoadOrderShared.ItemInfo ItemConfig { get; }
 
         public void ResetCache();

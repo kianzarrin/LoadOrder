@@ -106,14 +106,21 @@ namespace CO.Plugins {
             public string DisplayText {
                 get {
                     if (displayText_ == null) {
-                        if (ModCache.Name.IsNullorEmpty())
+                        string modName = CSModCache?.Name;
+                        if (modName.IsNullorEmpty())
+                            modName = ModCache.Name;
+
+                        if (modName.IsNullorEmpty()) {
                             displayText_ = DispalyPath;
-                        else
-                            displayText_ = string.Join(" | ", new[] { ModCache.Name, DispalyPath });
+                        } else {
+                            displayText_ = $"{modName} ({DispalyPath})";
+                        }
                     }
                     return displayText_;
                 }
             }
+
+            public string Description => CSItemCache?.Description;
 
             public DateTime DateUpdatedUTC => ModCache.DateUpdatedUTC;
 
@@ -264,6 +271,7 @@ namespace CO.Plugins {
                 this.ModCache =
                     Cache.GetMod(IncludedPath)
                     ?? new SteamCache.Mod { Path = IncludedPath };
+                this.CSModCache = ConfigWrapper.CSCache?.GetItem(IncludedPath) as CSCache.Mod;
 
                 isIncludedPending_ = IsIncluded;
                 isEnabledPending_ = isEnabled;
@@ -271,6 +279,7 @@ namespace CO.Plugins {
 
             public void ResetCache() {
                 this.ModCache = Cache.GetMod(IncludedPath);
+                this.CSModCache = ConfigWrapper.CSCache?.GetItem(IncludedPath) as CSCache.Mod;
                 this.strDateDownloaded_ = null;
                 this.dateDownloadedUTC_ = null;
                 this.strDateUpdated_ = null;
@@ -340,6 +349,9 @@ namespace CO.Plugins {
 
             public LoadOrderTool.Data.SteamCache.Mod ModCache { get; private set; }
             public SteamCache.Item ItemCache => ModCache;
+
+            public LoadOrderShared.CSCache.Mod CSModCache { get; private set; }
+            public CSCache.Item CSItemCache => CSModCache;
 
 
             public void ResetLoadOrder() => LoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
