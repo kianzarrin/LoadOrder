@@ -111,7 +111,7 @@ namespace LoadOrderTool.Util {
                 string url = $@"https://steamcommunity.com/profiles/{personaID}";
                 var http = await httpWrapper.HttpClient.GetStringAsync(url);
                 var ret = await Task.Run(() => ExtractPersonaNameFromHTML(http));
-                httpWrapper.FailureCount--; // hope is restored!
+                httpWrapper.FailureCount = 0; // hope is restored!
                 return ret;
             } catch (Exception ex) {
                 httpWrapper.FailureCount++; // hope is fading!
@@ -128,7 +128,7 @@ namespace LoadOrderTool.Util {
                 string url = $@"https://steamcommunity.com/profiles/{personaID}";
                 var http = httpWrapper.HttpClient.GetStringAsync(url).Result;
                 var ret = ExtractPersonaNameFromHTML(http);
-                httpWrapper.FailureCount--; // hope is restored!
+                httpWrapper.FailureCount = 0; // hope is restored!
                 return ret;
             } catch (Exception ex) {
                 httpWrapper.FailureCount++; // hope is fading!
