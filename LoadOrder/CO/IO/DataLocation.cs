@@ -35,6 +35,7 @@ namespace CO.IO {
             try {
                 var data = CSCache.Deserialize(LocalLOMData);
                 if(data == null) {
+                    data = new CSCache();
                     // backward compatiblity.
                     var data2 = LoadOrderConfig.Deserialize(LocalLOMData);
                     if(data2 != null) {
