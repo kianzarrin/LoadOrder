@@ -53,7 +53,13 @@ namespace LoadOrderMod {
                 LoadingManager.instance.m_introLoaded += LoadOrderUtil.TurnOffSteamPanels;
                 LoadOrderUtil.TurnOffSteamPanels();
 
-                CacheUtil.CacheData();
+                bool introLoaded = ContentManagerUtil.IsIntroLoaded;
+                if (introLoaded) {
+                    CacheUtil.CacheData();
+                } else {
+                    LoadingManager.instance.m_introLoaded += CacheUtil.CacheData;
+                }
+
 
                 CheckSubsUtil.RegisterEvents();
                 Log.Flush();
@@ -68,6 +74,7 @@ namespace LoadOrderMod {
                     GameObject.DestroyImmediate(item?.gameObject);
                 }
 
+                LoadingManager.instance.m_introLoaded -= CacheUtil.CacheData;
                 LoadingManager.instance.m_introLoaded -= LoadOrderUtil.TurnOffSteamPanels;
                 HarmonyUtil.UninstallHarmony(HARMONY_ID);
                 MonoStatus.Release();

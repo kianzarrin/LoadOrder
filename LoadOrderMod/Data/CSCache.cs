@@ -3,6 +3,7 @@ namespace LoadOrderShared {
     using System.Xml.Serialization;
     using System.Collections.Generic;
     using System.Collections;
+    using System.Linq;
 
     public class CSCache {
         public class Item {
@@ -11,8 +12,7 @@ namespace LoadOrderShared {
             public string Description;
         }
 
-        public class Mod: Item {
-        }
+        public class Mod: Item { }
 
         public class Asset: Item {
             public string[] Tags;
@@ -25,12 +25,13 @@ namespace LoadOrderShared {
         public string SteamPath;
 
 
-        public List<Item> Items = new List<Item>(200000);
+        // do not use these directly. use Add/GetItem insteaed.
+        public Mod[] Mods = new Mod[0];
+        public Asset[] Assets = new Asset[0];
 
         internal Hashtable ItemTable = new Hashtable(100000);
 
         public void AddItem(Item item) {
-            Items.Add(item);
             ItemTable[item.IncludedPath] = item;
         }
 
@@ -38,6 +39,8 @@ namespace LoadOrderShared {
 
 
         public void Serialize(string dir) {
+            Mods = ItemTable.Values.OfType<Mod>().ToArray();
+            Assets = ItemTable.Values.OfType<Asset>().ToArray();
             XmlSerializer ser = new XmlSerializer(typeof(CSCache));
             using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Create, FileAccess.Write)) {
                 ser.Serialize(fs, this);
@@ -49,7 +52,8 @@ namespace LoadOrderShared {
                 XmlSerializer ser = new XmlSerializer(typeof(CSCache));
                 using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Open, FileAccess.Read)) {
                     var ret = ser.Deserialize(fs) as CSCache;
-                    foreach(var item in ret.Items) ret.ItemTable[item.IncludedPath] = item;
+                    foreach (var item in ret.Mods) ret.ItemTable[item.IncludedPath] = item;
+                    foreach (var item in ret.Assets) ret.ItemTable[item.IncludedPath] = item;
                     return ret;
                 }
             }

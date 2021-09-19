@@ -42,8 +42,10 @@ namespace LoadOrderMod.Util {
                     tags.Add(tag);
             }
 
-            bool hasMod = publishedFileId != PublishedFileId.invalid &&
-                ContentManagerUtil.ModEntries.Any(item => item.publishedFileId == publishedFileId);
+            bool hasMod =
+                publishedFileId != PublishedFileId.invalid &&
+                PluginManager.instance.GetPluginsInfo().Any(item => item.publishedFileID == publishedFileId);
+
             if (hasMod) tags.Add("Mod");
 
             return tags.ToArray();

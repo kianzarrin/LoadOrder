@@ -23,6 +23,17 @@ namespace LoadOrderMod.Util {
         const string ASSET_CATEGORY_NAME = "Assets";
         const string MOD_CATEGORY_NAME = "Mods";
 
+        public static bool IsIntroLoaded {
+            get {
+                try {
+                    _ = ModCategory;
+                    return true;
+                } catch {
+                    return false;
+                }
+            }
+        }
+
         public static CategoryContentPanel GetCategory(string name) {
             foreach(var c in GameObject.FindObjectsOfType<UIComponent>()) {
                 if (c.name != name) continue;
