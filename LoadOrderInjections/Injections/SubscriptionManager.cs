@@ -478,13 +478,12 @@ namespace LoadOrderInjections {
                 return DownloadStatus.NotDownloaded;
             }
 
-            if (localSize < sizeServer) // could be bigger if user has its own files in there.
-            {
-                reason = $"subscribed item download is incomplete. server-size={sizeServer}) local-size={localSize})";
-                return DownloadStatus.PartiallyDownloaded;
-            }
-
             if (updatedLocal < updatedServer) {
+                if (updatedLocal == DateTime.MinValue) {
+                    reason = $"Error geting local time.";
+                    return DownloadStatus.NotDownloaded;
+                }
+
                 bool sure =
                     localSize < sizeServer ||
                     updatedLocal < updatedServer.AddHours(-24);
@@ -494,6 +493,11 @@ namespace LoadOrderInjections {
                 return DownloadStatus.OutOfDate;
             }
 
+            if (localSize < sizeServer) // could be bigger if user has its own files in there.
+            {
+                reason = $"subscribed item download is incomplete. server-size={sizeServer}) local-size={localSize})";
+                return DownloadStatus.PartiallyDownloaded;
+            }
 
             reason = null;
             return DownloadStatus.DownloadOK;
