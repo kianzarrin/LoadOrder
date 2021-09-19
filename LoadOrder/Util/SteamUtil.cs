@@ -169,7 +169,6 @@ namespace LoadOrderTool.Util {
             }
         }
 
-
         public class LoggingHandler : DelegatingHandler {
             public static HttpClient CreateTracedHttpClient() => new HttpClient(new LoggingHandler(new HttpClientHandler()));
             public LoggingHandler(HttpMessageHandler innerHandler)
