@@ -471,6 +471,19 @@ namespace LoadOrderInjections {
             var updatedLocal = GetLocalTimeUpdated(localPath).ToUniversalTime();
             var sizeServer = det.fileSize;
             var localSize = GetTotalSize(localPath);
+
+            if(localSize == 0) {
+                reason = $"subscribed item is not downloaded (empty folder '{localPath}'): " +
+                    PlatformService.workshop.GetSubscribedItemPath(det.publishedFileId);
+                return DownloadStatus.NotDownloaded;
+            }
+
+            if (localSize < sizeServer) // could be bigger if user has its own files in there.
+            {
+                reason = $"subscribed item download is incomplete. server-size={sizeServer}) local-size={localSize})";
+                return DownloadStatus.PartiallyDownloaded;
+            }
+
             if (updatedLocal < updatedServer) {
                 bool sure =
                     localSize < sizeServer ||
@@ -481,11 +494,6 @@ namespace LoadOrderInjections {
                 return DownloadStatus.OutOfDate;
             }
 
-            if (localSize < sizeServer ) // could be smaller if user has its own files in there.
-            {
-                reason = $"subscribed item download is incomplete. server-size={sizeServer}) local-size={localSize})";
-                return DownloadStatus.PartiallyDownloaded;
-            }
 
             reason = null;
             return DownloadStatus.DownloadOK;

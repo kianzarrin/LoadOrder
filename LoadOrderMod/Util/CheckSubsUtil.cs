@@ -161,7 +161,7 @@ namespace LoadOrderMod.Util {
                     if (status != DownloadStatus.DownloadOK) {
                         string m =
                             $"'{ugc.publishedFileId} {ugc.title}' is not installed properly. Please try reinstalling it!" +
-                            $"\t(reason={reason})";
+                            $"\n\t(reason={reason})";
                         ThreadHelper.dispatcher.Dispatch(() => Log.DisplayWarning(m));
                     }
                 } catch (Exception ex) { ex.Log(); }
