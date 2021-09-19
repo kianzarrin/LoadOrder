@@ -140,7 +140,8 @@ namespace CO.Packaging {
 
             private PublishedFileId m_PublishedFileId = PublishedFileId.invalid;
 
-            public IEnumerable<string> GetTags() => CSAssetCache?.Tags ?? AssetCache.Tags;
+            public IEnumerable<string> GetTags() =>
+                CSAssetCache?.Tags ?? AssetCache.Tags ?? Enumerable.Empty<string>();
 
             private AssetInfo() { }
 
