@@ -105,9 +105,9 @@ namespace LoadOrderTool.Util {
         }
 
         public static async Task<string> GetPersonaNameAsync(this HttpWrapper httpWrapper, ulong personaID) {
-            if (httpWrapper.FailureCount >= httpWrapper.MaxConnections) return null;
             await httpWrapper.HttpSem.WaitAsync();
             try {
+                if (httpWrapper.FailureCount >= httpWrapper.MaxConnections) return null;
                 string url = $@"https://steamcommunity.com/profiles/{personaID}";
                 var http = await httpWrapper.HttpClient.GetStringAsync(url);
                 var ret = await Task.Run(() => ExtractPersonaNameFromHTML(http));
