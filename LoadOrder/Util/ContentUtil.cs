@@ -6,7 +6,7 @@ namespace LoadOrderTool.Util {
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using static LoadOrderTool.Data.LoadOrderCache;
+    using static LoadOrderTool.Data.SteamCache;
 
     public static class ContentUtil {
         public const string WS_URL_PREFIX = @"https://steamcommunity.com/sharedfiles/filedetails/?id=";

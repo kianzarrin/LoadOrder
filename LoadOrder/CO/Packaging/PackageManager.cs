@@ -23,7 +23,7 @@ namespace CO.Packaging {
     public class PackageManager : SingletonLite<PackageManager>, IDataManager {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
         static LoadOrderConfig Config => ConfigWrapper.Config;
-        static LoadOrderCache Cache => ConfigWrapper.Cache;
+        static SteamCache Cache => ConfigWrapper.SteamCache;
 
         public bool IsLoading { get; private set; }
         public bool IsLoaded { get; private set; }
@@ -155,7 +155,7 @@ namespace CO.Packaging {
                     ?? new LoadOrderShared.AssetInfo {Path = includedPath};
                 this.AssetCache =
                     Cache.GetAsset(this.IncludedPath)
-                    ?? new LoadOrderCache.Asset { Path = includedPath };
+                    ?? new SteamCache.Asset { Path = includedPath };
                 isIncludedPending_ = IsIncluded;
             }
 
@@ -172,8 +172,8 @@ namespace CO.Packaging {
             public LoadOrderShared.AssetInfo ConfigAssetInfo { get; private set; }
             public LoadOrderShared.ItemInfo ItemConfig => ConfigAssetInfo;
 
-            public LoadOrderCache.Asset AssetCache { get; private set; }
-            public LoadOrderCache.Item ItemCache => AssetCache;
+            public SteamCache.Asset AssetCache { get; private set; }
+            public SteamCache.Item ItemCache => AssetCache;
 
             public override string ToString() {
                 return

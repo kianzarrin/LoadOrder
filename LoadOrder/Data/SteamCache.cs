@@ -8,7 +8,7 @@ namespace LoadOrderTool.Data {
     using System.Collections.Generic;
     using LoadOrderTool.Util;
 
-    public class LoadOrderCache {
+    public class SteamCache {
         public class Persona {
             public ulong ID;
             public string Name;
@@ -39,7 +39,7 @@ namespace LoadOrderTool.Data {
             }
 
             public void UpdateAuthor() {
-                var person = ConfigWrapper.instance.Cache.GetPersona(AuthorID);
+                var person = ConfigWrapper.instance.SteamCache.GetPersona(AuthorID);
                 Author = person?.Name;
             }
 
@@ -73,22 +73,22 @@ namespace LoadOrderTool.Data {
         private Hashtable<ulong, Persona> peopleTable_;
 
 
-        const string FILE_NAME = "LoadOrderCache.xml";
+        const string FILE_NAME = "SteamCache.xml";
         static string DIR => DataLocation.LocalLOMData;
         static string FilePath => Path.Combine(DIR, FILE_NAME);
 
         internal void Serialize() {
-            XmlSerializer ser = new XmlSerializer(typeof(LoadOrderCache));
+            XmlSerializer ser = new XmlSerializer(typeof(SteamCache));
             using (FileStream fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write)) {
                 ser.Serialize(fs, this);
             }
         }
 
-        internal static LoadOrderCache Deserialize() {
+        internal static SteamCache Deserialize() {
             try {
-                XmlSerializer ser = new XmlSerializer(typeof(LoadOrderCache));
+                XmlSerializer ser = new XmlSerializer(typeof(SteamCache));
                 using (FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read)) {
-                    var ret = ser.Deserialize(fs) as LoadOrderCache;
+                    var ret = ser.Deserialize(fs) as SteamCache;
                     ret.RebuildIndeces();
                     return ret;
                 }

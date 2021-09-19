@@ -33,7 +33,17 @@ namespace CO.IO {
             var sw = System.Diagnostics.Stopwatch.StartNew();
             string m = "Delayed messages: "; // delayed message;
             try {
-                var data = LoadOrderConfig.Deserialize(LocalLOMData);
+                var data = CSCache.Deserialize(LocalLOMData);
+                if(data == null) {
+                    // backward compatiblity.
+                    var data2 = LoadOrderConfig.Deserialize(LocalLOMData);
+                    if(data2 != null) {
+                        data.WorkShopContentPath = data2.WorkShopContentPath;
+                        data.GamePath = data2.GamePath;
+                        data.SteamPath = data2.SteamPath;
+                    }
+                }
+
                 sw.Stop();
 
                 try {
@@ -104,11 +114,11 @@ namespace CO.IO {
                         m += "\nSteamPath=" + (SteamPath ?? "<null>");
                         m += "\nWorkshopContentPath=" + (WorkshopContentPath ?? "<null>");
 
-                        data ??= new LoadOrderConfig();
+                        data ??= new CSCache();
                         data.GamePath = GamePath;
                         data.SteamPath = SteamPath;
                         data.WorkShopContentPath = WorkshopContentPath;
-                        data.Serialize(localApplicationData);
+                        data.Serialize(LocalLOMData);
                     } else {
                         Log.Info(m);
                         Process.GetCurrentProcess().Kill();

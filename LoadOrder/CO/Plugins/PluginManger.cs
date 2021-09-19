@@ -22,7 +22,7 @@ namespace CO.Plugins {
     public class PluginManager : SingletonLite<PluginManager>, IDataManager {
         public static ConfigWrapper ConfigWrapper = ConfigWrapper.instance;
         static LoadOrderConfig Config => ConfigWrapper.Config;
-        static LoadOrderCache Cache => ConfigWrapper.Cache;
+        static SteamCache Cache => ConfigWrapper.SteamCache;
 
         public bool IsLoading { get; private set; }
         public bool IsLoaded { get; private set; }
@@ -263,7 +263,7 @@ namespace CO.Plugins {
                     ?? new LoadOrderShared.ModInfo { Path = IncludedPath };
                 this.ModCache =
                     Cache.GetMod(IncludedPath)
-                    ?? new LoadOrderCache.Mod { Path = IncludedPath };
+                    ?? new SteamCache.Mod { Path = IncludedPath };
 
                 isIncludedPending_ = IsIncluded;
                 isEnabledPending_ = isEnabled;
@@ -338,8 +338,8 @@ namespace CO.Plugins {
             public LoadOrderShared.ModInfo ModInfo { get; private set; }
             public LoadOrderShared.ItemInfo ItemConfig => ModInfo;
 
-            public LoadOrderTool.Data.LoadOrderCache.Mod ModCache { get; private set; }
-            public LoadOrderCache.Item ItemCache => ModCache;
+            public LoadOrderTool.Data.SteamCache.Mod ModCache { get; private set; }
+            public SteamCache.Item ItemCache => ModCache;
 
 
             public void ResetLoadOrder() => LoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;

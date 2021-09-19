@@ -368,14 +368,14 @@ namespace LoadOrderTool.UI {
 
 
         public void AddAuthor(ulong id, string name) {
-            ConfigWrapper.Cache.AddPerson(id,name);
+            ConfigWrapper.SteamCache.AddPerson(id,name);
         }
 
         public void RefreshAuthors() {
             try {
                 lastRefreshUpdate = DateTime.Now;
 
-                ConfigWrapper.Cache.RebuildPeopleIndeces();
+                ConfigWrapper.SteamCache.RebuildPeopleIndeces();
 
                 foreach (var item in ManagerList.GetItems())
                     item.ItemCache.UpdateAuthor();
