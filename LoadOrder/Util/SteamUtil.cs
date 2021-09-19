@@ -75,7 +75,7 @@ namespace LoadOrderTool.Util {
             public HttpWrapper(int connections = 6) {
                 MaxConnections = connections;
                 HttpSem = new SemaphoreSlim(MaxConnections);
-                ServicePointManager.FindServicePoint(new Uri("https://steamcommunity.com/profiles/")).ConnectionLimit = MaxConnections;
+                //ServicePointManager.FindServicePoint(new Uri("https://steamcommunity.com/profiles/")).ConnectionLimit = MaxConnections;
             }
 
             private bool disposedValue;

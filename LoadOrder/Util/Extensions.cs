@@ -149,4 +149,13 @@ namespace LoadOrderTool.Util {
         internal static string SpaceCamelCase(this string camelCase) =>
             Regex.Replace(camelCase, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ");
     }
+
+    public static class EnumerableExtensions {
+        public static IEnumerable<T> UnionOrDefault<T>(this IEnumerable<T> first, IEnumerable<T> second) {
+            first ??= Enumerable.Empty<T>();
+            second ??= Enumerable.Empty<T>();
+            return first.Union(second);
+        }
+
+    }
 }
