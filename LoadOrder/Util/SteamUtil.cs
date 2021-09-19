@@ -104,14 +104,31 @@ namespace LoadOrderTool.Util {
             }
         }
 
-        public static async Task<string> GetPersonaName(this HttpWrapper httpWrapper, ulong personaID) {
+        public static async Task<string> GetPersonaNameAsync(this HttpWrapper httpWrapper, ulong personaID) {
             if (httpWrapper.FailureCount >= httpWrapper.MaxConnections) return null;
             await httpWrapper.HttpSem.WaitAsync();
             try {
                 string url = $@"https://steamcommunity.com/profiles/{personaID}";
                 var http = await httpWrapper.HttpClient.GetStringAsync(url);
                 var ret = await Task.Run(() => ExtractPersonaNameFromHTML(http));
-                httpWrapper.FailureCount--; // hope is restored!
+                httpWrapper.FailureCount = 0; // hope is restored!
+                return ret;
+            } catch (Exception ex) {
+                httpWrapper.FailureCount++; // hope is fading!
+                throw new Exception($"GetPersonaName({personaID}) failed", ex);
+            } finally {
+                httpWrapper.HttpSem.Release();
+            }
+        }
+
+        public static string GetPersonaName(this HttpWrapper httpWrapper, ulong personaID) {
+            if (httpWrapper.FailureCount >= httpWrapper.MaxConnections) return null;
+            httpWrapper.HttpSem.Wait();
+            try {
+                string url = $@"https://steamcommunity.com/profiles/{personaID}";
+                var http = httpWrapper.HttpClient.GetStringAsync(url).Result;
+                var ret = ExtractPersonaNameFromHTML(http);
+                httpWrapper.FailureCount = 0; // hope is restored!
                 return ret;
             } catch (Exception ex) {
                 httpWrapper.FailureCount++; // hope is fading!

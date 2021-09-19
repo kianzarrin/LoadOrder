@@ -282,7 +282,7 @@ namespace LoadOrderTool.UI {
 
                 bool authorsUpdated = true;
                 try {
-                    authorsUpdated = CacheAuthors();
+                    authorsUpdated = await Task.Run(CacheAuthors);
                 } catch (Exception ex) {
                     ex.Log();
                 }
@@ -332,16 +332,22 @@ namespace LoadOrderTool.UI {
             iAuthor_ = 0;
             nAuthors_ = missingAuthors.Length;
             using (var httpWrapper = new SteamUtil.HttpWrapper()) {
-                var tasks = missingAuthors.Select(authorId => GetAndApplyPersonaName(httpWrapper, authorId));
+                Task proc(ulong _authorId) {
+                    return Task.Factory.StartNew(
+                        () => GetAndApplyPersonaName(httpWrapper, _authorId));
+                }
+                var tasks = missingAuthors.Select(proc);
+
                 SetCacheProgress(55);
                 Task.WaitAll(tasks.ToArray());
             }
             Log.Succeeded();
             return true;
+
         }
 
-        public async Task GetAndApplyPersonaName(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
-            var authorName = await SteamUtil.GetPersonaName(httpWrapper, authorId);
+        public async Task GetAndApplyPersonaNameAsync(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
+            var authorName = await SteamUtil.GetPersonaNameAsync(httpWrapper, authorId);
             if (authorName.IsNullorEmpty()) return;
             Log.Debug($"Author recieved: {authorId} -> {authorName}");
             AddAuthor(authorId, authorName);
@@ -349,6 +355,17 @@ namespace LoadOrderTool.UI {
             iAuthor_++;
             Log.Succeeded();
         }
+
+        public void GetAndApplyPersonaName(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
+            var authorName = SteamUtil.GetPersonaName(httpWrapper, authorId);
+            if (authorName.IsNullorEmpty()) return;
+            Log.Debug($"Author recieved: {authorId} -> {authorName}");
+            AddAuthor(authorId, authorName);
+            SetCacheProgress(60 + (40 * iAuthor_) / nAuthors_);
+            iAuthor_++;
+            Log.Succeeded();
+        }
+
 
         public void AddAuthor(ulong id, string name) {
             ConfigWrapper.Cache.AddPerson(id,name);
