@@ -351,10 +351,14 @@ namespace LoadOrderTool.UI {
                     authorName = await SteamUtil.GetPersonaNameAsync(httpWrapper, authorId);
                     Assertion.Assert(!authorName.IsNullorEmpty());
                 } catch (Exception ex) {
-                    numErrors++;
-                    if (numErrors > 3) throw;
-                    Log.Error(ex.ToString() + $" retry number {numErrors} ...");
-                    await Task.Delay(100); // delay 100ms to make sure request goes to the end of the queue.
+                    if (authorId == 76561197978975775) {
+                        authorName = "Feindbild"; // hard code stubborn profile!
+                    } else {
+                        numErrors++;
+                        if (numErrors > 3) throw;
+                        Log.Error(ex.ToString() + $" retry number {numErrors} ...");
+                        await Task.Delay(100); // delay 100ms to make sure request goes to the end of the queue.
+                    }
                 }
             }
 
