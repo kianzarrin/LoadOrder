@@ -520,7 +520,8 @@ namespace CO.Plugins {
                     .ToArray();
 
                 Cache.RebuildIndeces();
-                ConfigWrapper.SaveConfig();
+
+                ConfigWrapper.Dirty = true;
             } catch (Exception ex) {
                 Log.Exception(ex);
             } finally {

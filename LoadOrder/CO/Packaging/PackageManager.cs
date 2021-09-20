@@ -233,8 +233,6 @@ namespace CO.Packaging {
                     .Union(m_Assets.Select(item => item.AssetCache))
                     .ToArray();
 
-                Cache.RebuildIndeces();
-
                 ConfigWrapper.Dirty = true;
             } catch (Exception ex) {
                 Log.Exception(ex);

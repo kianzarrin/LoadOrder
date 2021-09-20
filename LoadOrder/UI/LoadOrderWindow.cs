@@ -249,8 +249,10 @@ namespace LoadOrderTool.UI {
         public async Task ReloadAll() {
             try {
                 await Task.Run(ContentUtil.EnsureSubscribedItems);
+                ConfigWrapper.Paused = true;
                 var modTask = dataGridMods.LoadModsAsync(ModPredicate);
                 var AssetTask = LoadAssets();
+                ConfigWrapper.Paused = false;
                 await Task.WhenAll(modTask, AssetTask);
                 await CacheWSDetails();
             } catch (Exception ex) { ex.Log(); }
