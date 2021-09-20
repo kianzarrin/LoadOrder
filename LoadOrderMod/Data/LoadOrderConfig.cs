@@ -29,6 +29,8 @@ namespace LoadOrderShared {
         public bool LogAssetLoadingTimes = true;
         public bool LogPerModAssetLoadingTimes = false;
         public bool LogPerModOnCreatedTimes = false;
+        public bool IgnoranceIsBliss = false; // turn off steam warnings.
+        public bool UGCCache = true;
 
         public float StatusX = 1000;
         public float StatusY = 10;

@@ -61,7 +61,8 @@ namespace LoadOrderMod {
                 }
 
 
-                CheckSubsUtil.RegisterEvents();
+                if(!Settings.ConfigUtil.Config.IgnoranceIsBliss)
+                    CheckSubsUtil.RegisterEvents();
                 Log.Flush();
             } catch (Exception ex) {
                 Log.Exception(ex);

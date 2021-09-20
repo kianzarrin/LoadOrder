@@ -26,6 +26,7 @@ namespace LoadOrderMod.Settings.Tabs {
                     ConfigUtil.Config.TurnOffSteamPanels = val;
                     ConfigUtil.SaveConfig();
                 });
+
             var c2 = panelHelper.AddCheckbox(
                 "Improve content manager",
                 ConfigUtil.Config.FastContentManager,
@@ -34,11 +35,28 @@ namespace LoadOrderMod.Settings.Tabs {
                     ConfigUtil.SaveConfig();
                 }) as UIComponent;
             c2.tooltip = "faster content manager";
+
             var c3 = panelHelper.AddCheckbox(
                 "Add harmony resolver",
                 ConfigUtil.Config.AddHarmonyResolver,
                 val => {
                     ConfigUtil.Config.AddHarmonyResolver = val;
+                    ConfigUtil.SaveConfig();
+                }) as UICheckBox;
+
+            var c4 = panelHelper.AddCheckbox(
+                "Cache asset details for the tool.",
+                ConfigUtil.Config.UGCCache,
+                val => {
+                    ConfigUtil.Config.UGCCache = val;
+                    ConfigUtil.SaveConfig();
+                }) as UICheckBox;
+
+            var c5 = panelHelper.AddCheckbox(
+                "Hide steam download errors (Ignorance is bliss!)",
+                ConfigUtil.Config.IgnoranceIsBliss,
+                val => {
+                    ConfigUtil.Config.IgnoranceIsBliss = val;
                     ConfigUtil.SaveConfig();
                 }) as UICheckBox;
         }

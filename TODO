@@ -1,22 +1,21 @@
 steam web:
+enum EUCMListType
+{
+	Subscribed = 1;
+	Favorites = 2;
+	Played = 3;
+	Completed = 4;
+	ShortcutFavorites = 5;
+	Followed = 6;
+}
 
-Caveat:
-    - it takes a long time to load game with LOM.
-        - is it searching for mods?. maybe create hashtable?
-        - is it checking included/excluded mods?
 
-bug:
-    - run debug (F5) tool to eliminate access from other threads (replace with invoke).
 
-- LHT command lines
-- display WS item download status in tool
+-----------------------------------
+- send list of items to sub to CS via file.
 - IMT like supports tab (including log file option)
+- bug: if I build a new mod, and then press reload in tool, the enable is not always accurate.
 
-bugs:
-    - if I build a new mod, and then press reload in tool, the enable is not always accurate.
-
-- manage DLC's
-- profile to manage prefab skipping file.
 
 - property display
 - group items

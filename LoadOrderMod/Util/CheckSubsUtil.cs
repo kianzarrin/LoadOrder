@@ -49,6 +49,7 @@ namespace LoadOrderMod.Util {
         public Coroutine RequestItemDetails() => StartCoroutine(RequiestItemDetailsCoroutine());
         public IEnumerator RequiestItemDetailsCoroutine() {
             Log.DisplayMesage($"Checking all items ...");
+            RegisterEvents();
             var items = PlatformService.workshop.GetSubscribedItems();
             int counter = 0;
             foreach (var id in items) {

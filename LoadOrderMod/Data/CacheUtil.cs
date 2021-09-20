@@ -125,11 +125,16 @@ namespace LoadOrderMod.Data {
         }
 
         public static void CacheData() {
-            new CacheUtil().CachAll();
+            new CacheUtil().CacheAll();
         }
 
-        public void CachAll() {
+        public void CacheAll() {
             LogCalled();
+            if (!ConfigUtil.Config.UGCCache) {
+                Log.Info("Skipping CacheAll ...");
+                return;
+            }
+
             try {
                 AquirePathDetails();
                 Save();
@@ -137,9 +142,7 @@ namespace LoadOrderMod.Data {
                 Save();
                 AquireAssetsDetails();
                 Save();
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
+            } catch (Exception ex) { Log.Exception(ex); }
         }
     }
 }
