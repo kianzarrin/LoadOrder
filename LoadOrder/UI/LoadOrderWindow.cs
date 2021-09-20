@@ -349,8 +349,18 @@ namespace LoadOrderTool.UI {
         }
 
         public async Task GetAndApplyPersonaNameAsync(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
-            var authorName = await SteamUtil.GetPersonaNameAsync(httpWrapper, authorId);
-            if (authorName.IsNullorEmpty()) return;
+            string authorName = null;
+            for(int numErrors = 0; authorName.IsNullorEmpty();) {
+                try {
+                    authorName = await SteamUtil.GetPersonaNameAsync(httpWrapper, authorId);
+                    Assertion.Assert(!authorName.IsNullorEmpty());
+                } catch (Exception ex) {
+                    numErrors++;
+                    if (numErrors > 3) throw;
+                    Log.Error(ex.ToString() + $" retry number {numErrors} ...");
+                }
+            }
+
             Log.Debug($"Author recieved: {authorId} -> {authorName}");
             AddAuthor(authorId, authorName);
             SetCacheProgress(60 + (40 * iAuthor_) / nAuthors_);
