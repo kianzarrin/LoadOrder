@@ -358,6 +358,7 @@ namespace LoadOrderTool.UI {
                     numErrors++;
                     if (numErrors > 3) throw;
                     Log.Error(ex.ToString() + $" retry number {numErrors} ...");
+                    await Task.Delay(100); // delay 100ms to make sure request goes to the end of the queue.
                 }
             }
 
@@ -369,8 +370,19 @@ namespace LoadOrderTool.UI {
         }
 
         public void GetAndApplyPersonaName(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
-            var authorName = SteamUtil.GetPersonaName(httpWrapper, authorId);
-            if (authorName.IsNullorEmpty()) return;
+            string authorName = null;
+            for (int numErrors = 0; authorName.IsNullorEmpty();) {
+                try {
+                    authorName = SteamUtil.GetPersonaName(httpWrapper, authorId);
+                    Assertion.Assert(!authorName.IsNullorEmpty());
+                } catch (Exception ex) {
+                    numErrors++;
+                    if (numErrors > 3) throw;
+                    Log.Error(ex.ToString() + $" retry number {numErrors} ...");
+                    Thread.Sleep(100); // delay 100ms to make sure request goes to the end of the queue.
+                }
+            }
+
             Log.Debug($"Author recieved: {authorId} -> {authorName}");
             AddAuthor(authorId, authorName);
             SetCacheProgress(60 + (40 * iAuthor_) / nAuthors_);
