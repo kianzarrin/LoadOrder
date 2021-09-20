@@ -298,20 +298,12 @@ namespace LoadOrderTool.UI {
 
         public void DTO2Cache(SteamUtil.PublishedFileDTO[] ppl) {
             Assertion.NotNull(ppl);
-            foreach (var asset in PackageManager.instance.GetAssets()) {
-                if (!asset.IsWorkshop) continue;
-                var person = ppl.FirstOrDefault(p => p.PublishedFileID == asset.PublishedFileId.AsUInt64);
+            foreach (var item in ManagerList.GetWSItems()) {
+                if (!item.IsWorkshop) continue;
+                var person = ppl.FirstOrDefault(p => p.PublishedFileID == item.PublishedFileId.AsUInt64);
                 if (person != null) {
-                    asset.AssetCache.Read(person);
-                    asset.ResetCache();
-                }
-            }
-            foreach (var mod in PluginManager.instance.GetMods()) {
-                if (!mod.IsWorkshop) continue;
-                var person = ppl.FirstOrDefault(p => p.PublishedFileID == mod.PublishedFileId.AsUInt64);
-                if (person != null) {
-                    mod.ModCache.Read(person);
-                    mod.ResetCache();
+                    item.ItemCache.Read(person);
+                    item.ResetCache();
                 }
             }
         }
@@ -322,8 +314,13 @@ namespace LoadOrderTool.UI {
 
         public bool CacheAuthors() {
             Log.Called();
+            static bool predicate(IWSItem item) {
+                Assertion.NotNull(item, "item");
+                Assertion.NotNull(item.ItemCache, $"item: {item.GetType().Name} {item.IncludedPath} {item.PublishedFileId}");
+                return item.ItemCache.Author.IsNullorEmpty() && item.ItemCache.AuthorID != 0;
+            }
             var missingAuthors = ManagerList.GetWSItems()
-                .Where(item => item.ItemCache.Author.IsNullorEmpty() && item.ItemCache.AuthorID != 0)
+                .Where(predicate)
                 .Select(item => item.ItemCache.AuthorID)
                 .Distinct()
                 .ToArray();
@@ -345,7 +342,6 @@ namespace LoadOrderTool.UI {
             }
             Log.Succeeded();
             return true;
-
         }
 
         public async Task GetAndApplyPersonaNameAsync(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
