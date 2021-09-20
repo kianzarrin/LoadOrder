@@ -80,7 +80,7 @@ namespace LoadOrderTool.UI {
         private void SubscribeAll_Click(object sender, EventArgs e) {
             CleanupTextBox();
             var ids = GetIDs(tbIDs.Text);
-            ContentUtil.Subscribe(GetIDs(tbIDs.Text));
+            ContentUtil.Subscribe(ids);
         }
 
         private void btnCancel_Click(object sender, EventArgs e) => Close();

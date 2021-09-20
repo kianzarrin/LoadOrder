@@ -1,6 +1,7 @@
 namespace LoadOrderTool.Util {
     using CO.IO;
     using CO.PlatformServices;
+    using LoadOrderShared;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -99,12 +100,12 @@ namespace LoadOrderTool.Util {
             }
         }
 
-        public static Process Subscribe(IEnumerable<PublishedFileId> ids) => Subscribe(ids.Select(id => id.ToString()));
-        public static Process Subscribe(IEnumerable<ulong> ids) => Subscribe(ids.Select(id => id.ToString()));
-        public static Process Subscribe(IEnumerable<string> ids) {
-            if (!ids.Any()) return null;
-            var ids2 = string.Join(";", ids);
-            return Execute(DataLocation.GamePath, DataLocation.CitiesExe, $"--subscribe {ids2}");
+        public static Process Subscribe(IEnumerable<PublishedFileId> ids) => Subscribe(ids.Select(id => id.AsUInt64));
+        public static Process Subscribe(IEnumerable<string> ids) => Subscribe( UGCListTransfer.ToNumber(ids));
+        public static Process Subscribe(IEnumerable<ulong> ids) {
+            if (ids.IsNullorEmpty()) return null;
+            UGCListTransfer.SendList(ids, DataLocation.LocalLOMData);
+            return Execute(DataLocation.GamePath, DataLocation.CitiesExe, $"-subscribe");
         }
 
         public static bool IsPathIncluded(string fullPath) {

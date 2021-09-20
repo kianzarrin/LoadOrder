@@ -173,11 +173,11 @@ namespace LoadOrderTool.UI {
             }
         }
 
-        public string[] GetMissingIDs() {
-            List<string> ids = new List<string>();
+        public ulong[] GetMissingIDs() {
+            List<ulong> ids = new List<ulong>();
             foreach (var item in MissingItems) {
                 if (item.TryGetID(out ulong id))
-                    ids.Add(id.ToString());
+                    ids.Add(id);
             }
             return ids.ToArray();
         }

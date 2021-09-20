@@ -12,6 +12,7 @@ using ColossalFramework;
 using LoadOrderShared;
 using ColossalFramework.Threading;
 using System.Threading;
+using ColossalFramework.IO;
 
 namespace LoadOrderInjections {
     public enum DownloadStatus {
@@ -86,18 +87,13 @@ namespace LoadOrderInjections {
             try
             {
                 LogCalled();
-                int i = Environment.GetCommandLineArgs().FindIndex(_arg => _arg == "--subscribe");
-                if (i < 0)
-                    return;
-                var ids = Environment.GetCommandLineArgs()[i + 1];
+                string path = Path.Combine(DataLocation.localApplicationData, "LoadOrder");
+                var ids = UGCListTransfer.GetList(path);
                 var subscriedItems = PlatformService.workshop.GetSubscribedItems();
-                foreach (var id in ids.Split(' ', ';', ','))
+                foreach (var id in ids)
                 {
-                    if (ulong.TryParse(id, out ulong id2))
-                    {
-                        if(!subscriedItems.Any(item=> item.AsUInt64 == id2))
-                            Items.Add(new ItemT(id2));
-                    }
+                    if(!subscriedItems.Any(item=> item.AsUInt64 == id))
+                        Items.Add(new ItemT(id));
                 }
                 RemainingCount = Items.Count();
                 StartSubToAll();
@@ -292,7 +288,7 @@ namespace LoadOrderInjections {
     public static class SteamUtilities {
         static bool initialized = false;
         public static bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
-        public static bool massub = Environment.GetCommandLineArgs().Any(_arg => _arg == "--subscribe");
+        public static bool massub = Environment.GetCommandLineArgs().Any(_arg => _arg == "-subscribe");
 
         static LoadOrderShared.LoadOrderConfig Config =>
             LoadOrderInjections.Util.LoadOrderUtil.Config;
