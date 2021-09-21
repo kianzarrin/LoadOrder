@@ -399,8 +399,6 @@ namespace LoadOrderTool.UI {
             try {
                 lastRefreshUpdate = DateTime.Now;
 
-                ConfigWrapper.SteamCache.RebuildPeopleIndeces();
-
                 foreach (var item in ManagerList.GetItems())
                     item.ItemCache.UpdateAuthor();
 

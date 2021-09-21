@@ -2,24 +2,24 @@
 namespace CO.Packaging {
     using CO.IO;
     using CO.PlatformServices;
+    using LoadOrderShared;
     using LoadOrderTool;
+    using LoadOrderTool.Data;
+    using LoadOrderTool.UI;
     using LoadOrderTool.Util;
     using Mono.Cecil;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Runtime.ConstrainedExecution;
     using System.Threading;
-    using System.Windows.Forms;
-    using LoadOrderShared;
-    using LoadOrderTool.Data;
-    using System.Globalization;
-    using LoadOrderTool.UI;
     using System.Threading.Tasks;
+    using System.Windows.Forms;
 
     public class PackageManager : SingletonLite<PackageManager>, IDataManager {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
@@ -151,19 +151,18 @@ namespace CO.Packaging {
                 this.m_Path = includedPath;
                 //this.m_IsBuiltin = builtin;
                 this.m_PublishedFileId = id;
+
                 this.ConfigAssetInfo =
                     Config.Assets.FirstOrDefault(item => item.Path == includedPath)
-                    ?? new LoadOrderShared.AssetInfo {Path = includedPath};
-                this.AssetCache =
-                    Cache.GetAsset(this.IncludedPath)
-                    ?? new SteamCache.Asset { Path = includedPath };
+                    ?? new LoadOrderShared.AssetInfo { Path = includedPath };
+                this.AssetCache = Cache.GetOrCreateAsset(this.IncludedPath);
                 this.CSAssetCache = ConfigWrapper.CSCache?.GetItem(includedPath) as CSCache.Asset;
+
                 isIncludedPending_ = IsIncluded;
             }
 
             public void ResetCache() {
-                this.AssetCache = Cache.GetAsset(this.IncludedPath);
-                Assertion.NotNull(AssetCache);
+                this.AssetCache = Cache.GetOrCreateAsset(this.IncludedPath);
                 this.CSAssetCache = ConfigWrapper.CSCache?.GetItem(this.IncludedPath) as CSCache.Asset;
                 this.strDateDownloaded_ = null;
                 this.dateDownloadedUTC_ = null;
@@ -173,11 +172,17 @@ namespace CO.Packaging {
                 this.strTags_ = null;
             }
 
+            #region metadata
             public LoadOrderShared.AssetInfo ConfigAssetInfo { get; private set; }
             public LoadOrderShared.ItemInfo ItemConfig => ConfigAssetInfo;
 
-            public SteamCache.Asset AssetCache { get; private set; }
+            private SteamCache.Asset assetCache_;
+            public SteamCache.Asset AssetCache {
+                get => assetCache_ ?? throw new Exception("assetCache_ is null");
+                private set => assetCache_ = value ?? throw new ArgumentNullException();
+            }
             public SteamCache.Item ItemCache => AssetCache;
+            #endregion metadata
 
             public CSCache.Asset CSAssetCache { get; private set; }
             public CSCache.Item CSItemCache => CSAssetCache;
@@ -222,9 +227,6 @@ namespace CO.Packaging {
 
                 Config.Assets = Config.Assets
                     .Union(m_Assets.Select(item => item.ConfigAssetInfo))
-                    .ToArray();
-                Cache.Assets =  Cache.Assets
-                    .Union(m_Assets.Select(item => item.AssetCache))
                     .ToArray();
 
                 ConfigWrapper.Dirty = true;
@@ -296,12 +298,12 @@ namespace CO.Packaging {
                 Log.Exception(ex);
             }
         }
-    
+
         public static void CheckFile(string fullFilePath) {
             string included = ContentUtil.ToIncludedPath(fullFilePath);
             string excluded = ContentUtil.ToExcludedPath(fullFilePath);
             if (File.Exists(included) && File.Exists(excluded)) {
-                File.Move(included, excluded, overwrite:true);
+                File.Move(included, excluded, overwrite: true);
                 fullFilePath = excluded;
             }
         }

@@ -269,9 +269,7 @@ namespace CO.Plugins {
                 this.ModInfo =
                     Config.Mods.FirstOrDefault(item => item.Path == IncludedPath)
                     ?? new LoadOrderShared.ModInfo { Path = IncludedPath };
-                this.ModCache =
-                    Cache.GetMod(IncludedPath)
-                    ?? new SteamCache.Mod { Path = IncludedPath };
+                this.ModCache = Cache.GetOrCreateMod(IncludedPath);
                 this.CSModCache = ConfigWrapper.CSCache?.GetItem(IncludedPath) as CSCache.Mod;
 
                 isIncludedPending_ = IsIncluded;
@@ -279,7 +277,7 @@ namespace CO.Plugins {
             }
 
             public void ResetCache() {
-                this.ModCache = Cache.GetMod(IncludedPath);
+                this.ModCache = Cache.GetOrCreateMod(IncludedPath);
                 Assertion.NotNull(ModCache);
                 this.CSModCache = ConfigWrapper.CSCache?.GetItem(IncludedPath) as CSCache.Mod;
                 this.strDateDownloaded_ = null;
@@ -429,7 +427,6 @@ namespace CO.Plugins {
         //            try {
         //                var asm = m_Assemblies[i];
         //                if (!asm.GetReferencedAssemblies().Any(_asm => _asm?.Name == "ICities")) {
-        //                    // this also filters out non-CS mods.
         //                    continue;
         //                }
         //                foreach (Type type2 in this.m_Assemblies[i].GetExportedTypes()) {
@@ -498,16 +495,11 @@ namespace CO.Plugins {
                 await Task.Run(LoadPluginsImpl);
 
                 m_Plugins = m_Plugins.Where(p => p.HasUserMod).ToList();
-                Log.Debug($"{m_Plugins.Count} pluggins remained after purging non-cs or non-mods.");
+                Log.Debug($"{m_Plugins.Count} pluggins remained after purging non-mods.");
 
                 Config.Mods = Config.Mods
                     .Union(m_Plugins.Select(item => item.ModInfo))
                     .ToArray();
-                Cache.Mods = Cache.Mods
-                    .Union(m_Plugins.Select(item => item.ModCache))
-                    .ToArray();
-
-                Cache.RebuildIndeces();
 
                 ConfigWrapper.Dirty = true;
             } catch (Exception ex) {
@@ -564,6 +556,11 @@ namespace CO.Plugins {
                     string subscribedItemPath = ContentUtil.GetSubscribedItemPath(id);
                     if (subscribedItemPath != null && Directory.Exists(subscribedItemPath)) {
                         //Log.Debug("scanned: " + subscribedItemPath);
+                        var files = new DirectoryInfo(subscribedItemPath).GetFiles("*.dll");
+                        if (files.IsNullorEmpty()) {
+                            //Log.Debug($"{subscribedItemPath} has no dlls");
+                            continue;
+                        }
                         m_Plugins.Add(new PluginInfo(subscribedItemPath, false, id));
                         ModDataGrid.SetProgress((i * 50) / subscribedItems.Length);
                     } else {
