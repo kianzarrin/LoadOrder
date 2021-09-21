@@ -19,6 +19,7 @@ namespace CO.Packaging {
     using LoadOrderTool.Data;
     using System.Globalization;
     using LoadOrderTool.UI;
+    using System.Threading.Tasks;
 
     public class PackageManager : SingletonLite<PackageManager>, IDataManager {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
@@ -162,6 +163,7 @@ namespace CO.Packaging {
 
             public void ResetCache() {
                 this.AssetCache = Cache.GetAsset(this.IncludedPath);
+                Assertion.NotNull(AssetCache);
                 this.CSAssetCache = ConfigWrapper.CSCache?.GetItem(this.IncludedPath) as CSCache.Asset;
                 this.strDateDownloaded_ = null;
                 this.dateDownloadedUTC_ = null;
@@ -205,8 +207,8 @@ namespace CO.Packaging {
             return ret;
         }
 
-        public void Load() => LoadPackages();
-        public void LoadPackages() {
+        public void Load() => LoadPackages().Wait();
+        public async Task LoadPackages() {
             try {
                 Log.Info("Loading Assets ...", true);
                 IsLoading = true;
@@ -214,16 +216,8 @@ namespace CO.Packaging {
 
                 m_Assets = new List<AssetInfo>();
 
-                //this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Maps"), PublishedFileId.invalid);
-                //this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Scenarios"), PublishedFileId.invalid);
-                this.LoadWorkshopPackages();
-                AssetDataGrid.SetProgress(80);
-                this.LoadPackages(DataLocation.stylesPath, PublishedFileId.invalid);
-                this.LoadPackages(DataLocation.assetsPath, PublishedFileId.invalid);
-                //this.LoadPackages(DataLocation.mapLocation, PublishedFileId.invalid);
-                //this.LoadPackages(DataLocation.saveLocation, PublishedFileId.invalid);
-                this.LoadPackages(DataLocation.mapThemesPath, PublishedFileId.invalid);
-                //this.LoadPackages(DataLocation.scenarioLocation, PublishedFileId.invalid);
+                await Task.Run(LoadPackagesImpl);
+
                 AssetDataGrid.SetProgress(90);
 
                 Config.Assets = Config.Assets
@@ -236,9 +230,25 @@ namespace CO.Packaging {
                 ConfigWrapper.Dirty = true;
             } catch (Exception ex) {
                 Log.Exception(ex);
+            } finally {
+                IsLoaded = false;
+                IsLoaded = true;
+                try { EventLoaded?.Invoke(); } catch (Exception ex) { ex.Log(); }
             }
 
-            try { EventLoaded?.Invoke(); } catch (Exception ex) { ex.Log(); }
+        }
+
+        void LoadPackagesImpl() {
+            //this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Maps"), PublishedFileId.invalid);
+            //this.LoadPackages(Path.Combine(DataLocation.gameContentPath, "Scenarios"), PublishedFileId.invalid);
+            this.LoadWorkshopPackages();
+            AssetDataGrid.SetProgress(80);
+            this.LoadPackages(DataLocation.stylesPath, PublishedFileId.invalid);
+            this.LoadPackages(DataLocation.assetsPath, PublishedFileId.invalid);
+            //this.LoadPackages(DataLocation.mapLocation, PublishedFileId.invalid);
+            //this.LoadPackages(DataLocation.saveLocation, PublishedFileId.invalid);
+            this.LoadPackages(DataLocation.mapThemesPath, PublishedFileId.invalid);
+            //this.LoadPackages(DataLocation.scenarioLocation, PublishedFileId.invalid);
         }
 
         public void LoadWorkshopPackages() {

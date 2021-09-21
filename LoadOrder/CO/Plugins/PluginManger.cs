@@ -18,6 +18,7 @@ namespace CO.Plugins {
     using LoadOrderTool.Data;
     using LoadOrderTool.UI;
     using System.Globalization;
+    using System.Threading.Tasks;
 
     public class PluginManager : SingletonLite<PluginManager>, IDataManager {
         public static ConfigWrapper ConfigWrapper = ConfigWrapper.instance;
@@ -279,6 +280,7 @@ namespace CO.Plugins {
 
             public void ResetCache() {
                 this.ModCache = Cache.GetMod(IncludedPath);
+                Assertion.NotNull(ModCache);
                 this.CSModCache = ConfigWrapper.CSCache?.GetItem(IncludedPath) as CSCache.Mod;
                 this.strDateDownloaded_ = null;
                 this.dateDownloadedUTC_ = null;
@@ -481,33 +483,19 @@ namespace CO.Plugins {
 
         public int modCount => GetMods().Count();
 
-        public void Load() => LoadPlugins();
-        public void LoadPlugins() {
+        public void Load() => LoadPlugins().Wait();
+        public async Task LoadPlugins() {
             Log.Info("Loading Plugins ...", true);
             IsLoading = true;
             IsLoaded = false;
 
-            string builtinModsPath = Path.Combine(DataLocation.gameContentPath, "Mods");
-            string addonsModsPath = DataLocation.modsPath;
-            m_Plugins = new List<PluginInfo>();
 
             try {
-                this.LoadPluginInfosAtPath(builtinModsPath, true);
-                this.LoadPluginInfosAtPath(addonsModsPath, false);
-                if (!PluginManager.noWorkshop) {
-                    this.LoadWorkshopPluginInfos();
-                }
-                //this.LoadAssemblies();
-                Log.Debug($"{m_Plugins.Count} pluggins loaded.");
-                ModDataGrid.SetProgress(50);
+                Log.Info("Loading Plugins ...", true);
+                IsLoading = true;
+                IsLoaded = false;
 
-                // purge plugins without a IUserMod Implementation. this also filters out non-cs mods.
-                // all dependent assemblies must be loaded before doing this.
-                for (int i = 0; i < m_Plugins.Count; ++i) {
-                    var p = m_Plugins[i];
-                    Log.Info($"hasUserMod:{p.HasUserMod} " + p);
-                    ModDataGrid.SetProgress(50 + (i * 40) / m_Plugins.Count);
-                }
+                await Task.Run(LoadPluginsImpl);
 
                 m_Plugins = m_Plugins.Where(p => p.HasUserMod).ToList();
                 Log.Debug($"{m_Plugins.Count} pluggins remained after purging non-cs or non-mods.");
@@ -525,8 +513,33 @@ namespace CO.Plugins {
             } catch (Exception ex) {
                 Log.Exception(ex);
             } finally {
+                IsLoaded = false;
+                IsLoaded = true;
                 //this.CreateReporters(modsPath);
                 try { EventLoaded?.Invoke(); } catch (Exception ex) { ex.Log(); }
+            }
+        }
+
+        void LoadPluginsImpl() {
+            string builtinModsPath = Path.Combine(DataLocation.gameContentPath, "Mods");
+            string addonsModsPath = DataLocation.modsPath;
+            m_Plugins = new List<PluginInfo>();
+
+            this.LoadPluginInfosAtPath(builtinModsPath, true);
+            this.LoadPluginInfosAtPath(addonsModsPath, false);
+            if (!PluginManager.noWorkshop) {
+                this.LoadWorkshopPluginInfos();
+            }
+            //this.LoadAssemblies();
+            Log.Debug($"{m_Plugins.Count} pluggins loaded.");
+            ModDataGrid.SetProgress(50);
+
+            // purge plugins without a IUserMod Implementation. this also filters out non-cs mods.
+            // all dependent assemblies must be loaded before doing this.
+            for (int i = 0; i < m_Plugins.Count; ++i) {
+                var p = m_Plugins[i];
+                Log.Info($"hasUserMod:{p.HasUserMod} " + p);
+                ModDataGrid.SetProgress(50 + (i * 40) / m_Plugins.Count);
             }
         }
 

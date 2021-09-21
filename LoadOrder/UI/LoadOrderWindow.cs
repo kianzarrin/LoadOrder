@@ -593,7 +593,7 @@ namespace LoadOrderTool.UI {
         }
 
         public async Task LoadAssets() {
-            await Task.Run(PackageManager.instance.LoadPackages);
+            await PackageManager.instance.LoadPackages();
             AssetDataGrid.SetProgress(100);
             PopulateAssets();
         }

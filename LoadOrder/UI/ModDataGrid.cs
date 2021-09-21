@@ -306,7 +306,7 @@ namespace LoadOrderTool.UI {
         }
 
         public async Task LoadMods(Func<PluginManager.PluginInfo, bool> predicateCallback) {
-            await Task.Run(PluginManager.instance.LoadPlugins);
+            await PluginManager.instance.LoadPlugins();
             ModList = ModList.GetAllMods(predicateCallback);
             SetProgress(100);
             Sort(); // also refreshes mod list.
