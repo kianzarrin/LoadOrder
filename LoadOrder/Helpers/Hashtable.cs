@@ -1,6 +1,7 @@
 namespace LoadOrderTool.Helpers {
     using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class Hashtable<TKey, TValue> where TValue : class {
         Hashtable hashtable_;
@@ -14,8 +15,8 @@ namespace LoadOrderTool.Helpers {
             set => hashtable_[key] = value;
         }
 
-        public virtual ICollection<TKey> Keys { get; }
-        public virtual ICollection<TValue> Values { get; }
+        public virtual ICollection<TKey> Keys => hashtable_.Keys.Cast<TKey>().ToArray();
+        public virtual ICollection<TValue> Values => hashtable_.Values.Cast<TValue>().ToArray();
         public virtual void Add(TKey key, TValue value) => hashtable_.Add(key, value);
         public virtual bool Contains(TKey key) => hashtable_.Contains(key);
         public virtual bool ContainsKey(TKey key) => hashtable_.ContainsKey(key);
