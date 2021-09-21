@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../Version.props" />
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
@@ -47,12 +47,18 @@
     <Compile Remove="KianCommons\**" />
     <EmbeddedResource Remove="KianCommons\**" />
     <None Remove="KianCommons\**" />
-    <Compile Include="..\LoadOrderMod\Data\LoadOrderConfig.cs" Link="LoadOrderConfig.cs" />
+    <Compile Include="..\LoadOrderMod\Data\LoadOrderConfig.cs" Link="Shared\LoadOrderConfig.cs" />
+    <Compile Include="..\LoadOrder\Data\UGCListTransfer.cs" Link="Shared\UGCListTransfer.cs" />
     <Compile Include="KianCommons\KianCommons\UI\UIHelperExtension.cs" />
     <Compile Include="KianCommons\KianCommons\Util\EnumerationExtensions.cs" />
     <Compile Include="KianCommons\KianCommons\Util\ReflectionHelpers.cs" />
     <Compile Include="KianCommons\KianCommons\Util\Assertion.cs" />
     <Compile Include="KianCommons\KianCommons\Util\StringExtensions.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Shared\" />
   </ItemGroup>
 
   <Target Name="DeployToModDirectory" AfterTargets="Build">

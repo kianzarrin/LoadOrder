@@ -6,20 +6,19 @@ namespace LoadOrderShared {
 
     public static class UGCListTransfer {
         const string FILE_NAME = "UGCListTransfer.txt";
-        const string DELIM = ";";
         static string GetFilePath(string localLOMData) => Path.Combine(localLOMData, FILE_NAME);
         public static void SendList(IEnumerable<ulong> ids, string localLOMData) {
             if (ids == null) throw new ArgumentNullException("ids");
             static bool IsValid(ulong id) => id != 0 && id != ulong.MaxValue;
-            var ids2 = ids.Where(IsValid).ToArray();
-            var text = string.Join(DELIM, ids);
+            var ids2 = ids.Where(IsValid).Select(id=>id.ToString()).ToArray();
+            var text = string.Join(";", ids2);
 
             File.WriteAllText(GetFilePath(localLOMData), text);
         }
 
         public static List<ulong> GetList(string localLOMData) {
             string text = File.ReadAllText(GetFilePath(localLOMData));
-            var ids = text.Split(DELIM);
+            var ids = text.Split(';');
             return ToNumber(ids);
         }
 

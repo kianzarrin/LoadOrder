@@ -46,6 +46,7 @@
   
   <ItemGroup>
     <Compile Include="..\LoadOrderMod\Data\LoadOrderConfig.cs" Link="Data\LoadOrderConfig.cs" />
+    <Compile Include="..\LoadOrderMod\Data\CSCache.cs" Link="Data\CSCache.cs" />
     <Compile Include="CO\Plugins\PluginManger.cs" />
   </ItemGroup>
   
