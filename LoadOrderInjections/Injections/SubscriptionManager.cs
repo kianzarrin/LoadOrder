@@ -318,11 +318,22 @@ namespace LoadOrderInjections {
             if (sman)
                 EnsureAll();
             else {
-                foreach (var id in PlatformService.workshop.GetSubscribedItems())
-                    EnsureIncludedOrExcluded(id);
+                //foreach (var id in PlatformService.workshop.GetSubscribedItems())
+                //    EnsureIncludedOrExcluded(id);
+                EnsureIncludedOrExcludedAllFast();
                 if (Config.DeleteUnsubscribedItemsOnLoad)
                     DeleteUnsubbed();
             }
+        }
+
+        static DirectoryInfo GetWSPath() {
+            foreach(var id in PlatformService.workshop.GetSubscribedItems()) {
+                var path = PlatformService.workshop.GetSubscribedItemPath(id);
+                if (!path.IsNullOrWhiteSpace()) {
+                    return new DirectoryInfo(path).Parent;
+                }
+            }
+            return default;
         }
 
         public static void OnRequestItemDetailsClicked() {
@@ -551,7 +562,6 @@ namespace LoadOrderInjections {
         }
 
         public static void EnsureIncludedOrExcluded(PublishedFileId id) {
-            Log.Called();
             try {
                 string path1 = PlatformService.workshop.GetSubscribedItemPath(id);
                 if (path1.IsNullorEmpty()) {
@@ -567,7 +577,6 @@ namespace LoadOrderInjections {
             } catch (Exception ex) {
                 Log.Exception(ex, $"EnsureIncludedOrExcluded({id})", showInPanel: false);
             }
-            Log.Succeeded();
         }
 
         public static void EnsureIncludedOrExcludedFiles(string path) {
@@ -612,6 +621,7 @@ namespace LoadOrderInjections {
                     Directory.Delete(dir, true);
                 }
             }
+            Log.Succeeded();
         }
 
         public static void EnsureAll() {
@@ -635,18 +645,23 @@ namespace LoadOrderInjections {
             return null;
         }
 
+        public static void EnsureIncludedOrExcludedAllFast() {
+            var dir = GetWSPath();
+            if (dir != default)
+                EnsureIncludedOrExcludedAllFast(dir);
+        }
+
         /// <summary>
         /// I think GetFiles/GetDirectories is cached and therefore the normal EnsureIncludedOrExcluded should work fast
         /// but just in case it doesn't for some OS then I should use this method
         /// </summary>
-        /// <param name="WSDir"></param>
-        public static void EnsureIncludedOrExcludedAllFast(DirectoryInfo WSDir) {
+        public static void EnsureIncludedOrExcludedAllFast(DirectoryInfo RootDir) {
             try {
                 Log.Called();
-                var dirs = new HashSet<string>(WSDir.GetDirectories().Select(item => item.FullName));
+                var dirs = new HashSet<string>(RootDir.GetDirectories().Select(item => item.FullName));
                 foreach (var dir in dirs) {
                     string path1 = ToIncludedPath(dir);
-                    string path2 = ToExcludedPath(dir);
+                    string path2 = ToExcludedPath2(dir);
                     if(dirs.Contains(path1) && dirs.Contains(path2)) {
                         Assertion.Assert(Directory.Exists(path1), "path1 exists");
                         Assertion.Assert(Directory.Exists(path1), "path2 exists");
@@ -655,8 +670,9 @@ namespace LoadOrderInjections {
                     }
                 }
             } catch (Exception ex) {
-                Log.Exception(ex, $"EnsureIncludedOrExcluded({WSDir})", showInPanel: false);
+                Log.Exception(ex, $"EnsureIncludedOrExcluded({RootDir})", showInPanel: false);
             }
+            Log.Succeeded();
         }
     }
 }
