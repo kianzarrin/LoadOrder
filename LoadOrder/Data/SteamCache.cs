@@ -134,7 +134,7 @@ namespace LoadOrderTool.Data {
             if (p != null) {
                 p.Name = name;
             } else {
-                p = new Persona { ID = id, Name = name };
+                p = peopleTable_[id] = new Persona { ID = id, Name = name };
             }
             return p;
         }
