@@ -20,7 +20,8 @@ namespace LoadOrderTool.Data {
             OutOfDate,
             NotDownloaded,
             PartiallyDownloaded,
-            Gone,
+            Removed,
+            Unknown,
         }
 
         public class Item {
@@ -64,13 +65,16 @@ namespace LoadOrderTool.Data {
             }
         }
 
-        public List<Mod> Mods = new List<Mod>(1000);
-        public List<Asset> Assets = new List<Asset>(100000);
-        public List<Persona> People = new List<Persona>(1000);
+        // do not use! only for persistancy
+        public Mod[] Mods = new Mod[0];
+        public Asset[] Assets = new Asset[0];
+        public Persona[] People = new Persona[0];
 
         private Hashtable<string, Mod> modTable_ = new Hashtable<string, Mod>(1000);
         private Hashtable<string, Asset> assetTable_ = new Hashtable<string, Asset>(10000);
         private Hashtable<ulong, Persona> peopleTable_ = new Hashtable<ulong, Persona>(1000);
+        private System.Collections.Hashtable x = new System.Collections.Hashtable();
+
 
 
         const string FILE_NAME = "SteamCache.xml";
@@ -80,6 +84,10 @@ namespace LoadOrderTool.Data {
         internal void Serialize() {
             XmlSerializer ser = new XmlSerializer(typeof(SteamCache));
             using (FileStream fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write)) {
+                Mods = modTable_.Values.ToArray();
+                Assets = assetTable_.Values.ToArray();
+                People = peopleTable_.Values.ToArray();
+
                 ser.Serialize(fs, this);
             }
         }
@@ -89,12 +97,17 @@ namespace LoadOrderTool.Data {
                 XmlSerializer ser = new XmlSerializer(typeof(SteamCache));
                 using (FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read)) {
                     var ret = ser.Deserialize(fs) as SteamCache;
-                    ret.RebuildIndeces();
+                    ret.BuildIndeces();
                     return ret;
                 }
             } catch {
                 return null;
             }
+        }
+        private void BuildIndeces() {
+            modTable_ = new Hashtable<string, Mod>(Mods.ToDictionary(mod => mod.Path));
+            assetTable_ = new Hashtable<string, Asset>(Assets.ToDictionary(asset => asset.Path));
+            peopleTable_ = new Hashtable<ulong, Persona>(People.ToDictionary(persona => persona.ID));
         }
 
         public Mod GetMod(string includedPath) => modTable_[includedPath];
@@ -102,7 +115,6 @@ namespace LoadOrderTool.Data {
             var ret = modTable_[includedPath];
             if(ret == null){
                 ret = modTable_[includedPath] = new Mod { Path = includedPath };
-                Mods.Add(ret);
             }
             return ret;
         }
@@ -112,7 +124,6 @@ namespace LoadOrderTool.Data {
             var ret = assetTable_[includedPath];
             if (ret == null) {
                 ret = assetTable_[includedPath] = new Asset { Path = includedPath };
-                Assets.Add(ret);
             }
             return ret;
         }
@@ -120,31 +131,15 @@ namespace LoadOrderTool.Data {
         public Persona GetPersona(ulong ID) => peopleTable_[ID];
         public Persona AddPerson(ulong id, string name) {
             var p = peopleTable_[id];
-            if (p != null)
+            if (p != null) {
                 p.Name = name;
-            else
-                People.Add(p = new Persona { ID = id, Name = name });
+            } else {
+                p = new Persona { ID = id, Name = name };
+            }
             return p;
         }
 
-        void RebuildIndeces() {
-            modTable_ = new Hashtable<string, Mod>(Mods.ToDictionary(mod => mod.Path));
-            assetTable_ = new Hashtable<string, Asset>(Assets.ToDictionary(asset => asset.Path));
-            RebuildPeopleIndeces();
-        }
 
-        void RebuildPeopleIndeces() {
-            try {
-                peopleTable_ = new Hashtable<ulong, Persona>(People.ToDictionary(persona => persona.ID));
-            } catch {
-                // fix duplicate key error : new value replace old.
-                var ppl2 = new Dictionary<ulong, Persona>();
-                foreach(var person in People) {
-                    ppl2[person.ID] = person;
-                }
-                People = ppl2.Values.ToList();
-                peopleTable_ = new Hashtable<ulong, Persona>(ppl2);
-            }
-        }
+
     }
 }

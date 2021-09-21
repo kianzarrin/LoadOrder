@@ -252,11 +252,17 @@ namespace LoadOrderTool.Util {
         }
 
         public static DownloadStatus IsUGCUpToDate(SteamUtil.PublishedFileDTO det, out string reason) {
-            Assertion.Neq(det.PublishedFileID , 0ul, "id");
-            if (det.Title.IsNullOrWhiteSpace()) {
+            Assertion.Neq(det.PublishedFileID, 0ul, "id");
+            if (det.Result != SteamUtil.EResult.k_EResultOK) {
                 reason = "could not get steam details. result:" + det.Result;
-                return DownloadStatus.Gone;
+                if (det.Result == SteamUtil.EResult.k_EResultBanned ||
+                   det.Result == SteamUtil.EResult.k_EResultItemDeleted) {
+                    return DownloadStatus.Removed;
+                } else {
+                    return DownloadStatus.Unknown;
+                }
             }
+        
             string localPath = GetSubscribedItemPath(det.PublishedFileID);
 
             if (localPath == null) {
