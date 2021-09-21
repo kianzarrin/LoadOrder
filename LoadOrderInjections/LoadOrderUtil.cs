@@ -13,11 +13,12 @@ using ColossalFramework.PlatformServices;
 namespace LoadOrderInjections.Util {
     internal static class LoadOrderUtil {
         static LoadOrderConfig config_;
+        public static string LocalLOMData => Path.Combine(DataLocation.localApplicationData, "LoadOrder");
         public static LoadOrderConfig Config {
             get {
                 try {
                     return config_ ??=
-                        LoadOrderConfig.Deserialize(Path.Combine(DataLocation.localApplicationData, "LoadOrder"))
+                        LoadOrderConfig.Deserialize(LocalLOMData)
                         ?? new LoadOrderConfig();
                 } catch (Exception ex) {
                     Log.Exception(ex);
