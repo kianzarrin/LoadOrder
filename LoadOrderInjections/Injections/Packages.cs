@@ -1,5 +1,6 @@
 namespace LoadOrderInjections.Injections {
     using System.Collections.Generic;
+    using KianCommons;
     using static LoadOrderInjections.Util.LoadOrderUtil;
     public static class Packages {
         static HashSet<string> excludedPaths_;
@@ -12,7 +13,9 @@ namespace LoadOrderInjections.Injections {
                         excluded.Add(item.Path);
                 }
             }
-            return excludedPaths_ = new HashSet<string>(excluded);
+            var ret = excludedPaths_ = new HashSet<string>(excluded);
+            Log.Debug("Excluded assets = " + excludedPaths_.JoinLines(), false);
+            return ret;
         }
         static HashSet<string> ExcludedPaths => excludedPaths_ ??= Create();
         public static bool IsPathExcluded(string path) {
