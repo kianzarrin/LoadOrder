@@ -110,11 +110,14 @@ namespace LoadOrderInjections.Injections {
 
                 Log.Info("\n=========================== plugins.Values: =======================", false);
                 foreach (var p in plugins.Values) {
-                    string dlls = string.Join(", ",
-                        Directory.GetFiles(p.modPath, "*.dll", SearchOption.AllDirectories));
-                    Log.Debug(
-                        $"loadOrder={p.GetLoadOrder()} path={p.modPath} dlls={{{dlls}}}"
-                        , false);
+                    var dllFiles = Directory.GetFiles(p.modPath, "*.dll", SearchOption.AllDirectories);
+                    // exclude assets.
+                    if(!dllFiles.IsNullorEmpty()) {
+                        string dlls = string.Join(", ", dllFiles);
+                        Log.Debug(
+                            $"loadOrder={p.GetLoadOrder()} path={p.modPath} dlls={{{dlls}}}"
+                            , false);
+                    }
                 }
                 Log.Info("\n=========================== END plugins.Values =====================\n", false);
             }catch(Exception ex) {
