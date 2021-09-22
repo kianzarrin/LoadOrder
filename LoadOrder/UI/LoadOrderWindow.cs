@@ -12,6 +12,7 @@ using LoadOrderTool.UI;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using CO.PlatformServices;
 
 namespace LoadOrderTool.UI {
     public partial class LoadOrderWindow : Form {
@@ -273,10 +274,18 @@ namespace LoadOrderTool.UI {
                     .ToArray();
 
                 SetCacheProgress(10);
-                var ppl = await SteamUtil.LoadDataAsync(ids);
-                SetCacheProgress(40);
-                Assertion.NotNull(ppl);
-                await Task.Run(() => DTO2Cache(ppl));
+
+                int i = 0;
+                List<Task> tasks = new List<Task>(32);
+                await foreach(var data in LoadDataAsyncInChunks(ids)) {
+                    Assertion.NotNull(data);
+                    var task = Task.Run(() => DTO2Cache(data));
+                    tasks.Add(task);
+                    i += data.Length;
+                    SetCacheProgress(10 + (30 * i) / ids.Length);
+                }
+                await Task.WhenAll(tasks.ToArray());
+
                 SetCacheProgress(45);
                 dataGridMods.RefreshModList();
                 dataGridAssets.Refresh();
@@ -294,7 +303,23 @@ namespace LoadOrderTool.UI {
             } catch (Exception ex) { ex.Log(); }
         }
 
+        public async IAsyncEnumerable<SteamUtil.PublishedFileDTO[]> LoadDataAsyncInChunks(PublishedFileId[] ids, int chunkSize = 1000) {
+            int i;
+            for(i = 0; i + chunkSize < ids.Length; i += chunkSize) {
+                var buffer = new PublishedFileId[chunkSize];
+                Array.Copy(ids, i, buffer, 0, chunkSize);
+                var data = await SteamUtil.LoadDataAsync(buffer);
+                yield return data;
+            }
+            int r = ids.Length - i;
+            if(r > 0) {
 
+                var buffer = new PublishedFileId[r];
+                Array.Copy(ids, i, buffer, 0, r);
+                var data = await SteamUtil.LoadDataAsync(buffer);
+                yield return data;
+            }
+        }
 
         public void DTO2Cache(SteamUtil.PublishedFileDTO[] ppl) {
             Assertion.NotNull(ppl);
