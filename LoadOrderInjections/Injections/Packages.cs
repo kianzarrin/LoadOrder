@@ -20,8 +20,6 @@ namespace LoadOrderInjections.Injections {
         static HashSet<string> ExcludedPaths => excludedPaths_ ??= Create();
         public static bool IsPathExcluded(string path) {
             return ExcludedPaths.Contains(path);
-            //Log.Debug($"searching path in:\n" + ExcludedPaths.JoinLines());
-            //return ExcludedPaths.Contains(path).LogRet($"IsPathExcluded({path})");
         }
     }
 }
