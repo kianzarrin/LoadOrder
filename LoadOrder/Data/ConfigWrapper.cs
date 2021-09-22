@@ -113,7 +113,7 @@ namespace LoadOrderTool.Data {
             PluginManager.instance.ApplyPendingValues(); // saves to game config and moves folders.
             Config.Serialize(DataLocation.LocalLOMData);
             SteamCache.Serialize();
-            LSMConfig.Serialize();
+            LSMConfig = LSMConfig.SyncAndSerialize();
             Log.Info($"SaveConfigImpl() done. (Dirty={Dirty})");
         }
 

@@ -51,5 +51,19 @@ namespace LoadingScreenMod {
                 ex.Log();
             }
         }
+
+        public Settings SyncAndSerialize() {
+            try {
+                var ret = Deserialize();
+                ret.skipFile = this.skipFile;
+                ret.skipPrefabs = this.skipPrefabs;
+                ret.Serialize();
+                return ret;
+            } catch(Exception ex) {
+                ex.Log();
+                return this;
+            }
+        }
+
     }
 }
