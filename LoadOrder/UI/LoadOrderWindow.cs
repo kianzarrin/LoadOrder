@@ -93,8 +93,12 @@ namespace LoadOrderTool.UI {
                 menuStrip.tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
                 menuStrip.tsmiAutoSave.Click += TsmiAutoSave_Click;
 
-                menuStrip.tsmiResetSettings.Click += TsmiResetSettings_Click;
-                menuStrip.tsmiReload.Click += ReloadAll_Click;
+                menuStrip.tsmiReloadUGC.Click += ReloadAll_Click;
+                menuStrip.tsmiResetCache.Click += TsmiResetCache_Click;
+                menuStrip.tsmiReloadSettings.Click += TsmiReloadSettings_Click;
+                menuStrip.tsmiUpdateSteamCache.Click += TsmiUpdateSteamCache_Click;
+                menuStrip.tsmiResetAllSettings.Click += TsmiResetSettings_Click;
+
                 menuStrip.tsmiSave.Click += Save_Click;
                 menuStrip.tsmiExport.Click += Export_Click;
                 menuStrip.tsmiImport.Click += Import_Click;
@@ -104,12 +108,10 @@ namespace LoadOrderTool.UI {
                 ConfigWrapper.SaveConfig();
 
                 await CacheWSDetails();
-                ConfigWrapper.SaveConfig();
             } catch (Exception ex) {
                 ex.Log();
             }
         }
-
 
         protected override void OnLoad(EventArgs e) {
             base.OnLoad(e);
@@ -170,8 +172,9 @@ namespace LoadOrderTool.UI {
         }
 
         #region MenuBar
-        private void TsmiResetSettings_Click(object sender, EventArgs e) {
-            if (DialogResult.Yes ==
+        private async void TsmiResetSettings_Click(object sender, EventArgs e) => await TsmiResetSettings();
+        private async Task TsmiResetSettings() {
+            if(DialogResult.Yes ==
                 MessageBox.Show(
                     text: "Are you sure you want to reset all settings?",
                     caption: "Reset settings?",
@@ -179,12 +182,11 @@ namespace LoadOrderTool.UI {
                     icon: MessageBoxIcon.Warning
                 )) {
                 ConfigWrapper.ResetAllConfig();
-                ReloadAll();
                 launchControl.LoadSettings();
+                await ReloadAll();
                 ConfigWrapper.instance.SaveConfig();
             }
         }
-
         private void TsmiAutoSave_CheckedChanged(object sender, EventArgs e) {
             ConfigWrapper.AutoSave = menuStrip.tsmiAutoSave.Checked;
         }
@@ -247,192 +249,45 @@ namespace LoadOrderTool.UI {
             await ReloadAll();
         }
 
-        public async Task ReloadAll() {
-            try {
-                await Task.Run(ContentUtil.EnsureSubscribedItems);
-                ConfigWrapper.Paused = true;
-                var modTask = dataGridMods.LoadModsAsync(ModPredicate);
-                var AssetTask = LoadAssets();
-                ConfigWrapper.Paused = false;
-                await Task.WhenAll(modTask, AssetTask);
-                await CacheWSDetails();
-            } catch (Exception ex) { ex.Log(); }
+        private async void TsmiUpdateSteamCache_Click(object sender, EventArgs e) {
+            ConfigWrapper.ReloadCSCache();
+            await CacheWSDetails();
         }
 
-        void SetCacheProgress(float percent) {
-            if (percent > 100) Log.Error($"percent={percent} nAuthors={nAuthors_} iAuthor={iAuthor_}");
-            ModDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
-            AssetDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
-        }
-
-        public async Task CacheWSDetails() {
-            try {
-                SetCacheProgress(5);
-                var ids = ManagerList.GetWSItems()
-                    .Select(item => item.PublishedFileId)
-                    .Distinct()
-                    .ToArray();
-
-                SetCacheProgress(10);
-
-                int i = 0;
-                List<Task> tasks = new List<Task>(32);
-                await foreach(var data in LoadDataAsyncInChunks(ids)) {
-                    Assertion.NotNull(data);
-                    var task = Task.Run(() => DTO2Cache(data));
-                    tasks.Add(task);
-                    i += data.Length;
-                    SetCacheProgress(10 + (30 * i) / ids.Length);
-                }
-                await Task.WhenAll(tasks.ToArray());
-
-                SetCacheProgress(45);
-                dataGridMods.RefreshModList();
-                dataGridAssets.Refresh();
-                SetCacheProgress(50);
-
-                bool authorsUpdated = true;
-                try {
-                    authorsUpdated = await Task.Run(CacheAuthors);
-                } catch (Exception ex) {
-                    ex.Log();
-                }
-                SetCacheProgress(100);
-                if(authorsUpdated) RefreshAuthors();
-                SetCacheProgress(-1);
-            } catch (Exception ex) { ex.Log(); }
-        }
-
-        public async IAsyncEnumerable<SteamUtil.PublishedFileDTO[]> LoadDataAsyncInChunks(PublishedFileId[] ids, int chunkSize = 1000) {
-            int i;
-            for(i = 0; i + chunkSize < ids.Length; i += chunkSize) {
-                var buffer = new PublishedFileId[chunkSize];
-                Array.Copy(ids, i, buffer, 0, chunkSize);
-                var data = await SteamUtil.LoadDataAsync(buffer);
-                yield return data;
-            }
-            int r = ids.Length - i;
-            if(r > 0) {
-
-                var buffer = new PublishedFileId[r];
-                Array.Copy(ids, i, buffer, 0, r);
-                var data = await SteamUtil.LoadDataAsync(buffer);
-                yield return data;
-            }
-        }
-
-        public void DTO2Cache(SteamUtil.PublishedFileDTO[] ppl) {
-            Assertion.NotNull(ppl);
-            foreach (var item in ManagerList.GetWSItems()) {
-                if (!item.IsWorkshop) continue;
-                var person = ppl.FirstOrDefault(p => p.PublishedFileID == item.PublishedFileId.AsUInt64);
-                if (person != null) {
-                    item.ItemCache.Read(person);
-                    item.ResetCache();
-                }
-            }
-        }
-
-        int nAuthors_;
-        int iAuthor_;
-        DateTime lastRefreshUpdate;
-
-        public bool CacheAuthors() {
-            Log.Called();
-            static bool predicate(IWSItem item) {
-                Assertion.NotNull(item, "item");
-                Assertion.NotNull(item.ItemCache, $"item: {item.GetType().Name} {item.IncludedPath} {item.PublishedFileId}");
-                return item.ItemCache.Author.IsNullorEmpty() && item.ItemCache.AuthorID != 0;
-            }
-            var missingAuthors = ManagerList.GetWSItems()
-                .Where(predicate)
-                .Select(item => item.ItemCache.AuthorID)
-                .Distinct()
-                .ToArray();
-            Log.Info("Geting author names : " + missingAuthors.ToSTR());
-            if (!missingAuthors.Any())
-                return false;
-
-            iAuthor_ = 0;
-            nAuthors_ = missingAuthors.Length;
-            using (var httpWrapper = new SteamUtil.HttpWrapper()) {
-                Task proc(ulong _authorId) {
-                    return Task.Factory.StartNew(
-                        () => GetAndApplyPersonaName(httpWrapper, _authorId));
-                }
-                var tasks = missingAuthors.Select(proc);
-
-                SetCacheProgress(55);
-                Task.WaitAll(tasks.ToArray());
-            }
-            Log.Succeeded();
-            return true;
-        }
-
-        public async Task GetAndApplyPersonaNameAsync(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
-            string authorName = null;
-            for(int numErrors = 0; authorName.IsNullorEmpty();) {
-                try {
-                    authorName = await SteamUtil.GetPersonaNameAsync(httpWrapper, authorId);
-                    Assertion.Assert(!authorName.IsNullorEmpty());
-                } catch (Exception ex) {
-                    if (authorId == 76561197978975775) {
-                        authorName = "Feindbild"; // hard code stubborn profile!
-                    } else {
-                        numErrors++;
-                        if (numErrors > 3) throw;
-                        Log.Error(ex.ToString() + $" retry number {numErrors} ...");
-                        await Task.Delay(100); // delay 100ms to make sure request goes to the end of the queue.
+        private void TsmiReloadSettings_Click(object sender, EventArgs e) {
+            if(Dirty) {
+                if(ConfigWrapper.AutoSave) { 
+                    ConfigWrapper.SaveConfig();
+                } else {
+                    var res = MessageBox.Show(
+                        text: "All unsaved changes will be lost. Do you wish to proceed to replace them by settings from the game?",
+                        caption: "Discard changes?",
+                        buttons: MessageBoxButtons.OKCancel);
+                    if(res == DialogResult.Cancel) {
+                        return;
                     }
                 }
             }
 
-            Log.Debug($"Author recieved: {authorId} -> {authorName}");
-            AddAuthor(authorId, authorName);
-            SetCacheProgress(60 + (40 * iAuthor_) / nAuthors_);
-            iAuthor_++;
-            Log.Succeeded();
+            ConfigWrapper.Paused = true;
+            ConfigWrapper.ReloadAllConfig();
+
+            ManagerList.instance.ReloadConfig();
+            launchControl.LoadSettings();
+
+            ConfigWrapper.Dirty = false;
+            ConfigWrapper.Paused = false;
+            RefreshAll();
         }
 
-        public void GetAndApplyPersonaName(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
-            string authorName = null;
-            for (int numErrors = 0; authorName.IsNullorEmpty();) {
-                try {
-                    authorName = SteamUtil.GetPersonaName(httpWrapper, authorId);
-                    Assertion.Assert(!authorName.IsNullorEmpty());
-                } catch (Exception ex) {
-                    numErrors++;
-                    if (numErrors > 3) throw;
-                    Log.Error(ex.ToString() + $" retry number {numErrors} ...");
-                    Thread.Sleep(100); // delay 100ms to make sure request goes to the end of the queue.
-                }
-            }
-
-            Log.Debug($"Author recieved: {authorId} -> {authorName}");
-            AddAuthor(authorId, authorName);
-            SetCacheProgress(60 + (40 * iAuthor_) / nAuthors_);
-            iAuthor_++;
-            Log.Succeeded();
-        }
-
-
-        public void AddAuthor(ulong id, string name) {
-            ConfigWrapper.SteamCache.AddPerson(id,name);
-        }
-
-        public void RefreshAuthors() {
+        private async void TsmiResetCache_Click(object sender, EventArgs e) => await ResetCache();
+        private async Task ResetCache() {
             try {
-                lastRefreshUpdate = DateTime.Now;
-
-                foreach (var item in ManagerList.GetItems())
-                    item.ItemCache.UpdateAuthor();
-
-                dataGridMods.PopulateMods();
-                dataGridAssets.Refresh();
-            } catch(Exception ex) { ex.Log(); } 
+                ConfigWrapper.ResetCSCache();
+                ConfigWrapper.SteamCache = new SteamCache();
+                await CacheWSDetails();
+            } catch(Exception ex) { ex.Log(); }
         }
-
-
         #endregion
 
         #region Mod tab
@@ -767,5 +622,179 @@ namespace LoadOrderTool.UI {
             }
         }
         #endregion
+
+        public void RefreshAll() {
+            dataGridMods.RefreshModList();
+            dataGridAssets.Refresh();
+        }
+
+        public async Task ReloadAll() {
+            try {
+                await Task.Run(ContentUtil.EnsureSubscribedItems);
+                ConfigWrapper.Paused = true;
+                ConfigWrapper.ReloadCSCache();
+                var modTask = dataGridMods.LoadModsAsync(ModPredicate);
+                var AssetTask = LoadAssets();
+                ConfigWrapper.Paused = false;
+                await Task.WhenAll(modTask, AssetTask);
+                await CacheWSDetails();
+            } catch(Exception ex) { ex.Log(); }
+        }
+
+        #region steam cache
+        void SetCacheProgress(float percent) {
+            if(percent > 100) Log.Error($"percent={percent} nAuthors={nAuthors_} iAuthor={iAuthor_}");
+            ModDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
+            AssetDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
+        }
+
+        public async Task CacheWSDetails(bool save = true) {
+            try {
+                SetCacheProgress(5);
+                var ids = ManagerList.GetWSItems()
+                    .Select(item => item.PublishedFileId)
+                    .Distinct()
+                    .ToArray();
+
+                SetCacheProgress(10);
+
+                int i = 0;
+                List<Task> tasks = new List<Task>(32);
+                await foreach(var data in SteamUtil.LoadDataAsyncInChunks(ids)) {
+                    Assertion.NotNull(data);
+                    var task = Task.Run(() => DTO2Cache(data));
+                    tasks.Add(task);
+                    i += data.Length;
+                    SetCacheProgress(10 + (30 * i) / ids.Length);
+                }
+                await Task.WhenAll(tasks.ToArray());
+
+                SetCacheProgress(45);
+                RefreshAll();
+                SetCacheProgress(50);
+
+                bool authorsUpdated = true;
+                try {
+                    authorsUpdated = await Task.Run(CacheAuthors);
+                } catch(Exception ex) {
+                    ex.Log();
+                }
+                SetCacheProgress(100);
+                if(authorsUpdated) RefreshAuthors();
+                if(save) ConfigWrapper.SteamCache.Serialize();
+                SetCacheProgress(-1);
+            } catch(Exception ex) { ex.Log(); }
+        }
+
+        public void DTO2Cache(SteamUtil.PublishedFileDTO[] ppl) {
+            Assertion.NotNull(ppl);
+            foreach(var item in ManagerList.GetWSItems()) {
+                if(!item.IsWorkshop) continue;
+                var person = ppl.FirstOrDefault(p => p.PublishedFileID == item.PublishedFileId.AsUInt64);
+                if(person != null) {
+                    item.ItemCache.Read(person);
+                    item.ResetCache();
+                }
+            }
+        }
+
+        int nAuthors_;
+        int iAuthor_;
+        DateTime lastRefreshUpdate;
+
+        public bool CacheAuthors() {
+            Log.Called();
+            static bool predicate(IWSItem item) {
+                Assertion.NotNull(item, "item");
+                Assertion.NotNull(item.ItemCache, $"item: {item.GetType().Name} {item.IncludedPath} {item.PublishedFileId}");
+                return item.ItemCache.Author.IsNullorEmpty() && item.ItemCache.AuthorID != 0;
+            }
+            var missingAuthors = ManagerList.GetWSItems()
+                .Where(predicate)
+                .Select(item => item.ItemCache.AuthorID)
+                .Distinct()
+                .ToArray();
+            Log.Info("Geting author names : " + missingAuthors.ToSTR());
+            if(!missingAuthors.Any())
+                return false;
+
+            iAuthor_ = 0;
+            nAuthors_ = missingAuthors.Length;
+            using(var httpWrapper = new SteamUtil.HttpWrapper()) {
+                Task proc(ulong _authorId) {
+                    return Task.Factory.StartNew(
+                        () => GetAndApplyPersonaName(httpWrapper, _authorId));
+                }
+                var tasks = missingAuthors.Select(proc);
+
+                SetCacheProgress(55);
+                Task.WaitAll(tasks.ToArray());
+            }
+            Log.Succeeded();
+            return true;
+        }
+
+        public async Task GetAndApplyPersonaNameAsync(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
+            string authorName = null;
+            for(int numErrors = 0; authorName.IsNullorEmpty();) {
+                try {
+                    authorName = await SteamUtil.GetPersonaNameAsync(httpWrapper, authorId);
+                    Assertion.Assert(!authorName.IsNullorEmpty());
+                } catch(Exception ex) {
+                    if(authorId == 76561197978975775) {
+                        authorName = "Feindbild"; // hard code stubborn profile!
+                    } else {
+                        numErrors++;
+                        if(numErrors > 3) throw;
+                        Log.Error(ex.ToString() + $" retry number {numErrors} ...");
+                        await Task.Delay(100); // delay 100ms to make sure request goes to the end of the queue.
+                    }
+                }
+            }
+
+            Log.Debug($"Author recieved: {authorId} -> {authorName}");
+            AddAuthor(authorId, authorName);
+            SetCacheProgress(60 + (40 * iAuthor_) / nAuthors_);
+            iAuthor_++;
+            Log.Succeeded();
+        }
+
+        public void GetAndApplyPersonaName(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
+            string authorName = null;
+            for(int numErrors = 0; authorName.IsNullorEmpty();) {
+                try {
+                    authorName = SteamUtil.GetPersonaName(httpWrapper, authorId);
+                    Assertion.Assert(!authorName.IsNullorEmpty());
+                } catch(Exception ex) {
+                    numErrors++;
+                    if(numErrors > 3) throw;
+                    Log.Error(ex.ToString() + $" retry number {numErrors} ...");
+                    Thread.Sleep(100); // delay 100ms to make sure request goes to the end of the queue.
+                }
+            }
+
+            Log.Debug($"Author recieved: {authorId} -> {authorName}");
+            AddAuthor(authorId, authorName);
+            SetCacheProgress(60 + (40 * iAuthor_) / nAuthors_);
+            iAuthor_++;
+            Log.Succeeded();
+        }
+
+
+        public void AddAuthor(ulong id, string name) {
+            ConfigWrapper.SteamCache.AddPerson(id, name);
+        }
+
+        public void RefreshAuthors() {
+            try {
+                lastRefreshUpdate = DateTime.Now;
+
+                foreach(var item in ManagerList.GetItems())
+                    item.ItemCache.UpdateAuthor();
+
+                RefreshAll();
+            } catch(Exception ex) { ex.Log(); }
+        }
+        #endregion steam cache
     }
 }

@@ -8,6 +8,7 @@ namespace LoadOrderTool.Data {
     using System.Threading;
     using LoadOrderTool.UI;
     using LoadOrderShared;
+    using LoadOrderTool.Util;
 
     public class ConfigWrapper : SingletonLite<ConfigWrapper> {
         public LoadOrderConfig Config;
@@ -21,7 +22,7 @@ namespace LoadOrderTool.Data {
             get => dirty_;
             set {
                 dirty_ = value;
-                if (LoadOrderWindow.Instance != null)
+                if(LoadOrderWindow.Instance != null)
                     LoadOrderWindow.Instance.Dirty = value;
             }
         }
@@ -35,9 +36,9 @@ namespace LoadOrderTool.Data {
             Config = LoadOrderConfig.Deserialize(DataLocation.LocalLOMData)
                 ?? new LoadOrderConfig();
             SteamCache = SteamCache.Deserialize() ?? new SteamCache();
-            CSCache = CSCache.Deserialize(DataLocation.LocalLOMData) ?? new CSCache();
-            Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
+            ReloadCSCache();
             LSMConfig = LoadingScreenMod.Settings.Deserialize();
+            Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
             if(!CommandLine.Parse.CommandLine)
                 StartSaveThread();
         }
@@ -46,7 +47,7 @@ namespace LoadOrderTool.Data {
 
         public void Terminate() {
             m_Run = false;
-            lock (m_LockObject)
+            lock(m_LockObject)
                 Monitor.Pulse(m_LockObject);
             Log.Info("LoadOrderConfig terminated");
         }
@@ -55,7 +56,7 @@ namespace LoadOrderTool.Data {
             get {
                 if(m_SaveThread == null)
                     return false; // command line
-                else 
+                else
                     return LoadOrderToolSettings.Instace.AutoSave;
             }
             set {
@@ -70,6 +71,16 @@ namespace LoadOrderTool.Data {
         public void Suspend() => Paused = true;
         public void Resume() => Paused = false;
 
+        public void ReloadCSCache() => CSCache = CSCache.Deserialize(DataLocation.LocalLOMData) ?? new CSCache();
+        public void ResetCSCache() {
+            CSCache = new CSCache() {
+                WorkShopContentPath = CSCache?.WorkShopContentPath,
+                SteamPath = CSCache?.SteamPath,
+                GamePath = CSCache?.GamePath,
+            };
+            CSCache.Serialize(DataLocation.LocalLOMData);
+        }
+
         public void ResetAllConfig() {
             AutoSave = false;
 
@@ -80,6 +91,7 @@ namespace LoadOrderTool.Data {
             };
             Config.Serialize(DataLocation.LocalLOMData);
 
+            ResetCSCache();
             SteamCache = new SteamCache();
             SteamCache.Serialize();
 
@@ -97,6 +109,22 @@ namespace LoadOrderTool.Data {
             
             Dirty = false;
             AutoSave = LoadOrderToolSettings.Instace.AutoSave;
+        }
+
+
+        public void ReloadAllConfig() {
+            try {
+                Log.Called();
+                Assertion.Assert(Paused, "pause config before doing this");
+                Dirty = false;
+                Config = LoadOrderConfig.Deserialize(DataLocation.LocalLOMData)
+                    ?? new LoadOrderConfig();
+                ReloadCSCache();
+                LSMConfig = LoadingScreenMod.Settings.Deserialize();
+                Log.Succeeded();
+            } catch(Exception ex) {
+                ex.Log();
+            }
         }
 
         public void SaveConfig() {

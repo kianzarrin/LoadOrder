@@ -97,6 +97,9 @@ namespace LoadOrderTool.Data {
         }
 
         public void ResetCache() { }
+        public void ReloadConfig() {
+            DLCs = LoadImpl(ConfigWrapper.Config.ExcludedDLCs);
+        }
     }
 
 }

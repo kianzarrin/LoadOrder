@@ -65,5 +65,12 @@ namespace LoadOrderTool.Data {
         }
 
         public void ResetCache() { }
+
+        public void ReloadConfig() {
+            if(ConfigWrapper.LSMConfig.skipPrefabs)
+                SkipPath = ConfigWrapper.LSMConfig.skipFile;
+            else
+                SkipPath = null;
+        }
     }
 }

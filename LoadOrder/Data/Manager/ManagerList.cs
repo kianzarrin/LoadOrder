@@ -8,25 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace LoadOrderTool.Data {
-    public interface IDataManager {
-        /// <summary>
-        /// load or reload data
-        /// </summary>
-        void Load();
-        void LoadFromProfile(LoadOrderProfile profile, bool replace = true);
-        bool IsLoading { get; }
-        bool IsLoaded { get; }
-        event Action EventLoaded;
-
-        /// <summary>
-        /// save data to config but do not serialize
-        /// </summary>
-        void Save();
-        void SaveToProfile(LoadOrderProfile profile);
-        public void ResetCache();
-
-    }
-
     public class ManagerList : SingletonLite<ManagerList>, IDataManager {
         public static IEnumerable<IWSItem> GetItems() =>
             PackageManager.instance.GetAssets()
@@ -98,6 +79,14 @@ namespace LoadOrderTool.Data {
                 foreach (IDataManager m in Managers)
                     m.ResetCache();
             } catch (Exception ex) { ex.Log(); }
+        }
+
+        public void ReloadConfig() {
+            try {
+                Log.Called();
+                foreach(IDataManager m in Managers)
+                    m.ReloadConfig();
+            } catch(Exception ex) { ex.Log(); }
         }
     }
 }

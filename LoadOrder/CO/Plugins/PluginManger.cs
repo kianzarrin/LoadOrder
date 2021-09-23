@@ -42,7 +42,7 @@ namespace CO.Plugins {
         public PluginInfo GetPlugin(string includedPath) =>
             m_Plugins.FirstOrDefault(predicate => predicate.IncludedPath == includedPath);
 
-        public class PluginInfo :IWSItem {
+        public class PluginInfo : IWSItem {
             // private Type m_UserModImplementation;
             // public List<Assembly> m_Assemblies;
             // public int assemblyCount => m_Assemblies.Count;
@@ -278,13 +278,19 @@ namespace CO.Plugins {
 
             public void ResetCache() {
                 this.ModCache = Cache.GetOrCreateMod(IncludedPath);
-                Assertion.NotNull(ModCache);
                 this.CSModCache = ConfigWrapper.CSCache?.GetItem(IncludedPath) as CSCache.Mod;
                 this.strDateDownloaded_ = null;
                 this.dateDownloadedUTC_ = null;
                 this.strDateUpdated_ = null;
                 this.displayText_ = null;
                 this.searchText_ = null;
+            }
+
+            public void ReloadConfig() {
+                // discard pending values.
+                isEnabled = isEnabled; 
+                IsIncluded = IsIncluded;
+                ResetCache();
             }
 
             //public bool ContainsAssembly(Assembly asm)
@@ -700,6 +706,12 @@ namespace CO.Plugins {
         public void ResetCache() {
             foreach (var mod in GetMods()) {
                 mod.ResetCache();
+            }
+        }
+
+        public void ReloadConfig() {
+            foreach(var mod in GetMods()) {
+                mod.ReloadConfig();
             }
         }
 

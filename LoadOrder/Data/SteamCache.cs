@@ -104,6 +104,7 @@ namespace LoadOrderTool.Data {
                 return null;
             }
         }
+
         private void BuildIndeces() {
             modTable_ = new Hashtable<string, Mod>(Mods.ToDictionary(mod => mod.Path));
             assetTable_ = new Hashtable<string, Asset>(Assets.ToDictionary(asset => asset.Path));

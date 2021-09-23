@@ -198,6 +198,12 @@ namespace CO.Packaging {
             public void ApplyPendingValues() {
                 IsIncluded = isIncludedPending_;
             }
+
+            public void ReloadConfig() {
+                //discard pending values
+                IsIncluded = IsIncluded;
+                ResetCache();
+            }
         }
 
         public static readonly string packageExtension = ".crp";
@@ -350,6 +356,12 @@ namespace CO.Packaging {
         public void ResetCache() {
             foreach (var assetInfo in m_Assets) {
                 assetInfo.ResetCache();
+            }
+        }
+
+        public void ReloadConfig() {
+            foreach(var assetInfo in m_Assets) {
+                assetInfo.ReloadConfig();
             }
         }
     }

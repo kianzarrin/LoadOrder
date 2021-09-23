@@ -42,6 +42,24 @@ namespace LoadOrderTool.Util {
             }
         }
 
+        public static async IAsyncEnumerable<PublishedFileDTO[]> LoadDataAsyncInChunks(PublishedFileId[] ids, int chunkSize = 1000) {
+            int i;
+            for(i = 0; i + chunkSize < ids.Length; i += chunkSize) {
+                var buffer = new PublishedFileId[chunkSize];
+                Array.Copy(ids, i, buffer, 0, chunkSize);
+                var data = await LoadDataAsync(buffer);
+                yield return data;
+            }
+            int r = ids.Length - i;
+            if(r > 0) {
+
+                var buffer = new PublishedFileId[r];
+                Array.Copy(ids, i, buffer, 0, r);
+                var data = await LoadDataAsync(buffer);
+                yield return data;
+            }
+        }
+
         public static async Task<PublishedFileDTO[]> LoadDataAsync(PublishedFileId[] ids) {
             using (var httpClient = new HttpClient()) {
                 var url = @"https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/";

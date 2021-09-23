@@ -6,14 +6,12 @@ namespace LoadOrderTool.UI {
 
     public class LoadOrderWindowMenuStrip : MenuStrip {
         public ToolStripMenuItem tsmiFile;
-        public ToolStripMenuItem tsmiReload;
         private ToolStripSeparator toolStripSeparator1;
         public ToolStripMenuItem tsmiSave;
         private ToolStripSeparator toolStripSeparator2;
         public ToolStripMenuItem tsmiExport;
         public ToolStripMenuItem tsmiImport;
         public ToolStripMenuItem tsmiAutoSave;
-        public ToolStripMenuItem tsmiResetSettings;
         public ToolStripMenuItem tsmiOrder;
         public ToolStripMenuItem tsmiResetOrder;
         public ToolStripMenuItem tsmiHarmonyOrder;
@@ -25,13 +23,20 @@ namespace LoadOrderTool.UI {
         public ToolStripMenuItem tsmiAbout;
         public ToolStripMenuItem tsmiOpenLogLocation;
         public ToolStripMenuItem tsmiDiscordSupport;
-        public ToolStripMenuItem tsniTools;
+        public ToolStripMenuItem tsmiTools;
         public ToolStripMenuItem tsmiMassSubscribe;
+
+        public ToolStripMenuItem tsmiEdit;
+        public ToolStripMenuItem tsmiReloadUGC; // reload UGCs from drive.
+        public ToolStripMenuItem tsmiResetCache; // reset CS cache + Steam Cache
+        public ToolStripMenuItem tsmiResetAllSettings; // rese config + CS cache + steam cache
+        public ToolStripMenuItem tsmiReloadSettings; // reload config + CS cache
+        public ToolStripMenuItem tsmiUpdateSteamCache; // update Steam Cache
+
 
         public LoadOrderWindowMenuStrip() {
             tsmiFile = new ToolStripMenuItem();
-            tsmiResetSettings = new ToolStripMenuItem();
-            tsmiReload = new ToolStripMenuItem();
+            tsmiReloadUGC = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             tsmiSave = new ToolStripMenuItem();
             tsmiAutoSave = new ToolStripMenuItem();
@@ -49,22 +54,28 @@ namespace LoadOrderTool.UI {
             tsmiOpenLogLocation = new ToolStripMenuItem();
             toolStripSeparator3 = new ToolStripSeparator();
             tsmiAbout = new ToolStripMenuItem();
-            tsniTools = new ToolStripMenuItem();
+            tsmiTools = new ToolStripMenuItem();
             tsmiMassSubscribe = new ToolStripMenuItem();
+
+            tsmiEdit = new ToolStripMenuItem();
+            tsmiResetAllSettings = new ToolStripMenuItem();
+            tsmiReloadUGC = new ToolStripMenuItem();
+            tsmiReloadSettings = new ToolStripMenuItem();
+            tsmiUpdateSteamCache = new ToolStripMenuItem();
+            tsmiResetCache = new ToolStripMenuItem();
+            tsmiResetAllSettings = new ToolStripMenuItem();
 
             Items.AddRange(new ToolStripItem[] {
             tsmiFile,
+            tsmiEdit,
             tsmiOrder,
-            tsniTools,
+            tsmiTools,
             tsmiHelp});
 
             // 
             // tsmiFile
             // 
             tsmiFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            tsmiResetSettings,
-            tsmiReload,
-            toolStripSeparator1,
             tsmiSave,
             tsmiAutoSave,
             toolStripSeparator2,
@@ -73,23 +84,6 @@ namespace LoadOrderTool.UI {
             tsmiFile.Name = "tsmiFile";
             tsmiFile.Size = new Size(37, 20);
             tsmiFile.Text = "&File";
-            // 
-            // tsmiResetSettings
-            // 
-            tsmiResetSettings.Name = "tsmiResetSettings";
-            tsmiResetSettings.Size = new Size(147, 22);
-            tsmiResetSettings.Text = "Reset &Settings";
-            // 
-            // tsmiReload
-            // 
-            tsmiReload.Name = "tsmiReload";
-            tsmiReload.Size = new Size(147, 22);
-            tsmiReload.Text = "&Reload Items";
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(144, 6);
             // 
             // tsmiSave
             // 
@@ -201,19 +195,72 @@ namespace LoadOrderTool.UI {
             tsmiAbout.Size = new Size(180, 22);
             tsmiAbout.Text = "&About";
             // 
-            // tsniTools
+            // tsmiTools
             // 
-            tsniTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            tsmiTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             tsmiMassSubscribe});
-            tsniTools.Name = "tsniTools";
-            tsniTools.Size = new Size(46, 20);
-            tsniTools.Text = "&Tools";
+            tsmiTools.Name = "tsmiTools";
+            tsmiTools.Size = new Size(46, 20);
+            tsmiTools.Text = "&Tools";
             // 
             // tsmiMassSubscribe
             // 
             tsmiMassSubscribe.Name = "tsmiMassSubscribe";
             tsmiMassSubscribe.Size = new Size(180, 22);
             tsmiMassSubscribe.Text = "Mass &Subscribe";
+            // 
+            // tsmiEdit
+            // 
+            tsmiEdit.Name = "tsmiEdit";
+            tsmiEdit.Text = "&Edit";
+            tsmiEdit.DropDownItems.AddRange(new ToolStripItem[] {
+                tsmiReloadUGC,
+                tsmiReloadSettings,
+                tsmiUpdateSteamCache,
+                tsmiResetCache,
+                tsmiResetAllSettings,
+                toolStripSeparator1,
+
+            });
+            // 
+            // tsmiReloadUGC
+            //
+            tsmiReloadUGC.Name = "tsmiReloadUGC";
+            tsmiReloadUGC.Text = "Reload &Items";
+            tsmiReloadUGC.ToolTipText = "Reload all mods/assets";
+            // 
+            // tsmiReloadSettings
+            //
+            tsmiReloadSettings.Name = "tsmiReloadSettings";
+            tsmiReloadSettings.Text = "Reload &Settings";
+            tsmiReloadSettings.ToolTipText = "Sync with game";
+            // 
+            // tsmiUpdateSteamCache
+            //
+            tsmiUpdateSteamCache.Name = "tsmiUpdateSteamCache";
+            tsmiUpdateSteamCache.Text = "&Update Steam Cache";
+            // 
+            // tsmiResetCache
+            //
+            tsmiResetCache.Name = "tsmiResetCache";
+            tsmiResetCache.Text = "Reset Cache";
+            // 
+            // tsmiResetAllSettings
+            // 
+            tsmiResetAllSettings.Name = "tsmiResetAllSettings";
+            tsmiResetAllSettings.Text = "Reset Settings";
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(144, 6);
+            toolStripSeparator1.Visible = false;
+            //// 
+            //// tsmi
+            ////
+            //tsmi.Name = "tsmi";
+            //tsmi.Text = "&";
+            //tsmi.ToolTipText = "";
 
             tsmiWiki.Click += TsmiWiki_Click;
             tsmiDiscordSupport.Click += TsmiDiscordSupport_Click;
