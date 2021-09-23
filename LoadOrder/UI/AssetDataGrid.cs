@@ -129,6 +129,7 @@ namespace LoadOrderTool.UI {
 
         public static void SetProgress(float percent) => SetProgress(percent, UIUtil.WIN32Color.Normal);
         public static void SetProgress(float percent, UIUtil.WIN32Color color) {
+            if(LoadOrderWindow.Instance == null) return;
             LoadOrderWindow.Instance.ExecuteThreadSafe(delegate () {
                 var p = LoadOrderWindow.Instance.AssetProgressBar;
                 p.Visible = percent >=0;

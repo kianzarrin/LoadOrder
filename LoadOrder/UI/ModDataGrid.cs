@@ -317,6 +317,8 @@ namespace LoadOrderTool.UI {
         // set color and progress
         // percent < 0 -> hide
         public static void SetProgress(float percent, UIUtil.WIN32Color color) {
+            if(LoadOrderWindow.Instance == null)
+                return;
             LoadOrderWindow.Instance.ExecuteThreadSafe(delegate () {
                 var p = LoadOrderWindow.Instance.ModProgressBar;
                 p.Visible = percent >= 0;

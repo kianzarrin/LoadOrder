@@ -206,7 +206,7 @@ namespace LoadOrderTool.UI {
             // tsmiSync
             // 
             tsmiSync.Name = "tsmiSync";
-            tsmiSync.Text = "&Sync";
+            tsmiSync.Text = "&Refresh";
             tsmiSync.DropDownItems.AddRange(new ToolStripItem[] {
                 tsmiReloadSettings,
                 //new ToolStripSeparator(),
@@ -252,7 +252,6 @@ namespace LoadOrderTool.UI {
             //tsmi.Name = "tsmi";
             //tsmi.Text = "&";
             //tsmi.ToolTipText = "";
-
             tsmiWiki.Click += TsmiWiki_Click;
             tsmiDiscordSupport.Click += TsmiDiscordSupport_Click;
             tsmiOpenLogLocation.Click += TsmiOpenLogLocation_Click;
