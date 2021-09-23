@@ -231,10 +231,18 @@ namespace CO.Plugins {
                         throw new Exception($"cannot move because targetPath alreadty exists ({targetPath})");
                     if (!Directory.Exists(m_Path))
                         throw new Exception($"cannot move because source path does not exists ({m_Path})");
-                    Directory.Move(m_Path, targetPath);
-                    if (Directory.Exists(targetPath))
+
+                    string newPath = ContentUtil.EnsureModAt(m_Path);
+                    if(newPath == null)
+                        throw new Exception($"cannot move because could not ensure item.");
+
+                    // no need to move if ensuring move the directory for us.
+                    if(newPath != targetPath) 
+                        Directory.Move(m_Path, targetPath);
+                    
+                    if(Directory.Exists(targetPath)) {
                         Log.Debug($"move successful!");
-                    else {
+                    } else {
                         Log.Debug($"FAILED!");
                         throw new Exception($"failed to move directory from {m_Path} to {targetPath}");
                     }

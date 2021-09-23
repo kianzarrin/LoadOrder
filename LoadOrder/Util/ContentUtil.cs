@@ -206,6 +206,23 @@ namespace LoadOrderTool.Util {
             }
         }
 
+        public static string EnsureModAt(string dir) {
+            try {
+                if(!Directory.Exists(dir))
+                    return null;
+
+                var included = ToIncludedPath(dir);
+                var excluded = ToExcludedPath(dir);
+                if(Directory.Exists(included) && Directory.Exists(excluded)) {
+                    Directory.Delete(excluded);
+                    Directory.Move(included, excluded);
+                    return excluded;
+                }
+                return dir;
+            } catch(Exception ex) { ex.Log(); }
+            return false;
+        }
+
         public static void EnsureLocalItemsAt(string parentDir) {
             lock (ensureLock_) {
                 List<string> includedPaths = new List<string>();
