@@ -3,12 +3,11 @@ namespace LoadOrderTool.UI {
     using System.Drawing;
     using System.Windows.Forms;
     using LoadOrderTool.Util;
+    using LoadOrderTool.UI;
 
     public class LoadOrderWindowMenuStrip : MenuStrip {
         public ToolStripMenuItem tsmiFile;
-        private ToolStripSeparator toolStripSeparator1;
         public ToolStripMenuItem tsmiSave;
-        private ToolStripSeparator toolStripSeparator2;
         public ToolStripMenuItem tsmiExport;
         public ToolStripMenuItem tsmiImport;
         public ToolStripMenuItem tsmiAutoSave;
@@ -26,7 +25,7 @@ namespace LoadOrderTool.UI {
         public ToolStripMenuItem tsmiTools;
         public ToolStripMenuItem tsmiMassSubscribe;
 
-        public ToolStripMenuItem tsmiEdit;
+        public ToolStripMenuItem tsmiSync;
         public ToolStripMenuItem tsmiReloadUGC; // reload UGCs from drive.
         public ToolStripMenuItem tsmiResetCache; // reset CS cache + Steam Cache
         public ToolStripMenuItem tsmiResetAllSettings; // rese config + CS cache + steam cache
@@ -37,13 +36,11 @@ namespace LoadOrderTool.UI {
         public LoadOrderWindowMenuStrip() {
             tsmiFile = new ToolStripMenuItem();
             tsmiReloadUGC = new ToolStripMenuItem();
-            toolStripSeparator1 = new ToolStripSeparator();
             tsmiSave = new ToolStripMenuItem();
             tsmiAutoSave = new ToolStripMenuItem();
-            toolStripSeparator2 = new ToolStripSeparator();
             tsmiExport = new ToolStripMenuItem();
             tsmiImport = new ToolStripMenuItem();
-            tsmiOrder = new ToolStripMenuItem();
+            tsmiOrder = new ToolStripMenuItem();// no need to move if ensuring move the directory for us.
             tsmiResetOrder = new ToolStripMenuItem();
             tsmiHarmonyOrder = new ToolStripMenuItem();
             tsmiReverseOrder = new ToolStripMenuItem();
@@ -57,7 +54,7 @@ namespace LoadOrderTool.UI {
             tsmiTools = new ToolStripMenuItem();
             tsmiMassSubscribe = new ToolStripMenuItem();
 
-            tsmiEdit = new ToolStripMenuItem();
+            tsmiSync = new ToolStripMenuItem();
             tsmiResetAllSettings = new ToolStripMenuItem();
             tsmiReloadUGC = new ToolStripMenuItem();
             tsmiReloadSettings = new ToolStripMenuItem();
@@ -67,10 +64,12 @@ namespace LoadOrderTool.UI {
 
             Items.AddRange(new ToolStripItem[] {
             tsmiFile,
-            tsmiEdit,
+            tsmiSync,
             tsmiOrder,
             tsmiTools,
             tsmiHelp});
+
+            this.ShowItemToolTips = true;
 
             // 
             // tsmiFile
@@ -78,7 +77,7 @@ namespace LoadOrderTool.UI {
             tsmiFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             tsmiSave,
             tsmiAutoSave,
-            toolStripSeparator2,
+            new ToolStripSeparator(),
             tsmiExport,
             tsmiImport});
             tsmiFile.Name = "tsmiFile";
@@ -98,11 +97,6 @@ namespace LoadOrderTool.UI {
             tsmiAutoSave.Name = "tsmiAutoSave";
             tsmiAutoSave.Size = new Size(147, 22);
             tsmiAutoSave.Text = "&Auto-save";
-            // 
-            // toolStripSeparator2
-            // 
-            toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(144, 6);
             // 
             // tsmiExport
             // 
@@ -209,52 +203,49 @@ namespace LoadOrderTool.UI {
             tsmiMassSubscribe.Size = new Size(180, 22);
             tsmiMassSubscribe.Text = "Mass &Subscribe";
             // 
-            // tsmiEdit
+            // tsmiSync
             // 
-            tsmiEdit.Name = "tsmiEdit";
-            tsmiEdit.Text = "&Edit";
-            tsmiEdit.DropDownItems.AddRange(new ToolStripItem[] {
-                tsmiReloadUGC,
+            tsmiSync.Name = "tsmiSync";
+            tsmiSync.Text = "&Sync";
+            tsmiSync.DropDownItems.AddRange(new ToolStripItem[] {
                 tsmiReloadSettings,
-                tsmiUpdateSteamCache,
+                //new ToolStripSeparator(),
+                tsmiReloadUGC,
+                //tsmiUpdateSteamCache,
+                new ToolStripSeparator(),
                 tsmiResetCache,
                 tsmiResetAllSettings,
-                toolStripSeparator1,
-
             });
             // 
             // tsmiReloadUGC
             //
             tsmiReloadUGC.Name = "tsmiReloadUGC";
-            tsmiReloadUGC.Text = "Reload &Items";
-            tsmiReloadUGC.ToolTipText = "Reload all mods/assets";
+            tsmiReloadUGC.Text = "&Reload Mods/Assets";
+            tsmiReloadUGC.ToolTipText = "Reload syncs mods/assets that might have been subbed/unsubbed";
             // 
             // tsmiReloadSettings
             //
             tsmiReloadSettings.Name = "tsmiReloadSettings";
             tsmiReloadSettings.Text = "Reload &Settings";
-            tsmiReloadSettings.ToolTipText = "Sync with game";
+            tsmiReloadSettings.ToolTipText = "Reload settings syncs data that might have been modified inside of game (discarding any unchanged saves).";
             // 
             // tsmiUpdateSteamCache
             //
             tsmiUpdateSteamCache.Name = "tsmiUpdateSteamCache";
-            tsmiUpdateSteamCache.Text = "&Update Steam Cache";
+            tsmiUpdateSteamCache.Text = "Update Steam Data";
+            tsmiUpdateSteamCache.Visible = false;
             // 
             // tsmiResetCache
             //
             tsmiResetCache.Name = "tsmiResetCache";
             tsmiResetCache.Text = "Reset Cache";
+            tsmiResetCache.ToolTipText = "Reset Cache resets all data (author names) collected from steam or data collected when you launch CS (asset names/tags)";
             // 
             // tsmiResetAllSettings
             // 
             tsmiResetAllSettings.Name = "tsmiResetAllSettings";
-            tsmiResetAllSettings.Text = "Reset Settings";
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(144, 6);
-            toolStripSeparator1.Visible = false;
+            tsmiResetAllSettings.Text = "Reset all Settings";
+            tsmiResetAllSettings.ToolTipText = "reset all settings deletes all cache/setting files (not profiles) and starts from scratch";
             //// 
             //// tsmi
             ////

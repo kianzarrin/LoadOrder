@@ -635,8 +635,8 @@ namespace LoadOrderTool.UI {
                 ConfigWrapper.ReloadCSCache();
                 var modTask = dataGridMods.LoadModsAsync(ModPredicate);
                 var AssetTask = LoadAssets();
-                ConfigWrapper.Paused = false;
                 await Task.WhenAll(modTask, AssetTask);
+                ConfigWrapper.Paused = false;
                 await CacheWSDetails();
             } catch(Exception ex) { ex.Log(); }
         }
