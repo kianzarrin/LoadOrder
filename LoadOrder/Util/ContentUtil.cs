@@ -147,7 +147,6 @@ namespace LoadOrderTool.Util {
                 StringSplitOptions.RemoveEmptyEntries);
         }
 
-
         public static bool TryGetAssetID(string path, out ulong id) {
             if (!path.Contains(DataLocation.WorkshopContentPath)) {
                 id = 0;
@@ -220,7 +219,7 @@ namespace LoadOrderTool.Util {
                 }
                 return dir;
             } catch(Exception ex) { ex.Log(); }
-            return false;
+            return null;
         }
 
         public static void EnsureLocalItemsAt(string parentDir) {
