@@ -1,5 +1,7 @@
 namespace LoadOrderTool.UI
 {
+    using LoadOrderTool.Util;
+    using System.Drawing;
     using System.Windows.Forms;
     partial class LoadOrderWindow
     {
@@ -67,6 +69,7 @@ namespace LoadOrderTool.UI
             ModProgressBar = new ProgressBar();
             AssetProgressBar = new ProgressBar();
 
+            this.Icon = ResourceUtil.GetIcon("LoadOrder.ico");
             this.TabContainer.SuspendLayout();
             this.ModsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridMods)).BeginInit();

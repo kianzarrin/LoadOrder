@@ -75,11 +75,18 @@ namespace LoadOrderTool.UI {
             // tsmiFile
             // 
             tsmiFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            tsmiSave,
-            tsmiAutoSave,
-            new ToolStripSeparator(),
-            tsmiExport,
-            tsmiImport});
+                tsmiReloadSettings,
+                tsmiSave,
+                tsmiAutoSave,
+                new ToolStripSeparator(),
+                tsmiReloadUGC,
+                new ToolStripSeparator(),
+                tsmiResetCache,
+                tsmiResetAllSettings,
+                new ToolStripSeparator(),
+                tsmiExport,
+                tsmiImport,
+            });
             tsmiFile.Name = "tsmiFile";
             tsmiFile.Size = new Size(37, 20);
             tsmiFile.Text = "&File";
@@ -89,7 +96,9 @@ namespace LoadOrderTool.UI {
             tsmiSave.Name = "tsmiSave";
             tsmiSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             tsmiSave.Size = new Size(147, 22);
-            tsmiSave.Text = "&Save";
+            tsmiSave.Text = "&Save settings";
+            tsmiSave.ToolTipText = "Save settings to game";
+            tsmiSave.Image = ResourceUtil.GetImage("arrow-right.png");
             // 
             // tsmiAutoSave
             // 
@@ -207,14 +216,9 @@ namespace LoadOrderTool.UI {
             // 
             tsmiSync.Name = "tsmiSync";
             tsmiSync.Text = "&Refresh";
+            tsmiSync.Visible = false;
             tsmiSync.DropDownItems.AddRange(new ToolStripItem[] {
-                tsmiReloadSettings,
-                //new ToolStripSeparator(),
-                tsmiReloadUGC,
                 //tsmiUpdateSteamCache,
-                new ToolStripSeparator(),
-                tsmiResetCache,
-                tsmiResetAllSettings,
             });
             // 
             // tsmiReloadUGC
@@ -226,8 +230,9 @@ namespace LoadOrderTool.UI {
             // tsmiReloadSettings
             //
             tsmiReloadSettings.Name = "tsmiReloadSettings";
-            tsmiReloadSettings.Text = "Reload &Settings";
-            tsmiReloadSettings.ToolTipText = "Reload settings syncs data that might have been modified inside of game (discarding any unchanged saves).";
+            tsmiReloadSettings.Text = "Load &Settings";
+            tsmiReloadSettings.ToolTipText = "syncs back data that might have been modified inside of game (discarding any unsaved changes).";
+            tsmiReloadSettings.Image = ResourceUtil.GetImage("arrow-left.png");
             // 
             // tsmiUpdateSteamCache
             //

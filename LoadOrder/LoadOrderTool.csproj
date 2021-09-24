@@ -60,12 +60,25 @@
   </ItemGroup>
   
   <ItemGroup>
+    <None Remove="Resources\arrow-left.png" />
+    <None Remove="Resources\arrow-right.png" />
+    <None Remove="Resources\LoadOrder.ico" />
     <None Remove="Resources\mono-debug._dll" />
+    <EmbeddedResource Include="Resources\arrow-left.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\arrow-right.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\mono-debug._dll" />
   </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\CheckBoxComboBox\CheckBoxComboBox.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\LoadOrder.ico" />
   </ItemGroup>
   
 
