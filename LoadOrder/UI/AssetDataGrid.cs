@@ -127,6 +127,12 @@ namespace LoadOrderTool.UI {
             }
         }
 
+        public void SetRowCountFast(int nRows) {
+            if(RowCount > nRows)
+                Rows.Clear(); // work around : removing rows is slow.
+            RowCount = nRows;
+        }
+
         public static void SetProgress(float percent) => SetProgress(percent, UIUtil.WIN32Color.Normal);
         public static void SetProgress(float percent, UIUtil.WIN32Color color) {
             if(LoadOrderWindow.Instance == null) return;

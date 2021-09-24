@@ -1,3 +1,5 @@
+#define ASYNC_FILTER
+
 using CO;
 using CO.Packaging;
 using CO.Plugins;
@@ -506,32 +508,50 @@ namespace LoadOrderTool.UI {
         }
 
         #region Filter
-        private void ApplyAssetFilter(object sender, EventArgs e) {
-            ApplyAssetFilter();
-            dataGridAssets.AllowUserToResizeColumns = true;
-        }
-
 #if ASYNC_FILTER // modify this line to switch to async
-        private void ApplyAssetFilter() {
-            // TODO: this fails when modifying text box too fast
-            dataGridAssets.Rows.Clear(); // work around : removing rows is slow.
-            Task.Run(ApplyAssetFilterTask);
+        private async void ApplyAssetFilter(object sender, EventArgs e) {
+            await ApplyAssetFilter();
         }
 
-        object changeRowsLockObject_ = new object();
-        async void ApplyAssetFilterTask() {
-            Log.Debug("ApplyAssetFilterTask");
-            FilterAssets();
-            lock (changeRowsLockObject_) {
-                dataGridAssets.RowCount = dataGridAssets.AssetList.Filtered.Count;
+        private async Task ApplyAssetFilter() {
+            // TODO: this fails when modifying text box too fast
+            await ApplyAssetFilterTask();
+            // dataGridAssets.AllowUserToResizeColumns = true;
+        }
+
+        int waitcount = 0;
+        async Task ApplyAssetFilterTask() {
+            if(dataGridAssets?.AssetList?.Filtered == null)
+                return;
+
+            try {
+                waitcount++;
+                await Task.Delay(150);
+                // abort all but last waiting events.
+                if(waitcount > 1) {
+                    // abort this event because another event is waiting.
+                    return;
+                }
+
+                FilterAssets();
+                dataGridAssets.SetRowCountFast(dataGridAssets.AssetList.Filtered.Count);
                 dataGridAssets.Refresh();
+            } catch( Exception ex) {
+                ex.Log();
+            } finally {
+                waitcount--;
             }
         }
 #else
+        private void ApplyAssetFilter(object sender, EventArgs e) {
+            ApplyAssetFilter();
+        }
+
         private void ApplyAssetFilter() {
             Log.Debug("ApplyAssetFilterTask");
             FilterAssets();
             dataGridAssets.Refresh();
+            dataGridAssets.AllowUserToResizeColumns = true;
         }
 #endif
         public void FilterAssets() => dataGridAssets.AssetList?.FilterItems();
