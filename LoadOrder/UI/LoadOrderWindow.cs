@@ -519,29 +519,27 @@ namespace LoadOrderTool.UI {
             // dataGridAssets.AllowUserToResizeColumns = true;
         }
 
-        int waitcount = 0;
-        async Task ApplyAssetFilterTask() {
-            if(dataGridAssets?.AssetList?.Filtered == null)
-                return;
-
-            try {
-                waitcount++;
-                await Task.Delay(150);
-                // abort all but last waiting events.
-                if(waitcount > 1) {
-                    // abort this event because another event is waiting.
+            CancellationTokenSource filterTokenSource_;
+            async Task ApplyAssetFilterTask() {
+                if(dataGridAssets?.AssetList?.Filtered == null)
                     return;
+                filterTokenSource_?.Cancel();
+                try {
+                    filterTokenSource_ = new CancellationTokenSource(); 
+                    await Task.Delay(150, cancellationToken: filterTokenSource_.Token);
+                
+                    FilterAssets();
+                    dataGridAssets.SetRowCountFast(dataGridAssets.AssetList.Filtered.Count);
+                    dataGridAssets.Refresh();
+                } catch(OperationCanceledException oce) {
+                    // return silently
+                } catch( Exception ex) {
+                    ex.Log();
+                } finally {
+                    filterTokenSource_?.Dispose();
+                    filterTokenSource_ = null;
                 }
-
-                FilterAssets();
-                dataGridAssets.SetRowCountFast(dataGridAssets.AssetList.Filtered.Count);
-                dataGridAssets.Refresh();
-            } catch( Exception ex) {
-                ex.Log();
-            } finally {
-                waitcount--;
             }
-        }
 #else
         private void ApplyAssetFilter(object sender, EventArgs e) {
             ApplyAssetFilter();
@@ -678,17 +676,18 @@ namespace LoadOrderTool.UI {
 
                 SetCacheProgress(10);
 
-                int i = 0;
-                List<Task> tasks = new List<Task>(32);
-                await foreach(var data in SteamUtil.LoadDataAsyncInChunks(ids)) {
-                    Assertion.NotNull(data);
-                    var task = Task.Run(() => DTO2Cache(data));
-                    tasks.Add(task);
-                    i += data.Length;
-                    SetCacheProgress(10 + (30 * i) / ids.Length);
-                }
-                await Task.WhenAll(tasks.ToArray());
-
+                try {
+                    int i = 0;
+                    List<Task> tasks = new List<Task>(32);
+                    await foreach(var data in SteamUtil.LoadDataAsyncInChunks(ids)) {
+                        Assertion.NotNull(data);
+                        var task = Task.Run(() => DTO2Cache(data));
+                        tasks.Add(task);
+                        i += data.Length;
+                        SetCacheProgress(10 + (30 * i) / ids.Length);
+                    }
+                    await Task.WhenAll(tasks.ToArray());
+                } catch(Exception ex) { ex.Log(); }
                 SetCacheProgress(45);
                 RefreshAll();
                 SetCacheProgress(50);
