@@ -67,6 +67,8 @@ namespace LoadOrderTool {
                 _ = DataLocation.GamePath; // run DataLocation static constructor
                 _ = Log.LogFilePath; // run Log static constructor
 
+                CacheDLLs();
+
                 if (Parse.CommandLine) {
                     Entry.Start();
                 } else {
@@ -75,6 +77,12 @@ namespace LoadOrderTool {
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
+        }
+
+        static ParallelQuery<byte[]> CacheDLLs() {
+            return Directory.GetFiles(DataLocation.WorkshopContentPath, "*.dll", searchOption: SearchOption.AllDirectories)
+                .AsParallel()
+                .Select(File.ReadAllBytes);
         }
 
         public static bool IsAdministrator =>
