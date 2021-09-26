@@ -12,6 +12,7 @@ namespace LoadOrderTool {
     using System.Linq;
     using System.Runtime.InteropServices;
     using LoadOrderTool.CommandLine;
+    using System.Collections.Generic;
 
     static class Program {
         [DllImport("kernel32.dll")]
@@ -79,10 +80,17 @@ namespace LoadOrderTool {
             }
         }
 
-        static ParallelQuery<byte[]> CacheDLLs() {
-            return Directory.GetFiles(DataLocation.WorkshopContentPath, "*.dll", searchOption: SearchOption.AllDirectories)
+        static void CacheDLLs() {
+            var timer = Stopwatch.StartNew();
+            var res = Directory.GetFiles(DataLocation.WorkshopContentPath, "*.dll", searchOption: SearchOption.AllDirectories)
                 .AsParallel()
-                .Select(File.ReadAllBytes);
+                .Select(File.ReadAllBytes)
+                .ToList();
+            string m = $"caching {res.Count} dlls took {timer.ElapsedMilliseconds}ms";
+            Log.Info(m, true);
+            //MessageBox.Show(m);
+            //Process.GetCurrentProcess().Kill();
+
         }
 
         public static bool IsAdministrator =>
