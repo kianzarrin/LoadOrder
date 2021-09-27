@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using CO.PlatformServices;
+using System.IO;
 
 namespace LoadOrderTool.UI {
     public partial class LoadOrderWindow : Form {
@@ -91,6 +92,8 @@ namespace LoadOrderTool.UI {
                 var modTask = InitializeModTab();
                 var assetTask = InitializeAssetTab();
                 await Task.WhenAll(modTask, assetTask);
+                if(!LoadOrderToolSettings.Instace.LastProfileName.IsNullorEmpty())
+                    LastProfileLabel.Text = $"last profile was '{LoadOrderToolSettings.Instace.LastProfileName}'";
 
                 menuStrip.tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
                 menuStrip.tsmiAutoSave.Click += TsmiAutoSave_Click;
@@ -196,6 +199,12 @@ namespace LoadOrderTool.UI {
         private void TsmiAutoSave_Click(object sender, EventArgs e) =>
             menuStrip.tsmiFile.ShowDropDown(); // prevent hiding menu when clicking auto-save
 
+        public void UpdateLastProfileName(string fullPath) {
+            LoadOrderToolSettings.Instace.LastProfileName = Path.GetFileNameWithoutExtension(fullPath);
+            LoadOrderToolSettings.Instace.Serialize();
+            LastProfileLabel.Text = $"last profile was '{LoadOrderToolSettings.Instace.LastProfileName}'";
+        }
+
         private void Export_Click(object sender, EventArgs e) {
             SaveFileDialog diaglog = new SaveFileDialog();
             diaglog.Filter = "xml files (*.xml)|*.xml";
@@ -204,6 +213,7 @@ namespace LoadOrderTool.UI {
                 LoadOrderProfile profile = new LoadOrderProfile();
                 ManagerList.instance.SaveToProfile(profile);
                 profile.Serialize(diaglog.FileName);
+                UpdateLastProfileName(diaglog.FileName);
             }
         }
 
@@ -218,6 +228,7 @@ namespace LoadOrderTool.UI {
                             return;
                         bool replace = opd.DialogResult == OpenProfileDialog.RESULT_REPLACE;
                         ApplyProfile(profile, types: opd.ItemTypes, replace: replace);
+                        if(replace) UpdateLastProfileName(ofd.FileName);
                     }
                 }
             }
@@ -324,6 +335,9 @@ namespace LoadOrderTool.UI {
             DisableAllMods.Click += DisableAllMods_Click;
 
             dataGridMods.CellMouseClick += DataGridMods_CellMouseClick;
+
+            dataGridMods.VisibleChanged += (_, __) => ModCountLabel.Visible = dataGridMods.Visible;
+            ModCountLabel.Visible = true;
         }
 
         private void RefreshModList(object sender, EventArgs e) {
@@ -462,6 +476,8 @@ namespace LoadOrderTool.UI {
             await LoadAssetsAsync();
 
             dataGridAssets.CellMouseClick += DataGridAssets_CellMouseClick;
+
+            dataGridAssets.VisibleChanged += (_, __) => AssetCountLabel.Visible = dataGridAssets.Visible;
         }
 
         public async Task LoadAssetsAsync() {
@@ -519,27 +535,27 @@ namespace LoadOrderTool.UI {
             // dataGridAssets.AllowUserToResizeColumns = true;
         }
 
-            CancellationTokenSource filterTokenSource_;
-            async Task ApplyAssetFilterTask() {
-                if(dataGridAssets?.AssetList?.Filtered == null)
-                    return;
-                filterTokenSource_?.Cancel();
-                try {
-                    filterTokenSource_ = new CancellationTokenSource(); 
-                    await Task.Delay(150, cancellationToken: filterTokenSource_.Token);
+        CancellationTokenSource filterTokenSource_;
+        async Task ApplyAssetFilterTask() {
+            if(dataGridAssets?.AssetList?.Filtered == null)
+                return;
+            filterTokenSource_?.Cancel();
+            try {
+                filterTokenSource_ = new CancellationTokenSource(); 
+                await Task.Delay(150, cancellationToken: filterTokenSource_.Token);
                 
-                    FilterAssets();
-                    dataGridAssets.SetRowCountFast(dataGridAssets.AssetList.Filtered.Count);
-                    dataGridAssets.Refresh();
-                } catch(OperationCanceledException oce) {
-                    // return silently
-                } catch( Exception ex) {
-                    ex.Log();
-                } finally {
-                    filterTokenSource_?.Dispose();
-                    filterTokenSource_ = null;
-                }
+                FilterAssets();
+                dataGridAssets.SetRowCountFast(dataGridAssets.AssetList.Filtered.Count);
+                dataGridAssets.Refresh();
+            } catch(OperationCanceledException oce) {
+                // return silently
+            } catch( Exception ex) {
+                ex.Log();
+            } finally {
+                filterTokenSource_?.Dispose();
+                filterTokenSource_ = null;
             }
+        }
 #else
         private void ApplyAssetFilter(object sender, EventArgs e) {
             ApplyAssetFilter();
@@ -561,6 +577,7 @@ namespace LoadOrderTool.UI {
             if (tagFilter == NO_TAGS) tagFilter = null;
             var words = TextFilterAsset.Text?.Split(" ");
             assetList.FilterItems(item => AssetPredicateFast(item, includedFilter, wsFilter, tagFilter, words));
+            AssetCountLabel.Text = $"showing {assetList.Filtered.Count}/{assetList.Original.Count} assets";
         }
 
         bool AssetPredicateFast(

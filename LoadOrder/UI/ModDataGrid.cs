@@ -340,6 +340,7 @@ namespace LoadOrderTool.UI {
             }
             ModList.FilterIn();
             PopulateMods();
+            LoadOrderWindow.Instance.ModCountLabel.Text = $"showing {ModList.Filtered.Count}/{ModList.Count} mods";
         }
 
         public DataGridViewRow GetRow(PluginManager.PluginInfo pluginInfo) {

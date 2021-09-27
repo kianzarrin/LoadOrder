@@ -25,6 +25,8 @@ namespace LoadOrderTool {
 
         public string ExtraArgs;
 
+        public string LastProfileName;
+
 
         const string FILE_NAME = "LoadOrderToolSettings.xml";
         static string PATH => Path.Combine(DataLocation.LocalLOMData, FILE_NAME);

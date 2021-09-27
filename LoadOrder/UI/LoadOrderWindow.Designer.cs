@@ -493,7 +493,15 @@ namespace LoadOrderTool.UI
             this.statusStrip.Size = new System.Drawing.Size(863, 22);
             this.statusStrip.TabIndex = 3;
             this.statusStrip.Text = "statusStrip1";
-            this.statusStrip.Visible = false; //until i find some use for it.
+            this.statusStrip.Visible = true; //until i find some use for it.
+            ModCountLabel = new ToolStripStatusLabel { BorderSides = ToolStripStatusLabelBorderSides.Left, BorderStyle = Border3DStyle.Etched};
+            AssetCountLabel = new ToolStripStatusLabel { BorderSides = ToolStripStatusLabelBorderSides.Left, BorderStyle = Border3DStyle.Etched };
+            LastProfileLabel = new ToolStripStatusLabel { BorderSides = ToolStripStatusLabelBorderSides.Left, BorderStyle = Border3DStyle.Etched };
+            statusStrip.Items.AddRange(new[] { ModCountLabel, AssetCountLabel, LastProfileLabel });
+            ModCountLabel.Visible = false;
+            AssetCountLabel.Visible = false;
+            LastProfileLabel.Visible = true;
+            
             // 
             // LoadOrderWindow
             // 
@@ -575,6 +583,10 @@ namespace LoadOrderTool.UI
         private UI.LSMControl LSMControl;
 
         private StatusStrip statusStrip;
+        public ToolStripStatusLabel ModCountLabel;
+        public ToolStripStatusLabel AssetCountLabel;
+        public ToolStripStatusLabel LastProfileLabel;
+
 
         public ProgressBar ModProgressBar;
         public ProgressBar AssetProgressBar;
