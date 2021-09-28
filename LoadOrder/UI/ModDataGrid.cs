@@ -191,6 +191,7 @@ namespace LoadOrderTool.UI {
                 } else {
                     return;
                 }
+                LoadOrderWindow.Instance.UpdateStatus();
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
@@ -340,7 +341,7 @@ namespace LoadOrderTool.UI {
             }
             ModList.FilterIn();
             PopulateMods();
-            LoadOrderWindow.Instance.ModCountLabel.Text = $"showing {ModList.Filtered.Count}/{ModList.Count} mods";
+            LoadOrderWindow.Instance.UpdateStatus();
         }
 
         public DataGridViewRow GetRow(PluginManager.PluginInfo pluginInfo) {

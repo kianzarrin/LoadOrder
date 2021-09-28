@@ -230,6 +230,7 @@ namespace LoadOrderTool.UI {
             } else {
                 Log.Error("unexpected column changed: " + Columns[e.ColumnIndex]?.Name);
             }
+            LoadOrderWindow.Instance.UpdateStatus();
         }
 
 

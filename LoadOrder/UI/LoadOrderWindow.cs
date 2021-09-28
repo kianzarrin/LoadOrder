@@ -92,8 +92,9 @@ namespace LoadOrderTool.UI {
                 var modTask = InitializeModTab();
                 var assetTask = InitializeAssetTab();
                 await Task.WhenAll(modTask, assetTask);
-                if(!LoadOrderToolSettings.Instace.LastProfileName.IsNullorEmpty())
-                    LastProfileLabel.Text = $"last profile was '{LoadOrderToolSettings.Instace.LastProfileName}'";
+                TabContainer.Selected += (_, __) => UpdateStatus();
+
+                UpdateStatus();
 
                 menuStrip.tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
                 menuStrip.tsmiAutoSave.Click += TsmiAutoSave_Click;
@@ -176,6 +177,8 @@ namespace LoadOrderTool.UI {
             LoadOrderToolSettings.Instace.FormHeight = Height;
         }
 
+
+
         #region MenuBar
         private async void TsmiResetSettings_Click(object sender, EventArgs e) => await TsmiResetSettings();
         private async Task TsmiResetSettings() {
@@ -202,7 +205,7 @@ namespace LoadOrderTool.UI {
         public void UpdateLastProfileName(string fullPath) {
             LoadOrderToolSettings.Instace.LastProfileName = Path.GetFileNameWithoutExtension(fullPath);
             LoadOrderToolSettings.Instace.Serialize();
-            LastProfileLabel.Text = $"last profile was '{LoadOrderToolSettings.Instace.LastProfileName}'";
+            UpdateStatus();
         }
 
         private void Export_Click(object sender, EventArgs e) {
@@ -229,6 +232,7 @@ namespace LoadOrderTool.UI {
                         bool replace = opd.DialogResult == OpenProfileDialog.RESULT_REPLACE;
                         ApplyProfile(profile, types: opd.ItemTypes, replace: replace);
                         if(replace) UpdateLastProfileName(ofd.FileName);
+                        else UpdateStatus();
                     }
                 }
             }
@@ -336,8 +340,7 @@ namespace LoadOrderTool.UI {
 
             dataGridMods.CellMouseClick += DataGridMods_CellMouseClick;
 
-            dataGridMods.VisibleChanged += (_, __) => ModCountLabel.Visible = dataGridMods.Visible;
-            ModCountLabel.Visible = true;
+            UpdateStatus();
         }
 
         private void RefreshModList(object sender, EventArgs e) {
@@ -477,7 +480,7 @@ namespace LoadOrderTool.UI {
 
             dataGridAssets.CellMouseClick += DataGridAssets_CellMouseClick;
 
-            dataGridAssets.VisibleChanged += (_, __) => AssetCountLabel.Visible = dataGridAssets.Visible;
+            UpdateStatus();
         }
 
         public async Task LoadAssetsAsync() {
@@ -577,7 +580,7 @@ namespace LoadOrderTool.UI {
             if (tagFilter == NO_TAGS) tagFilter = null;
             var words = TextFilterAsset.Text?.Split(" ");
             assetList.FilterItems(item => AssetPredicateFast(item, includedFilter, wsFilter, tagFilter, words));
-            AssetCountLabel.Text = $"showing {assetList.Filtered.Count}/{assetList.Original.Count} assets";
+            UpdateStatus();
         }
 
         bool AssetPredicateFast(
@@ -658,9 +661,34 @@ namespace LoadOrderTool.UI {
         }
         #endregion
 
+        public void UpdateStatus() {
+            try {
+                ModCountLabel.Visible = TabContainer.SelectedTab == ModsTab;
+                if(dataGridMods.ModList is ModList modList) {
+                    ModCountLabel.Text = $"mods " +
+                        $"enabled:{modList.Count(mod => mod.IsEnabledPending)} " +
+                        $"included:{modList.Count(mod => mod.IsIncludedPending)} " +
+                        $"totlal:{modList.Count}";
+                }
+
+                AssetCountLabel.Visible = TabContainer.SelectedTab == AssetsTab;
+                if(dataGridAssets.AssetList is AssetList asseList) {
+                    AssetCountLabel.Text = $"assets " +
+                        $"included:{asseList.Original.Count(asset => asset.IsIncludedPending)} " +
+                        $"totlal:{asseList.Original.Count}";
+                }
+
+
+                string lastProfileName = LoadOrderToolSettings.Instace?.LastProfileName;
+                LastProfileLabel.Visible = !lastProfileName.IsNullorEmpty();
+                LastProfileLabel.Text = $"Last profile was '{lastProfileName}'";
+            } catch(Exception ex) { ex.Log(); }
+        }
+
         public void RefreshAll() {
             dataGridMods.RefreshModList();
             dataGridAssets.Refresh();
+            UpdateStatus();
         }
 
         public async Task ReloadAll() {
