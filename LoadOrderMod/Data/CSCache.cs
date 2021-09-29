@@ -42,6 +42,7 @@ namespace LoadOrderShared {
             Mods = ItemTable.Values.OfType<Mod>().ToArray();
             Assets = ItemTable.Values.OfType<Asset>().ToArray();
             XmlSerializer ser = new XmlSerializer(typeof(CSCache));
+            if(!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Create, FileAccess.Write)) {
                 ser.Serialize(fs, this);
             }

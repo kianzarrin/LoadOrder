@@ -49,7 +49,8 @@ namespace LoadOrderShared {
         public static LoadOrderConfig Deserialize(string dir) {
             try {
                 XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));
-                using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Open, FileAccess.Read)) {
+                if(!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                using(FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Open, FileAccess.Read)) {
                     return ser.Deserialize(fs) as LoadOrderConfig;
                 }
             }

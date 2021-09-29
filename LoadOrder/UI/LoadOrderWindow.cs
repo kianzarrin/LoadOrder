@@ -665,17 +665,17 @@ namespace LoadOrderTool.UI {
             try {
                 ModCountLabel.Visible = TabContainer.SelectedTab == ModsTab;
                 if(dataGridMods.ModList is ModList modList) {
-                    ModCountLabel.Text = $"mods " +
+                    ModCountLabel.Text = $"Mods " +
                         $"enabled:{modList.Count(mod => mod.IsEnabledPending)} " +
                         $"included:{modList.Count(mod => mod.IsIncludedPending)} " +
-                        $"totlal:{modList.Count}";
+                        $"total:{modList.Count}";
                 }
 
                 AssetCountLabel.Visible = TabContainer.SelectedTab == AssetsTab;
                 if(dataGridAssets.AssetList is AssetList asseList) {
-                    AssetCountLabel.Text = $"assets " +
+                    AssetCountLabel.Text = $"Assets " +
                         $"included:{asseList.Original.Count(asset => asset.IsIncludedPending)} " +
-                        $"totlal:{asseList.Original.Count}";
+                        $"total:{asseList.Original.Count}";
                 }
 
 
