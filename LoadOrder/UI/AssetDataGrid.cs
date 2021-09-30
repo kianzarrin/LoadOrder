@@ -179,7 +179,6 @@ namespace LoadOrderTool.UI {
         // style
         protected override void OnCellFormatting(DataGridViewCellFormattingEventArgs e) {
             base.OnCellFormatting(e);
-            Log.Called();
             try {
                 if(AssetList == null) return;
                 if(e.RowIndex >= AssetList.Filtered.Count) return;
