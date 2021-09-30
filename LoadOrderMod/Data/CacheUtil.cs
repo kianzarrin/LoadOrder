@@ -9,6 +9,7 @@ namespace LoadOrderMod.Data {
     using LoadOrderMod.Util;
     using LoadOrderShared;
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
@@ -100,8 +101,8 @@ namespace LoadOrderMod.Data {
                     cache.Name = asset.name;
 
 
-                    cache.Tags = asset.type.Tags();
-                    Assertion.NotNull(cache.Tags, "assetInfo.Tags");
+                    List<string> tags = new List<string>(asset.type.Tags());
+                    tags.AddRange(asset.package.Tags());
 
                     timerInstantiate.Start();
                     MetaData metaData = asset.Instantiate() as MetaData;
@@ -110,9 +111,10 @@ namespace LoadOrderMod.Data {
 
                     if (metaData is CustomAssetMetaData customAssetMetaData) {
                         cache.Description = ContentManagerUtil.SafeGetAssetDesc(customAssetMetaData, asset.package);
-                        var tags = customAssetMetaData.Tags(asset.package.GetPublishedFileID());
-                        cache.Tags = cache.Tags.Concat(tags).ToArray();
+                        tags.AddRange(customAssetMetaData.Tags());
                     }
+                    cache.Tags = tags.ToArray();
+
                 } catch (Exception ex) {
                     ex.Log($"asset: {asset}");
                 }

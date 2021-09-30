@@ -33,7 +33,7 @@ namespace LoadOrderMod.Util {
                 return new string[0];
         }
 
-        public static string[] Tags(this CustomAssetMetaData metadata, PublishedFileId publishedFileId) {
+        public static string[] Tags(this CustomAssetMetaData metadata) {
             var tags = new List<string>();
             foreach(var tag in metadata.steamTags) {
                 if(Tag2Category.TryGetValue(tag, out var cat))
@@ -42,14 +42,26 @@ namespace LoadOrderMod.Util {
                     tags.Add(tag);
             }
 
-            bool hasMod =
-                publishedFileId != PublishedFileId.invalid &&
-                PluginManager.instance.GetPluginsInfo().Any(item => item.publishedFileID == publishedFileId);
-
-            if (hasMod) tags.Add("Mod");
-
             return tags.ToArray();
         }
 
+        public static string [] Tags(this Package package) {
+            if(package.HasMod())
+                return new[] { "Mod" };
+            else
+                return new string[0];
+        }
+
+        public static bool HasMod(this Package package) {
+            PublishedFileId publishedFileId = package.GetPublishedFileID();
+            var plugins = PluginManager.instance.GetPluginsInfo();
+            if(publishedFileId != PublishedFileId.invalid) {
+                return plugins.Any(item => item.publishedFileID == publishedFileId);
+            } else {
+                return false;
+                // local mod assets are not loaded
+                return plugins.Any(item => item.name == package.packageName);
+            }
+        }
     }
 }
