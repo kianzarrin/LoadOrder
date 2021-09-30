@@ -160,13 +160,6 @@ namespace LoadOrderTool.UI {
                     e.Value = id;
                 } else if (e.ColumnIndex == cStatus.Index) {
                     e.Value = asset.StrStatus;
-                    if(asset.AssetCache.Status > SteamCache.DownloadStatus.OK) {
-                        var c = this[columnIndex: e.ColumnIndex, rowIndex: e.RowIndex];
-                        c.Style = new DataGridViewCellStyle(c.Style) {
-                            ForeColor = Color.Red,
-                            Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
-                        };
-                    }
                 } else if (e.ColumnIndex == cName.Index) {
                     e.Value = asset.DisplayText ?? "";
                 } else if (e.ColumnIndex == cAuthor.Index) {
@@ -179,6 +172,27 @@ namespace LoadOrderTool.UI {
                     e.Value = asset.StrTags;
                 }
             } catch (Exception ex) {
+                Log.Exception(ex);
+            }
+        }
+
+        // style
+        protected override void OnCellFormatting(DataGridViewCellFormattingEventArgs e) {
+            base.OnCellFormatting(e);
+            Log.Called();
+            try {
+                if(AssetList == null) return;
+                if(e.RowIndex >= AssetList.Filtered.Count) return;
+                if(e.ColumnIndex == cStatus.Index) {
+                    var asset = AssetList.Filtered[e.RowIndex];
+                    if(asset.AssetCache.Status > SteamCache.DownloadStatus.OK) {
+                        e.CellStyle = new DataGridViewCellStyle(e.CellStyle) {
+                            ForeColor = Color.Red,
+                            Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
+                        };
+                    }
+                }
+            } catch(Exception ex) {
                 Log.Exception(ex);
             }
         }
