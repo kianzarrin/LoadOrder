@@ -160,6 +160,13 @@ namespace LoadOrderTool.UI {
                     e.Value = id;
                 } else if (e.ColumnIndex == cStatus.Index) {
                     e.Value = asset.StrStatus;
+                    if(asset.AssetCache.Status > SteamCache.DownloadStatus.OK) {
+                        var c = this[columnIndex: e.ColumnIndex, rowIndex: e.RowIndex];
+                        c.Style = new DataGridViewCellStyle(c.Style) {
+                            ForeColor = Color.Red,
+                            Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
+                        };
+                    }
                 } else if (e.ColumnIndex == cName.Index) {
                     e.Value = asset.DisplayText ?? "";
                 } else if (e.ColumnIndex == cAuthor.Index) {

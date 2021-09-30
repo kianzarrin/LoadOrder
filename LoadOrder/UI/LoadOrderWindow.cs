@@ -678,10 +678,12 @@ namespace LoadOrderTool.UI {
                         $"total:{asseList.Original.Count}";
                 }
 
-
                 string lastProfileName = LoadOrderToolSettings.Instace?.LastProfileName;
                 LastProfileLabel.Visible = !lastProfileName.IsNullorEmpty();
                 LastProfileLabel.Text = $"Last profile was '{lastProfileName}'";
+
+                DLCNoticeLabel.Visible = TabContainer.SelectedTab == DLCTab;
+                DownloadWarningLabel.Visible = ManagerList.GetWSItems().Any(item => item.ItemCache.Status > SteamCache.DownloadStatus.OK);
             } catch(Exception ex) { ex.Log(); }
         }
 

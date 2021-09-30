@@ -133,7 +133,7 @@ namespace LoadOrderTool.UI {
                 col.SortMode = DataGridViewColumnSortMode.Programmatic;
         }
 
-        public void AddRow(int order, bool included, bool enabled, string id,
+        public int AddRow(int order, bool included, bool enabled, string id,
             string author, string updated, string downloaded, string description, string status) {
             var row = new object[Columns.Count];
             row[COrder.Index] = order;
@@ -145,7 +145,7 @@ namespace LoadOrderTool.UI {
             row[CDateUpdated.Index] = updated;
             row[CDateDownloaded.Index] = downloaded;
             row[CDescription.Index] = description;
-            Rows.Add(row);
+            return Rows.Add(row);
         }
 
         private void ModDataGrid_DataError(object sender, DataGridViewDataErrorEventArgs e) {
@@ -365,7 +365,7 @@ namespace LoadOrderTool.UI {
                     if (id == "0" || mod.PublishedFileId == PublishedFileId.invalid)
                         id = "Local";
 
-                    AddRow(
+                    var row = AddRow(
                         order: mod.LoadOrder,
                         included: mod.IsIncludedPending,
                         enabled: mod.IsEnabledPending,
@@ -375,6 +375,13 @@ namespace LoadOrderTool.UI {
                         updated: mod.StrDateUpdate ?? "",
                         downloaded: mod.StrDateDownloaded ?? "",
                         description: mod.DisplayText ?? "");
+                    if(mod.ItemCache.Status > SteamCache.DownloadStatus.OK) {
+                        var c = this[columnIndex: CStatus.Index, rowIndex: row];
+                        c.Style = new DataGridViewCellStyle(c.Style) {
+                            ForeColor = Color.Red,
+                            Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
+                        };
+                    }
                 } catch (Exception ex) {
                     Log.Exception(new Exception(
                         $"failed to add mod to row: " +

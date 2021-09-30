@@ -494,14 +494,37 @@ namespace LoadOrderTool.UI
             this.statusStrip.TabIndex = 3;
             this.statusStrip.Text = "statusStrip1";
             this.statusStrip.Visible = true; //until i find some use for it.
-            ModCountLabel = new ToolStripStatusLabel { BorderSides = ToolStripStatusLabelBorderSides.Left, BorderStyle = Border3DStyle.Etched};
-            AssetCountLabel = new ToolStripStatusLabel { BorderSides = ToolStripStatusLabelBorderSides.Left, BorderStyle = Border3DStyle.Etched };
-            LastProfileLabel = new ToolStripStatusLabel { BorderSides = ToolStripStatusLabelBorderSides.Left, BorderStyle = Border3DStyle.Etched };
-            statusStrip.Items.AddRange(new[] { ModCountLabel, AssetCountLabel, LastProfileLabel });
-            ModCountLabel.Visible = false;
-            AssetCountLabel.Visible = false;
-            LastProfileLabel.Visible = true;
-            
+            DLCNoticeLabel = new ToolStripStatusLabel {
+                BorderSides = ToolStripStatusLabelBorderSides.Left,
+                BorderStyle = Border3DStyle.Etched,
+                Visible = false,
+                Text = "Assuming DLCs are enabled in steam",
+            };
+            DownloadWarningLabel = new ToolStripStatusLabel {
+                BorderSides = ToolStripStatusLabelBorderSides.Left,
+                BorderStyle = Border3DStyle.Etched,
+                Visible = true,
+                ForeColor = Color.Red,
+                Font =  new Font(SystemFonts.DefaultFont, FontStyle.Bold),
+                Text = "There are broken downloads!",
+            };
+            ModCountLabel = new ToolStripStatusLabel {
+                BorderSides = ToolStripStatusLabelBorderSides.Left,
+                BorderStyle = Border3DStyle.Etched,
+                Visible = false,
+            };
+            AssetCountLabel = new ToolStripStatusLabel {
+                BorderSides = ToolStripStatusLabelBorderSides.Left,
+                BorderStyle = Border3DStyle.Etched,
+                Visible = false,
+            };
+            LastProfileLabel = new ToolStripStatusLabel {
+                BorderSides = ToolStripStatusLabelBorderSides.Left,
+                BorderStyle = Border3DStyle.Etched,
+                Visible = true,
+            };
+            statusStrip.Items.AddRange(new[] { DownloadWarningLabel, DLCNoticeLabel, ModCountLabel, AssetCountLabel, LastProfileLabel });
+
             // 
             // LoadOrderWindow
             // 
@@ -583,6 +606,8 @@ namespace LoadOrderTool.UI
         private UI.LSMControl LSMControl;
 
         private StatusStrip statusStrip;
+        public ToolStripStatusLabel DownloadWarningLabel;
+        public ToolStripStatusLabel DLCNoticeLabel;
         public ToolStripStatusLabel ModCountLabel;
         public ToolStripStatusLabel AssetCountLabel;
         public ToolStripStatusLabel LastProfileLabel;

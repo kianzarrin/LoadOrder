@@ -1,26 +1,12 @@
-steam web:
-enum EUCMListType
-{
-	Subscribed = 1;
-	Favorites = 2;
-	Played = 3;
-	Completed = 4;
-	ShortcutFavorites = 5;
-	Followed = 6;
-}
-
-
+- expand load profile combo box.
 
 -----------------------------------
-- send list of items to sub to CS via file.
 - IMT like supports tab (including log file option)
 - bug: if I build a new mod, and then press reload in tool, the enable is not always accurate.
-
 
 - property display
 - group items
 - tool-bar
-- status bar
 
 
 - auto-publish using DefaultTargets https://stackoverflow.com/questions/12165715/call-publish-after-build-in-msbuild

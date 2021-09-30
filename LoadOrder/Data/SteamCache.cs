@@ -15,8 +15,8 @@ namespace LoadOrderTool.Data {
         }
 
         public enum DownloadStatus {
-            None,
-            OK,
+            None = 0,
+            OK = 1,
             OutOfDate,
             NotDownloaded,
             PartiallyDownloaded,
