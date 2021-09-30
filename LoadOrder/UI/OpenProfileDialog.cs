@@ -57,6 +57,7 @@ namespace LoadOrderTool.UI {
 
             btnAppend.SetTooltip("current mods/assets + profile mods/assets");
             btnReplace.SetTooltip("profile mods/assets only");
+            cbItemType.AutoSize();
         }
 
         private void BtnReload_Click(object sender, EventArgs e) {
