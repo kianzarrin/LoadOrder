@@ -133,7 +133,7 @@ namespace LoadOrderInjections {
                 yield return new WaitForSeconds(1);
                 yield return new WaitForSeconds(0.01f * RemainingCount);
             }
-            yield return new WaitForSeconds(1); // to see the results :)
+            Log.Info("all items subscribed!");
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
 
@@ -160,7 +160,7 @@ namespace LoadOrderInjections {
             while(true) {
                 RemainingCount = RemainingItems.Count();
                 if(RemainingCount == 0) {
-                    yield return new WaitForSeconds(1f);
+                    Log.Info("all items subscribed!");
                     System.Diagnostics.Process.GetCurrentProcess().Kill();
                 }
                 yield return new WaitForSeconds(0.5f);
@@ -261,7 +261,7 @@ namespace LoadOrderInjections {
                 yield return new WaitForSeconds(1);
                 yield return new WaitForSeconds(0.01f * RemainingCount);
             }
-            yield return new WaitForSeconds(1); // to see the results :)
+            Log.Info("all items unsubscribed!");
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
 
@@ -285,7 +285,7 @@ namespace LoadOrderInjections {
             while(true) {
                 RemainingCount = RemainingItems.Count();
                 if(RemainingCount == 0) {
-                    yield return new WaitForSeconds(1f);
+                    Log.Info("all items unsubscribed!");
                     System.Diagnostics.Process.GetCurrentProcess().Kill();
                 }
                 yield return new WaitForSeconds(0.5f);
