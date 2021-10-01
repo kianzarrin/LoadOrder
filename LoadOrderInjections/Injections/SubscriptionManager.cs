@@ -73,8 +73,6 @@ namespace LoadOrderInjections {
             }
         }
 
-        public static bool SteamInitialized;
-
         DateTime LastEventTime = default;
 
         public List<ItemT> Items = new List<ItemT>();
@@ -93,13 +91,13 @@ namespace LoadOrderInjections {
                     string path = Path.Combine(DataLocation.localApplicationData, "LoadOrder");
                     ids = UGCListTransfer.GetList(path);
                 } else {
-                    ids = UGCListTransfer.GetList(filePath);
+                    ids = UGCListTransfer.GetListFromFile(filePath);
                 }
 
                 var subscriedItems = PlatformService.workshop.GetSubscribedItems();
                 foreach (var id in ids)
                 {
-                    if(!subscriedItems.Any(item=> item.AsUInt64 == id))
+                    if(!subscriedItems.Any(item => item.AsUInt64 == id))
                         Items.Add(new ItemT(id));
                 }
                 RemainingCount = Items.Count();
@@ -113,12 +111,13 @@ namespace LoadOrderInjections {
         private IEnumerator SubToAllCoroutine()
         {
             LogCalled();
-            while (!SteamInitialized)
+            while (!SteamUtilities.SteamInitialized)
                 yield return new WaitForSeconds(0.1f);
 
             PlatformService.workshop.eventWorkshopSubscriptionChanged += Workshop_eventWorkshopSubscriptionChanged;
 
-            for (; ; )
+            Log.Info("entering loop");
+            for(; ; )
             {
                 int counter = 0;
                 foreach (var item in Items)
@@ -129,10 +128,10 @@ namespace LoadOrderInjections {
                         yield return 0;
                 }
 
-                int n = RemainingItems.Count();
-                if (n == 0) break;
+                RemainingCount = RemainingItems.Count();
+                if (RemainingCount == 0) break;
                 yield return new WaitForSeconds(1);
-                yield return new WaitForSeconds(0.01f * n);
+                yield return new WaitForSeconds(0.01f * RemainingCount);
             }
             yield return new WaitForSeconds(1); // to see the results :)
             System.Diagnostics.Process.GetCurrentProcess().Kill();
@@ -155,15 +154,18 @@ namespace LoadOrderInjections {
         }
 
         public int RemainingCount;
-        public Coroutine StartUpdateUI() => StartCoroutine(SubToAllCoroutine());
+        public Coroutine StartUpdateUI() => StartCoroutine(UpdateUICoroutine());
         private IEnumerator UpdateUICoroutine()
         {
-            RemainingCount = RemainingItems.Count();
-            if(RemainingCount == 0)
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
-            yield return new WaitForSeconds(0.5f);
+            while(true) {
+                RemainingCount = RemainingItems.Count();
+                if(RemainingCount == 0) {
+                    yield return new WaitForSeconds(1f);
+                    System.Diagnostics.Process.GetCurrentProcess().Kill();
+                }
+                yield return new WaitForSeconds(0.5f);
+            }
         }
-
 
         void OnGUI()
         {
@@ -202,10 +204,9 @@ namespace LoadOrderInjections {
                 }
                 PlatformService.workshop.Unsubscribe(PublishedFileId);
                 State = StateT.UnSubSent;
+                Log.Called("unsubscribe request sent for: " + PublishedFileId);
             }
         }
-
-        public static bool SteamInitialized;
 
         DateTime LastEventTime = default;
 
@@ -223,12 +224,12 @@ namespace LoadOrderInjections {
                     string path = Path.Combine(DataLocation.localApplicationData, "LoadOrder");
                     ids = UGCListTransfer.GetList(path);
                 } else {
-                    ids = UGCListTransfer.GetList(filePath);
+                    ids = UGCListTransfer.GetListFromFile(filePath);
                 }
 
                 var subscriedItems = PlatformService.workshop.GetSubscribedItems();
                 foreach(var id in ids) {
-                    if(!subscriedItems.Any(item => item.AsUInt64 == id))
+                    if(subscriedItems.Any(item => item.AsUInt64 == id))
                         Items.Add(new ItemT(id));
                 }
                 RemainingCount = Items.Count();
@@ -240,11 +241,11 @@ namespace LoadOrderInjections {
         public Coroutine StartUnSubToAll() => StartCoroutine(UnSubToAllCoroutine());
         private IEnumerator UnSubToAllCoroutine() {
             LogCalled();
-            while(!SteamInitialized)
+            while(!SteamUtilities.SteamInitialized)
                 yield return new WaitForSeconds(0.1f);
 
             PlatformService.workshop.eventWorkshopSubscriptionChanged += Workshop_eventWorkshopSubscriptionChanged;
-
+            Log.Info("entering loop");
             for(; ; )
             {
                 int counter = 0;
@@ -255,10 +256,10 @@ namespace LoadOrderInjections {
                         yield return 0;
                 }
 
-                int n = RemainingItems.Count();
-                if(n == 0) break;
+                RemainingCount = RemainingItems.Count();
+                if(RemainingCount == 0) break;
                 yield return new WaitForSeconds(1);
-                yield return new WaitForSeconds(0.01f * n);
+                yield return new WaitForSeconds(0.01f * RemainingCount);
             }
             yield return new WaitForSeconds(1); // to see the results :)
             System.Diagnostics.Process.GetCurrentProcess().Kill();
@@ -266,6 +267,7 @@ namespace LoadOrderInjections {
 
         private void Workshop_eventWorkshopSubscriptionChanged(PublishedFileId fileID, bool subscribed) {
             try {
+                Log.Called(fileID, subscribed);
                 LastEventTime = DateTime.Now;
                 var item = Items.Find(item => item.PublishedFileId == fileID);
                 if(item == null)
@@ -278,12 +280,16 @@ namespace LoadOrderInjections {
         }
 
         public int RemainingCount;
-        public Coroutine StartUpdateUI() => StartCoroutine(UnSubToAllCoroutine());
+        public Coroutine StartUpdateUI() => StartCoroutine(UpdateUICoroutine());
         private IEnumerator UpdateUICoroutine() {
-            RemainingCount = RemainingItems.Count();
-            if(RemainingCount == 0)
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
-            yield return new WaitForSeconds(0.5f);
+            while(true) {
+                RemainingCount = RemainingItems.Count();
+                if(RemainingCount == 0) {
+                    yield return new WaitForSeconds(1f);
+                    System.Diagnostics.Process.GetCurrentProcess().Kill();
+                }
+                yield return new WaitForSeconds(0.5f);
+            }
         }
 
 
@@ -391,7 +397,6 @@ namespace LoadOrderInjections {
     public static class SubscriptionManager {
         /// <returns>true, to avoid loading intro</returns>
         public static bool PostBootAction() {
-            Log.Info("TEST p1", true);
             Log.Called();
             if (SteamUtilities.sman) {
                 new GameObject().AddComponent<Camera>();
@@ -475,19 +480,20 @@ namespace LoadOrderInjections {
             PlatformService.eventGameOverlayActivated += OnGameOverlayActivated;
             PlatformService.workshop.eventSubmitItemUpdate += OnSubmitItemUpdate;
             PlatformService.workshop.eventWorkshopItemInstalled += OnWorkshopItemInstalled;
+            PlatformService.workshop.eventWorkshopSubscriptionChanged -= OnWorkshopSubscriptionChanged;
             PlatformService.workshop.eventWorkshopSubscriptionChanged += OnWorkshopSubscriptionChanged;
             PlatformService.workshop.eventUGCQueryCompleted += OnUGCQueryCompleted;
             PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnUGCRequestUGCDetailsCompleted;
         }
 
         public static bool firstTime = true;
+        public static bool SteamInitialized { get; private set; } = false;
         public static void OnInitSteamController() {
             if (!firstTime)
                 return;
             firstTime = false;
 
             Log.Debug(Environment.StackTrace);
-            MassSubscribe.SteamInitialized = true;
             if (sman)
                 EnsureAll();
             else {
@@ -497,6 +503,7 @@ namespace LoadOrderInjections {
                 if (Config.DeleteUnsubscribedItemsOnLoad)
                     DeleteUnsubbed();
             }
+            SteamInitialized = true;
         }
 
         static DirectoryInfo GetWSPath() {
