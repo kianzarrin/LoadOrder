@@ -391,6 +391,8 @@ namespace LoadOrderInjections {
     public static class SubscriptionManager {
         /// <returns>true, to avoid loading intro</returns>
         public static bool PostBootAction() {
+            Log.Info("TEST p1", true);
+            Log.Called();
             if (SteamUtilities.sman) {
                 new GameObject().AddComponent<Camera>();
                 //new GameObject("base").AddComponent<Example>();
@@ -407,7 +409,7 @@ namespace LoadOrderInjections {
                 new GameObject("mass unsubscirbe go").AddComponent<MassUnSubscribe>();
                 return true;
             } else {
-                return false;
+                return false.LogRet(ThisMethod);
             }
         }
 
@@ -417,7 +419,7 @@ namespace LoadOrderInjections {
     }
 
     public static class SteamUtilities {
-        static bool initialized = false;
+        public static bool Initialized { get; private set; } = false;
         public static bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
         public static bool GetMassSub(out string filePath) => ParseCommandLine("subscribe", out filePath);
         public static bool GetMassUnSub(out string filePath) => ParseCommandLine("unsubscribe", out filePath);
@@ -465,8 +467,8 @@ namespace LoadOrderInjections {
         }
 
         public static void RegisterEvents() {
-            if (initialized) return;
-            initialized = true;
+            if (Initialized) return;
+            Initialized = true; // used to check if patch loader is effetive.
             Log.Debug(Environment.StackTrace);
             PlatformService.eventSteamControllerInit += OnInitSteamController;
 

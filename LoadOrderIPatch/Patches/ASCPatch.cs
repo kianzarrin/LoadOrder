@@ -42,11 +42,7 @@ namespace LoadOrderIPatch.Patches {
                 if (ConfigUtil.Config.AddHarmonyResolver)
                     InstallHarmonyResolver();
 
-                bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
-                //if (sman) 
-                {
-                    assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition);
-                }
+                assemblyDefinition = SubscriptionManagerPatch(assemblyDefinition); // must be called to check if patch loader is effective.
 
                 if (ConfigUtil.Config.TurnOffSteamPanels)
                     NoQueryPatch(assemblyDefinition); // handled by harmony patch

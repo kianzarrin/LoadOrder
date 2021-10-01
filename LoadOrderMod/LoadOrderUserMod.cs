@@ -1,4 +1,6 @@
 namespace LoadOrderMod {
+    extern alias Injections;
+    using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
     using CitiesHarmony.API;
     using ICities;
     using KianCommons;
@@ -22,6 +24,7 @@ namespace LoadOrderMod {
 
         public void OnEnabled() {
             try {
+                Log.Called();
                 Util.LoadOrderUtil.ApplyGameLoggingImprovements();
 
                 var args = Environment.GetCommandLineArgs();
@@ -29,7 +32,7 @@ namespace LoadOrderMod {
 
                 Log.ShowGap = true;
 #if DEBUG
-                Log.Buffered = true; 
+                Log.Buffered = true;
 #else
                 Log.Buffered = true;
 #endif
@@ -41,7 +44,7 @@ namespace LoadOrderMod {
                 //    string savedKey = p.name + p.modPath.GetHashCode().ToString() + ".enabled";
                 //    Log.Debug($"plugin info: savedKey={savedKey} cachedName={p.name} modPath={p.modPath}");
                 //}
-
+                CheckPatchLoader();
 
                 HarmonyHelper.DoOnHarmonyReady(() => {
                     //HarmonyLib.Harmony.DEBUG = true;
@@ -51,6 +54,8 @@ namespace LoadOrderMod {
                 SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
                 LoadingManager.instance.m_introLoaded += LoadOrderUtil.TurnOffSteamPanels;
+                LoadingManager.instance.m_introLoaded += CheckPatchLoader;
+
                 LoadOrderUtil.TurnOffSteamPanels();
 
                 bool introLoaded = ContentManagerUtil.IsIntroLoaded;
@@ -77,6 +82,7 @@ namespace LoadOrderMod {
 
                 LoadingManager.instance.m_introLoaded -= CacheUtil.CacheData;
                 LoadingManager.instance.m_introLoaded -= LoadOrderUtil.TurnOffSteamPanels;
+                LoadingManager.instance.m_introLoaded -= CheckPatchLoader;
                 HarmonyUtil.UninstallHarmony(HARMONY_ID);
                 MonoStatus.Release();
                 LOMAssetDataExtension.Release();
@@ -88,6 +94,14 @@ namespace LoadOrderMod {
                 Log.Exception(ex);
             }
         }
+
+        public void CheckPatchLoader() {
+            Log.Info("SteamUtilities.Initialized=" + SteamUtilities.Initialized);
+            if(!SteamUtilities.Initialized && PatchLoaderStatus.Instance.IsAvailbleAndEnabled) {
+                Log.DisplayWarning("Patch Loader Ineffective. Some LOM features might not work!\n\n" + PatchLoaderStatus.WindowsCriticalErrorSolutions);
+            }
+        }
+
 
         public static void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
             Log.Info($"OnSceneLoaded({scene.name}, {mode})", true);
