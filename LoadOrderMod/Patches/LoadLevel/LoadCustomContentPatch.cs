@@ -4,18 +4,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using static KianCommons.Patches.TranspilerUtils;
-using static LoadOrderMod.Util.LoadOrderUtil;
+using static LoadOrderMod.Util.LSMUtil;
 namespace LoadOrderMod.Patches {
     [HarmonyPatch]
     public static class LoadCustomContentPatch {
         static IEnumerable<MethodBase> TargetMethods() {
             yield return GetCoroutineMoveNext(typeof(LoadingManager), "LoadCustomContent");
-            var asm = GetLSMAssembly();
-            if (asm != null) {
-                var tAssetLoader = asm.GetType("LoadingScreenMod.AssetLoader", throwOnError: true);
+            foreach(var tAssetLoader in GetTypeFromBothLSMs("AssetLoader")) {
                 yield return GetCoroutineMoveNext(tAssetLoader, "LoadCustomContent");
             }
         }
+        
         static Stopwatch sw_total = new Stopwatch();
         static Stopwatch sw = new Stopwatch();
         static int counter = 0;

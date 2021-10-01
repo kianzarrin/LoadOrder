@@ -7,14 +7,14 @@ using System.Reflection;
 using System.Reflection.Emit;
 using static KianCommons.Patches.TranspilerUtils;
 using static LoadingManager;
+using static LoadOrderMod.Util.LSMUtil;
 
 namespace LoadOrderMod.Patches {
     [HarmonyPatch]
     public static class SimulationDataReadyPatch {
         static IEnumerable<MethodBase> TargetMethods() {
             yield return GetCoroutineMoveNext(typeof(LoadingManager), "LoadLevelCoroutine");
-            var tLevelLoader = Type.GetType("LoadingScreenMod.LevelLoader, LoadingScreenMod", throwOnError: false);
-            if(tLevelLoader != null) {
+            foreach(var tLevelLoader in GetTypeFromBothLSMs("LevelLoader")){
                 yield return GetCoroutineMoveNext(tLevelLoader, "LoadLevelCoroutine");
             }
         }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using static LoadOrderMod.Util.LSMUtil;
 using static KianCommons.Patches.TranspilerUtils;
 
 namespace LoadOrderMod.Patches {
@@ -11,10 +12,8 @@ namespace LoadOrderMod.Patches {
     public static class SceneLoadedPatch {
         static IEnumerable<MethodBase> TargetMethods() {
             yield return GetCoroutineMoveNext(typeof(LoadingManager), "LoadLevelCoroutine");
-            var tLevelLoader = Type.GetType("LoadingScreenMod.LevelLoader, LoadingScreenMod", throwOnError: false);
-            if (tLevelLoader != null) {
-                var ret = GetCoroutineMoveNext(tLevelLoader, "LoadLevelCoroutine");
-                if(ret != null) yield return ret;
+            foreach(var tLevelLoader in GetTypeFromBothLSMs("LevelLoader")) {
+                yield return GetCoroutineMoveNext(tLevelLoader, "LoadLevelCoroutine");
             }
         }
 
