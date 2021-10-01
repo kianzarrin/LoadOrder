@@ -16,11 +16,16 @@ namespace LoadOrderShared {
             File.WriteAllText(GetFilePath(localLOMData), text);
         }
 
-        public static List<ulong> GetList(string localLOMData) {
-            string text = File.ReadAllText(GetFilePath(localLOMData));
+        public static List<ulong> GetList(string localLOMData) =>
+            GetListFromFile(GetFilePath(localLOMData));
+
+
+        public static List<ulong> GetListFromFile(string filePath) {
+            string text = File.ReadAllText(filePath);
             var ids = text.Split(';');
             return ToNumber(ids);
         }
+
 
         public static List<ulong> ToNumber(IEnumerable<string> ids) {
             List<ulong> ret = new List<ulong>();

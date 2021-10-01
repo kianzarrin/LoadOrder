@@ -87,8 +87,15 @@ namespace LoadOrderInjections {
             try
             {
                 LogCalled();
-                string path = Path.Combine(DataLocation.localApplicationData, "LoadOrder");
-                var ids = UGCListTransfer.GetList(path);
+                SteamUtilities.GetMassSub(out string filePath);
+                List<ulong> ids;
+                if(filePath.IsNullorEmpty()) {
+                    string path = Path.Combine(DataLocation.localApplicationData, "LoadOrder");
+                    ids = UGCListTransfer.GetList(path);
+                } else {
+                    ids = UGCListTransfer.GetList(filePath);
+                }
+
                 var subscriedItems = PlatformService.workshop.GetSubscribedItems();
                 foreach (var id in ids)
                 {
@@ -127,6 +134,7 @@ namespace LoadOrderInjections {
                 yield return new WaitForSeconds(1);
                 yield return new WaitForSeconds(0.01f * n);
             }
+            yield return new WaitForSeconds(1); // to see the results :)
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
 
@@ -267,7 +275,7 @@ namespace LoadOrderInjections {
                 //new GameObject("base").AddComponent<Example>();
                 new GameObject("test go").AddComponent<TestComponent>();
                 return true;
-            }else if (SteamUtilities.massub)
+            }else if (SteamUtilities.GetMassSub(out _))
             {
                 new GameObject().AddComponent<Camera>();
                 //new GameObject("base").AddComponent<Example>();
@@ -288,11 +296,50 @@ namespace LoadOrderInjections {
     public static class SteamUtilities {
         static bool initialized = false;
         public static bool sman = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman");
-        public static bool massub = Environment.GetCommandLineArgs().Any(_arg => _arg == "-subscribe");
+        public static bool GetMassSub(out string filePath) => ParseCommandLine("subscribe", out filePath);
+        
 
         static LoadOrderShared.LoadOrderConfig Config =>
             LoadOrderInjections.Util.LoadOrderUtil.Config;
         // steam manager is already initialized at this point.
+
+        /// <summary>
+        /// if no match was found, value=null and returns false.
+        /// if a match is found, value="" or string after --prototype= and returns true.
+        /// </summary>
+        public static bool ParseCommandLine(string prototypes, out string value) {
+            foreach(string arg in Environment.GetCommandLineArgs()) {
+                foreach(string prototype in prototypes.Split("|")) {
+                    if(MatchCommandLineArg(arg, prototype, out string val)) {
+                        value = val;
+                        return true;
+                    }
+                }
+            }
+            value = null;
+            return false;
+        }
+
+        /// <summary>
+        /// matches one arg with one prototype
+        /// </summary>
+        public static bool MatchCommandLineArg(string arg, string prototype, out string value) {
+            if(arg == "-" + prototype) {
+                value = "";
+                return true;
+            } else if(arg.StartsWith($"--{prototype}=")) {
+                int i = prototype.Length + 3;
+                if(arg.Length > i)
+                    value = arg.Substring(i);
+                else
+                    value = "";
+                return true;
+            } else {
+                value = null;
+                return false;
+            }
+        }
+
         public static void RegisterEvents() {
             if (initialized) return;
             initialized = true;
