@@ -22,7 +22,7 @@ namespace LoadOrderShared {
 
         public static List<ulong> GetListFromFile(string filePath) {
             string text = File.ReadAllText(filePath);
-            var ids = text.Split(';');
+            var ids = text.Split(';', ',', ' ', '\t');
             return ToNumber(ids);
         }
 
