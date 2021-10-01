@@ -78,7 +78,7 @@ namespace LoadOrderInjections {
         DateTime LastEventTime = default;
 
         public List<ItemT> Items = new List<ItemT>();
-        public IEnumerable<ItemT> RemainingItems => Items.Where(item => item.State <= StateT.Subbed);
+        public IEnumerable<ItemT> RemainingItems => Items.Where(item => item.State <= StateT.SubSent);
 
         void Awake() => LogCalled();
         
@@ -210,7 +210,7 @@ namespace LoadOrderInjections {
         DateTime LastEventTime = default;
 
         public List<ItemT> Items = new List<ItemT>();
-        public IEnumerable<ItemT> RemainingItems => Items.Where(item => item.State <= StateT.UnSubbed);
+        public IEnumerable<ItemT> RemainingItems => Items.Where(item => item.State <= StateT.UnSubSent);
 
         void Awake() => LogCalled();
 
