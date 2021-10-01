@@ -3,17 +3,17 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using static KianCommons.Patches.TranspilerUtils;
 using KianCommons;
 using static KianCommons.ReflectionHelpers;
+using static LoadOrderMod.Util.LSMUtil;
 
 namespace LoadOrderMod.Patches {
     [HarmonyPatch]
     public static class PrintLoadInfoPatch {
         static IEnumerable<MethodBase> TargetMethods() {
             yield return GetMethod(typeof(LoadingManager), "LoadLevelCoroutine");
-            var tLevelLoader = Type.GetType("LoadingScreenMod.LevelLoader, LoadingScreenMod", throwOnError: false);
-            if (tLevelLoader != null) {
+
+            foreach(var tLevelLoader in GetTypeFromBothLSMs("LevelLoader")){
                 yield return GetMethod(tLevelLoader, "LoadLevelCoroutine");
             }
         }
