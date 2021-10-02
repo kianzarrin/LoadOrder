@@ -1,4 +1,4 @@
-
+@echo off
 echo =============================================
 cd "C:\Program Files (x86)\Steam\"
 call :waitforgame

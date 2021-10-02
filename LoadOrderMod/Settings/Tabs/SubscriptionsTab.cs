@@ -23,8 +23,9 @@ namespace LoadOrderMod.Settings.Tabs {
             button = panelHelper.AddButton("[experimental] unsubscribe from depricated workshop items", () => CheckSubsUtil.Instance.UnsubDepricated()) as UIButton;
             button.tooltip = "if steam does not return item path, i assume its depricated.";
 
-            button = panelHelper.AddButton("Resubribe to all broken downloads (exits game)", CheckSubsUtil.ResubcribeExternally) as UIButton;
+            button = panelHelper.AddButton("Resubribe to all broken downloads (exits game) [Experimental]", CheckSubsUtil.ResubcribeExternally) as UIButton;
             button.tooltip = "less steam can hide problems. if you use less steam please click 'Refresh workshop items' to get all broken downloads";
+            button.isVisible = false; //hide for now.
 
             checkBox = panelHelper.AddCheckbox(
                 "Delete unsubscibed items on startup",
