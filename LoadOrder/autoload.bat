@@ -1,4 +1,4 @@
-﻿@echo off
+@echo off
 setlocal enabledelayedexpansion
 echo =============================================
 
@@ -41,7 +41,7 @@ FOR /L %%s IN (1,1,3) DO (
 
 	echo waiting for game loading to finsih ...
 	call :waitforgame
-	echo Gamle Loading Finished
+	echo Game Loading Finished
 	TASKKILL /IM Cities.exe /F
 	
 	REM backup output logs and game state.

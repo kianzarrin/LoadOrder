@@ -117,13 +117,16 @@
     <None Update="Resources\Status.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="resub.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Target Name="DeployToModDirectory" AfterTargets="Build">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />
     </GetAssemblyIdentity>
     <ItemGroup>
-      <AuxiliaryFiles Include="$(TargetDir)CitiesHarmony.API.dll;" />
+      <AuxiliaryFiles Include="$(TargetDir)CitiesHarmony.API.dll;$(TargetDir)*.bat" />
       <ResourceFiles Include="$(TargetDir)/Resources/*.png" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>

@@ -89,9 +89,9 @@ namespace LoadOrderInjections {
                 List<ulong> ids;
                 if(filePath.IsNullorEmpty()) {
                     string path = Path.Combine(DataLocation.localApplicationData, "LoadOrder");
-                    ids = UGCListTransfer.GetList(path);
+                    ids = UGCListTransfer.GetList(path, out _);
                 } else {
-                    ids = UGCListTransfer.GetListFromFile(filePath);
+                    ids = UGCListTransfer.GetListFromFile(filePath, out _);
                 }
 
                 var subscriedItems = PlatformService.workshop.GetSubscribedItems();
@@ -220,11 +220,20 @@ namespace LoadOrderInjections {
                 LogCalled();
                 SteamUtilities.GetMassUnSub(out string filePath);
                 List<ulong> ids;
+                bool missing;
                 if(filePath.IsNullorEmpty()) {
                     string path = Path.Combine(DataLocation.localApplicationData, "LoadOrder");
-                    ids = UGCListTransfer.GetList(path);
+                    ids = UGCListTransfer.GetList(path, out missing);
+                    if(missing) {
+                        ids.AddRange(SteamUtilities.GetMissingItems().Select(item => item.AsUInt64));
+                        UGCListTransfer.SendList(ids, path, false); // replace missing with actual ids.
+                    }
                 } else {
-                    ids = UGCListTransfer.GetListFromFile(filePath);
+                    ids = UGCListTransfer.GetListFromFile(filePath, out missing);
+                    if(missing) {
+                        ids.AddRange(SteamUtilities.GetMissingItems().Select(item => item.AsUInt64));
+                        UGCListTransfer.SendList(ids, filePath, false); // replace missing with actual ids.
+                    }
                 }
 
                 var subscriedItems = PlatformService.workshop.GetSubscribedItems();
@@ -504,6 +513,18 @@ namespace LoadOrderInjections {
                     DeleteUnsubbed();
             }
             SteamInitialized = true;
+        }
+
+        /// <summary>
+        /// returns a list of items that are subscribed but not downloaded (excluding deleted items).
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<PublishedFileId> GetMissingItems() {
+            foreach(var id in PlatformService.workshop.GetSubscribedItems()) {
+                var path = PlatformService.workshop.GetSubscribedItemPath(id);
+                if(!path.IsNullOrWhiteSpace() && !Directory.Exists(path))
+                    yield return id;
+            }
         }
 
         static DirectoryInfo GetWSPath() {

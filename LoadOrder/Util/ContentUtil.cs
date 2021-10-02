@@ -104,8 +104,8 @@ namespace LoadOrderTool.Util {
         public static Process Subscribe(IEnumerable<string> ids) => Subscribe( UGCListTransfer.ToNumber(ids));
         public static Process Subscribe(IEnumerable<ulong> ids) {
             if (ids.IsNullorEmpty()) return null;
-            UGCListTransfer.SendList(ids, DataLocation.LocalLOMData);
-            return Execute(DataLocation.GamePath, DataLocation.CitiesExe, $"-subscribe");
+            UGCListTransfer.SendList(ids, DataLocation.LocalLOMData, false);
+            return Execute(DataLocation.GamePath, DataLocation.SteamExe, $"-applaunch 255710 -subscribe");
         }
 
         public static bool IsPathIncluded(string fullPath) {
