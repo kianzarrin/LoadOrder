@@ -24,6 +24,7 @@ namespace LoadOrderTool.UI {
         public ToolStripMenuItem tsmiDiscordSupport;
         public ToolStripMenuItem tsmiTools;
         public ToolStripMenuItem tsmiMassSubscribe;
+        public ToolStripMenuItem tsmiReSubscribe;
 
         public ToolStripMenuItem tsmiSync;
         public ToolStripMenuItem tsmiReloadUGC; // reload UGCs from drive.
@@ -53,6 +54,7 @@ namespace LoadOrderTool.UI {
             tsmiAbout = new ToolStripMenuItem();
             tsmiTools = new ToolStripMenuItem();
             tsmiMassSubscribe = new ToolStripMenuItem();
+            tsmiReSubscribe = new ToolStripMenuItem();
 
             tsmiSync = new ToolStripMenuItem();
             tsmiResetAllSettings = new ToolStripMenuItem();
@@ -201,7 +203,9 @@ namespace LoadOrderTool.UI {
             // tsmiTools
             // 
             tsmiTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            tsmiMassSubscribe});
+                tsmiMassSubscribe,
+                tsmiReSubscribe,
+            });
             tsmiTools.Name = "tsmiTools";
             tsmiTools.Size = new Size(46, 20);
             tsmiTools.Text = "&Tools";
@@ -211,6 +215,11 @@ namespace LoadOrderTool.UI {
             tsmiMassSubscribe.Name = "tsmiMassSubscribe";
             tsmiMassSubscribe.Size = new Size(180, 22);
             tsmiMassSubscribe.Text = "Mass &Subscribe";
+            // 
+            // tsmiReSubscribe
+            // 
+            tsmiReSubscribe.Name = "tsmiReSubscribe";
+            tsmiReSubscribe.Text = "&Resubscribe broken downloads";
             // 
             // tsmiSync
             // 
@@ -262,6 +271,7 @@ namespace LoadOrderTool.UI {
             tsmiOpenLogLocation.Click += TsmiOpenLogLocation_Click;
             tsmiAbout.Click += TsmiAbout_Click;
             tsmiMassSubscribe.Click += TsmiMassSubscribe_Click;
+            tsmiReSubscribe.Click += TsmiReSubscribe_Click;
         }
 
         private void TsmiDiscordSupport_Click(object sender, EventArgs e) =>
@@ -278,6 +288,10 @@ namespace LoadOrderTool.UI {
         
         private void TsmiMassSubscribe_Click(object sender, EventArgs e) =>
             new SubscribeDialog().Show();
-        
-   }
+
+        private void TsmiReSubscribe_Click(object sender, EventArgs e) {
+            new ResubscribeDialog().Show();
+        }
+
+    }
 }
