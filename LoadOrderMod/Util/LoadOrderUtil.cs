@@ -13,6 +13,10 @@ namespace LoadOrderMod.Util {
         internal static bool IsHarmonyMod(this PluginInfo p) =>
             p.name == "2040656402" || p.name == "CitiesHarmony";
 
+        internal static bool IsLOM(this PluginInfo p) =>
+            p != null && p.name == "2448824112" || p.name == "LoadOrder";
+
+        internal const ulong WSId = 2448824112ul;
 
         public static void ApplyGameLoggingImprovements() {
             Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);

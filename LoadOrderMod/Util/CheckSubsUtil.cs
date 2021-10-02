@@ -98,17 +98,18 @@ namespace LoadOrderMod.Util {
             Log.Called();
             try {
                 List<PublishedFileId> ids = new List<PublishedFileId>();
-                foreach(var item in ContentManagerUtil.ModEntries) {
+                foreach (var item in ContentManagerUtil.ModEntries) {
                     var det = item.workshopDetails;
                     var id = det.publishedFileId;
-                    if(id == PublishedFileId.invalid || id.AsUInt64 == 0) continue;
+                    if (id == PublishedFileId.invalid || id.AsUInt64 == 0) continue;
+                    if (id.AsUInt64 == PatchLoaderStatus.PatchLoaderWorkshopId ||
+                        id.AsUInt64 == LoadOrderUtil.WSId) continue; // cannot resub to patch loader or LOM.
                     var status = SteamUtilities.IsUGCUpToDate(det, out _);
-                    if(status != DownloadStatus.DownloadOK) {
+                    if (status != DownloadStatus.DownloadOK) {
                         ids.Add(id);
                     }
                 }
                 ids.AddRange(SteamUtilities.GetMissingItems());
-
                 Injections.LoadOrderShared.UGCListTransfer.SendList(
                     ids.Select(id => id.AsUInt64),
                     ConfigUtil.LocalLoadOrderPath,
@@ -117,7 +118,7 @@ namespace LoadOrderMod.Util {
                 string modPath = PluginUtil.GetLoadOrderMod().modPath;
                 Process.Start("CMD.exe", $"/c \"{modPath}/resub.bat\"");
                 Process.GetCurrentProcess().Kill();
-            }catch (Exception ex) {
+            } catch (Exception ex) {
                 ex.Log();
             }
         }
