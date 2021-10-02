@@ -13,6 +13,9 @@ namespace LoadOrderMod.Util {
     using Settings;
     using System.Threading;
     using ColossalFramework.Threading;
+    using System.Collections.Generic;
+    using KianCommons.Plugins;
+    using System.Diagnostics;
 
     public class CheckSubsUtil : MonoBehaviour {
         static GameObject go_;
@@ -90,6 +93,34 @@ namespace LoadOrderMod.Util {
             Log.DisplayMesage($"Unsubscribing from {nUnsubbed} depricated items.");
         }
 
+
+        public static void ResubcribeExternally() {
+            Log.Called();
+            try {
+                List<PublishedFileId> ids = new List<PublishedFileId>();
+                foreach(var item in ContentManagerUtil.ModEntries) {
+                    var det = item.workshopDetails;
+                    var id = det.publishedFileId;
+                    if(id == PublishedFileId.invalid || id.AsUInt64 == 0) continue;
+                    var status = SteamUtilities.IsUGCUpToDate(det, out _);
+                    if(status != DownloadStatus.DownloadOK) {
+                        ids.Add(id);
+                    }
+                }
+                ids.AddRange(SteamUtilities.GetMissingItems());
+
+                Injections.LoadOrderShared.UGCListTransfer.SendList(
+                    ids.Select(id => id.AsUInt64),
+                    ConfigUtil.LocalLoadOrderPath,
+                    false);
+
+                string modPath = PluginUtil.GetLoadOrderMod().modPath;
+                Process.Start("CMD.exe", $"/c \"{modPath}/resub.bat\"");
+                Process.GetCurrentProcess().Kill();
+            }catch (Exception ex) {
+                ex.Log();
+            }
+        }
 
         public Coroutine DeleteUnsubbed() => StartCoroutine(DeleteUnsubbedCoroutine());
 
