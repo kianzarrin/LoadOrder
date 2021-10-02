@@ -8,7 +8,7 @@ namespace LoadOrderMod {
     using KianCommons;
 
     public class PatchLoaderStatus {
-        private const ulong PatchLoaderWorkshopId = 2041457644u;
+        public const ulong PatchLoaderWorkshopId = 2041457644u;
 
         private bool _initialized;
         private bool _errorModalOpened;
