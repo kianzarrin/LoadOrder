@@ -315,7 +315,7 @@ namespace LoadOrderTool.UI {
 
                 SteamUtil.ReDownload(ids);
                 var res = MessageBox.Show("You can monitor download progress in steam client. Wait for steam to finish downloading. Then press ok to refresh everyhing.", "Wait for download");
-                await LoadOrderWindow.Instance.CacheWSDetails();
+                await LoadOrderWindow.Instance.ReloadAll(); // reload to fix included/excluded, paths, ...
             } catch (Exception ex) { ex.Log(); }
         }
     }
