@@ -67,9 +67,6 @@ namespace LoadOrderTool {
                 _ = DataLocation.GamePath; // run DataLocation static constructor
                 _ = Log.LogFilePath; // run Log static constructor
 
-                new UI.ResubscribeDialog().ShowDialog();
-                return;
-
                 CacheDLLs();
 
                 if (Parse.CommandLine) {
