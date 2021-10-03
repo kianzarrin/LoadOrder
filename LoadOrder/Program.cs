@@ -45,7 +45,6 @@ namespace LoadOrderTool {
                 AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
                 Application.ThreadException += UnhandledThreadExceptionHandler;
 
-
                 if (IsAdministrator) {
                     string m = "Running this application as administrator can cause problems. Please quite and run this normally";
                     Console.WriteLine(m);
@@ -67,6 +66,9 @@ namespace LoadOrderTool {
 
                 _ = DataLocation.GamePath; // run DataLocation static constructor
                 _ = Log.LogFilePath; // run Log static constructor
+
+                new UI.ResubscribeDialog().ShowDialog();
+                return;
 
                 CacheDLLs();
 

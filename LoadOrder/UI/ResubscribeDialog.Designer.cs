@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.UI {
+namespace LoadOrderTool.UI {
 
     partial class ResubscribeDialog {
         /// <summary>
@@ -71,6 +71,8 @@
             // cbMissing
             // 
             this.cbMissing.AutoSize = true;
+            this.cbMissing.Checked = true;
+            this.cbMissing.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbMissing.Location = new System.Drawing.Point(4, 7);
             this.cbMissing.Margin = new System.Windows.Forms.Padding(4, 7, 4, 5);
             this.cbMissing.Name = "cbMissing";
@@ -90,6 +92,7 @@
             this.btnUnsubscribeAll.TabIndex = 2;
             this.btnUnsubscribeAll.Text = "Unsubscribe from All in CS";
             this.btnUnsubscribeAll.UseVisualStyleBackColor = true;
+            this.btnUnsubscribeAll.Click += new System.EventHandler(this.btnUnsubscribeAll_Click);
             // 
             // label1
             // 
@@ -102,7 +105,13 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(419, 3);
+            this.pictureBox1.BackColor = System.Drawing.Color.Gainsboro;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox1.ErrorImage = null;
+            this.pictureBox1.InitialImage = null;
+            this.pictureBox1.Location = new System.Drawing.Point(419, 5);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(50, 35);
             this.pictureBox1.TabIndex = 5;
@@ -119,10 +128,17 @@
             this.btnSubscribeAll.TabIndex = 1;
             this.btnSubscribeAll.Text = "Subscribe to All in CS";
             this.btnSubscribeAll.UseVisualStyleBackColor = true;
+            this.btnSubscribeAll.Click += new System.EventHandler(this.btnSubscribeAll_Click);
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Location = new System.Drawing.Point(674, 3);
+            this.pictureBox2.BackColor = System.Drawing.Color.Gainsboro;
+            this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox2.ErrorImage = null;
+            this.pictureBox2.InitialImage = null;
+            this.pictureBox2.Location = new System.Drawing.Point(674, 5);
+            this.pictureBox2.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(50, 35);
             this.pictureBox2.TabIndex = 6;
@@ -135,8 +151,9 @@
             this.btnFinish.Name = "btnFinish";
             this.btnFinish.Size = new System.Drawing.Size(107, 38);
             this.btnFinish.TabIndex = 7;
-            this.btnFinish.Text = "Reload";
+            this.btnFinish.Text = "Finish";
             this.btnFinish.UseVisualStyleBackColor = true;
+            this.btnFinish.Click += new System.EventHandler(this.btnFinish_Click);
             // 
             // ResubscribeDialog
             // 

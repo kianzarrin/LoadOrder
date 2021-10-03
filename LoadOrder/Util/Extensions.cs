@@ -80,6 +80,7 @@ namespace LoadOrderTool.Util {
 
     public static class StringExtensions {
         public static string Join(this IEnumerable<string> strings, string del) => string.Join(del, strings.ToArray());
+        public static string Join(this IEnumerable<object> objs, string del) => string.Join(del, objs.Select(obj=>obj.ToSTR()).ToArray());
         public static string Join(this string[] strings, string del) => string.Join(del, strings);
 
         internal static string ToSTR(this object obj) {
