@@ -251,7 +251,6 @@ namespace LoadOrderTool.Util {
             foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath)) {
                 var dirName = Path.GetFileName(path);
                 if (!TryGetID(dirName, out ulong id)) continue;
-                //if (!Directory.GetFiles(dir, "*.dll").Any()) continue;
                 yield return new PublishedFileId(id);
             }
         }
@@ -313,7 +312,7 @@ namespace LoadOrderTool.Util {
         public static DateTime GetLocalTimeUpdated(string path) {
             DateTime dateTime = DateTime.MinValue;
             if (Directory.Exists(path)) {
-                foreach (string filePAth in Directory.GetFiles(path)) {
+                foreach (string filePAth in Directory.GetFiles(path,"*", SearchOption.AllDirectories)) {
                     string ext = Path.GetExtension(filePAth);
                     //if (ext == ".dll" || ext == ".crp" || ext == ".png")
                     {

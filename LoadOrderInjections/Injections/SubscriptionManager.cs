@@ -589,15 +589,10 @@ namespace LoadOrderInjections {
         //code copied from package entry
         public static DateTime GetLocalTimeCreated(string modPath) {
             DateTime dateTime = DateTime.MinValue;
-
-            foreach (string path in Directory.GetFiles(modPath)) {
-                string ext = Path.GetExtension(path);
-                //if (ext == ".dll" || ext == ".crp" || ext == ".png")
-                {
-                    DateTime creationTimeUtc = File.GetCreationTimeUtc(path);
-                    if (creationTimeUtc > dateTime) {
-                        dateTime = creationTimeUtc;
-                    }
+            foreach(string path in Directory.GetFiles(modPath, "*", searchOption: SearchOption.AllDirectories)) {
+                DateTime creationTimeUtc = File.GetCreationTimeUtc(path);
+                if(creationTimeUtc > dateTime) {
+                    dateTime = creationTimeUtc;
                 }
             }
             return dateTime;
@@ -605,16 +600,13 @@ namespace LoadOrderInjections {
 
         //code copied from package entry
         public static DateTime GetLocalTimeUpdated(string modPath) {
+            Log.Called(modPath);
             DateTime dateTime = DateTime.MinValue;
-            if (Directory.Exists(modPath)) {
-                foreach (string path in Directory.GetFiles(modPath)) {
-                    string ext = Path.GetExtension(path);
-                    //if (ext == ".dll" || ext == ".crp" || ext == ".png")
-                    {
-                        DateTime lastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
-                        if (lastWriteTimeUtc > dateTime) {
-                            dateTime = lastWriteTimeUtc;
-                        }
+            if(Directory.Exists(modPath)) {
+                foreach(string path in Directory.GetFiles(modPath, "*", searchOption: SearchOption.AllDirectories)) {
+                    DateTime lastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
+                    if(lastWriteTimeUtc > dateTime) {
+                        dateTime = lastWriteTimeUtc;
                     }
                 }
             }
@@ -665,12 +657,10 @@ namespace LoadOrderInjections {
                 return DownloadStatus.NotDownloaded;
             }
 
-            if (updatedLocal < updatedServer) {
-                if (updatedLocal == DateTime.MinValue) {
-                    reason = $"Error geting local time.";
-                    return DownloadStatus.NotDownloaded;
-                }
-
+            if (updatedLocal == DateTime.MinValue) {
+                reason = $"Error geting local time at {localPath}";
+                return DownloadStatus.NotDownloaded;
+            } else if (updatedLocal < updatedServer) {
                 bool sure =
                     localSize < sizeServer ||
                     updatedLocal < updatedServer.AddHours(-24);
@@ -761,7 +751,7 @@ namespace LoadOrderInjections {
 
         public static void EnsureIncludedOrExcludedFiles(string path) {
             try {
-                foreach (string file in Directory.GetFiles(path))
+                foreach (string file in Directory.GetFiles(path, "*", searchOption: SearchOption.AllDirectories))
                     EnsureFile(file);
             } catch (Exception ex) {
                 Log.Exception(ex);
