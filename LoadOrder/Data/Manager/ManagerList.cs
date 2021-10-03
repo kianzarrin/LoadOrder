@@ -25,7 +25,6 @@ namespace LoadOrderTool.Data {
 
         public static IEnumerable<IWSItem> GetBrokenDownloads() =>
             GetWSItems().Where(item => item.ItemCache.Status.IsBroken());
-        
 
         public bool IsLoaded => Managers.All(m => m.IsLoaded);
 

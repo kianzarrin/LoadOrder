@@ -309,7 +309,10 @@ namespace LoadOrderTool.UI {
             try {
                 var ids = ManagerList.GetBrokenDownloads()
                     .Select(item => item.PublishedFileId.AsUInt64)
-                    .Distinct();
+                    .Concat(ConfigWrapper.instance.SteamCache.Missing)
+                    .Distinct()
+                    .ToArray();
+
                 SteamUtil.ReDownload(ids);
                 var res = MessageBox.Show("You can monitor download progress in steam client. Wait for steam to finish downloading. Then press ok to refresh everyhing.", "Wait for download");
                 await LoadOrderWindow.Instance.CacheWSDetails();

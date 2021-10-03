@@ -716,11 +716,8 @@ namespace LoadOrderTool.UI {
         public async Task CacheWSDetails(bool save = true) {
             try {
                 SetCacheProgress(5);
-                var ids = ManagerList.GetWSItems()
-                    .Select(item => item.PublishedFileId)
-                    .Distinct()
-                    .ToArray();
-
+                var ids = (await Task.Run(ContentUtil.GetSubscribedItems)).ToArray();
+                ConfigWrapper.SteamCache.Missing.Clear();
                 SetCacheProgress(10);
 
                 try {
@@ -752,14 +749,18 @@ namespace LoadOrderTool.UI {
             } catch(Exception ex) { ex.Log(); }
         }
 
-        public void DTO2Cache(SteamUtil.PublishedFileDTO[] ppl) {
-            Assertion.NotNull(ppl);
-            foreach(var item in ManagerList.GetWSItems()) {
-                if(!item.IsWorkshop) continue;
-                var person = ppl.FirstOrDefault(p => p.PublishedFileID == item.PublishedFileId.AsUInt64);
-                if(person != null) {
-                    item.ItemCache.Read(person);
+        public static void DTO2Cache(SteamUtil.PublishedFileDTO[] dtos) {
+            Assertion.NotNull(dtos);
+            var wsItems = ManagerList.GetWSItems();
+            foreach(var dto in dtos) {
+                var item = wsItems.FirstOrDefault(item => dto.PublishedFileID == item.PublishedFileId.AsUInt64);
+                if (item != null) {
+                    item.ItemCache.Read(dto);
                     item.ResetCache();
+                } else if (dto.Result == SteamUtil.EResult.k_EResultOK) {
+                    var missing = ConfigWrapper.instance.SteamCache.Missing;
+                    if (!missing.Contains(dto.PublishedFileID))
+                        missing.Add(dto.PublishedFileID);
                 }
             }
         }
