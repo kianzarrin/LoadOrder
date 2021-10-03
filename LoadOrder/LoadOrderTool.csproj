@@ -83,7 +83,9 @@
   </ItemGroup>
   
   <ItemGroup>
-    <EmbeddedResource Include="Resources\next-arrow.png" />
+    <EmbeddedResource Include="Resources\next-arrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   
   <ItemGroup>

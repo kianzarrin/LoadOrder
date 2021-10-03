@@ -8,6 +8,12 @@ namespace LoadOrderTool.Data {
     using System.Collections.Generic;
     using LoadOrderTool.Util;
 
+    public static class DownloadStatusExtension {
+        public static bool IsBroken(this SteamCache.DownloadStatus status) {
+            return (int)status > 2;
+        }
+    }
+
     public class SteamCache {
         public class Persona {
             public ulong ID;
@@ -17,11 +23,11 @@ namespace LoadOrderTool.Data {
         public enum DownloadStatus {
             None = 0,
             OK = 1,
+            Unknown = 2,
             OutOfDate,
             NotDownloaded,
             PartiallyDownloaded,
             Removed,
-            Unknown,
         }
 
         public class Item {
