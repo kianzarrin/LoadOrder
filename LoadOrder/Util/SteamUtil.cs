@@ -2,6 +2,7 @@ namespace LoadOrderTool.Util {
     using CO.PlatformServices;
     using Newtonsoft.Json.Linq;
     using System;
+    using System.IO;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
@@ -9,8 +10,24 @@ namespace LoadOrderTool.Util {
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
+    using CO.IO;
+    using System.Diagnostics;
 
     public static class SteamUtil {
+        public static Process ExecuteSteam(string args) =>
+            ContentUtil.Execute(DataLocation.SteamPath, DataLocation.SteamExe, args);
+
+        public static void ReDownload(IEnumerable<ulong> ids) {
+            try {
+                Log.Called(ids);
+                ExecuteSteam("steam://open/console").WaitForExit(); // so that user can see what is happening.
+                foreach (var id in ids)
+                    ExecuteSteam($"+workshop_download_item 255710 {id}").WaitForExit();
+                ExecuteSteam("steam://open/downloads").WaitForExit();
+            } catch(Exception ex) { ex.Log(); }
+        }
+
+
         public static PublishedFileDTO[] HttpResponse2DTOs(string httpResponse) {
             Log.Info("parsing response to json ...");
             dynamic json = JContainer.Parse(httpResponse);

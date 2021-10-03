@@ -33,10 +33,15 @@ namespace LoadOrderShared {
             return ToNumber(ids);
         }
 
+        public static void DeleteFile(string localLOMData) {
+            string path = GetFilePath(localLOMData);
+            if (File.Exists(path))
+                File.Delete(path);
+        }
 
         public static List<ulong> ToNumber(IEnumerable<string> ids) {
             List<ulong> ret = new List<ulong>();
-            foreach (var strId in ids) {
+            foreach (var strId in ids.Distinct()) {
                 if (ulong.TryParse(strId, out ulong id))
                     ret.Add(id);
             }

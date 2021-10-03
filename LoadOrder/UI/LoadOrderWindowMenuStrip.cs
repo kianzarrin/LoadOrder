@@ -4,6 +4,8 @@ namespace LoadOrderTool.UI {
     using System.Windows.Forms;
     using LoadOrderTool.Util;
     using LoadOrderTool.UI;
+    using LoadOrderTool.Data;
+    using System.Linq;
 
     public class LoadOrderWindowMenuStrip : MenuStrip {
         public ToolStripMenuItem tsmiFile;
@@ -25,6 +27,7 @@ namespace LoadOrderTool.UI {
         public ToolStripMenuItem tsmiTools;
         public ToolStripMenuItem tsmiMassSubscribe;
         public ToolStripMenuItem tsmiReSubscribe;
+        public ToolStripMenuItem tsmiReDownload;
 
         public ToolStripMenuItem tsmiSync;
         public ToolStripMenuItem tsmiReloadUGC; // reload UGCs from drive.
@@ -55,6 +58,7 @@ namespace LoadOrderTool.UI {
             tsmiTools = new ToolStripMenuItem();
             tsmiMassSubscribe = new ToolStripMenuItem();
             tsmiReSubscribe = new ToolStripMenuItem();
+            tsmiReDownload = new ToolStripMenuItem();
 
             tsmiSync = new ToolStripMenuItem();
             tsmiResetAllSettings = new ToolStripMenuItem();
@@ -205,6 +209,7 @@ namespace LoadOrderTool.UI {
             tsmiTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 tsmiMassSubscribe,
                 tsmiReSubscribe,
+                tsmiReDownload,
             });
             tsmiTools.Name = "tsmiTools";
             tsmiTools.Size = new Size(46, 20);
@@ -220,6 +225,12 @@ namespace LoadOrderTool.UI {
             // 
             tsmiReSubscribe.Name = "tsmiReSubscribe";
             tsmiReSubscribe.Text = "&Resubscribe broken downloads";
+            tsmiReSubscribe.Visible = false; // replaced with redownload
+            // 
+            // tsmiReDownload
+            // 
+            tsmiReDownload.Name = "tsmiReDownload";
+            tsmiReDownload.Text = "&Redownload broken downloads";
             // 
             // tsmiSync
             // 
@@ -272,6 +283,7 @@ namespace LoadOrderTool.UI {
             tsmiAbout.Click += TsmiAbout_Click;
             tsmiMassSubscribe.Click += TsmiMassSubscribe_Click;
             tsmiReSubscribe.Click += TsmiReSubscribe_Click;
+            tsmiReDownload.Click += TsmiReDownload_Click;
         }
 
         private void TsmiDiscordSupport_Click(object sender, EventArgs e) =>
@@ -293,5 +305,15 @@ namespace LoadOrderTool.UI {
             new ResubscribeDialog().Show();
         }
 
+        private async void TsmiReDownload_Click(object sender, EventArgs e) {
+            try {
+                var ids = ManagerList.GetBrokenDownloads()
+                    .Select(item => item.PublishedFileId.AsUInt64)
+                    .Distinct();
+                SteamUtil.ReDownload(ids);
+                var res = MessageBox.Show("You can monitor download progress in steam client. Wait for steam to finish downloading. Then press ok to refresh everyhing.", "Wait for download");
+                await LoadOrderWindow.Instance.CacheWSDetails();
+            } catch (Exception ex) { ex.Log(); }
+        }
     }
 }
