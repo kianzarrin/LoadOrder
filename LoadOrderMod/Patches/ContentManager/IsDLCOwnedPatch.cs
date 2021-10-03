@@ -1,8 +1,6 @@
-namespace LoadOrderMod.Patches.Startup {
+namespace LoadOrderMod.Patches.ContentManager {
     using HarmonyLib;
     using KianCommons;
-    using ColossalFramework;
-    using ColossalFramework.PlatformServices;
     using LoadOrderMod.Settings;
     using System.Linq;
     using System;
