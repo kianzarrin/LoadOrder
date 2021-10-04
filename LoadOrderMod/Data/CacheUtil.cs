@@ -1,4 +1,6 @@
 namespace LoadOrderMod.Data {
+    extern alias Injections;
+    using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
     using ColossalFramework.IO;
     using ColossalFramework.Packaging;
     using ColossalFramework.PlatformServices;
@@ -126,6 +128,13 @@ namespace LoadOrderMod.Data {
             LogSucceeded();
         }
 
+        public void AquireMissingItems() {
+            Cache.MissingDir =
+                SteamUtilities.GetMissingItems()
+                .Select(id => id.AsUInt64)
+                .ToArray();
+        }
+
         public static void CacheData() {
             new CacheUtil().CacheAll();
         }
@@ -141,6 +150,8 @@ namespace LoadOrderMod.Data {
                 AquirePathDetails();
                 Save();
                 AquireModsDetails();
+                Save();
+                AquireMissingItems();
                 Save();
                 AquireAssetsDetails();
                 Save();

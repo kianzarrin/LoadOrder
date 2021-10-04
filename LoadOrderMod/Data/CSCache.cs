@@ -12,9 +12,9 @@ namespace LoadOrderShared {
             public string Description;
         }
 
-        public class Mod: Item { }
+        public class Mod : Item { }
 
-        public class Asset: Item {
+        public class Asset : Item {
             public string[] Tags;
         }
 
@@ -29,6 +29,11 @@ namespace LoadOrderShared {
         public Mod[] Mods = new Mod[0];
         public Asset[] Assets = new Asset[0];
 
+        /// <summary>
+        /// missing root dir
+        /// </summary>
+        public ulong[] MissingDir = new ulong[0];
+
         internal Hashtable ItemTable = new Hashtable(100000);
 
         public void AddItem(Item item) {
@@ -37,17 +42,16 @@ namespace LoadOrderShared {
 
         public Item GetItem(string path) => ItemTable[path] as Item;
 
-
         public void Serialize(string dir) {
             Mods = ItemTable.Values.OfType<Mod>().ToArray();
             Assets = ItemTable.Values.OfType<Asset>().ToArray();
             XmlSerializer ser = new XmlSerializer(typeof(CSCache));
-            if(!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Create, FileAccess.Write)) {
                 ser.Serialize(fs, this);
             }
         }
-        
+
         public static CSCache Deserialize(string dir) {
             try {
                 XmlSerializer ser = new XmlSerializer(typeof(CSCache));
@@ -57,8 +61,7 @@ namespace LoadOrderShared {
                     foreach (var item in ret.Assets) ret.ItemTable[item.IncludedPath] = item;
                     return ret;
                 }
-            }
-            catch {
+            } catch {
                 return null;
             }
         }

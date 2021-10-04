@@ -2,6 +2,7 @@ namespace LoadOrderTool.Util {
     using CO.IO;
     using CO.PlatformServices;
     using LoadOrderShared;
+    using LoadOrderTool.Data;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -19,7 +20,7 @@ namespace LoadOrderTool.Util {
             return WS_URL_PREFIX + id.AsUInt64;
         }
         public static string GetItemURL(string id) {
-            if (string.IsNullOrEmpty(id)) 
+            if (string.IsNullOrEmpty(id))
                 return null;
             return WS_URL_PREFIX + id;
         }
@@ -48,27 +49,20 @@ namespace LoadOrderTool.Util {
         /// <summary>
         /// opens folder or file location in explorer.
         /// </summary>
-        public static Process OpenPath(string path)
-        {
+        public static Process OpenPath(string path) {
             Log.Called(path);
-            try
-            {
-                if (File.Exists(path))
-                {
+            try {
+                if (File.Exists(path)) {
                     string cmd = "explorer.exe";
                     string arg = "/select, " + path;
                     return Process.Start(cmd, arg);
-                }
-                else
-                {
+                } else {
                     string cmd = "explorer.exe";
                     string arg = path;
                     return Process.Start(cmd, arg);
                 }
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Log.Exception(new Exception("could not open path: " + path, ex));
                 return null;
             }
@@ -101,7 +95,7 @@ namespace LoadOrderTool.Util {
         }
 
         public static Process Subscribe(IEnumerable<PublishedFileId> ids) => Subscribe(ids.Select(id => id.AsUInt64));
-        public static Process Subscribe(IEnumerable<string> ids) => Subscribe( UGCListTransfer.ToNumber(ids));
+        public static Process Subscribe(IEnumerable<string> ids) => Subscribe(UGCListTransfer.ToNumber(ids));
         public static Process Subscribe(IEnumerable<ulong> ids) {
             if (ids.IsNullorEmpty()) return null;
             UGCListTransfer.SendList(ids, DataLocation.LocalLOMData, false);
@@ -114,7 +108,7 @@ namespace LoadOrderTool.Util {
         public static string ToIncludedPath(string fullPath) {
             string parent = Path.GetDirectoryName(fullPath);
             string file = Path.GetFileName(fullPath);
-            if(file.StartsWith("_"))
+            if (file.StartsWith("_"))
                 file = file.Substring(1); //drop _
             return Path.Combine(parent, file);
         }
@@ -154,7 +148,7 @@ namespace LoadOrderTool.Util {
             }
             path = Path.GetRelativePath(DataLocation.WorkshopContentPath, path);
             int i = path.IndexOf('\\');
-            var dirname = i< 0 ? path : path.Substring(0, i);
+            var dirname = i < 0 ? path : path.Substring(0, i);
             Log.Debug($"path={path} dirname={dirname}");
             return TryGetID(dirname, out id);
         }
@@ -169,7 +163,7 @@ namespace LoadOrderTool.Util {
                 dirName = dirName.Remove(0, 1);
             return ulong.TryParse(dirName, out id);
         }
-            
+
 
         static ulong Path2ID(string path) {
             TryGetID(Path.GetFileName(path), out ulong ret);
@@ -207,18 +201,18 @@ namespace LoadOrderTool.Util {
 
         public static string EnsureModAt(string dir) {
             try {
-                if(!Directory.Exists(dir))
+                if (!Directory.Exists(dir))
                     return null;
 
                 var included = ToIncludedPath(dir);
                 var excluded = ToExcludedPath(dir);
-                if(Directory.Exists(included) && Directory.Exists(excluded)) {
+                if (Directory.Exists(included) && Directory.Exists(excluded)) {
                     Directory.Delete(excluded);
                     Directory.Move(included, excluded);
                     return excluded;
                 }
                 return dir;
-            } catch(Exception ex) { ex.Log(); }
+            } catch (Exception ex) { ex.Log(); }
             return null;
         }
 
@@ -247,12 +241,27 @@ namespace LoadOrderTool.Util {
             }
         }
 
-        public static IEnumerable<PublishedFileId> GetSubscribedItems() {
+        public static PublishedFileId[] GetSubscribedItems() {
+            var dirs = Directory.GetDirectories(DataLocation.WorkshopContentPath);
+            var ret = new List<PublishedFileId>(dirs.Length);
             foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath)) {
                 var dirName = Path.GetFileName(path);
                 if (!TryGetID(dirName, out ulong id)) continue;
-                yield return new PublishedFileId(id);
+                ret.Add(new PublishedFileId(id));
             }
+            return subscribedItemsCached_ = ret.ToArray();
+        }
+
+
+        static PublishedFileId[] subscribedItemsCached_;
+        /// <summary>
+        /// Get Items that are missing root dir
+        /// </summary>
+        public static ulong[] GetMissingDirItems() {
+            subscribedItemsCached_ ??= GetSubscribedItems();
+            var missing = ConfigWrapper.instance.CSCache.MissingDir;
+            var subs = subscribedItemsCached_.Select(item => item.AsUInt64);
+            return missing.Except(subs).ToArray();
         }
 
         public static string GetSubscribedItemPath(PublishedFileId id) => GetSubscribedItemPath(id.AsUInt64);
@@ -277,7 +286,7 @@ namespace LoadOrderTool.Util {
                     return DownloadStatus.Unknown;
                 }
             }
-        
+
             string localPath = GetSubscribedItemPath(det.PublishedFileID);
 
             if (localPath == null) {
@@ -312,7 +321,7 @@ namespace LoadOrderTool.Util {
         public static DateTime GetLocalTimeUpdated(string path) {
             DateTime dateTime = DateTime.MinValue;
             if (Directory.Exists(path)) {
-                foreach (string filePAth in Directory.GetFiles(path,"*", SearchOption.AllDirectories)) {
+                foreach (string filePAth in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
                     string ext = Path.GetExtension(filePAth);
                     //if (ext == ".dll" || ext == ".crp" || ext == ".png")
                     {

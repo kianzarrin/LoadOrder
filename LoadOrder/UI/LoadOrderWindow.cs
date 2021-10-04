@@ -683,7 +683,23 @@ namespace LoadOrderTool.UI {
                 LastProfileLabel.Text = $"Last profile was '{lastProfileName}'";
 
                 DLCNoticeLabel.Visible = TabContainer.SelectedTab == DLCTab;
-                DownloadWarningLabel.Visible = ManagerList.GetWSItems().Any(item => item.ItemCache.Status > SteamCache.DownloadStatus.OK);
+
+                {
+                    bool red =
+                        ConfigWrapper.instance.SteamCache.MissingFile.Any() ||
+                        ManagerList.GetWSItems().Any(item => item.ItemCache.Status > SteamCache.DownloadStatus.OK);
+                    bool yellow = ContentUtil.GetMissingDirItems().Any();
+
+                    DownloadWarningLabel.Visible = red || yellow;
+                    if (red) {
+                        DownloadWarningLabel.Text = "There are broken downloads!";
+                        DownloadWarningLabel.ForeColor = Color.Red;
+                    } else if (yellow) {
+                        DownloadWarningLabel.Text = "There maybe broken downloads!";
+                        DownloadWarningLabel.ForeColor = Color.Yellow;
+                    }
+                }
+
             } catch(Exception ex) { ex.Log(); }
         }
 
@@ -717,7 +733,7 @@ namespace LoadOrderTool.UI {
             try {
                 SetCacheProgress(5);
                 var ids = (await Task.Run(ContentUtil.GetSubscribedItems)).ToArray();
-                ConfigWrapper.SteamCache.Missing.Clear();
+                ConfigWrapper.SteamCache.MissingFile.Clear();
                 SetCacheProgress(10);
 
                 try {
@@ -758,7 +774,7 @@ namespace LoadOrderTool.UI {
                     item.ItemCache.Read(dto);
                     item.ResetCache();
                 } else if (dto.Result == SteamUtil.EResult.k_EResultOK) {
-                    var missing = ConfigWrapper.instance.SteamCache.Missing;
+                    var missing = ConfigWrapper.instance.SteamCache.MissingFile;
                     if (!missing.Contains(dto.PublishedFileID))
                         missing.Add(dto.PublishedFileID);
                 }

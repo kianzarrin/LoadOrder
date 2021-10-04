@@ -309,12 +309,15 @@ namespace LoadOrderTool.UI {
             try {
                 var ids = ManagerList.GetBrokenDownloads()
                     .Select(item => item.PublishedFileId.AsUInt64)
-                    .Concat(ConfigWrapper.instance.SteamCache.Missing)
+                    .Concat(ConfigWrapper.instance.SteamCache.MissingFile) // missing dll/crp
+                    .Concat(ContentUtil.GetMissingDirItems()) // missing root dir
                     .Distinct()
                     .ToArray();
-
                 SteamUtil.ReDownload(ids);
+
                 var res = MessageBox.Show("You can monitor download progress in steam client. Wait for steam to finish downloading. Then press ok to refresh everyhing.", "Wait for download");
+                ConfigWrapper.instance.CSCache.MissingDir = new ulong[0];
+                LoadOrderWindow.Instance.DownloadWarningLabel.Visible = false;
                 await LoadOrderWindow.Instance.ReloadAll(); // reload to fix included/excluded, paths, ...
             } catch (Exception ex) { ex.Log(); }
         }
