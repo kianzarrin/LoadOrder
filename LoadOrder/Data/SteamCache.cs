@@ -75,11 +75,7 @@ namespace LoadOrderTool.Data {
         public Mod[] Mods = new Mod[0];
         public Asset[] Assets = new Asset[0];
         public Persona[] People = new Persona[0];
-
-        /// <summary>
-        /// missing dll/crp
-        /// </summary>
-        public List<ulong> MissingFile = new List<ulong>(32);
+        public List<ulong> Missing = new List<ulong>(32);
 
         private Hashtable<string, Mod> modTable_ = new Hashtable<string, Mod>(1000);
         private Hashtable<string, Asset> assetTable_ = new Hashtable<string, Asset>(10000);

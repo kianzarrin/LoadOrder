@@ -24,14 +24,10 @@ namespace LoadOrderShared {
         public string GamePath;
         public string SteamPath;
 
+
         // do not use these directly. use Add/GetItem insteaed.
         public Mod[] Mods = new Mod[0];
         public Asset[] Assets = new Asset[0];
-
-        /// <summary>
-        /// missing root dir
-        /// </summary>
-        public ulong[] MissingDir = new ulong[0];
 
         internal Hashtable ItemTable = new Hashtable(100000);
 

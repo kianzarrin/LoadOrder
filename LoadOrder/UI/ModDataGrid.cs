@@ -171,7 +171,7 @@ namespace LoadOrderTool.UI {
         }
 
         // write
-        protected async override void OnCellValueChanged(DataGridViewCellEventArgs e) {
+        protected override void OnCellValueChanged(DataGridViewCellEventArgs e) {
             base.OnCellValueChanged(e);
             try {
                 if (ModList == null) return;
@@ -183,7 +183,7 @@ namespace LoadOrderTool.UI {
                     int newVal = Int32.Parse(cell.Value as string);
                     var p = ModList.Filtered[e.RowIndex];
                     ModList.MoveItem(p, newVal);
-                    await RefreshModList();
+                    RefreshModList();
                 } else if (col == CEnabled) {
                     plugin.IsEnabledPending = (bool)cell.Value;
                 } else if (col == CIsIncluded) {
@@ -191,7 +191,7 @@ namespace LoadOrderTool.UI {
                 } else {
                     return;
                 }
-                await LoadOrderWindow.Instance.UpdateStatus();
+                LoadOrderWindow.Instance.UpdateStatus();
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
@@ -260,7 +260,7 @@ namespace LoadOrderTool.UI {
         }
 
         // sort
-        protected async override void OnColumnHeaderMouseClick(DataGridViewCellMouseEventArgs e) {
+        protected override void OnColumnHeaderMouseClick(DataGridViewCellMouseEventArgs e) {
             base.OnColumnHeaderMouseClick(e);
             if (ModList == null) return;
             if (e.ColumnIndex == prevSortCol_) {
@@ -273,10 +273,10 @@ namespace LoadOrderTool.UI {
             var sortOrder = sortAssending_ ? SortOrder.Ascending : SortOrder.Descending;
             Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = sortOrder;
             prevSortCol_ = e.ColumnIndex;
-            await Sort();
+            Sort();
         }
 
-        async Task Sort() {
+        void Sort() {
             try {
                 int columnIndex = prevSortCol_;
                 if (columnIndex == COrder.Index || prevSortCol_ == -1) {
@@ -292,15 +292,15 @@ namespace LoadOrderTool.UI {
                 } else if (columnIndex == CAuthor.Index) {
                     // "[unknown" is sorted before "[unknown]". This puts empty before unknown author.
                     ModList.SortItemsBy(item => item.Author ?? "[unknown", sortAssending_);
-                } else if (columnIndex == CDateUpdated.Index) {
+                } else if (columnIndex == this.CDateUpdated.Index) {
                     ModList.SortItemsBy(item => item.DateUpdatedUTC, sortAssending_);
-                } else if (columnIndex == CDateDownloaded.Index) {
+                } else if (columnIndex == this.CDateDownloaded.Index) {
                     ModList.SortItemsBy(item => item.DateDownloadedUTC, sortAssending_);
                 }else if (columnIndex == CStatus.Index) {
                     ModList.SortItemsBy(item => item.ItemCache.Status, sortAssending_);
                 }
 
-               await RefreshModList(sort: false);
+                RefreshModList(sort: false);
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
@@ -310,7 +310,7 @@ namespace LoadOrderTool.UI {
             await PluginManager.instance.LoadPlugins();
             ModList = ModList.GetAllMods(predicateCallback);
             SetProgress(100);
-            await Sort(); // also refreshes mod list.
+            Sort(); // also refreshes mod list.
         }
 
         public static void SetProgress(float percent) => SetProgress(percent, UIUtil.WIN32Color.Normal);
@@ -334,14 +334,14 @@ namespace LoadOrderTool.UI {
             SetProgress(-1);
         }
 
-        public async Task RefreshModList(bool sort = false) {
+        public void RefreshModList(bool sort = false) {
             if (sort) {
                 ModList.DefaultSort();
                 COrder.HeaderCell.SortGlyphDirection = SortOrder.Ascending;
             }
             ModList.FilterIn();
             PopulateMods();
-            await LoadOrderWindow.Instance.UpdateStatus();
+            LoadOrderWindow.Instance.UpdateStatus();
         }
 
         public DataGridViewRow GetRow(PluginManager.PluginInfo pluginInfo) {

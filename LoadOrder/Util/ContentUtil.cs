@@ -2,7 +2,6 @@ namespace LoadOrderTool.Util {
     using CO.IO;
     using CO.PlatformServices;
     using LoadOrderShared;
-    using LoadOrderTool.Data;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -254,15 +253,6 @@ namespace LoadOrderTool.Util {
                 if (!TryGetID(dirName, out ulong id)) continue;
                 yield return new PublishedFileId(id);
             }
-        }
-
-        /// <summary>
-        /// Get Items that are missing root dir
-        /// </summary>
-        public static ulong[] GetMissingDirItems() {
-            var missing = ConfigWrapper.instance.CSCache.MissingDir;
-            var subs = GetSubscribedItems().Select(item => item.AsUInt64);
-            return missing.Except(subs).ToArray();
         }
 
         public static string GetSubscribedItemPath(PublishedFileId id) => GetSubscribedItemPath(id.AsUInt64);
