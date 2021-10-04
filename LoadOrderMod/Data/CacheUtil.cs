@@ -1,6 +1,6 @@
 namespace LoadOrderMod.Data {
     extern alias Injections;
-    using static SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
+    using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
     using ColossalFramework.IO;
     using ColossalFramework.Packaging;
     using ColossalFramework.PlatformServices;
