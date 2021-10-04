@@ -309,7 +309,8 @@ namespace LoadOrderTool.UI {
             try {
                 var ids = ManagerList.GetBrokenDownloads()
                     .Select(item => item.PublishedFileId.AsUInt64)
-                    .Concat(ConfigWrapper.instance.SteamCache.Missing)
+                    .Concat(ConfigWrapper.instance.SteamCache.MissingFile) // missing dll/crp
+                    .Concat(ContentUtil.GetMissingDirItems()) // missing root dir
                     .Distinct()
                     .ToArray();
 

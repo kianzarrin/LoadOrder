@@ -3,19 +3,16 @@
 using CO;
 using CO.Packaging;
 using CO.Plugins;
+using LoadOrderTool.Data;
 using LoadOrderTool.Util;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Windows.Forms;
-using LoadOrderTool.Data;
-using LoadOrderTool.UI;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using CO.PlatformServices;
-using System.IO;
+using System.Windows.Forms;
 
 namespace LoadOrderTool.UI {
     public partial class LoadOrderWindow : Form {
@@ -92,9 +89,9 @@ namespace LoadOrderTool.UI {
                 var modTask = InitializeModTab();
                 var assetTask = InitializeAssetTab();
                 await Task.WhenAll(modTask, assetTask);
-                TabContainer.Selected += (_, __) => UpdateStatus();
+                TabContainer.Selected += async (_, __) => await UpdateStatus();
 
-                UpdateStatus();
+                await UpdateStatus();
 
                 menuStrip.tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
                 menuStrip.tsmiAutoSave.Click += TsmiAutoSave_Click;
@@ -119,9 +116,9 @@ namespace LoadOrderTool.UI {
             }
         }
 
-        protected override void OnLoad(EventArgs e) {
+        protected async override void OnLoad(EventArgs e) {
             base.OnLoad(e);
-            LoadAsync();
+            await LoadAsync();
         }
 
         protected override void OnResizeEnd(EventArgs e) {
@@ -182,7 +179,7 @@ namespace LoadOrderTool.UI {
         #region MenuBar
         private async void TsmiResetSettings_Click(object sender, EventArgs e) => await TsmiResetSettings();
         private async Task TsmiResetSettings() {
-            if(DialogResult.Yes ==
+            if (DialogResult.Yes ==
                 MessageBox.Show(
                     text: "Are you sure you want to reset all settings?",
                     caption: "Reset settings?",
@@ -202,13 +199,16 @@ namespace LoadOrderTool.UI {
         private void TsmiAutoSave_Click(object sender, EventArgs e) =>
             menuStrip.tsmiFile.ShowDropDown(); // prevent hiding menu when clicking auto-save
 
-        public void UpdateLastProfileName(string fullPath) {
-            LoadOrderToolSettings.Instace.LastProfileName = Path.GetFileNameWithoutExtension(fullPath);
-            LoadOrderToolSettings.Instace.Serialize();
-            UpdateStatus();
+        public async Task UpdateLastProfileName(string fullPath) {
+            try {
+                LoadOrderToolSettings.Instace.LastProfileName = Path.GetFileNameWithoutExtension(fullPath);
+                LoadOrderToolSettings.Instace.Serialize();
+                await UpdateStatus();
+            } catch(Exception ex) { ex.Log(); }
         }
 
-        private void Export_Click(object sender, EventArgs e) {
+        private async void Export_Click(object sender, EventArgs e) => await ExportAsync();
+        private async Task ExportAsync() {
             SaveFileDialog diaglog = new SaveFileDialog();
             diaglog.Filter = "xml files (*.xml)|*.xml";
             diaglog.InitialDirectory = LoadOrderProfile.DIR;
@@ -216,11 +216,12 @@ namespace LoadOrderTool.UI {
                 LoadOrderProfile profile = new LoadOrderProfile();
                 ManagerList.instance.SaveToProfile(profile);
                 profile.Serialize(diaglog.FileName);
-                UpdateLastProfileName(diaglog.FileName);
+                await UpdateLastProfileName(diaglog.FileName);
             }
         }
 
-        private void Import_Click(object sender, EventArgs e) {
+        private async void Import_Click(object sender, EventArgs e) => await ImportAsync();
+        private async Task ImportAsync() {
             using (OpenFileDialog ofd = new OpenFileDialog()) {
                 ofd.Filter = "xml files (*.xml)|*.xml";
                 ofd.InitialDirectory = LoadOrderProfile.DIR;
@@ -230,19 +231,19 @@ namespace LoadOrderTool.UI {
                         if (DialogResult.Cancel == opd.ShowDialog())
                             return;
                         bool replace = opd.DialogResult == OpenProfileDialog.RESULT_REPLACE;
-                        ApplyProfile(profile, types: opd.ItemTypes, replace: replace);
-                        if(replace) UpdateLastProfileName(ofd.FileName);
-                        else UpdateStatus();
+                        await ApplyProfile(profile, types: opd.ItemTypes, replace: replace);
+                        if (replace) await UpdateLastProfileName(ofd.FileName);
+                        else await UpdateStatus();
                     }
                 }
             }
         }
 
-        public void ApplyProfile(LoadOrderProfile profile, OpenProfileDialog.ItemTypeT types, bool replace) {
+        public async Task ApplyProfile(LoadOrderProfile profile, OpenProfileDialog.ItemTypeT types, bool replace) {
             Log.Called("types:" + types, "replace:" + replace);
             if ((types & OpenProfileDialog.ItemTypeT.Mods) != 0) {
                 dataGridMods.ModList.LoadFromProfile(profile, replace);
-                dataGridMods.RefreshModList(true);
+                await dataGridMods.RefreshModList(true);
             }
             if ((types & OpenProfileDialog.ItemTypeT.Assets) != 0) {
                 PackageManager.instance.LoadFromProfile(profile, replace);
@@ -271,30 +272,33 @@ namespace LoadOrderTool.UI {
             await CacheWSDetails();
         }
 
-        private void TsmiReloadSettings_Click(object sender, EventArgs e) {
-            if(Dirty) {
-                if(ConfigWrapper.AutoSave) { 
-                    ConfigWrapper.SaveConfig();
-                } else {
-                    var res = MessageBox.Show(
-                        text: "All unsaved changes will be lost. Do you wish to proceed to replace them by settings from the game?",
-                        caption: "Discard changes?",
-                        buttons: MessageBoxButtons.OKCancel);
-                    if(res == DialogResult.Cancel) {
-                        return;
+        private async void TsmiReloadSettings_Click(object sender, EventArgs e) => await TsmiReloadSettings_Click_Async();
+        private async Task TsmiReloadSettings_Click_Async() {
+            try {
+                if (Dirty) {
+                    if (ConfigWrapper.AutoSave) {
+                        ConfigWrapper.SaveConfig();
+                    } else {
+                        var res = MessageBox.Show(
+                            text: "All unsaved changes will be lost. Do you wish to proceed to replace them by settings from the game?",
+                            caption: "Discard changes?",
+                            buttons: MessageBoxButtons.OKCancel);
+                        if (res == DialogResult.Cancel) {
+                            return;
+                        }
                     }
                 }
-            }
 
-            ConfigWrapper.Paused = true;
-            ConfigWrapper.ReloadAllConfig();
+                ConfigWrapper.Paused = true;
+                ConfigWrapper.ReloadAllConfig();
 
-            ManagerList.instance.ReloadConfig();
-            launchControl.LoadSettings();
+                ManagerList.instance.ReloadConfig();
+                launchControl.LoadSettings();
 
-            ConfigWrapper.Dirty = false;
-            ConfigWrapper.Paused = false;
-            RefreshAll();
+                ConfigWrapper.Dirty = false;
+                ConfigWrapper.Paused = false;
+                await RefreshAll();
+            }catch(Exception ex) { ex.Log(); }
         }
 
         private async void TsmiResetCache_Click(object sender, EventArgs e) => await ResetCache();
@@ -303,7 +307,7 @@ namespace LoadOrderTool.UI {
                 ConfigWrapper.ResetCSCache();
                 ConfigWrapper.SteamCache = new SteamCache();
                 await CacheWSDetails();
-            } catch(Exception ex) { ex.Log(); }
+            } catch (Exception ex) { ex.Log(); }
         }
         #endregion
 
@@ -323,10 +327,10 @@ namespace LoadOrderTool.UI {
 
             await dataGridMods.LoadModsAsync(ModPredicate);
 
-            ComboBoxIncluded.SelectedIndexChanged += RefreshModList;
-            ComboBoxEnabled.SelectedIndexChanged += RefreshModList;
-            ComboBoxWS.SelectedIndexChanged += RefreshModList;
-            TextFilterMods.TextChanged += RefreshModList;
+            ComboBoxIncluded.SelectedIndexChanged += RefreshModList0;
+            ComboBoxEnabled.SelectedIndexChanged += RefreshModList0;
+            ComboBoxWS.SelectedIndexChanged += RefreshModList0;
+            TextFilterMods.TextChanged += RefreshModList0;
 
             TabContainer.SelectedIndexChanged += TabContainer_SelectedIndexChanged;
             menuStrip.tsmiHarmonyOrder.Click += SortByHarmony_Click;
@@ -340,19 +344,20 @@ namespace LoadOrderTool.UI {
 
             dataGridMods.CellMouseClick += DataGridMods_CellMouseClick;
 
-            UpdateStatus();
+            await UpdateStatus();
         }
 
-        private void RefreshModList(object sender, EventArgs e) {
+        private async void RefreshModList0(object sender, EventArgs e) => await RefreshModList();
+        private async Task RefreshModList() {
             RefreshModPredicate();
-            dataGridMods.RefreshModList(); // filter and populate
+            await dataGridMods.RefreshModList(); // filter and populate
         }
 
         #region predicate
         IncludedFilter modIncludedFilter_;
         EnabledFilter modEnabledFilter_;
         WSFilter modWSFilter_;
-        string [] modTextFilter_;
+        string[] modTextFilter_;
 
         public void RefreshModPredicate() {
             modIncludedFilter_ = ComboBoxIncluded.GetSelectedItem<IncludedFilter>();
@@ -397,16 +402,16 @@ namespace LoadOrderTool.UI {
         private void TabContainer_SelectedIndexChanged(object sender, EventArgs e) =>
             menuStrip.tsmiOrder.Visible = dataGridMods.Visible;
 
-        private void ResetOrder_Click(object sender, EventArgs e) {
+        private async void ResetOrder_Click(object sender, EventArgs e) {
             foreach (var mod in dataGridMods.ModList)
                 mod.ResetLoadOrder();
-            dataGridMods.RefreshModList(sort: true);
+            await dataGridMods.RefreshModList(sort: true);
         }
 
-        private void SortByHarmony_Click(object sender, EventArgs e) {
+        private async void SortByHarmony_Click(object sender, EventArgs e) {
             dataGridMods.ModList.ResetLoadOrders();
             dataGridMods.ModList.SortBy(ModList.HarmonyComparison);
-            dataGridMods.RefreshModList();
+            await dataGridMods.RefreshModList();
         }
 
         private void EnableAllMods_Click(object sender, EventArgs e) {
@@ -433,14 +438,14 @@ namespace LoadOrderTool.UI {
             dataGridMods.PopulateMods();
         }
 
-        private void ReverseOrder_Click(object sender, EventArgs e) {
+        private async void ReverseOrder_Click(object sender, EventArgs e) {
             dataGridMods.ModList.ReverseOrder();
-            dataGridMods.RefreshModList();
+            await dataGridMods.RefreshModList();
         }
 
-        private void RandomizeOrder_Click(object sender, EventArgs e) {
+        private async void RandomizeOrder_Click(object sender, EventArgs e) {
             dataGridMods.ModList.RandomizeOrder();
-            dataGridMods.RefreshModList();
+            await dataGridMods.RefreshModList();
         }
 
         private void DataGridMods_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
@@ -468,9 +473,9 @@ namespace LoadOrderTool.UI {
             ComboBoxAssetTags.SelectedIndexChanged += ApplyAssetFilter;
             TextFilterAsset.TextChanged += ApplyAssetFilter;
 
-            this.IncludeAllAssets.Click += IncludeAllAssets_Click;
-            this.ExcludeAllAssets.Click += ExcludeAllAssets_Click;
-            
+            IncludeAllAssets.Click += IncludeAllAssets_Click;
+            ExcludeAllAssets.Click += ExcludeAllAssets_Click;
+
             var buttons = AssetsActionPanel.Controls.OfType<Button>();
             var maxwidth = buttons.Max(b => b.Width);
             foreach (var b in buttons)
@@ -480,7 +485,7 @@ namespace LoadOrderTool.UI {
 
             dataGridAssets.CellMouseClick += DataGridAssets_CellMouseClick;
 
-            UpdateStatus();
+            await UpdateStatus();
         }
 
         public async Task LoadAssetsAsync() {
@@ -528,10 +533,7 @@ namespace LoadOrderTool.UI {
 
         #region Filter
 #if ASYNC_FILTER // modify this line to switch to async
-        private async void ApplyAssetFilter(object sender, EventArgs e) {
-            await ApplyAssetFilter();
-        }
-
+        private async void ApplyAssetFilter(object sender, EventArgs e) => await ApplyAssetFilter();
         private async Task ApplyAssetFilter() {
             // TODO: this fails when modifying text box too fast
             await ApplyAssetFilterTask();
@@ -540,19 +542,19 @@ namespace LoadOrderTool.UI {
 
         CancellationTokenSource filterTokenSource_;
         async Task ApplyAssetFilterTask() {
-            if(dataGridAssets?.AssetList?.Filtered == null)
+            if (dataGridAssets?.AssetList?.Filtered == null)
                 return;
             filterTokenSource_?.Cancel();
             try {
-                filterTokenSource_ = new CancellationTokenSource(); 
+                filterTokenSource_ = new CancellationTokenSource();
                 await Task.Delay(150, cancellationToken: filterTokenSource_.Token);
-                
+
                 FilterAssets();
                 dataGridAssets.SetRowCountFast(dataGridAssets.AssetList.Filtered.Count);
                 dataGridAssets.Refresh();
-            } catch(OperationCanceledException oce) {
+            } catch (OperationCanceledException) {
                 // return silently
-            } catch( Exception ex) {
+            } catch (Exception ex) {
                 ex.Log();
             } finally {
                 filterTokenSource_?.Dispose();
@@ -580,7 +582,7 @@ namespace LoadOrderTool.UI {
             if (tagFilter == NO_TAGS) tagFilter = null;
             var words = TextFilterAsset.Text?.Split(" ");
             assetList.FilterItems(item => AssetPredicateFast(item, includedFilter, wsFilter, tagFilter, words));
-            UpdateStatus();
+            UpdateStatus().Wait();
         }
 
         bool AssetPredicateFast(
@@ -603,7 +605,7 @@ namespace LoadOrderTool.UI {
                 return false;
             }
             if (words != null && words.Length > 0) {
-                if (!ContainsWords(a.SearchText, words)){
+                if (!ContainsWords(a.SearchText, words)) {
                     return false;
                 }
             }
@@ -632,7 +634,7 @@ namespace LoadOrderTool.UI {
                     asset.IsIncludedPending = value;
                 }
                 dataGridAssets.Refresh();
-            }catch (Exception ex) {
+            } catch (Exception ex) {
                 Log.Exception(ex);
             } finally {
                 ConfigWrapper.Resume();
@@ -661,10 +663,10 @@ namespace LoadOrderTool.UI {
         }
         #endregion
 
-        public void UpdateStatus() {
+        public async Task UpdateStatus() {
             try {
                 ModCountLabel.Visible = TabContainer.SelectedTab == ModsTab;
-                if(dataGridMods.ModList is ModList modList) {
+                if (dataGridMods.ModList is ModList modList) {
                     ModCountLabel.Text = $"Mods " +
                         $"enabled:{modList.Count(mod => mod.IsEnabledPending)} " +
                         $"included:{modList.Count(mod => mod.IsIncludedPending)} " +
@@ -672,7 +674,7 @@ namespace LoadOrderTool.UI {
                 }
 
                 AssetCountLabel.Visible = TabContainer.SelectedTab == AssetsTab;
-                if(dataGridAssets.AssetList is AssetList asseList) {
+                if (dataGridAssets.AssetList is AssetList asseList) {
                     AssetCountLabel.Text = $"Assets " +
                         $"included:{asseList.Original.Count(asset => asset.IsIncludedPending)} " +
                         $"total:{asseList.Original.Count}";
@@ -683,14 +685,29 @@ namespace LoadOrderTool.UI {
                 LastProfileLabel.Text = $"Last profile was '{lastProfileName}'";
 
                 DLCNoticeLabel.Visible = TabContainer.SelectedTab == DLCTab;
-                DownloadWarningLabel.Visible = ManagerList.GetWSItems().Any(item => item.ItemCache.Status > SteamCache.DownloadStatus.OK);
-            } catch(Exception ex) { ex.Log(); }
+
+                {
+                    var red = await Task.Run(() =>
+                            ManagerList.GetWSItems().Any(item => item.ItemCache.Status > SteamCache.DownloadStatus.OK) ||
+                            ConfigWrapper.instance.SteamCache.MissingFile.Any()
+                    );
+                    var yellow = await Task.Run(() => ContentUtil.GetMissingDirItems().Any());
+                    DownloadWarningLabel.Visible = red || yellow;
+                    if (red) {
+                        DownloadWarningLabel.Text = "There are broken downloads!";
+                        DownloadWarningLabel.ForeColor = Color.Red;
+                    } else if (yellow) {
+                        DownloadWarningLabel.Text = "There maybe broken downloads!";
+                        DownloadWarningLabel.ForeColor = Color.Yellow;
+                    }
+                }
+            } catch (Exception ex) { ex.Log(); }
         }
 
-        public void RefreshAll() {
-            dataGridMods.RefreshModList();
+        public async Task RefreshAll() {
+            await dataGridMods.RefreshModList();
             dataGridAssets.Refresh();
-            UpdateStatus();
+            await UpdateStatus();
         }
 
         public async Task ReloadAll() {
@@ -703,12 +720,12 @@ namespace LoadOrderTool.UI {
                 await Task.WhenAll(modTask, AssetTask);
                 ConfigWrapper.Paused = false;
                 await CacheWSDetails();
-            } catch(Exception ex) { ex.Log(); }
+            } catch (Exception ex) { ex.Log(); }
         }
 
         #region steam cache
         void SetCacheProgress(float percent) {
-            if(percent > 100) Log.Error($"percent={percent} nAuthors={nAuthors_} iAuthor={iAuthor_}");
+            if (percent > 100) Log.Error($"percent={percent} nAuthors={nAuthors_} iAuthor={iAuthor_}");
             ModDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
             AssetDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
         }
@@ -717,13 +734,13 @@ namespace LoadOrderTool.UI {
             try {
                 SetCacheProgress(5);
                 var ids = (await Task.Run(ContentUtil.GetSubscribedItems)).ToArray();
-                ConfigWrapper.SteamCache.Missing.Clear();
+                ConfigWrapper.SteamCache.MissingFile.Clear();
                 SetCacheProgress(10);
 
                 try {
                     int i = 0;
                     List<Task> tasks = new List<Task>(32);
-                    await foreach(var data in SteamUtil.LoadDataAsyncInChunks(ids)) {
+                    await foreach (var data in SteamUtil.LoadDataAsyncInChunks(ids)) {
                         Assertion.NotNull(data);
                         var task = Task.Run(() => DTO2Cache(data));
                         tasks.Add(task);
@@ -731,34 +748,34 @@ namespace LoadOrderTool.UI {
                         SetCacheProgress(10 + (30 * i) / ids.Length);
                     }
                     await Task.WhenAll(tasks.ToArray());
-                } catch(Exception ex) { ex.Log(); }
+                } catch (Exception ex) { ex.Log(); }
                 SetCacheProgress(45);
-                RefreshAll();
+                await RefreshAll();
                 SetCacheProgress(50);
 
                 bool authorsUpdated = true;
                 try {
                     authorsUpdated = await Task.Run(CacheAuthors);
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     ex.Log();
                 }
                 SetCacheProgress(100);
-                if(authorsUpdated) RefreshAuthors();
-                if(save) ConfigWrapper.SteamCache.Serialize();
+                if (authorsUpdated) await RefreshAuthors();
+                if (save) ConfigWrapper.SteamCache.Serialize();
                 SetCacheProgress(-1);
-            } catch(Exception ex) { ex.Log(); }
+            } catch (Exception ex) { ex.Log(); }
         }
 
         public static void DTO2Cache(SteamUtil.PublishedFileDTO[] dtos) {
             Assertion.NotNull(dtos);
             var wsItems = ManagerList.GetWSItems();
-            foreach(var dto in dtos) {
+            foreach (var dto in dtos) {
                 var item = wsItems.FirstOrDefault(item => dto.PublishedFileID == item.PublishedFileId.AsUInt64);
                 if (item != null) {
                     item.ItemCache.Read(dto);
                     item.ResetCache();
                 } else if (dto.Result == SteamUtil.EResult.k_EResultOK) {
-                    var missing = ConfigWrapper.instance.SteamCache.Missing;
+                    var missing = ConfigWrapper.instance.SteamCache.MissingFile;
                     if (!missing.Contains(dto.PublishedFileID))
                         missing.Add(dto.PublishedFileID);
                 }
@@ -782,12 +799,12 @@ namespace LoadOrderTool.UI {
                 .Distinct()
                 .ToArray();
             Log.Info("Geting author names : " + missingAuthors.ToSTR());
-            if(!missingAuthors.Any())
+            if (!missingAuthors.Any())
                 return false;
 
             iAuthor_ = 0;
             nAuthors_ = missingAuthors.Length;
-            using(var httpWrapper = new SteamUtil.HttpWrapper()) {
+            using (var httpWrapper = new SteamUtil.HttpWrapper()) {
                 Task proc(ulong _authorId) {
                     return Task.Factory.StartNew(
                         () => GetAndApplyPersonaName(httpWrapper, _authorId));
@@ -803,16 +820,16 @@ namespace LoadOrderTool.UI {
 
         public async Task GetAndApplyPersonaNameAsync(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
             string authorName = null;
-            for(int numErrors = 0; authorName.IsNullorEmpty();) {
+            for (int numErrors = 0; authorName.IsNullorEmpty();) {
                 try {
                     authorName = await SteamUtil.GetPersonaNameAsync(httpWrapper, authorId);
                     Assertion.Assert(!authorName.IsNullorEmpty());
-                } catch(Exception ex) {
-                    if(authorId == 76561197978975775) {
+                } catch (Exception ex) {
+                    if (authorId == 76561197978975775) {
                         authorName = "Feindbild"; // hard code stubborn profile!
                     } else {
                         numErrors++;
-                        if(numErrors > 3) throw;
+                        if (numErrors > 3) throw;
                         Log.Error(ex.ToString() + $" retry number {numErrors} ...");
                         await Task.Delay(100); // delay 100ms to make sure request goes to the end of the queue.
                     }
@@ -828,13 +845,13 @@ namespace LoadOrderTool.UI {
 
         public void GetAndApplyPersonaName(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
             string authorName = null;
-            for(int numErrors = 0; authorName.IsNullorEmpty();) {
+            for (int numErrors = 0; authorName.IsNullorEmpty();) {
                 try {
                     authorName = SteamUtil.GetPersonaName(httpWrapper, authorId);
                     Assertion.Assert(!authorName.IsNullorEmpty());
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     numErrors++;
-                    if(numErrors > 3) throw;
+                    if (numErrors > 3) throw;
                     Log.Error(ex.ToString() + $" retry number {numErrors} ...");
                     Thread.Sleep(100); // delay 100ms to make sure request goes to the end of the queue.
                 }
@@ -852,15 +869,15 @@ namespace LoadOrderTool.UI {
             ConfigWrapper.SteamCache.AddPerson(id, name);
         }
 
-        public void RefreshAuthors() {
+        public async Task RefreshAuthors() {
             try {
                 lastRefreshUpdate = DateTime.Now;
 
-                foreach(var item in ManagerList.GetItems())
+                foreach (var item in ManagerList.GetItems())
                     item.ItemCache.UpdateAuthor();
 
-                RefreshAll();
-            } catch(Exception ex) { ex.Log(); }
+                await RefreshAll();
+            } catch (Exception ex) { ex.Log(); }
         }
         #endregion steam cache
     }

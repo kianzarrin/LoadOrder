@@ -240,7 +240,7 @@ namespace LoadOrderTool.UI {
         }
 
         //write
-        protected override void OnCellValuePushed(DataGridViewCellValueEventArgs e) {
+        protected async override void OnCellValuePushed(DataGridViewCellValueEventArgs e) {
             base.OnCellValuePushed(e);
             if (AssetList == null) return;
             var assetInfo = AssetList.Filtered[e.RowIndex];
@@ -250,7 +250,7 @@ namespace LoadOrderTool.UI {
             } else {
                 Log.Error("unexpected column changed: " + Columns[e.ColumnIndex]?.Name);
             }
-            LoadOrderWindow.Instance.UpdateStatus();
+            await LoadOrderWindow.Instance.UpdateStatus();
         }
 
 
