@@ -83,7 +83,7 @@ namespace LoadOrderMod.Settings.Tabs {
         }
 
         static bool IsSteamPathValid(string path) {
-            return Path.GetFileNameWithoutExtension(path).ToLower() != "steam" && File.Exists(path);
+            return Path.GetFileNameWithoutExtension(path).ToLower() == "steam" && File.Exists(path);
         }
 
         static bool CheckSteamPath(string path) {

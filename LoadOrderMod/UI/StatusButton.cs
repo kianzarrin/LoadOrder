@@ -70,9 +70,11 @@ namespace LoadOrderMod.UI {
 
         protected override void OnClick(UIMouseEventParameter p) {
             p.Use();
-            if (UGCDetails.publishedFileId.AsUInt64 != 0 && UGCDetails.publishedFileId != PublishedFileId.invalid) {
-                CheckSubsUtil.Instance.Redownload(UGCDetails.publishedFileId);
-            }
+            try {
+                if (UGCDetails.publishedFileId.AsUInt64 != 0 && UGCDetails.publishedFileId != PublishedFileId.invalid) {
+                    CheckSubsUtil.Instance.Redownload(UGCDetails.publishedFileId);
+                }
+            } catch(Exception ex) { ex.Log(); }
 
             base.OnClick(p);
         }

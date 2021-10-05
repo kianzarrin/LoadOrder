@@ -233,7 +233,7 @@ namespace LoadOrderMod.Util {
                 yield return new WaitForSeconds(10);
 
                 try {
-                    var method = typeof(Workshop).GetMethod("TriggerWorkshopSubscriptionChanged", throwOnError: true);
+                    var method = typeof(PlatformService).GetMethod("TriggerWorkshopSubscriptionChanged", throwOnError: true);
                     method.Invoke(null, new object[] { id, false});
                     method.Invoke(null, new object[] { id, true });
                 } catch (Exception ex) { ex.Log(); }
