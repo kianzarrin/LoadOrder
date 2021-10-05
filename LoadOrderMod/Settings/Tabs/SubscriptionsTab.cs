@@ -1,20 +1,27 @@
 namespace LoadOrderMod.Settings.Tabs {
     extern alias Injections;
-    using ColossalFramework.PlatformServices;
     using ColossalFramework.UI;
     using KianCommons;
-    using LoadOrderShared;
-    using LoadOrderMod.Util;
-    using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
-    using KianCommons.UI;
-    using System.IO;
-    using UnityEngine;
     using LoadOrderMod.Settings;
-    using System.Diagnostics;
+    using LoadOrderMod.Util;
+    using LoadOrderShared;
     using System;
+    using System.IO;
+    using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
 
     static class SubscriptionsTab {
         static LoadOrderConfig Config => ConfigUtil.Config;
+        static UITextField tfSteamPath_;
+        public static string SteamExePath {
+            get {
+                string ret = tfSteamPath_.text;
+                if (IsSteamPathValid(ret))
+                    return ret;
+                else
+                    return null;
+            }
+        }
+
 
         public static void Make(ExtUITabstrip tabStrip) {
             UIHelper panelHelper = tabStrip.AddTabPage("Subscriptions");
@@ -47,7 +54,7 @@ namespace LoadOrderMod.Settings.Tabs {
             {
                 var g = panelHelper.AddGroup("Broken downloads") as UIHelper;
 
-                UITextField tfSteamPath = g.AddTextfield(
+                tfSteamPath_ = g.AddTextfield(
                     text: "Steam Path: ",
                     defaultContent: ConfigUtil.Config.SteamPath ?? "",
                     eventChangedCallback: _ => { },
@@ -57,15 +64,15 @@ namespace LoadOrderMod.Settings.Tabs {
                             ConfigUtil.SaveConfig();
                         }
                     }) as UITextField;
-                tfSteamPath.width = 650;
+                tfSteamPath_.width = 650;
                 g.AddButton("Redownload broken downloads [EXPERIMENTAL]", delegate () {
                     try {
-                        var path = tfSteamPath.text;
+                        var path = tfSteamPath_.text;
                         if (CheckSteamPath(path)) {
                             CheckSubsUtil.ReDownload(path);
                             Prompt.Warning("Exit", "Please exit to desktop, wait for steam download to finish, and then start Cities skylines again.");
                         }
-                    }catch(Exception ex) {
+                    } catch (Exception ex) {
                         ex.Log();
                     }
                 });

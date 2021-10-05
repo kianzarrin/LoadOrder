@@ -16,6 +16,8 @@ namespace LoadOrderMod.Util {
     using System.Collections.Generic;
     using KianCommons.Plugins;
     using System.Diagnostics;
+    using LoadOrderMod.Settings.Tabs;
+    using System.Reflection;
 
     public class CheckSubsUtil : MonoBehaviour {
         static GameObject go_;
@@ -130,7 +132,7 @@ namespace LoadOrderMod.Util {
             }
         }
 
-                public static Process Execute(string dir, string exeFile, string args) {
+        public static Process Execute(string dir, string exeFile, string args) {
             try {
                 ProcessStartInfo startInfo = new ProcessStartInfo {
                     WorkingDirectory = dir,
@@ -213,6 +215,30 @@ namespace LoadOrderMod.Util {
             }
 
             Log.DisplayMesage($"Deleted {n} unsubscribed items.");
+        }
+
+        public Coroutine Redownload(PublishedFileId id) => StartCoroutine(RedownloadCoroutine(id));
+        public IEnumerator RedownloadCoroutine(PublishedFileId id) {
+            Log.Called(id);
+            if (id != PublishedFileId.invalid) {
+                try {
+                    string path = SubscriptionsTab.SteamExePath;
+                    if (path.IsNullorEmpty()) {
+                        yield break;
+                    }
+
+                    ReDownload(new[] { id.AsUInt64 }, new FileInfo(path));
+                } catch (Exception ex) { ex.Log(); }
+
+                yield return new WaitForSeconds(10);
+
+                try {
+                    var method = typeof(Workshop).GetMethod("TriggerWorkshopSubscriptionChanged", throwOnError: true);
+                    method.Invoke(null, new object[] { id, false});
+                    method.Invoke(null, new object[] { id, true });
+                } catch (Exception ex) { ex.Log(); }
+                yield return 0;
+            }
         }
 
         public Coroutine Resubscribe(PublishedFileId id) => StartCoroutine(ResubscribeCoroutine(id));

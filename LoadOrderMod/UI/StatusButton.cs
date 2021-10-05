@@ -64,13 +64,14 @@ namespace LoadOrderMod.UI {
             isVisible = status != DownloadStatus.DownloadOK;
             disabledFgSprite = focusedFgSprite = normalFgSprite = hoveredFgSprite = pressedFgSprite = status.ToString();
             tooltip = result;
+            if (!Settings.Tabs.SubscriptionsTab.SteamExePath.IsNullorEmpty())
+                tooltip += "\nClick to redownload";
         }
 
         protected override void OnClick(UIMouseEventParameter p) {
             p.Use();
-            return;
             if (UGCDetails.publishedFileId.AsUInt64 != 0 && UGCDetails.publishedFileId != PublishedFileId.invalid) {
-                CheckSubsUtil.Instance.Resubscribe(UGCDetails.publishedFileId);
+                CheckSubsUtil.Instance.Redownload(UGCDetails.publishedFileId);
             }
 
             base.OnClick(p);
