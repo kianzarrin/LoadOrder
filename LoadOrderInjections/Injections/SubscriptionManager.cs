@@ -522,7 +522,7 @@ namespace LoadOrderInjections {
         public static IEnumerable<PublishedFileId> GetMissingItems() {
             foreach(var id in PlatformService.workshop.GetSubscribedItems()) {
                 var path = PlatformService.workshop.GetSubscribedItemPath(id);
-                if(!path.IsNullOrWhiteSpace() && !Directory.Exists(path))
+                if(!path.IsNullOrWhiteSpace() && !Directory.Exists(path) && !Directory.Exists(ToExcludedPath2(path)))
                     yield return id;
             }
         }
@@ -621,7 +621,6 @@ namespace LoadOrderInjections {
 
         //code copied from package entry
         public static DateTime GetLocalTimeUpdated(string modPath) {
-            Log.Called(modPath);
             DateTime dateTime = DateTime.MinValue;
             if(Directory.Exists(modPath)) {
                 foreach(string path in Directory.GetFiles(modPath, "*", searchOption: SearchOption.AllDirectories)) {

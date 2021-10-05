@@ -93,23 +93,30 @@ namespace LoadOrderMod.Util {
             Log.DisplayMesage($"Unsubscribing from {nUnsubbed} depricated items.");
         }
 
+        public static List<PublishedFileId> GetBrokenDownloads() {
+            List<PublishedFileId> ids = new List<PublishedFileId>();
+            foreach (var item in ContentManagerUtil.ModEntries) {
+                var det = item.workshopDetails;
+                var id = det.publishedFileId;
+                if (id == PublishedFileId.invalid || id.AsUInt64 == 0) continue;
+                if (id.AsUInt64 == PatchLoaderStatus.PatchLoaderWorkshopId ||
+                    id.AsUInt64 == LoadOrderUtil.WSId) continue; // cannot resub to patch loader or LOM.
+                var status = SteamUtilities.IsUGCUpToDate(det, out _);
+                if (status != DownloadStatus.DownloadOK) {
+                    Log.Debug($"redownloading {item.entryName} with status:{status}",false);
+                    ids.Add(id);
+                }
+            }
+            var missing = SteamUtilities.GetMissingItems().ToArray();
+            Log.Debug("missings items = " + missing.ToSTR(), false);
+            ids.AddRange(missing);
+            return ids;
+        }
 
         public static void ResubcribeExternally() {
             Log.Called();
             try {
-                List<PublishedFileId> ids = new List<PublishedFileId>();
-                foreach (var item in ContentManagerUtil.ModEntries) {
-                    var det = item.workshopDetails;
-                    var id = det.publishedFileId;
-                    if (id == PublishedFileId.invalid || id.AsUInt64 == 0) continue;
-                    if (id.AsUInt64 == PatchLoaderStatus.PatchLoaderWorkshopId ||
-                        id.AsUInt64 == LoadOrderUtil.WSId) continue; // cannot resub to patch loader or LOM.
-                    var status = SteamUtilities.IsUGCUpToDate(det, out _);
-                    if (status != DownloadStatus.DownloadOK) {
-                        ids.Add(id);
-                    }
-                }
-                ids.AddRange(SteamUtilities.GetMissingItems());
+                var ids = GetBrokenDownloads();
                 Injections.LoadOrderShared.UGCListTransfer.SendList(
                     ids.Select(id => id.AsUInt64),
                     ConfigUtil.LocalLoadOrderPath,
@@ -121,6 +128,55 @@ namespace LoadOrderMod.Util {
             } catch (Exception ex) {
                 ex.Log();
             }
+        }
+
+                public static Process Execute(string dir, string exeFile, string args) {
+            try {
+                ProcessStartInfo startInfo = new ProcessStartInfo {
+                    WorkingDirectory = dir,
+                    FileName = exeFile,
+                    Arguments = args,
+                    WindowStyle = ProcessWindowStyle.Normal,
+                    UseShellExecute = true,
+                    CreateNoWindow = false,
+                };
+                Log.Info($"Executing ...\n" +
+                    $"\tWorkingDirectory={dir}\n" +
+                    $"\tFileName={exeFile}\n" +
+                    $"\tArguments={args}");
+                Process process = new Process { StartInfo = startInfo };
+                process.Start();
+                process.OutputDataReceived += (_, e) => Log.Info(e.Data);
+                process.ErrorDataReceived += (_, e) => Log.Warning(e.Data);
+                process.Exited += (_, e) => Log.Info("process exited with code " + process.ExitCode);
+                return process;
+            } catch (Exception ex) {
+                Log.Exception(ex);
+                return null;
+            }
+        }
+
+        public static void ReDownload(string steamPath) {
+            try {
+                var ids = GetBrokenDownloads();
+                ReDownload(ids.Select(id => id.AsUInt64), new FileInfo(steamPath));
+            } catch (Exception ex) { ex.Log(); }
+        }
+
+        public static void ReDownload(IEnumerable<ulong> ids, FileInfo steam) {
+            Log.Called(ids, steam);
+            return;
+            Assertion.Assert(steam.Exists);
+            string steamDir = steam.DirectoryName;
+            string steamExe = steam.Name;
+            void ExecuteSteam(string args) => Execute(steamDir, steamExe, args).WaitForExit();
+            try {
+                Log.Called(ids);
+                ExecuteSteam("steam://open/console"); // so that user can see what is happening.
+                foreach (var id in ids)
+                    ExecuteSteam($"+workshop_download_item 255710 {id}");
+                ExecuteSteam("steam://open/downloads");
+            } catch (Exception ex) { ex.Log(); }
         }
 
         public Coroutine DeleteUnsubbed() => StartCoroutine(DeleteUnsubbedCoroutine());
