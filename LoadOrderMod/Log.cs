@@ -72,7 +72,7 @@ namespace KianCommons {
         /// TYPE inlinefunctionname(...) => expression.LogRet("messege");
         /// </summary>
         public static T LogRet<T>(this T a, string m) {
-            KianCommons.Log.Debug(m + " -> " + a);
+            KianCommons.Log.Debug(m + " -> " + a.ToSTR());
             return a;
         }
 

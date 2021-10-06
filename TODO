@@ -1,5 +1,8 @@
+- when I filter WS items in CS content manager, the broken download status button keeps appearing/disappearing as I type in the filter.
+
+------------------------------------------
 - IMT like supports tab (including log file option)
-- bug: if I build a new mod, and then press reload in tool, the enable is not always accurate.
+- bug[?]: if I build a new mod, and then press reload in tool, the enable is not always accurate.
 
 - property display
 - group items

@@ -76,17 +76,23 @@ namespace LoadOrderMod.UI {
                 ?? throw new Exception("failed to create panel");
         }
 
-        public static EntryStatusPanel GetStatusPanel(PackageEntry packageEntry)  =>
-            packageEntry?.GetComponentInChildren<EntryStatusPanel>();
+        public static EntryStatusPanel GetStatusPanel(PackageEntry packageEntry) {
+            var ret = packageEntry?.GetComponentInChildren<EntryStatusPanel>();
+            if (!ret || !ret.enabled) ret = null;
+            return ret;//.LogRet(CurrentMethod(1, packageEntry?.entryName));
+
+
+        }
         
 
         static EntryStatusPanel Create(PackageEntry packageEntry) {
+            Log.Called();
             Assertion.Assert(packageEntry, "packageEntry");
             var topPanel = packageEntry.GetComponent<UIPanel>();
             Assertion.Assert(topPanel, "topPanel");
             var ret = topPanel.AddUIComponent<EntryStatusPanel>();
             ret.StatusButton.UGCDetails = m_WorkshopDetails(packageEntry);
-            return ret;
+            return ret;//.LogRet(ThisMethod);
         }
 
         private static AccessTools.FieldRef<PackageEntry, UGCDetails> m_WorkshopDetails =

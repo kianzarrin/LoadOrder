@@ -60,7 +60,7 @@ namespace LoadOrderMod.UI {
         }
 
         public void SetStatus(DownloadStatus status, string result) {
-            LogCalled(status, result);
+            //LogCalled(status, result);
             isVisible = status != DownloadStatus.DownloadOK;
             disabledFgSprite = focusedFgSprite = normalFgSprite = hoveredFgSprite = pressedFgSprite = status.ToString();
             tooltip = result;
