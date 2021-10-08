@@ -66,10 +66,10 @@
     <None Remove="Resources\mono-debug._dll" />
     <None Remove="Resources\next-arrow.png" />
     <EmbeddedResource Include="Resources\arrow-left.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\arrow-right.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\mono-debug._dll" />
   </ItemGroup>
@@ -80,12 +80,6 @@
   
   <ItemGroup>
     <EmbeddedResource Include="Resources\LoadOrder.ico" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\next-arrow.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
   
   <ItemGroup>
