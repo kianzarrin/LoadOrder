@@ -55,6 +55,7 @@ namespace LoadOrderTool.Data {
                 DateUpdatedUTC = dto.UpdatedUTC;
                 SetAuthor(dto.AuthorID);
                 Status = ContentUtil.IsUGCUpToDate(dto, out DownloadFailureReason);
+                if (Path.Contains("2197863850")) Log.Debug($"[PP2] {Path} {Status} {DownloadFailureReason}");
             }
         }
 

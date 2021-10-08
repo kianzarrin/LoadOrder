@@ -290,8 +290,7 @@ namespace LoadOrderTool.UI {
                 } else if (columnIndex == CDescription.Index) {
                     ModList.SortItemsBy(item => item.DisplayText, sortAssending_);
                 } else if (columnIndex == CAuthor.Index) {
-                    // "[unknown" is sorted before "[unknown]". This puts empty before unknown author.
-                    ModList.SortItemsBy(item => item.Author ?? "[unknown", sortAssending_);
+                    ModList.SortItemsBy(item => item.Author, sortAssending_);
                 } else if (columnIndex == this.CDateUpdated.Index) {
                     ModList.SortItemsBy(item => item.DateUpdatedUTC, sortAssending_);
                 } else if (columnIndex == this.CDateDownloaded.Index) {

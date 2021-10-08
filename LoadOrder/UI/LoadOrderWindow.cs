@@ -787,10 +787,12 @@ namespace LoadOrderTool.UI {
             Assertion.NotNull(dtos);
             var wsItems = ManagerList.GetWSItems();
             foreach(var dto in dtos) {
-                var item = wsItems.FirstOrDefault(item => dto.PublishedFileID == item.PublishedFileId.AsUInt64);
-                if (item != null) {
-                    item.ItemCache.Read(dto);
-                    item.ResetCache();
+                var items = wsItems.Where(item => dto.PublishedFileID == item.PublishedFileId.AsUInt64);
+                if (items.Any()) {
+                    foreach(var item in items) {
+                        item.ItemCache.Read(dto);
+                        item.ResetCache();
+                    }
                 } else if (dto.Result == SteamUtil.EResult.k_EResultOK) {
                     var missing = ConfigWrapper.instance.SteamCache.MissingFile;
                     if (!missing.Contains(dto.PublishedFileID))

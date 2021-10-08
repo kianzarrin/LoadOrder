@@ -287,8 +287,7 @@ namespace LoadOrderTool.UI {
                 } else if (e.ColumnIndex == cName.Index) {
                     AssetList.SortItemsBy(item => item.DisplayText, sortAssending_);
                 } else if (e.ColumnIndex == cAuthor.Index) {
-                    // "[unknown" is sorted before "[unknown]". This puts empty before unknown author.
-                    AssetList.SortItemsBy(item => item.Author ?? "[unknown", sortAssending_);
+                    AssetList.SortItemsBy(item => item.Author, sortAssending_);
                 } else if (e.ColumnIndex == cDateUpdated.Index) {
                     AssetList.SortItemsBy(item => item.DateUpdatedUTC, sortAssending_);
                 } else if (e.ColumnIndex == cDateDownloaded.Index) {
