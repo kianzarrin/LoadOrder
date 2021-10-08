@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using LoadOrderTool.Data;
 using LoadOrderTool.UI;
+using LoadOrderTool.Util;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
@@ -683,25 +684,42 @@ namespace LoadOrderTool.UI {
                 LastProfileLabel.Text = $"Last profile was '{lastProfileName}'";
 
                 DLCNoticeLabel.Visible = TabContainer.SelectedTab == DLCTab;
-
-                {
-                    bool red =
-                        ConfigWrapper.instance.SteamCache.MissingFile.Any() ||
-                        ManagerList.GetWSItems().Any(item => item.ItemCache.Status > SteamCache.DownloadStatus.OK);
-                    bool yellow = ContentUtil.GetMissingDirItems().Any();
-
-                    DownloadWarningLabel.Visible = red || yellow;
-                    if (red) {
-                        DownloadWarningLabel.Text = "There are broken downloads!";
-                        DownloadWarningLabel.ForeColor = Color.Red;
-                    } else if (yellow) {
-                        DownloadWarningLabel.Text = "There maybe broken downloads!";
-                        DownloadWarningLabel.ForeColor = Color.Yellow;
-                    }
-                }
-
+                UpdateBrokenDownloadsStatus();
             } catch(Exception ex) { ex.Log(); }
         }
+
+        void UpdateBrokenDownloadsStatus() {
+            bool red = false, yellow = false;
+            string reason = "the following are missing:\n";
+
+            foreach (var item in ManagerList.GetBrokenDownloads()) {
+                red = true;
+                string type = item is PluginManager.PluginInfo ? "MOD" : "asset";
+                reason += $"{item.PublishedFileId} [{type}] {item.DisplayText} : partially downloaded\n";
+            }
+
+            foreach (var item in ConfigWrapper.instance.SteamCache.MissingFile) {
+                red = true;
+                reason += $"{item} : partially downloaded\n";
+            }
+
+            foreach (var item in ContentUtil.GetMissingDirItems()) {
+                yellow = true;
+                reason += $"{item} : not downloaded\n";
+            }
+
+            DownloadWarningLabel.Visible = red || yellow;
+            if (red) {
+                DownloadWarningLabel.Text = "There are broken downloads!";
+                DownloadWarningLabel.ForeColor = Color.Red;
+                DownloadWarningLabel.ToolTipText = reason;
+            } else if (yellow) {
+                DownloadWarningLabel.Text = "There maybe broken downloads!";
+                DownloadWarningLabel.ForeColor = Color.Orange;
+                DownloadWarningLabel.ToolTipText = reason;
+            }
+        }
+
 
         public void RefreshAll() {
             dataGridMods.RefreshModList();

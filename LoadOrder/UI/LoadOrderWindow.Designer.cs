@@ -494,6 +494,7 @@ namespace LoadOrderTool.UI
             this.statusStrip.TabIndex = 3;
             this.statusStrip.Text = "statusStrip1";
             this.statusStrip.Visible = true; //until i find some use for it.
+            this.statusStrip.ShowItemToolTips = true;
             DLCNoticeLabel = new ToolStripStatusLabel {
                 BorderSides = ToolStripStatusLabelBorderSides.Left,
                 BorderStyle = Border3DStyle.Etched,

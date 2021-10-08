@@ -79,7 +79,7 @@ namespace LoadOrderTool.Data {
         /// <summary>
         /// missing dll/crp
         /// </summary>
-        public List<ulong> MissingFile = new List<ulong>(32);
+        public List<ulong> MissingFile = new List<ulong>(32); // todo is it possible to store dto and serialize dto?
 
         private Hashtable<string, Mod> modTable_ = new Hashtable<string, Mod>(1000);
         private Hashtable<string, Asset> assetTable_ = new Hashtable<string, Asset>(10000);
