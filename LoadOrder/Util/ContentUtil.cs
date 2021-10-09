@@ -338,7 +338,7 @@ namespace LoadOrderTool.Util {
 
         public static ulong GetTotalSize(string path) {
             var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
-            return (ulong)files.Sum(_f => new FileInfo(_f).Length).LogRet($"GetTotalSize({path})->");
+            return (ulong)files.Sum(_f => new FileInfo(_f).Length);
         }
 
         static string STR(DateTime time) {
