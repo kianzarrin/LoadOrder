@@ -171,8 +171,12 @@ namespace LoadOrderMod.Util {
                 Assertion.Assert(steam.Exists);
                 string steamDir = steam.DirectoryName;
                 string steamExe = steam.Name;
-                void ExecuteSteam(string args) => Execute(steamDir, steamExe, args).WaitForExit();
+                void ExecuteSteam(string args) {
+                    Execute(steamDir, steamExe, args).WaitForExit();
+                    Thread.Sleep(10);
+                }
                 ExecuteSteam("steam://open/console"); // so that user can see what is happening.
+                Thread.Sleep(100); // wait until steam is ready.
                 foreach (var id in ids)
                     ExecuteSteam($"+workshop_download_item 255710 {id}");
                 ExecuteSteam("steam://open/downloads");
