@@ -295,7 +295,7 @@ namespace LoadOrderTool.UI {
             try {
                 var ids = ConfigWrapper.instance.SteamCache.Items
                     .Where(item=>item.Status.IsBroken())
-                    .Select(item => item.ID.AsUInt64)
+                    .Select(item => item.ID)
                     .Concat(ContentUtil.GetMissingDirItems()) // missing root dir
                     .Distinct()
                     .ToArray();

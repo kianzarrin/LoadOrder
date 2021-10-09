@@ -32,7 +32,11 @@ namespace LoadOrderTool.Data {
         }
 
         public class Item {
-            public PublishedFileId ID;
+            internal PublishedFileId PublishedFileId {
+                get => new PublishedFileId(ID);
+                set => ID = value.AsUInt64;
+            }
+            public ulong ID;
             public string Name;
             public string Description;
             public string Author;
@@ -97,14 +101,14 @@ namespace LoadOrderTool.Data {
         }
 
         private void BuildIndeces() {
-            itemTable_ = new Hashtable<PublishedFileId, Item>(Items.ToDictionary(item => item.ID));
+            itemTable_ = new Hashtable<PublishedFileId, Item>(Items.ToDictionary(item => item.PublishedFileId));
             peopleTable_ = new Hashtable<ulong, Persona>(People.ToDictionary(persona => persona.ID));
         }
 
         public Item GetItem(PublishedFileId id) => itemTable_[id];
         public Item GetOrCreateItem(PublishedFileId id) {
             Assertion.Assert(id.IsValid, $"{id}.IsValid");
-            return itemTable_[id] ??= new Item { ID = id };
+            return itemTable_[id] ??= new Item { PublishedFileId = id };
         }
 
         public Persona GetPersona(ulong ID) => peopleTable_[ID];

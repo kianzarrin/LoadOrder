@@ -694,7 +694,7 @@ namespace LoadOrderTool.UI {
             foreach (var item in ConfigWrapper.instance.SteamCache.Items.Where(item=>item.Status.IsBroken())) {
                 red = true;
                 string type = item.Tags != null && item.Tags.Contains("Mod") ? "MOD" : "asset";
-                reason += $"{item.ID} [{type}] {item.Name} : {item.Status}\n";
+                reason += $"{item.PublishedFileId} [{type}] {item.Name} : {item.Status}\n";
             }
 
             foreach (var item in ContentUtil.GetMissingDirItems()) {
