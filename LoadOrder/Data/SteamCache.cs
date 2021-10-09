@@ -7,6 +7,7 @@ namespace LoadOrderTool.Data {
     using System.Linq;
     using System.Collections.Generic;
     using LoadOrderTool.Util;
+    using CO.PlatformServices;
 
     public static class DownloadStatusExtension {
         public static bool IsBroken(this SteamCache.DownloadStatus status) {
@@ -31,7 +32,7 @@ namespace LoadOrderTool.Data {
         }
 
         public class Item {
-            public string Path; // included path
+            public PublishedFileId ID;
             public string Name;
             public string Description;
             public string Author;
@@ -39,6 +40,7 @@ namespace LoadOrderTool.Data {
             public DateTime DateUpdatedUTC;
             public DownloadStatus Status;
             public string DownloadFailureReason;
+                        public string[] Tags;
 
             public void SetAuthor(ulong authorID) {
                 AuthorID = authorID;
@@ -55,39 +57,17 @@ namespace LoadOrderTool.Data {
                 DateUpdatedUTC = dto.UpdatedUTC;
                 SetAuthor(dto.AuthorID);
                 Status = ContentUtil.IsUGCUpToDate(dto, out DownloadFailureReason);
-                if (Path.Contains("2197863850")) Log.Debug($"[PP2] {Path} {Status} {DownloadFailureReason}");
-            }
-        }
-
-        public class Mod : Item {
-            // public string AssemblyName;
-        }
-
-        public class Asset : Item {
-            public string[] Tags;
-
-            public override void Read(SteamUtil.PublishedFileDTO dto) {
-                base.Read(dto);
                 Tags = dto.Tags;
             }
         }
 
+
         // do not use! only for persistancy
-        public Mod[] Mods = new Mod[0];
-        public Asset[] Assets = new Asset[0];
+        public Item[] Items = new Item[0];
         public Persona[] People = new Persona[0];
 
-        /// <summary>
-        /// missing dll/crp
-        /// </summary>
-        public List<ulong> MissingFile = new List<ulong>(32); // todo is it possible to store dto and serialize dto?
-
-        private Hashtable<string, Mod> modTable_ = new Hashtable<string, Mod>(1000);
-        private Hashtable<string, Asset> assetTable_ = new Hashtable<string, Asset>(10000);
+        private Hashtable<PublishedFileId, Item> itemTable_ = new Hashtable<PublishedFileId, Item>(15000);
         private Hashtable<ulong, Persona> peopleTable_ = new Hashtable<ulong, Persona>(1000);
-        private System.Collections.Hashtable x = new System.Collections.Hashtable();
-
-
 
         const string FILE_NAME = "SteamCache.xml";
         static string DIR => DataLocation.LocalLOMData;
@@ -96,8 +76,7 @@ namespace LoadOrderTool.Data {
         internal void Serialize() {
             XmlSerializer ser = new XmlSerializer(typeof(SteamCache));
             using (FileStream fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write)) {
-                Mods = modTable_.Values.ToArray();
-                Assets = assetTable_.Values.ToArray();
+                Items = itemTable_.Values.ToArray();
                 People = peopleTable_.Values.ToArray();
 
                 ser.Serialize(fs, this);
@@ -118,27 +97,14 @@ namespace LoadOrderTool.Data {
         }
 
         private void BuildIndeces() {
-            modTable_ = new Hashtable<string, Mod>(Mods.ToDictionary(mod => mod.Path));
-            assetTable_ = new Hashtable<string, Asset>(Assets.ToDictionary(asset => asset.Path));
+            itemTable_ = new Hashtable<PublishedFileId, Item>(Items.ToDictionary(item => item.ID));
             peopleTable_ = new Hashtable<ulong, Persona>(People.ToDictionary(persona => persona.ID));
         }
 
-        public Mod GetMod(string includedPath) => modTable_[includedPath];
-        public Mod GetOrCreateMod(string includedPath) {
-            var ret = modTable_[includedPath];
-            if(ret == null){
-                ret = modTable_[includedPath] = new Mod { Path = includedPath };
-            }
-            return ret;
-        }
-
-        public Asset GetAsset(string includedPath) => assetTable_[includedPath];
-        public Asset GetOrCreateAsset(string includedPath) {
-            var ret = assetTable_[includedPath];
-            if (ret == null) {
-                ret = assetTable_[includedPath] = new Asset { Path = includedPath };
-            }
-            return ret;
+        public Item GetItem(PublishedFileId id) => itemTable_[id];
+        public Item GetOrCreateItem(PublishedFileId id) {
+            Assertion.Assert(id.IsValid, $"{id}.IsValid");
+            return itemTable_[id] ??= new Item { ID = id };
         }
 
         public Persona GetPersona(ulong ID) => peopleTable_[ID];
@@ -151,8 +117,5 @@ namespace LoadOrderTool.Data {
             }
             return p;
         }
-
-
-
     }
 }

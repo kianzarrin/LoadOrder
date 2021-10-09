@@ -24,7 +24,6 @@ namespace CO.Packaging {
     public class PackageManager : SingletonLite<PackageManager>, IDataManager {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
         static LoadOrderConfig Config => ConfigWrapper.Config;
-        static SteamCache Cache => ConfigWrapper.SteamCache;
 
         public bool IsLoading { get; private set; }
         public bool IsLoaded { get; private set; }
@@ -40,8 +39,8 @@ namespace CO.Packaging {
 
             //public bool isBuiltin => m_IsBuiltin;
 
-            public bool IsLocal => PublishedFileId == PublishedFileId.invalid;
-            public bool IsWorkshop => !IsLocal;
+            public bool IsLocal => !IsWorkshop;
+            public bool IsWorkshop => PublishedFileId.IsValid;
 
             public string AssetPath => m_Path;
 
@@ -54,7 +53,7 @@ namespace CO.Packaging {
             public string DisplayText {
                 get {
                     if (string.IsNullOrEmpty(displayText_)) {
-                        displayText_ = CSAssetCache?.Name ?? AssetCache.Name;
+                        displayText_ = CSAssetCache?.Name ?? SteamCache?.Name;
                         if (string.IsNullOrEmpty(displayText_))
                             displayText_ = AssetName;
                     }
@@ -68,7 +67,7 @@ namespace CO.Packaging {
             public string StrTags =>
                 strTags_ ??= string.Join(", ", GetTags());
 
-            public DateTime DateUpdatedUTC => AssetCache.DateUpdatedUTC;
+            public DateTime DateUpdatedUTC => SteamCache?.DateUpdatedUTC ?? default;
 
             string strDateUpdated_;
             public string StrDateUpdated {
@@ -108,11 +107,11 @@ namespace CO.Packaging {
                 }
             }
 
-            public string StrStatus => ItemCache.Status == default
+            public string StrStatus => (SteamCache == null || SteamCache.Status == default)
                 ? ""
-                : ItemCache.Status.ToString().SpaceCamelCase();
+                : SteamCache.Status.ToString().SpaceCamelCase();
 
-            public string Author => AssetCache.Author;
+            public string Author => SteamCache?.Author;
 
             string searchText_;
             public string SearchText => searchText_ ??=
@@ -142,7 +141,7 @@ namespace CO.Packaging {
             private PublishedFileId m_PublishedFileId = PublishedFileId.invalid;
 
             public IEnumerable<string> GetTags() =>
-                CSAssetCache?.Tags ?? AssetCache.Tags ?? Enumerable.Empty<string>();
+                CSAssetCache?.Tags ?? (SteamCache?.Tags) ?? Enumerable.Empty<string>();
 
             private AssetInfo() { }
 
@@ -155,14 +154,16 @@ namespace CO.Packaging {
                 this.ConfigAssetInfo =
                     Config.Assets.FirstOrDefault(item => item.Path == includedPath)
                     ?? new LoadOrderShared.AssetInfo { Path = includedPath };
-                this.AssetCache = Cache.GetOrCreateAsset(this.IncludedPath);
                 this.CSAssetCache = ConfigWrapper.CSCache?.GetItem(includedPath) as CSCache.Asset;
+                if (IsWorkshop)
+                    this.SteamCache = ConfigWrapper.SteamCache.GetOrCreateItem(PublishedFileId);
 
                 isIncludedPending_ = IsIncluded;
             }
 
             public void ResetCache() {
-                this.AssetCache = Cache.GetOrCreateAsset(this.IncludedPath);
+                if (IsWorkshop)
+                    this.SteamCache = ConfigWrapper.SteamCache.GetOrCreateItem(PublishedFileId);
                 this.CSAssetCache = ConfigWrapper.CSCache?.GetItem(this.IncludedPath) as CSCache.Asset;
                 this.strDateDownloaded_ = null;
                 this.dateDownloadedUTC_ = null;
@@ -176,12 +177,8 @@ namespace CO.Packaging {
             public LoadOrderShared.AssetInfo ConfigAssetInfo { get; private set; }
             public LoadOrderShared.ItemInfo ItemConfig => ConfigAssetInfo;
 
-            private SteamCache.Asset assetCache_;
-            public SteamCache.Asset AssetCache {
-                get => assetCache_ ?? throw new Exception("assetCache_ is null");
-                private set => assetCache_ = value ?? throw new ArgumentNullException();
-            }
-            public SteamCache.Item ItemCache => AssetCache;
+            public LoadOrderTool.Data.SteamCache.Item SteamCache { get; private set; }
+
             #endregion metadata
 
             public CSCache.Asset CSAssetCache { get; private set; }

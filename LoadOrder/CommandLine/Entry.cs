@@ -30,7 +30,7 @@ namespace LoadOrderTool.CommandLine {
                         throw new Exception("could not find " + path);
                     path = path2;
                 }
-                var Profile = LoadOrderProfile.Deserialize(path);
+                Profile = LoadOrderProfile.Deserialize(path);
             }
 
             ManagerList.instance.Load();

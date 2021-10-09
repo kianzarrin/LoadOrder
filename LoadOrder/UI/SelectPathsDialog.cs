@@ -12,8 +12,8 @@ namespace LoadOrderTool.UI {
             const string examplePath = @"C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Cities.exe";
             int w = TextRenderer.MeasureText(examplePath + "XXXXXX", textBoxCitiesPath.Font).Width;
             textBoxCitiesPath.Width = textBoxSteamPath.Width = w;
-            textBoxCitiesPath.TextChanged += TextChanged;
-            textBoxSteamPath.TextChanged += TextChanged;
+            textBoxCitiesPath.TextChanged += OnTextChanged;
+            textBoxSteamPath.TextChanged += OnTextChanged;
             buttonCitiesPath.Click += ButtonCitiesPath_Click;
             buttonSteamPath.Click += ButtonSteamPath_Click;
             OKButton.Click += OKButton_Click;
@@ -127,17 +127,17 @@ namespace LoadOrderTool.UI {
             Close();
         }
 
-        private void TextChanged(object sender, EventArgs e) {
-            Task.Run(() => TextChanged(sender));
+        private async void OnTextChanged(object sender, EventArgs e) {
+            await OnTextChanged(sender);
         }
 
-        async Task TextChanged(object sender) {
-            if (sender == textBoxCitiesPath && IsCitiesExePath(textBoxCitiesPath.Text)) {
-                GetSteamPath();
-            } else if (sender == textBoxSteamPath && IsSteamExePath(textBoxSteamPath.Text)) {
-                GetCitiesPath();
+        async Task OnTextChanged(object sender) {
+            if (sender == textBoxCitiesPath && await Task.Run(()=>IsCitiesExePath(textBoxCitiesPath.Text))) {
+                await Task.Run(GetSteamPath);
+            } else if (sender == textBoxSteamPath && await Task.Run(() => IsSteamExePath(textBoxSteamPath.Text))) {
+                await Task.Run(GetCitiesPath);
             }
-            OKButton.Enabled = IsCitiesExePath(textBoxCitiesPath.Text) && IsSteamExePath(textBoxSteamPath.Text);
+            OKButton.Enabled = await Task.Run(() => IsCitiesExePath(textBoxCitiesPath.Text) && IsSteamExePath(textBoxSteamPath.Text));
         }
 
     }

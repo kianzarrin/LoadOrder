@@ -23,7 +23,6 @@ namespace CO.Plugins {
     public class PluginManager : SingletonLite<PluginManager>, IDataManager {
         public static ConfigWrapper ConfigWrapper = ConfigWrapper.instance;
         static LoadOrderConfig Config => ConfigWrapper.Config;
-        static SteamCache Cache => ConfigWrapper.SteamCache;
 
         public bool IsLoading { get; private set; }
         public bool IsLoaded { get; private set; }
@@ -71,8 +70,8 @@ namespace CO.Plugins {
 
             public bool isBuiltin => m_IsBuiltin;
 
-            public bool IsLocal => PublishedFileId == PublishedFileId.invalid || PublishedFileId.AsUInt64 == 0;
-            public bool IsWorkshop => !IsLocal;
+            public bool IsLocal => !IsWorkshop;
+            public bool IsWorkshop => PublishedFileId.IsValid;
 
             public string ModPath => m_Path;
 
@@ -109,7 +108,7 @@ namespace CO.Plugins {
                     if (displayText_ == null) {
                         string modName = CSModCache?.Name;
                         if (modName.IsNullorEmpty())
-                            modName = ModCache.Name;
+                            modName = SteamCache?.Name;
 
                         if (modName.IsNullorEmpty()) {
                             displayText_ = DispalyPath;
@@ -123,7 +122,7 @@ namespace CO.Plugins {
 
             public string Description => CSItemCache?.Description;
 
-            public DateTime DateUpdatedUTC => ModCache.DateUpdatedUTC;
+            public DateTime DateUpdatedUTC => SteamCache?.DateUpdatedUTC ?? default;
 
             string strDateUpdated_;
             public string StrDateUpdate {
@@ -163,7 +162,7 @@ namespace CO.Plugins {
                 }
             }
 
-            public string Author => ModCache.Author;
+            public string Author => SteamCache?.Author;
 
             string searchText_;
             public string SearchText => searchText_ ??=
@@ -277,15 +276,17 @@ namespace CO.Plugins {
                 this.ModInfo =
                     Config.Mods.FirstOrDefault(item => item.Path == IncludedPath)
                     ?? new LoadOrderShared.ModInfo { Path = IncludedPath };
-                this.ModCache = Cache.GetOrCreateMod(IncludedPath);
                 this.CSModCache = ConfigWrapper.CSCache?.GetItem(IncludedPath) as CSCache.Mod;
+                if (IsWorkshop)
+                    this.SteamCache = ConfigWrapper.SteamCache.GetOrCreateItem(PublishedFileId);
 
                 isIncludedPending_ = IsIncluded;
                 isEnabledPending_ = isEnabled;
             }
 
             public void ResetCache() {
-                this.ModCache = Cache.GetOrCreateMod(IncludedPath);
+                if (IsWorkshop)
+                    this.SteamCache = ConfigWrapper.SteamCache.GetOrCreateItem(PublishedFileId);
                 this.CSModCache = ConfigWrapper.CSCache?.GetItem(IncludedPath) as CSCache.Mod;
                 this.strDateDownloaded_ = null;
                 this.dateDownloadedUTC_ = null;
@@ -361,8 +362,7 @@ namespace CO.Plugins {
             public LoadOrderShared.ModInfo ModInfo { get; private set; }
             public LoadOrderShared.ItemInfo ItemConfig => ModInfo;
 
-            public LoadOrderTool.Data.SteamCache.Mod ModCache { get; private set; }
-            public SteamCache.Item ItemCache => ModCache;
+            public LoadOrderTool.Data.SteamCache.Item SteamCache { get; private set; }
 
             public LoadOrderShared.CSCache.Mod CSModCache { get; private set; }
             public CSCache.Item CSItemCache => CSModCache;
@@ -387,9 +387,9 @@ namespace CO.Plugins {
                     $"cachedName={m_CachedName}"; /*assemblies={assembliesString}"*/
             }
 
-            public string StrStatus => ItemCache.Status == default
+            public string StrStatus => (SteamCache == null ||  SteamCache.Status == default)
                 ? ""
-                : ItemCache.Status.ToString().SpaceCamelCase();
+                : SteamCache.Status.ToString().SpaceCamelCase();
 
             //public string assembliesString {
             //    get {

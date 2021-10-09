@@ -163,7 +163,7 @@ namespace LoadOrderTool.UI {
                 } else if (e.ColumnIndex == cName.Index) {
                     e.Value = asset.DisplayText ?? "";
                 } else if (e.ColumnIndex == cAuthor.Index) {
-                    e.Value = asset.AssetCache.Author ?? "";
+                    e.Value = (asset.SteamCache?.Author) ?? "";
                 } else if (e.ColumnIndex == cDateUpdated.Index) {
                     e.Value = asset.StrDateUpdated;
                 } else if (e.ColumnIndex == cDateDownloaded.Index) {
@@ -184,7 +184,7 @@ namespace LoadOrderTool.UI {
                 if(e.RowIndex >= AssetList.Filtered.Count) return;
                 if(e.ColumnIndex == cStatus.Index) {
                     var asset = AssetList.Filtered[e.RowIndex];
-                    if(asset.AssetCache.Status > SteamCache.DownloadStatus.OK) {
+                    if(asset.SteamCache != null && asset.SteamCache.Status > SteamCache.DownloadStatus.OK) {
                         e.CellStyle = new DataGridViewCellStyle(e.CellStyle) {
                             ForeColor = Color.Red,
                             Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
@@ -210,7 +210,7 @@ namespace LoadOrderTool.UI {
                     string url = ContentUtil.GetItemURL(asset.PublishedFileId);
                     e.ToolTipText = url ?? asset.AssetPath;
                 } else if (e.ColumnIndex == cStatus.Index) {
-                    e.ToolTipText = asset.ItemCache.DownloadFailureReason;
+                    e.ToolTipText = asset.SteamCache?.DownloadFailureReason;
                 }
 
             } catch (Exception ex) {
@@ -295,7 +295,7 @@ namespace LoadOrderTool.UI {
                 } else if (e.ColumnIndex == cTags.Index) {
                     AssetList.SortItemsBy(item => item.StrTags, sortAssending_);
                 } else if (e.ColumnIndex == cStatus.Index) {
-                    AssetList.SortItemsBy(item => item.ItemCache.Status, sortAssending_);
+                    AssetList.SortItemsBy(item => item.SteamCache?.Status ?? default, sortAssending_);
                 }
 
                 Rows.Clear();

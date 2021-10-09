@@ -11,7 +11,6 @@ using System.Linq;
 using System.Windows.Forms;
 using LoadOrderTool.Data;
 using LoadOrderTool.UI;
-using LoadOrderTool.Util;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
@@ -120,9 +119,9 @@ namespace LoadOrderTool.UI {
             }
         }
 
-        protected override void OnLoad(EventArgs e) {
+        protected async override void OnLoad(EventArgs e) {
             base.OnLoad(e);
-            LoadAsync();
+            await LoadAsync();
         }
 
         protected override void OnResizeEnd(EventArgs e) {
@@ -551,7 +550,7 @@ namespace LoadOrderTool.UI {
                 FilterAssets();
                 dataGridAssets.SetRowCountFast(dataGridAssets.AssetList.Filtered.Count);
                 dataGridAssets.Refresh();
-            } catch(OperationCanceledException oce) {
+            } catch(OperationCanceledException) {
                 // return silently
             } catch( Exception ex) {
                 ex.Log();
@@ -689,31 +688,26 @@ namespace LoadOrderTool.UI {
         }
 
         void UpdateBrokenDownloadsStatus() {
-            bool red = false, yellow = false;
+            bool red = false, orange = false;
             string reason = "the following are missing:\n";
 
-            foreach (var item in ManagerList.GetBrokenDownloads()) {
+            foreach (var item in ConfigWrapper.instance.SteamCache.Items.Where(item=>item.Status.IsBroken())) {
                 red = true;
-                string type = item is PluginManager.PluginInfo ? "MOD" : "asset";
-                reason += $"{item.PublishedFileId} [{type}] {item.DisplayText} : partially downloaded\n";
-            }
-
-            foreach (var item in ConfigWrapper.instance.SteamCache.MissingFile) {
-                red = true;
-                reason += $"{item} : partially downloaded\n";
+                string type = item.Tags != null && item.Tags.Contains("Mod") ? "MOD" : "asset";
+                reason += $"{item.ID} [{type}] {item.Name} : {item.Status}\n";
             }
 
             foreach (var item in ContentUtil.GetMissingDirItems()) {
-                yellow = true;
+                orange = true;
                 reason += $"{item} : not downloaded\n";
             }
 
-            DownloadWarningLabel.Visible = red || yellow;
+            DownloadWarningLabel.Visible = red || orange;
             if (red) {
                 DownloadWarningLabel.Text = "There are broken downloads!";
                 DownloadWarningLabel.ForeColor = Color.Red;
                 DownloadWarningLabel.ToolTipText = reason;
-            } else if (yellow) {
+            } else if (orange) {
                 DownloadWarningLabel.Text = "There maybe broken downloads!";
                 DownloadWarningLabel.ForeColor = Color.Orange;
                 DownloadWarningLabel.ToolTipText = reason;
@@ -751,7 +745,6 @@ namespace LoadOrderTool.UI {
             try {
                 SetCacheProgress(5);
                 var ids = (await Task.Run(ContentUtil.GetSubscribedItems)).ToArray();
-                ConfigWrapper.SteamCache.MissingFile.Clear();
                 SetCacheProgress(10);
 
                 try {
@@ -787,17 +780,13 @@ namespace LoadOrderTool.UI {
             Assertion.NotNull(dtos);
             var wsItems = ManagerList.GetWSItems();
             foreach(var dto in dtos) {
-                var items = wsItems.Where(item => dto.PublishedFileID == item.PublishedFileId.AsUInt64);
-                if (items.Any()) {
-                    foreach(var item in items) {
-                        item.ItemCache.Read(dto);
-                        item.ResetCache();
-                    }
-                } else if (dto.Result == SteamUtil.EResult.k_EResultOK) {
-                    var missing = ConfigWrapper.instance.SteamCache.MissingFile;
-                    if (!missing.Contains(dto.PublishedFileID))
-                        missing.Add(dto.PublishedFileID);
-                }
+                var cacheItem = ConfigWrapper.SteamCache.GetOrCreateItem(new PublishedFileId(dto.PublishedFileID));
+                cacheItem.Read(dto);
+
+                var wsitems = wsItems.Where(item => dto.PublishedFileID == item.PublishedFileId.AsUInt64);
+                foreach(var item in wsitems)
+                    item.ResetCache();
+                
             }
         }
 
@@ -806,35 +795,40 @@ namespace LoadOrderTool.UI {
         DateTime lastRefreshUpdate;
 
         public bool CacheAuthors() {
-            Log.Called();
-            static bool predicate(IWSItem item) {
-                Assertion.NotNull(item, "item");
-                Assertion.NotNull(item.ItemCache, $"item: {item.GetType().Name} {item.IncludedPath} {item.PublishedFileId}");
-                return item.ItemCache.Author.IsNullorEmpty() && item.ItemCache.AuthorID != 0;
-            }
-            var missingAuthors = ManagerList.GetWSItems()
-                .Where(predicate)
-                .Select(item => item.ItemCache.AuthorID)
-                .Distinct()
-                .ToArray();
-            Log.Info("Geting author names : " + missingAuthors.ToSTR());
-            if(!missingAuthors.Any())
-                return false;
-
-            iAuthor_ = 0;
-            nAuthors_ = missingAuthors.Length;
-            using(var httpWrapper = new SteamUtil.HttpWrapper()) {
-                Task proc(ulong _authorId) {
-                    return Task.Factory.StartNew(
-                        () => GetAndApplyPersonaName(httpWrapper, _authorId));
+            try {
+                Log.Called();
+                static bool predicate(IWSItem item) {
+                    Assertion.NotNull(item, "item");
+                    Assertion.NotNull(item.SteamCache, $"item: {item.GetType().Name} {item.IncludedPath} {item.PublishedFileId}"); // ws items must have steam cache.
+                    return item.SteamCache.Author.IsNullorEmpty() && item.SteamCache.AuthorID != 0;
                 }
-                var tasks = missingAuthors.Select(proc);
+                var missingAuthors = ManagerList.GetWSItems()
+                    .Where(predicate)
+                    .Select(item => item.SteamCache.AuthorID)
+                    .Distinct()
+                    .ToArray();
+                Log.Info("Geting author names : " + missingAuthors.ToSTR());
+                if (!missingAuthors.Any())
+                    return false;
 
-                SetCacheProgress(55);
-                Task.WaitAll(tasks.ToArray());
+                iAuthor_ = 0;
+                nAuthors_ = missingAuthors.Length;
+                using (var httpWrapper = new SteamUtil.HttpWrapper()) {
+                    Task proc(ulong _authorId) {
+                        return Task.Factory.StartNew(
+                            () => GetAndApplyPersonaName(httpWrapper, _authorId));
+                    }
+                    var tasks = missingAuthors.Select(proc);
+
+                    SetCacheProgress(55);
+                    Task.WaitAll(tasks.ToArray());
+                }
+                Log.Succeeded();
+                return true;
+            }catch (Exception ex) {
+                ex.Log();
+                return true;
             }
-            Log.Succeeded();
-            return true;
         }
 
         public async Task GetAndApplyPersonaNameAsync(SteamUtil.HttpWrapper httpWrapper, ulong authorId) {
@@ -893,7 +887,7 @@ namespace LoadOrderTool.UI {
                 lastRefreshUpdate = DateTime.Now;
 
                 foreach(var item in ManagerList.GetItems())
-                    item.ItemCache.UpdateAuthor();
+                    item.SteamCache?.UpdateAuthor();
 
                 RefreshAll();
             } catch(Exception ex) { ex.Log(); }

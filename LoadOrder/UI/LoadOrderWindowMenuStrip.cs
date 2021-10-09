@@ -26,7 +26,6 @@ namespace LoadOrderTool.UI {
         public ToolStripMenuItem tsmiDiscordSupport;
         public ToolStripMenuItem tsmiTools;
         public ToolStripMenuItem tsmiMassSubscribe;
-        public ToolStripMenuItem tsmiReSubscribe;
         public ToolStripMenuItem tsmiReDownload;
 
         public ToolStripMenuItem tsmiSync;
@@ -57,7 +56,6 @@ namespace LoadOrderTool.UI {
             tsmiAbout = new ToolStripMenuItem();
             tsmiTools = new ToolStripMenuItem();
             tsmiMassSubscribe = new ToolStripMenuItem();
-            tsmiReSubscribe = new ToolStripMenuItem();
             tsmiReDownload = new ToolStripMenuItem();
 
             tsmiSync = new ToolStripMenuItem();
@@ -208,7 +206,6 @@ namespace LoadOrderTool.UI {
             // 
             tsmiTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 tsmiMassSubscribe,
-                tsmiReSubscribe,
                 tsmiReDownload,
             });
             tsmiTools.Name = "tsmiTools";
@@ -220,12 +217,6 @@ namespace LoadOrderTool.UI {
             tsmiMassSubscribe.Name = "tsmiMassSubscribe";
             tsmiMassSubscribe.Size = new Size(180, 22);
             tsmiMassSubscribe.Text = "Mass &Subscribe";
-            // 
-            // tsmiReSubscribe
-            // 
-            tsmiReSubscribe.Name = "tsmiReSubscribe";
-            tsmiReSubscribe.Text = "&Resubscribe broken downloads";
-            tsmiReSubscribe.Visible = false; // replaced with redownload
             // 
             // tsmiReDownload
             // 
@@ -282,7 +273,6 @@ namespace LoadOrderTool.UI {
             tsmiOpenLogLocation.Click += TsmiOpenLogLocation_Click;
             tsmiAbout.Click += TsmiAbout_Click;
             tsmiMassSubscribe.Click += TsmiMassSubscribe_Click;
-            tsmiReSubscribe.Click += TsmiReSubscribe_Click;
             tsmiReDownload.Click += TsmiReDownload_Click;
         }
 
@@ -301,15 +291,11 @@ namespace LoadOrderTool.UI {
         private void TsmiMassSubscribe_Click(object sender, EventArgs e) =>
             new SubscribeDialog().Show();
 
-        private void TsmiReSubscribe_Click(object sender, EventArgs e) {
-            new ResubscribeDialog().Show();
-        }
-
         private async void TsmiReDownload_Click(object sender, EventArgs e) {
             try {
-                var ids = ManagerList.GetBrokenDownloads()
-                    .Select(item => item.PublishedFileId.AsUInt64)
-                    .Concat(ConfigWrapper.instance.SteamCache.MissingFile) // missing dll/crp
+                var ids = ConfigWrapper.instance.SteamCache.Items
+                    .Where(item=>item.Status.IsBroken())
+                    .Select(item => item.ID.AsUInt64)
                     .Concat(ContentUtil.GetMissingDirItems()) // missing root dir
                     .Distinct()
                     .ToArray();

@@ -60,8 +60,8 @@ namespace LoadOrderTool.UI {
             cbItemType.AutoSize();
         }
 
-        private void BtnReload_Click(object sender, EventArgs e) {
-            LoadOrderWindow.Instance.ReloadAll();
+        private async void BtnReload_Click(object sender, EventArgs e) {
+            await LoadOrderWindow.Instance.ReloadAll();
             Populate();
         }
 

@@ -48,7 +48,7 @@ namespace LoadOrderTool.Data {
 
         public string Author { get; }
 
-        public SteamCache.Item ItemCache { get; }
+        public SteamCache.Item SteamCache { get; }
         public CSCache.Item CSItemCache { get; }
         public LoadOrderShared.ItemInfo ItemConfig { get; }
     }

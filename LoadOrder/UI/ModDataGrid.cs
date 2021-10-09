@@ -219,7 +219,7 @@ namespace LoadOrderTool.UI {
                     cell.ToolTipText = ModList.Filtered[e.RowIndex].Description;
                 } else if (e.ColumnIndex == CStatus.Index && e.Value != null) {
                     var mod = ModList.Filtered[e.RowIndex];
-                    cell.ToolTipText = mod.ItemCache.DownloadFailureReason;
+                    cell.ToolTipText = mod.SteamCache?.DownloadFailureReason;
                 } else if (e.ColumnIndex == CModID.Index) {
                     var mod = ModList.Filtered[e.RowIndex];
                     if (mod.IsWorkshop) {
@@ -296,7 +296,7 @@ namespace LoadOrderTool.UI {
                 } else if (columnIndex == this.CDateDownloaded.Index) {
                     ModList.SortItemsBy(item => item.DateDownloadedUTC, sortAssending_);
                 }else if (columnIndex == CStatus.Index) {
-                    ModList.SortItemsBy(item => item.ItemCache.Status, sortAssending_);
+                    ModList.SortItemsBy(item => item.SteamCache?.Status ?? default, sortAssending_);
                 }
 
                 RefreshModList(sort: false);
@@ -374,7 +374,7 @@ namespace LoadOrderTool.UI {
                         updated: mod.StrDateUpdate ?? "",
                         downloaded: mod.StrDateDownloaded ?? "",
                         description: mod.DisplayText ?? "");
-                    if(mod.ItemCache.Status > SteamCache.DownloadStatus.OK) {
+                    if(mod.SteamCache!= null && mod.SteamCache.Status > SteamCache.DownloadStatus.OK) {
                         var c = this[columnIndex: CStatus.Index, rowIndex: row];
                         c.Style = new DataGridViewCellStyle(c.Style) {
                             ForeColor = Color.Red,

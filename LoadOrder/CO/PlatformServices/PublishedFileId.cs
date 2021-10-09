@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 
 namespace CO.PlatformServices
 {
 	public struct PublishedFileId : IEquatable<PublishedFileId>
 	{
-		public static readonly PublishedFileId invalid = new PublishedFileId(ulong.MaxValue);
+                public bool IsValid => this != invalid && AsUInt64 != 0;
+
+                public static readonly PublishedFileId invalid = new PublishedFileId(ulong.MaxValue);
 
 		private ulong m_Handle;
 
