@@ -61,7 +61,11 @@ namespace LoadOrderTool.Data {
                 DateUpdatedUTC = dto.UpdatedUTC;
                 SetAuthor(dto.AuthorID);
                 Status = ContentUtil.IsUGCUpToDate(dto, out DownloadFailureReason);
-                Tags = dto.Tags;
+                Tags = dto.Tags.Select(tag => tag switch {
+                        "Road" => "Network",
+                        _ => tag,
+                    })
+                    .ToArray();
             }
         }
 
