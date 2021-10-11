@@ -211,6 +211,7 @@ namespace CO.Plugins {
                         ? dirName.Substring(1)  // drop _ prefix
                         : "_" + dirName; // add _ prefix
                     string targetPath = Path.Combine(parentPath, targetDirname);
+                    ContentUtil.EnsureModAt(m_Path);
                     bool success = MoveToPath(targetPath);
                     if (!success) {
                         // move failed. reverse value: 
@@ -225,19 +226,19 @@ namespace CO.Plugins {
             /// <returns>true on success</returns>
             public bool MoveToPath(string targetPath) {
                 try {
-                    Log.Debug($"moving mod from {m_Path} to {targetPath}");
-                    if (Directory.Exists(targetPath))
-                        throw new Exception($"cannot move because targetPath alreadty exists ({targetPath})");
-                    if (!Directory.Exists(m_Path))
-                        throw new Exception($"cannot move because source path does not exists ({m_Path})");
-
                     string newPath = ContentUtil.EnsureModAt(m_Path);
-                    if(newPath == null)
+                    if (newPath == null)
                         throw new Exception($"cannot move because could not ensure item.");
+                    Log.Debug($"moving mod from {newPath} to {targetPath}");
 
-                    // no need to move if ensuring move the directory for us.
-                    if(newPath != targetPath) 
-                        Directory.Move(m_Path, targetPath);
+                    if (newPath == targetPath)
+                        return true; // no need to move if ensuring moved the directory for us.
+                    if (Directory.Exists(targetPath))
+                        throw new Exception($"cannot move because targetPath alreadty exists ({targetPath})"); // unreachable code.
+                    if (!Directory.Exists(newPath))
+                        throw new Exception($"cannot move because source path does not exists ({newPath})"); // unreachable code.
+
+                    Directory.Move(newPath, targetPath);
                     
                     if(Directory.Exists(targetPath)) {
                         Log.Debug($"move successful!");
