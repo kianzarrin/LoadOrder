@@ -17,6 +17,7 @@ namespace LoadOrderMod.Data {
     using System.Linq;
     using static ColossalFramework.Plugins.PluginManager;
     using static KianCommons.ReflectionHelpers;
+    using System.Threading;
 
     public class CacheUtil {
         public CSCache Cache;
@@ -136,13 +137,25 @@ namespace LoadOrderMod.Data {
         }
 
         public static void CacheData() {
-            new CacheUtil().CacheAll();
+            try {
+                if (!ConfigUtil.Config.UGCCache) {
+                    Log.Info("Skipping UGCCache ...");
+                    return;
+                }
+                new Thread(CacheDataImpl).Start();
+            } catch (Exception ex) { ex.Log(); }
+        }
+
+        static void CacheDataImpl() {
+            try {
+                new CacheUtil().CacheAll();
+            } catch(Exception ex) { ex.Log(); }
         }
 
         public void CacheAll() {
             LogCalled();
             if (!ConfigUtil.Config.UGCCache) {
-                Log.Info("Skipping CacheAll ...");
+                Log.Info("Skipping UGCCache ...");
                 return;
             }
 
