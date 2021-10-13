@@ -408,7 +408,6 @@ namespace LoadOrderInjections {
         /// <returns>true, to avoid loading intro</returns>
         public static bool PostBootAction() {
             Log.Called();
-            SteamUtilities.CacheWSFiles();
             if (SteamUtilities.sman) {
                 new GameObject().AddComponent<Camera>();
                 //new GameObject("base").AddComponent<Example>();
@@ -865,37 +864,6 @@ namespace LoadOrderInjections {
                 Log.Exception(ex, $"EnsureIncludedOrExcluded({RootDir})", showInPanel: false);
             }
             Log.Succeeded();
-        }
-
-        static void CacheWSFilesImpl() {
-            Log.Called();
-            var timer = Stopwatch.StartNew();
-            var wsPath = GetWSPath().FullName;
-            var res1 = Directory.GetFiles(wsPath, "*.dll", searchOption: SearchOption.AllDirectories)
-                .AsParallel()
-                .Select(path => {
-                    if (File.Exists(path)) {
-                        using (var fs = File.OpenRead(path)) { }
-                    }
-                    return path;
-                });
-            var res2 = Directory.GetFiles(wsPath, "*.crp", searchOption: SearchOption.AllDirectories)
-                .AsParallel()
-                .Select(path => {
-                    if (File.Exists(path) && !Injections.Packages.IsPathExcluded(path)) {
-                        using (var fs = File.OpenRead(path)) { }
-                    }
-                    return path;
-                })
-                .ToList();
-            var res = res1.Concat(res2).ToList();
-            Log.Debug($"caching access to {res.Count} files took {timer.ElapsedMilliseconds}ms");
-        }
-
-        /// <summary>open and close files to cache improve the speed of first time load.</summary>
-        public static void CacheWSFiles() {
-            Log.Called();
-            new Thread(CacheWSFilesImpl).Start();
         }
     }
 }

@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="../Version.props"/>
+  <Import Project="../Version.props" />
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
     <Deterministic>false</Deterministic>
@@ -33,6 +33,9 @@
     </PackageReference>
     <PackageReference Include="Mono.Cecil" Version="0.10.3" />
     <PackageReference Include="Mono.Unofficial.pdb2mdb" Version="4.2.3.4" />
+    <PackageReference Include="TaskParallelLibrary" Version="1.0.2856">
+      <PrivateAssets>System.Threading.dll</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LoadOrderInjections\LoadOrderInjections.csproj">
@@ -61,7 +64,7 @@
       <Output TaskParameter="Assemblies" ItemName="Targets" />
     </GetAssemblyIdentity>
     <ItemGroup>
-      <AuxiliaryFiles Include="$(TargetDir)Mono.Cecil.dll;" />
+      <AuxiliaryFiles Include="$(TargetDir)Mono.Cecil.dll;$(TargetDir)System.Threading.dll" />
       <VersionNumber Include="@(Targets->'%(Version)')" />
     </ItemGroup>
     <PropertyGroup>
