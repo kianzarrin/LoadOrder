@@ -13,6 +13,7 @@ using LoadOrderShared;
 using ColossalFramework.Threading;
 using System.Threading;
 using ColossalFramework.IO;
+using System.Diagnostics;
 
 namespace LoadOrderInjections {
     public enum DownloadStatus {
@@ -407,6 +408,7 @@ namespace LoadOrderInjections {
         /// <returns>true, to avoid loading intro</returns>
         public static bool PostBootAction() {
             Log.Called();
+            SteamUtilities.CacheWSFiles();
             if (SteamUtilities.sman) {
                 new GameObject().AddComponent<Camera>();
                 //new GameObject("base").AddComponent<Example>();
@@ -863,6 +865,39 @@ namespace LoadOrderInjections {
                 Log.Exception(ex, $"EnsureIncludedOrExcluded({RootDir})", showInPanel: false);
             }
             Log.Succeeded();
+        }
+
+        public static void CacheWSFiles() {
+            // open and close files to cache improve the speed of first time load.
+            ThreadPool.QueueUserWorkItem((_) => {
+                var timer = Stopwatch.StartNew();
+                var wsPath = GetWSPath().FullName;
+                var res = Directory.GetFiles(wsPath, "*.dll", searchOption: SearchOption.AllDirectories)
+                    .AsParallel()
+                    .Select(path => {
+                        if (File.Exists(path)) {
+                            using (var fs = File.OpenRead(path)) { }
+                        }
+                        return path;
+                    })
+                    .ToList();
+                string m = $"caching access to {res.Count} dlls took {timer.ElapsedMilliseconds}ms";
+            });
+            ThreadPool.QueueUserWorkItem((_) => {
+                var timer = Stopwatch.StartNew();
+                var wsPath = GetWSPath().FullName;
+                var res = Directory.GetFiles(wsPath, "*.crp", searchOption: SearchOption.AllDirectories)
+                    .AsParallel()
+                    .Select(path => {
+                        if (File.Exists(path) && !Injections.Packages.IsPathExcluded(path)) {
+                            using (var fs = File.OpenRead(path)) { }
+                        }
+                        return path;
+                    })
+                    .ToList();
+                string m = $"caching access to {res.Count} crps took {timer.ElapsedMilliseconds}ms";
+            });
+
         }
     }
 }
