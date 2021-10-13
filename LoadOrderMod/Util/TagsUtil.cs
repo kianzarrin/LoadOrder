@@ -60,7 +60,7 @@ namespace LoadOrderMod.Util {
             } else {
                 return false;
                 // local mod assets are not loaded
-                return plugins.Any(item => item.name == package.packageName);
+                // return plugins.Any(item => item.name == package.packageName);
             }
         }
     }
