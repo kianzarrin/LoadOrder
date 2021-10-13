@@ -1,7 +1,5 @@
 namespace LoadOrderIPatch.Patches {
-    extern alias Injections;
-    using Inject = Injections.LoadOrderInjections.Injections;
-    using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
+
 
     using System;
     using Mono.Cecil;
@@ -11,10 +9,12 @@ namespace LoadOrderIPatch.Patches {
     using System.Threading;
     using System.IO;
     using System.Linq;
-
+    using static Commons;
     public class Entry : IPatch {
         public static ILogger Logger { get; private set; }
         public static IPaths GamePaths { get; private set; }
+        public static string PatcherWorkingPath { get; private set; }
+        public static string LocalLOMData => Path.Combine(GamePaths.AppDataPath, "LoadOrder");
 
         public int PatchOrderAsc => 0;
         public AssemblyToPatch PatchTarget => null;
@@ -24,17 +24,25 @@ namespace LoadOrderIPatch.Patches {
             ILogger logger,
             string patcherWorkingPath,
             IPaths gamePaths) {
-            Logger = logger;
-            GamePaths = gamePaths;
-            Log.Init();
+            try {
+                Logger = logger;
+                GamePaths = gamePaths;
+                PatcherWorkingPath = patcherWorkingPath;
+                Log.Init();
 
-            var args = Environment.GetCommandLineArgs();
-            Log.Info("comamnd line args are: " + string.Join(" ", args));
-            
-            if (IsDebugMono())
-                Log.Warning("Debug mono is slow! use Load order tool to change it.");
+                var args = Environment.GetCommandLineArgs();
+                Log.Info("comamnd line args are: " + string.Join(" ", args));
 
+                if (IsDebugMono())
+                    Log.Warning("Debug mono is slow! use Load order tool to change it.");
 
+                LoadDLL(Path.Combine(patcherWorkingPath, InjectionsDLL));
+                LoadDLL(Path.Combine(patcherWorkingPath, "System.Threading.dll"));
+
+                CacheWSFiles();
+            } catch(Exception ex) {
+                Log.Exception(ex);
+            }
             return assemblyDefinition;
         }
 
@@ -49,39 +57,7 @@ namespace LoadOrderIPatch.Patches {
             }
         }
 
-        static void CacheWSFilesImpl() {
-            try {
-                Log.Called();
-                var timer = Stopwatch.StartNew();
-                var wsPath = GamePaths.WorkshopModsPath;
-                var res1 = Directory.GetFiles(wsPath, "*.dll", searchOption: SearchOption.AllDirectories)
-                    .AsParallel()
-                    .Select(path => {
-                        if (File.Exists(path)) {
-                            using (var fs = File.OpenRead(path)) { }
-                        }
-                        return path;
-                    });
-                var res2 = Directory.GetFiles(wsPath, "*.crp", searchOption: SearchOption.AllDirectories)
-                    .AsParallel()
-                    .Select(path => {
-                        if (File.Exists(path) && !Inject.Packages.IsPathExcluded(path)) {
-                            using (var fs = File.OpenRead(path)) { }
-                        }
-                        return path;
-                    });
-                var res = res1.Concat(res2).ToList();
-                Log.Info($"caching access to {res.Count} files took {timer.ElapsedMilliseconds}ms");
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
 
-        /// <summary>open and close files to cache improve the speed of first time load.</summary>
-        public static void CacheWSFiles() {
-            Log.Called();
-            new Thread(CacheWSFilesImpl).Start();
-        }
 
     }
 }

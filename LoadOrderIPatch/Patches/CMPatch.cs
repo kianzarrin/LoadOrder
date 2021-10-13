@@ -13,7 +13,6 @@ using ILogger = Patch.API.ILogger;
 
 namespace LoadOrderIPatch.Patches {
     extern alias Injections;
-    using Inject = Injections.LoadOrderInjections.Injections;
     using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
 
     public class CMPatch : IPatch {
@@ -328,19 +327,13 @@ namespace LoadOrderIPatch.Patches {
 
                 // skip method only if path is asset path
                 var LdArgPath = mTarget.GetLDArg("path");
-                var mIsExcluded = GetType().GetMethod(nameof(IsFileExcluded));
+                var mIsExcluded = GetType().GetMethod(nameof(Packages.IsFileExcluded));
                 var callIsExcluded = Instruction.Create(OpCodes.Call, module.ImportReference(mIsExcluded));
                 var skipIfExcluded = Instruction.Create(OpCodes.Brtrue, last); // goto to return.
                 ilProcessor.Prefix(new[] { LdArgPath, callIsExcluded, skipIfExcluded });
             }
 
             Log.Successful();
-        }
-
-        public static bool IsFileExcluded(string path) {
-            if (string.IsNullOrEmpty(path) || path[0] == '_')
-                return true;
-            return Inject.Packages.IsPathExcluded(path);
         }
 
         public void ExcludeAssetDirPatch(AssemblyDefinition CM) {

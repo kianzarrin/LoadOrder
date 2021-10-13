@@ -37,7 +37,6 @@ namespace LoadOrderIPatch.Patches {
                 assemblyDefinition = ImproveLoggingPatch(assemblyDefinition);
                 assemblyDefinition = BindEnableDisableAllPatch(assemblyDefinition);
                 //assemblyDefinition = NewsFeedPanelPatch(assemblyDefinition); // handled by harmony patch
-                LoadDLL(Path.Combine(workingPath_, InjectionsDLL));
                 InstallResolverLog();
                 if (ConfigUtil.Config.AddHarmonyResolver)
                     InstallHarmonyResolver();
@@ -48,30 +47,6 @@ namespace LoadOrderIPatch.Patches {
                     NoQueryPatch(assemblyDefinition); // handled by harmony patch
             } catch (Exception ex) { logger.Error(ex.ToString());  }
             return assemblyDefinition;
-        }
-
-        public Assembly LoadDLL(string dllPath)
-        {
-            try {
-                Assembly assembly;
-                string symPath = dllPath + ".mdb";
-                if(File.Exists(symPath)) {
-                    Log.Info("\nLoading " + dllPath + "\nSymbols " + symPath);
-                    assembly = Assembly.Load(File.ReadAllBytes(dllPath), File.ReadAllBytes(symPath));
-                } else {
-                    Log.Info("Loading " + dllPath);
-                    assembly = Assembly.Load(File.ReadAllBytes(dllPath));
-                }
-                if(assembly != null) {
-                    Log.Info("Assembly " + assembly.FullName + " loaded.\n");
-                } else {
-                    Log.Info("Assembly at " + dllPath + " failed to load.\n");
-                }
-                return assembly;
-            } catch(Exception ex) {
-                Log.Error("Assembly at " + dllPath + " failed to load.\n" + ex.ToString());
-                return null;
-            }
         }
 
         /// <summary>

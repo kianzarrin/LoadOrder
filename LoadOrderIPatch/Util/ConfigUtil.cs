@@ -7,12 +7,10 @@ namespace LoadOrderIPatch {
     using System.IO;
 
     public static class ConfigUtil {
-        internal static string LocalApplicationPath => Entry.GamePaths.AppDataPath;
-
         internal static LoadOrderConfig config_;
         public static LoadOrderConfig Config =>
             config_ ??=
-                LoadOrderConfig.Deserialize(Path.Combine(LocalApplicationPath, "LoadOrder"))
+                LoadOrderConfig.Deserialize(Entry.LocalLOMData)
                 ?? new LoadOrderConfig();
         
         public static bool HasArg(string arg) =>
