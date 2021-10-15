@@ -27,23 +27,8 @@ namespace CO {
                     try {
                         settingsFiles[i].Load();
                         this.m_SettingsFiles.Add(settingsFiles[i].fileName, settingsFiles[i]);
-                    } catch (GameHandledException ex) {
-                        Log.Exception(ex);
-                        settingsFiles[i].Delete();
-                        this.m_SettingsFiles.Add(settingsFiles[i].fileName, settingsFiles[i]);
-                    } catch (Exception ex2) {
-                        Log.Error(string.Concat(new object[]
-                        {
-                                                        "An exception occurred (",
-                                                        ex2.GetType(),
-                                                        ": ",
-                                                        ex2.Message,
-                                                        ") trying to load ",
-                                                        settingsFiles[i].fileName,
-                                                        ". Deleting..."
-                        }));
-                        settingsFiles[i].Delete();
-                        throw new GameSettingsException(ex2.GetType() + " " + ex2.Message, ex2);
+                    } catch (Exception ex) {
+                        new Exception($"could not load {settingsFiles[i]} (maybe try launching CS?)",ex).Log();
                     }
                 }
             }
