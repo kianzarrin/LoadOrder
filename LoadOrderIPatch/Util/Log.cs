@@ -10,6 +10,10 @@ namespace LoadOrderIPatch {
     using LoadOrderIPatch.Patches;
     using System.IO;
 
+    internal static class LogExtension {
+        public static void Log(this Exception ex) => LoadOrderIPatch.Log.Exception(ex);
+    }
+
     internal static class Log {
         const string FILENAME = "LoadOrderIPatch.log";
         static string FilePath => Path.Combine(Entry.GamePaths.LogsPath, FILENAME);

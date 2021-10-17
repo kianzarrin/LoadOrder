@@ -1,5 +1,6 @@
 namespace LoadOrderIPatch {
     using System.Collections.Generic;
+    using System.Linq;
 
     public static class Packages {
 
@@ -14,6 +15,9 @@ namespace LoadOrderIPatch {
                 }
             }
             var ret = excludedPathsLowerCase_ = new HashSet<string>(excluded);
+            Log.Info($"data path is {Patches.Entry.LocalLOMData}");
+            string strExcluded = string.Join(", ", excludedPathsLowerCase_.ToArray());
+            Log.Info("Excluded assets are: " + strExcluded);
             return ret;
         }
 
@@ -21,7 +25,7 @@ namespace LoadOrderIPatch {
         private static HashSet<string> ExcludedPathsLowerCase => excludedPathsLowerCase_ ??= Create();
 
         public static bool IsFileExcluded(string path) {
-            if (string.IsNullOrEmpty(path) || path[0] == '_')
+            if (string.IsNullOrEmpty(path) || path.Contains(@"\_") || path.Contains(@"/_"))
                 return true;
             return Packages.IsPathExcluded(path);
         }

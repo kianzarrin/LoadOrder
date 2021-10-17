@@ -1,19 +1,14 @@
 namespace LoadOrderIPatch {
     extern alias Injections;
-    using Inject = Injections.LoadOrderInjections.Injections;
-    using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
-
+    using LoadOrderIPatch.Patches;
     using Mono.Cecil;
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using System.Reflection;
-    using System.Runtime.CompilerServices;
-    using ILogger = Patch.API.ILogger;
-    using LoadOrderIPatch.Patches;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
-    using LoadOrderShared;
 
     internal static class Commons {
         internal const string InjectionsDLL = InjectionsAssemblyName + ".dll";
@@ -73,11 +68,69 @@ namespace LoadOrderIPatch {
             }
         }
 
+        static void CacheWSFilesImpl2() {
+            try {
+                Log.Called();
+                var timer = Stopwatch.StartNew();
+                var wsPath = Entry.GamePaths.WorkshopModsPath;
+                var files1 = Directory.GetFiles(wsPath, "*.dll", searchOption: SearchOption.AllDirectories)
+                    .Where(path => !path.Contains(Path.PathSeparator + "_"));
+                var files2 = Directory.GetFiles(wsPath, "*.crp", searchOption: SearchOption.AllDirectories)
+                    .Where(path => !Packages.IsPathExcluded(path));
+                var files = files1.Concat(files2).ToArray();
+
+                var chunks = files.Chunk(files.Length / 100).ToArray();
+                List<Thread> threads = new List<Thread>(chunks.Length);
+                foreach(string [] chunk in chunks) {
+                    Thread thread = new Thread(CacheFilesThread);
+                    threads.Add(thread);
+                    thread.Start(chunk);
+                }
+
+                foreach(var thread in threads) {
+                    thread.Join();
+                }
+
+                Log.Info($"caching access to {files.Length} files took {timer.ElapsedMilliseconds}ms");
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
+
+            static void CacheFilesThread(object arg) {
+                try {
+                    var files = arg as string[];
+                    foreach (string file in files) {
+                        using (var fs = File.OpenRead(file)) { }
+                    }
+                } catch (Exception ex) {
+                    Log.Exception(ex);
+                }
+            }
+        }
+
         /// <summary>open and close files to cache improve the speed of first time load.</summary>
         /// precondition: all dependant dlls are loaded
         public static void CacheWSFiles() {
             Log.Called();
-            new Thread(CacheWSFilesImpl).Start();
+            new Thread(CacheWSFilesImpl2).Start();
+        }
+
+        public static IEnumerable<TValue []> Chunk<TValue>(
+                 this IEnumerable<TValue> values,
+                 int chunkSize) {
+            using (var enumerator = values.GetEnumerator()) {
+                while (enumerator.MoveNext()) {
+                    yield return GetChunk(enumerator, chunkSize).ToArray();
+                }
+            }
+        }
+
+        private static IEnumerable<T> GetChunk<T>(
+                         IEnumerator<T> enumerator,
+                         int chunkSize) {
+            do {
+                yield return enumerator.Current;
+            } while (--chunkSize > 0 && enumerator.MoveNext());
         }
     }
 }

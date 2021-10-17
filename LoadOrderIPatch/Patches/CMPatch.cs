@@ -304,36 +304,40 @@ namespace LoadOrderIPatch.Patches {
         }
 
         public void ExcludeAssetFilePatch(AssemblyDefinition CM) {
-            Log.StartPatching();
-            var module = CM.MainModule;
-            var type = module.GetType("ColossalFramework.Packaging.PackageManager");
+            try {
+                Log.StartPatching();
+                var module = CM.MainModule;
+                var type = module.GetType("ColossalFramework.Packaging.PackageManager");
 
-            //void Update(string path)
-            //void Update(PublishedFileId id, string path)
-            var mTargets = type.Methods.Where(_m => _m.Name == "Update").ToList();
+                //void Update(string path)
+                //void Update(PublishedFileId id, string path)
+                var mTargets = type.Methods.Where(_m => _m.Name == "Update").ToList();
 
-            // LoadPackages(string path, bool)
-            var mLoadPackages =  type.Methods.Single(_m =>
-                _m.Name == "LoadPackages" && _m.HasParameter("path"));
+                // LoadPackages(string path, bool)
+                var mLoadPackages = type.Methods.Single(_m =>
+                   _m.Name == "LoadPackages" && _m.HasParameter("path"));
 
-            mTargets.Add(mLoadPackages);
+                mTargets.Add(mLoadPackages);
 
 
-            foreach(var mTarget in mTargets) {
-                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
-                var instructions = mTarget.Body.Instructions;
-                var first = instructions.First();
-                var last = instructions.Last();
+                foreach (var mTarget in mTargets) {
+                    ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                    var instructions = mTarget.Body.Instructions;
+                    var first = instructions.First();
+                    var last = instructions.Last();
 
-                // skip method only if path is asset path
-                var LdArgPath = mTarget.GetLDArg("path");
-                var mIsExcluded = GetType().GetMethod(nameof(Packages.IsFileExcluded));
-                var callIsExcluded = Instruction.Create(OpCodes.Call, module.ImportReference(mIsExcluded));
-                var skipIfExcluded = Instruction.Create(OpCodes.Brtrue, last); // goto to return.
-                ilProcessor.Prefix(new[] { LdArgPath, callIsExcluded, skipIfExcluded });
+                    // skip method only if path is asset path
+                    var LdArgPath = mTarget.GetLDArg("path");
+                    var mIsExcluded = typeof(Packages).GetMethod(nameof(Packages.IsFileExcluded));
+                    var callIsExcluded = Instruction.Create(OpCodes.Call, module.ImportReference(mIsExcluded));
+                    var skipIfExcluded = Instruction.Create(OpCodes.Brtrue, last); // goto to return.
+                    ilProcessor.Prefix(new[] { LdArgPath, callIsExcluded, skipIfExcluded });
+                }
+
+                Log.Successful();
+            }catch(Exception ex) {
+                Log.Exception(ex);
             }
-
-            Log.Successful();
         }
 
         public void ExcludeAssetDirPatch(AssemblyDefinition CM) {

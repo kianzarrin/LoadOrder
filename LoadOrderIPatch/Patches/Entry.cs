@@ -39,7 +39,7 @@ namespace LoadOrderIPatch.Patches {
                 LoadDLL(Path.Combine(patcherWorkingPath, InjectionsDLL));
                 LoadDLL(Path.Combine(patcherWorkingPath, "System.Threading.dll"));
 
-                CacheWSFiles();
+                //CacheWSFiles();
             } catch(Exception ex) {
                 Log.Exception(ex);
             }
