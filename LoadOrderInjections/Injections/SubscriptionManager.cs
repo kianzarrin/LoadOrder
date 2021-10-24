@@ -494,6 +494,13 @@ namespace LoadOrderInjections {
             PlatformService.workshop.eventWorkshopSubscriptionChanged += OnWorkshopSubscriptionChanged;
             PlatformService.workshop.eventUGCQueryCompleted += OnUGCQueryCompleted;
             PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnUGCRequestUGCDetailsCompleted;
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+        }
+        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args) {
+            Exception ex = (Exception)args.ExceptionObject;
+            ex.Log(showInPannel:false);
         }
 
         public static bool firstTime = true;

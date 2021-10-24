@@ -207,7 +207,7 @@ namespace LoadOrderTool.Util {
                 var included = ToIncludedPath(dir);
                 var excluded = ToExcludedPath(dir);
                 if (Directory.Exists(included) && Directory.Exists(excluded)) {
-                    Directory.Delete(excluded);
+                    Directory.Delete(excluded, recursive: true);
                     Directory.Move(included, excluded);
                     return excluded;
                 }
