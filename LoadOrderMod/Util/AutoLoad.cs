@@ -16,13 +16,13 @@ namespace LoadOrderMod.Util {
     public class AutoLoad : MonoBehaviour {
         void Start() {
             LogCalled();
-            base.Invoke(nameof(Do), 2.5f);
+            base.Invoke(nameof(Do), 0);
         }
         void Do() {
             LogCalled();
             bool ready = !SavePanel.isSaving && Singleton<LoadingManager>.exists && !Singleton<LoadingManager>.instance.m_currentlyLoading;
             if (!ready) {
-                Invoke("Do", 3f);
+                Invoke("Do", 1f);
                 return;
             }
 
