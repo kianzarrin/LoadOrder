@@ -496,7 +496,6 @@ namespace LoadOrderInjections {
             PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnUGCRequestUGCDetailsCompleted;
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
         }
         public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args) {
             Exception ex = (Exception)args.ExceptionObject;
