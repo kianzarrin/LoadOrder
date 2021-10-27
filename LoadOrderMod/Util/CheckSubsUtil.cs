@@ -175,10 +175,17 @@ namespace LoadOrderMod.Util {
                     Execute(steamDir, steamExe, args).WaitForExit();
                     Thread.Sleep(10);
                 }
+
                 ExecuteSteam("steam://open/console"); // so that user can see what is happening.
-                Thread.Sleep(100); // wait until steam is ready.
+                Thread.Sleep(50); // wait until steam is ready.
+
+                // work-around: the first command is sometimes missed.
+                ExecuteSteam($"+workshop_download_item 255710 {ids.FirstOrDefault()}"); 
+                Thread.Sleep(100);
+
                 foreach (var id in ids)
                     ExecuteSteam($"+workshop_download_item 255710 {id}");
+
                 ExecuteSteam("steam://open/downloads");
             } catch (Exception ex) { ex.Log(); }
         }
