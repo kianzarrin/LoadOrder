@@ -595,7 +595,7 @@ namespace LoadOrderTool.UI
         private ComboBox ComboBoxAssetTags;
         private Label label2;
         private TextBox TextFilterAsset;
-        private UI.AssetDataGrid dataGridAssets;
+        public UI.AssetDataGrid dataGridAssets;
         public LoadOrderWindowMenuStrip menuStrip;
 
         private TabPage LaunchTab;

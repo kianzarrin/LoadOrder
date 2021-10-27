@@ -35,6 +35,7 @@ namespace LoadOrderTool.UI
             this.SubscribeAll = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tbIDs = new System.Windows.Forms.TextBox();
+            this.btnIncludeAll = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,6 +44,7 @@ namespace LoadOrderTool.UI
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel1.Controls.Add(this.btnCancel);
+            this.flowLayoutPanel1.Controls.Add(this.btnIncludeAll);
             this.flowLayoutPanel1.Controls.Add(this.SubscribeAll);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
@@ -67,7 +69,7 @@ namespace LoadOrderTool.UI
             // 
             this.SubscribeAll.AutoSize = true;
             this.SubscribeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.SubscribeAll.Location = new System.Drawing.Point(833, 5);
+            this.SubscribeAll.Location = new System.Drawing.Point(721, 5);
             this.SubscribeAll.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.SubscribeAll.Name = "SubscribeAll";
             this.SubscribeAll.Size = new System.Drawing.Size(191, 35);
@@ -98,6 +100,19 @@ namespace LoadOrderTool.UI
             this.tbIDs.Size = new System.Drawing.Size(1143, 627);
             this.tbIDs.TabIndex = 4;
             // 
+            // btnIncludeAll
+            // 
+            this.btnIncludeAll.AutoSize = true;
+            this.btnIncludeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnIncludeAll.Location = new System.Drawing.Point(920, 5);
+            this.btnIncludeAll.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnIncludeAll.Name = "btnIncludeAll";
+            this.btnIncludeAll.Size = new System.Drawing.Size(104, 35);
+            this.btnIncludeAll.TabIndex = 2;
+            this.btnIncludeAll.Text = "Include All";
+            this.btnIncludeAll.UseVisualStyleBackColor = true;
+            this.btnIncludeAll.Click += new System.EventHandler(this.btnIncludeAll_Click);
+            // 
             // SubscribeDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -123,5 +138,6 @@ namespace LoadOrderTool.UI
         private System.Windows.Forms.Button SubscribeAll;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbIDs;
+        private System.Windows.Forms.Button btnIncludeAll;
     }
 }

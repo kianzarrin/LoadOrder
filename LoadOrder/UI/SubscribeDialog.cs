@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using CO.PlatformServices;
+using CO.Packaging;
 
 namespace LoadOrderTool.UI {
     public partial class SubscribeDialog : Form {
@@ -86,6 +88,18 @@ namespace LoadOrderTool.UI {
         private void btnCancel_Click(object sender, EventArgs e) => Close();
 
         void CleanupTextBox() => tbIDs.Text = GetIDs(tbIDs.Text).Join(" ");
-        
+
+        private void btnIncludeAll_Click(object sender, EventArgs e) {
+            CleanupTextBox();
+            var ids = GetIDs(tbIDs.Text);
+            var assets = PackageManager.instance.GetAssets();
+            foreach (var id in ids) {
+                var publishedFileId = new PublishedFileId(ulong.Parse(id));
+                var asset = assets.FirstOrDefault(_a => _a.IsWorkshop && _a.PublishedFileId == publishedFileId);
+                if (asset == null) continue;
+                asset.IsIncludedPending = true;
+            }
+            LoadOrderWindow.Instance.dataGridAssets.Refresh();
+        }
     }
 }
