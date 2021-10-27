@@ -183,12 +183,12 @@ namespace LoadOrderTool {
                 this[i].LoadOrder = i;
         }
 
-        public void MoveItem(PluginInfo p, int newLoadOrder) {
-            if (p.LoadOrder == newLoadOrder) return;
+        public void MoveItem(PluginInfo movingItem, int newLoadOrder) {
+            if (movingItem.LoadOrder == newLoadOrder) return;
 
-            p.LoadOrder = newLoadOrder;
+            movingItem.LoadOrder = newLoadOrder;
 
-            if (!p.HasLoadOrder()) {
+            if (!movingItem.HasLoadOrder()) {
                 DefaultSort();
                 return;
             }
@@ -196,16 +196,21 @@ namespace LoadOrderTool {
             // work around: hyarmony without load order comes first:
             if (newLoadOrder < DefaultLoadOrder) {
                 foreach (var p2 in this) {
-                    if (p2 != p && p2.IsHarmonyMod() && !p2.HasLoadOrder())
+                    if (p2 != movingItem && p2.IsHarmonyMod() && !p2.HasLoadOrder())
                         p2.LoadOrder = 0;
                 }
             }
 
-            int newIndex = this.FindIndex(item => OldDefaultComparison(item, p) >= 0);
-            if (newIndex == -1) newIndex = this.Count - 1; // this is the biggest value;
-            this.Remove(p);
-            this.Insert(newIndex, p);
-            Log.Debug($"newIndex={newIndex} newLoadOrder={p.LoadOrder}");
+            this.Remove(movingItem);
+            // find the first item that is bigger than the moving item (that item will move one index down).
+            int newIndex = this.FindIndex(otherItem => HarmonyComparison(otherItem, movingItem) >= 0);
+            if (newIndex == -1) {
+                this.Add(movingItem); // add to end
+            } else {
+                this.Insert(newIndex, movingItem);
+            }
+            Log.Debug($"newIndex={newIndex} newLoadOrder={movingItem.LoadOrder}");
+            // if next item has order equal to current item shift it down.
             for (int i = 1; i < Count; ++i) {
                 if (this[i].HasLoadOrder() && this[i].LoadOrder <= this[i - 1].LoadOrder) {
                     this[i].LoadOrder = this[i - 1].LoadOrder + 1;
