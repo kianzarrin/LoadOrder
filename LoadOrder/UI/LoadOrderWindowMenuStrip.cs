@@ -221,7 +221,7 @@ namespace LoadOrderTool.UI {
             // tsmiReDownload
             // 
             tsmiReDownload.Name = "tsmiReDownload";
-            tsmiReDownload.Text = "&Redownload broken downloads";
+            tsmiReDownload.Text = "&Redownload broken downloads [Experimental]";
             // 
             // tsmiSync
             // 
@@ -301,7 +301,9 @@ namespace LoadOrderTool.UI {
                     .ToArray();
                 SteamUtil.ReDownload(ids);
 
-                var res = MessageBox.Show("You can monitor download progress in steam client. Wait for steam to finish downloading. Then press ok to refresh everyhing.", "Wait for download");
+                var res = MessageBox.Show(
+                    "You can monitor download progress in steam client. Wait for steam to finish downloading. Then press ok to refresh everyhing.\n" +
+                    "should this not work the first time please try again", "Wait for download");
                 ConfigWrapper.instance.CSCache.MissingDir = new ulong[0];
                 LoadOrderWindow.Instance.DownloadWarningLabel.Visible = false;
                 await LoadOrderWindow.Instance.ReloadAll(); // reload to fix included/excluded, paths, ...

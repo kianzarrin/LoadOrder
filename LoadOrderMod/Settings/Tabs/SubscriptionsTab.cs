@@ -70,7 +70,9 @@ namespace LoadOrderMod.Settings.Tabs {
                         var path = tfSteamPath_.text;
                         if (CheckSteamPath(path)) {
                             CheckSubsUtil.ReDownload(path);
-                            Prompt.Warning("Exit", "Please exit to desktop, wait for steam download to finish, and then start Cities skylines again.");
+                            Prompt.Warning("Exit",
+                                "Please exit to desktop, wait for steam download to finish, and then start Cities skylines again.\n" +
+                                "Should this not work the first time, please try again.");
                         }
                     } catch (Exception ex) {
                         ex.Log();

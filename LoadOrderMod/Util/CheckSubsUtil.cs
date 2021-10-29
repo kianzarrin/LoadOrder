@@ -173,13 +173,12 @@ namespace LoadOrderMod.Util {
                 string steamExe = steam.Name;
                 void ExecuteSteam(string args) {
                     Execute(steamDir, steamExe, args).WaitForExit();
-                    Thread.Sleep(10);
+                    Thread.Sleep(30);
                 }
 
                 ExecuteSteam("steam://open/console"); // so that user can see what is happening.
-                Thread.Sleep(50); // wait until steam is ready.
+                Thread.Sleep(100); // wait until steam is ready.
 
-                // work-around: the first command is sometimes missed.
                 ExecuteSteam($"+workshop_download_item 255710 {ids.FirstOrDefault()}"); 
                 Thread.Sleep(100);
 

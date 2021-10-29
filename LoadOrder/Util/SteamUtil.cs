@@ -16,14 +16,14 @@ namespace LoadOrderTool.Util {
     public static class SteamUtil {
         public static void ExecuteSteam(string args) {
             ContentUtil.Execute(DataLocation.SteamPath, DataLocation.SteamExe, args).WaitForExit();
-            Thread.Sleep(10);
+            Thread.Sleep(30);
         }
 
         public static void ReDownload(IEnumerable<ulong> ids) {
             try {
                 Log.Called(ids);
                 ExecuteSteam("steam://open/console");// so that user can see what is happening.
-                Thread.Sleep(100); // wait for steam to be ready.
+                Thread.Sleep(200); // wait for steam to be ready.
                 foreach (var id in ids)
                     ExecuteSteam($"+workshop_download_item 255710 {id}");
                 ExecuteSteam("steam://open/downloads");
