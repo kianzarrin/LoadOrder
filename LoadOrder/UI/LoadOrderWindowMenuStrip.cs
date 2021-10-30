@@ -293,7 +293,8 @@ namespace LoadOrderTool.UI {
 
         private async void TsmiReDownload_Click(object sender, EventArgs e) {
             try {
-                var ids = ConfigWrapper.instance.SteamCache.Items
+                var steamItems = ConfigWrapper.instance.SteamCache.Items;
+                var ids = steamItems
                     .Where(item=>item.Status.IsBroken())
                     .Select(item => item.ID)
                     .Concat(ContentUtil.GetMissingDirItems()) // missing root dir
@@ -306,6 +307,11 @@ namespace LoadOrderTool.UI {
                     "should this not work the first time please try again", "Wait for download");
                 ConfigWrapper.instance.CSCache.MissingDir = new ulong[0];
                 LoadOrderWindow.Instance.DownloadWarningLabel.Visible = false;
+                foreach(var item in steamItems) {
+                    if (item.Status.IsBroken() && item.DTO != null) {
+                        item.RefreshIsUpToDate();
+                    }
+                }
                 await LoadOrderWindow.Instance.ReloadAll(); // reload to fix included/excluded, paths, ...
             } catch (Exception ex) { ex.Log(); }
         }

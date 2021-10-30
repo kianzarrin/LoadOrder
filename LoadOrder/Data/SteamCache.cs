@@ -44,7 +44,11 @@ namespace LoadOrderTool.Data {
             public DateTime DateUpdatedUTC;
             public DownloadStatus Status;
             public string DownloadFailureReason;
-                        public string[] Tags;
+            public ulong WSSize;
+            public string[] Tags;
+
+            [XmlIgnore]
+            internal SteamUtil.PublishedFileDTO DTO;
 
             public void SetAuthor(ulong authorID) {
                 AuthorID = authorID;
@@ -57,15 +61,21 @@ namespace LoadOrderTool.Data {
             }
 
             public virtual void Read(SteamUtil.PublishedFileDTO dto) {
+                dto_ = dto;
                 Name = dto.Title;
                 DateUpdatedUTC = dto.UpdatedUTC;
                 SetAuthor(dto.AuthorID);
-                Status = ContentUtil.IsUGCUpToDate(dto, out DownloadFailureReason);
+                RefreshIsUpToDate();
                 Tags = dto.Tags.Select(tag => tag switch {
                         "Road" => "Network",
                         _ => tag,
                     })
                     .ToArray();
+            }
+
+            public void RefreshIsUpToDate() {
+                if(DTO != null)
+                    Status = ContentUtil.IsUGCUpToDate(DTO, out DownloadFailureReason);
             }
         }
 
