@@ -4,7 +4,6 @@ using Patch.API;
 using System;
 using System.Linq;
 using UnityEngine;
-using static LoadOrderIPatch.Commons;
 using ILogger = Patch.API.ILogger;
 
 
