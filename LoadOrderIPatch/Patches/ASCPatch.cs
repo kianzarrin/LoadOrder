@@ -62,20 +62,32 @@ namespace LoadOrderIPatch.Patches {
             AssemblyDefinition asm = GetInjectionsAssemblyDefinition(workingPath_);
 
             /**********************************/
-            var method = asm.MainModule.GetMethod(
-                "LoadOrderInjections.SubscriptionManager.PostBootAction");
-            var call1 = Instruction.Create(OpCodes.Call, module.ImportReference(method));
-            Instruction CallBoot = instructions.First(_c => _c.Calls("Boot"));
-            Instruction BranchTarget = instructions.Last();// return
-            Instruction BrTrueEnd = Instruction.Create(OpCodes.Brtrue, BranchTarget);
+            {
+                var method = asm.MainModule.GetMethod(
+                    "LoadOrderInjections.SubscriptionManager.PostBootAction");
+                var call1 = Instruction.Create(OpCodes.Call, module.ImportReference(method));
+                Instruction CallBoot = instructions.First(_c => _c.Calls("Boot"));
+                Instruction BranchTarget = instructions.Last();// return
+                Instruction BrTrueEnd = Instruction.Create(OpCodes.Brtrue, BranchTarget);
 
-            ilProcessor.InsertAfter(CallBoot, call1, BrTrueEnd);
+                ilProcessor.InsertAfter(CallBoot, call1, BrTrueEnd);
+            }
             /**********************************/
-            method = asm.MainModule.GetMethod(
-                "LoadOrderInjections.SteamUtilities.RegisterEvents");
-            var call2 = Instruction.Create(OpCodes.Call, module.ImportReference(method));
-            ilProcessor.Prefix(call2);
+            {
+                var method = asm.MainModule.GetMethod(
+                    "LoadOrderInjections.SteamUtilities.RegisterEvents");
+                var call2 = Instruction.Create(OpCodes.Call, module.ImportReference(method));
+                ilProcessor.Prefix(call2);
+            }
             /**********************************/
+            bool sman2 = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman2");
+            if(sman2)
+            {
+                var method = asm.MainModule.GetMethod("LoadOrderInjections.SubscriptionManager.DoNothing");
+                var callInjection = Instruction.Create(OpCodes.Call, module.ImportReference(method));
+                Instruction brLast = Instruction.Create(OpCodes.Br, instructions.Last()); // return
+                ilProcessor.Prefix(callInjection, brLast);
+            }
 
             Log.Successful();
             return ASC;

@@ -24,6 +24,12 @@ namespace LoadOrderInjections {
         Gone,
     }
 
+    public class DoNothingComponent : MonoBehaviour {
+        void Awake() => UnityEngine.Debug.Log("TestComponent.Awake() was called");
+        void Start() => UnityEngine.Debug.Log("TestComponent.Start() was called");
+    }
+
+
     public class TestComponent : MonoBehaviour {
         void Awake() => Log.Debug("TestComponent.Awake() was called");
         void Start() => Log.Debug("TestComponent.Start() was called");
@@ -430,6 +436,11 @@ namespace LoadOrderInjections {
 
         public static void EnsureSubs() {
             DirectoryInfo d = new DirectoryInfo("");
+        }
+
+        public static void DoNothing() {
+            new GameObject().AddComponent<Camera>();
+            new GameObject("nop go").AddComponent<DoNothingComponent>();
         }
     }
 
