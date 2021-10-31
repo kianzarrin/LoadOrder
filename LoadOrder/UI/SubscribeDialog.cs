@@ -13,6 +13,9 @@ namespace LoadOrderTool.UI {
     public partial class SubscribeDialog : Form {
         public SubscribeDialog() {
             InitializeComponent();
+            tbIDs.DragEnter += tbAssets_DragEnter;
+            tbIDs.DragLeave+= tbAssets_DragLeave;
+            tbIDs.DragDrop += tbAssets_DragDrop;
         }
 
         private void tbAssets_DragDrop(object sender, DragEventArgs e) {
@@ -32,6 +35,7 @@ namespace LoadOrderTool.UI {
         }
 
         private void tbAssets_DragEnter(object sender, DragEventArgs e) {
+            Log.Called();
             if (e.Data.GetDataPresent(DataFormats.Text) ||
                 e.Data.GetDataPresent(DataFormats.Html) ||
                 e.Data.GetDataPresent(DataFormats.FileDrop)) {
