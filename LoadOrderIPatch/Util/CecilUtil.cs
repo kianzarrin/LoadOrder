@@ -9,33 +9,6 @@ namespace LoadOrderIPatch {
     using Patch.API;
 
     public static class CecilUtil {
-        internal static AssemblyDefinition ReadAssemblyDefinition(string dllpath) {
-            try {
-                Log.Called(dllpath);
-                var r = new MyAssemblyResolver();
-                r.AddSearchDirectory(Entry.GamePaths.ManagedFolderPath);
-                r.AddSearchDirectory(Path.GetDirectoryName(dllpath));
-                var readerParameters = new ReaderParameters {
-                    ReadWrite = false,
-                    InMemory = true,
-                    AssemblyResolver = r,
-                };
-                r.ReaderParameters = readerParameters;
-                var asm = AssemblyDefinition.ReadAssembly(dllpath, readerParameters);
-
-                if (asm != null)
-                    Log.Info("Assembly Definition loaded: " + asm);
-                else
-                    Log.Info("Assembly Definition at " + dllpath + " failed to load.");
-
-                return asm;
-            }
-            catch (Exception ex) {
-                Log.Info("Assembly Definition at " + dllpath + " failed to load.\n" + ex.Message);
-                return null;
-            }
-        }
-
         public static Instruction Duplicate(this Instruction instruction)
         {
             var ret = Instruction.Create(instruction.OpCode);
