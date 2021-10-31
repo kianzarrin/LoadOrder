@@ -40,10 +40,10 @@ namespace LoadOrderIPatch.Patches {
             var callInjection = Instruction.Create(OpCodes.Call, module.ImportReference(method));
             Instruction brLast = Instruction.Create(OpCodes.Br, instructions.Last()); // return
 
-            ilProcessor.Prefix(callInjection, brLast);
+            //ilProcessor.Prefix(callInjection, brLast);
 
             Instruction CallBoot = instructions.First(_c => _c.Calls("Boot"));
-            ilProcessor.InsertAfter(CallBoot, callInjection, brLast);
+            ilProcessor.InsertBefore(CallBoot, callInjection, brLast);
 
             Log.Successful();
         }
@@ -51,11 +51,11 @@ namespace LoadOrderIPatch.Patches {
     }
 
     public class DoNothingComponent : MonoBehaviour {
-        void Awake() => Debug.Log("DoNothingComponent.Awake() was called");
-        void Start() => Debug.Log("DoNothingComponent.Start() was called");
+        //void Awake() => Debug.Log("DoNothingComponent.Awake() was called");
+        //void Start() => Debug.Log("DoNothingComponent.Start() was called");
         public static void DoNothing() {
-            new GameObject().AddComponent<Camera>();
-            new GameObject("nop go").AddComponent<DoNothingComponent>();
+            //new GameObject().AddComponent<Camera>();
+            //new GameObject("nop go").AddComponent<DoNothingComponent>();
         }
 
     }
