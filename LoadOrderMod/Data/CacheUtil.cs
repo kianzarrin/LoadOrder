@@ -85,12 +85,14 @@ namespace LoadOrderMod.Data {
             var timerInstantiate = new Stopwatch();
             int assetCount = 0;
 
-            foreach (var asset in PackageManager.FilterAssets(new[] {
+            // evaluate this to avoid race condtion.
+            var assets = PackageManager.FilterAssets(new[] {
                 UserAssetType.CustomAssetMetaData,
                 UserAssetType.MapThemeMetaData,
                 UserAssetType.ColorCorrection,
                 UserAssetType.DistrictStyleMetaData,
-            })) {
+            }).ToArray();
+            foreach (var asset in assets) {
                 try {
                     Assertion.NotNull(asset, "asset");
                     if (!asset.isMainAsset) continue;
@@ -152,6 +154,7 @@ namespace LoadOrderMod.Data {
             } catch(Exception ex) { ex.Log(); }
         }
 
+        public static bool Caching;
         public void CacheAll() {
             LogCalled();
             if (!ConfigUtil.Config.UGCCache) {
@@ -160,6 +163,7 @@ namespace LoadOrderMod.Data {
             }
 
             try {
+                Caching = true;
                 AquirePathDetails();
                 Save();
                 AquireModsDetails();
@@ -169,6 +173,7 @@ namespace LoadOrderMod.Data {
                 AquireAssetsDetails();
                 Save();
             } catch (Exception ex) { Log.Exception(ex); }
+            finally { Caching = false; }
         }
     }
 }
