@@ -61,7 +61,7 @@ namespace LoadOrderTool.Data {
             }
 
             public virtual void Read(SteamUtil.PublishedFileDTO dto) {
-                dto_ = dto;
+                DTO = dto;
                 Name = dto.Title;
                 DateUpdatedUTC = dto.UpdatedUTC;
                 SetAuthor(dto.AuthorID);
