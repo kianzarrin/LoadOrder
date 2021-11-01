@@ -47,7 +47,7 @@ namespace LoadOrderIPatch.Patches {
                 var callInjection = Instruction.Create(OpCodes.Call, module.ImportReference(method));
                 Instruction brLast = Instruction.Create(OpCodes.Br, instructions.Last()); // return
                 Instruction CallBoot = instructions.First(_c => _c.Calls("Boot"));
-                ilProcessor.InsertBefore(CallBoot, callInjection, brLast);
+                ilProcessor.InsertAfter(CallBoot, callInjection, brLast);
             }
 
 

@@ -40,8 +40,8 @@ namespace LoadOrderIPatch.Patches {
 
             /**********************************/
             Instruction ret = Instruction.Create(OpCodes.Ret);
-            Instruction pointer = instructions.First(_c => _c.Calls("EnsureHelper"));
-            ilProcessor.InsertAfter(pointer, ret);
+            Instruction pointer = instructions.First(_c => _c.Calls("DisplayStatus"));
+            //ilProcessor.InsertAfter(pointer, ret);
         
             Log.Successful();
         }
