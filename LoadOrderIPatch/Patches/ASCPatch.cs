@@ -38,9 +38,6 @@ namespace LoadOrderIPatch.Patches {
             AssemblyDefinition asm = GetInjectionsAssemblyDefinition();
 
             /**********************************/
-
-
-            /**********************************/
             var injectionMethod = asm.MainModule.GetMethod("LoadOrderInjections.DoNothingComponent.DoNothing");
             var callInjection = Instruction.Create(OpCodes.Call, module.ImportReference(injectionMethod));
             Instruction brLast = Instruction.Create(OpCodes.Br, instructions.Last()); // return
