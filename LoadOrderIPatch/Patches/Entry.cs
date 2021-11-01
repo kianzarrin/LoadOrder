@@ -3,7 +3,7 @@ namespace LoadOrderIPatch.Patches {
     using Patch.API;
     using System;
     public class Entry : IPatch {
-        public static ILogger Logger { get; private set; }
+        public static ILogger Logger { get; set; }
         public static IPaths GamePaths { get; private set; }
         public static string PatcherWorkingPath { get; private set; }
 

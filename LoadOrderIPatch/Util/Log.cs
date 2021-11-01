@@ -1,14 +1,11 @@
 namespace LoadOrderIPatch {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Mono.Cecil;
-    using Patch.API;
-    using System.Diagnostics;
-    using System.Runtime.CompilerServices;
     using LoadOrderIPatch.Patches;
+    using Patch.API;
+    using System;
+    using System.Diagnostics;
     using System.IO;
+    using System.Linq;
+    using System.Runtime.CompilerServices;
 
     internal static class LogExtension {
         public static void Log(this Exception ex) => LoadOrderIPatch.Log.Exception(ex);
@@ -18,7 +15,7 @@ namespace LoadOrderIPatch {
         const string FILENAME = "LoadOrderIPatch.log";
         static string FilePath => Path.Combine(Entry.GamePaths.LogsPath, FILENAME);
         public static void Init() {
-            if(File.Exists(FilePath)) File.Delete(FilePath);
+            if (File.Exists(FilePath)) File.Delete(FilePath);
 
             var details = typeof(Log).Assembly.GetName();
             Info($"Log file at {FilePath} now={DateTime.Now}");
@@ -61,9 +58,9 @@ namespace LoadOrderIPatch {
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        internal static void Called(params object [] args) {
+        internal static void Called(params object[] args) {
             string caller = new StackFrame(1).GetMethod().Name;
-            Log.Info($"{caller}({JoinArgs(args)}) called ..." );
+            Log.Info($"{caller}({JoinArgs(args)}) called ...");
         }
 
         private static string JoinArgs(object[] args) {

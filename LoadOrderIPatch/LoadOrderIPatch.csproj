@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
     <Deterministic>false</Deterministic>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
 
@@ -38,11 +38,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LoadOrderInjections\LoadOrderInjections.csproj">
-      <Aliases>Injections</Aliases>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="ColossalManaged" />
     <Reference Include="ICities" />
     <Reference Include="UnityEngine" />
@@ -51,15 +46,13 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Compile Remove="Data\**" />
     <Compile Remove="Settings\**" />
+    <EmbeddedResource Remove="Data\**" />
     <EmbeddedResource Remove="Settings\**" />
+    <None Remove="Data\**" />
     <None Remove="Settings\**" />
-    <Compile Include="..\LoadOrderMod\Data\LoadOrderConfig.cs" Link="Data\LoadOrderConfig.cs" />
     <EditorConfigFiles Include="..\LoadOrder\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Data\" />
   </ItemGroup>
 
 

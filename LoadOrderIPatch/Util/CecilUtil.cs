@@ -7,15 +7,7 @@ namespace LoadOrderIPatch {
     using System.IO;
     using LoadOrderIPatch.Patches;
     using Patch.API;
-
     public static class CecilUtil {
-        public static Instruction Duplicate(this Instruction instruction)
-        {
-            var ret = Instruction.Create(instruction.OpCode);
-            ret.Operand = instruction.Operand;
-            return ret;
-        }
-
         public static Instruction GetLDArg(this MethodDefinition method, string argName, bool throwOnError = true) {
             if (!throwOnError && !HasParameter(method, argName))
                 return null;
