@@ -67,15 +67,26 @@ namespace LoadOrderIPatch.Patches {
         public void NoReportersPatch(AssemblyDefinition CM) {
             Log.StartPatching();
             var module = CM.Modules.First();
-            MethodDefinition mTarget = module.GetMethod("ColossalFramework.Packaging.PackageManager.CreateReporter");
-            Log.Info($"patching {mTarget} ...");
+            {
+                MethodDefinition mTarget1 = module.GetMethod("ColossalFramework.Packaging.PackageManager.CreateReporter");
 
-            var instructions = mTarget.Body.Instructions;
-            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                var instructions = mTarget1.Body.Instructions;
+                ILProcessor ilProcessor = mTarget1.Body.GetILProcessor();
 
-            /**********************************/
-            Instruction ret = Instruction.Create(OpCodes.Ret);
-            ilProcessor.Prefix(ret);
+                /**********************************/
+                Instruction ret = Instruction.Create(OpCodes.Ret);
+                ilProcessor.Prefix(ret);
+            }
+
+            {
+                MethodDefinition mTarget = module.GetMethod("ColossalFramework.Plugins.PluginManager.CreateReporters");
+                var instructions = mTarget.Body.Instructions;
+                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+
+                /**********************************/
+                Instruction ret = Instruction.Create(OpCodes.Ret);
+                ilProcessor.Prefix(ret);
+            }
 
             Log.Successful();
         }

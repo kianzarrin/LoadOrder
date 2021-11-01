@@ -58,11 +58,6 @@
     <EditorConfigFiles Include="..\LoadOrder\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
-
-
   <Target Name="DeployToModDirectory" AfterTargets="Build">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />

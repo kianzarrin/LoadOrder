@@ -150,6 +150,22 @@ namespace LoadOrderIPatch {
                 ?? (code.Operand as MethodInfo)?.Name;
             return name == method;
         }
+
+        /// <summary>
+        /// used to patch opcodes with operands that are IMemberDefinition or MemberInfo
+        /// </summary>
+        /// <param name="operand">operand name</param>
+        /// <returns></returns>
+        public static bool Is(this Instruction code, OpCode opcode, string operand) {
+            return code.OpCode == opcode && code.GetOperandName() == operand;
+        }
+
+        /// <summary>
+        /// get operand name if it is IMemberDefinition or MemberInfo
+        /// </summary>
+        public static string GetOperandName(this Instruction code) =>
+            (code.Operand as IMemberDefinition)?.Name ?? (code.Operand as MemberInfo)?.Name;
+
     }
     public static class ILProcessorExtensions {
         public static void InsertAfter(this ILProcessor ilprocessor, Instruction target, params Instruction[] codes) {

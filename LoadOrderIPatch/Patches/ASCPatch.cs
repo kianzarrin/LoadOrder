@@ -64,12 +64,16 @@ namespace LoadOrderIPatch.Patches {
             /**********************************/
             bool sman2 = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman2");
             if (sman2) {
+                // this is for testing
                 var method = asm.MainModule.GetMethod("LoadOrderInjections.SubscriptionManager.DoNothing");
                 var callInjection = Instruction.Create(OpCodes.Call, module.ImportReference(method));
                 Instruction brLast = Instruction.Create(OpCodes.Br, instructions.Last()); // return
                 Instruction CallBoot = instructions.First(_c => _c.Calls("Boot"));
-                ilProcessor.InsertAfter(CallBoot, callInjection, brLast);
-            }else {
+                Instruction ldfldLoadIntro = instructions.First(_c => _c.Is(OpCodes.Ldfld, "m_loadIntro"));
+
+                ilProcessor.InsertBefore(ldfldLoadIntro, callInjection, brLast);
+                Log.Info($"inserted {callInjection} before {ldfldLoadIntro}");
+            } else {
                 var method = asm.MainModule.GetMethod(
                     "LoadOrderInjections.SubscriptionManager.PostBootAction");
                 var call1 = Instruction.Create(OpCodes.Call, module.ImportReference(method));
