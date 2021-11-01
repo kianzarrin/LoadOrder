@@ -29,6 +29,10 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
+            bool noReporters = Environment.GetCommandLineArgs().Any(_arg => _arg == "-norep");
+            if(noReporters)
+                NoReportersPatch(assemblyDefinition);
+
             if (!poke && Config.SoftDLLDependancy) {
                 FindAssemblySoftPatch(assemblyDefinition);
             }
@@ -59,6 +63,22 @@ namespace LoadOrderIPatch.Patches {
             return assemblyDefinition;
         }
 
+        // avoid memory leak by skipping reporters.
+        public void NoReportersPatch(AssemblyDefinition CM) {
+            Log.StartPatching();
+            var module = CM.Modules.First();
+            MethodDefinition mTarget = module.GetMethod("ColossalFramework.Packaging.PackageManager.CreateReporter");
+            Log.Info($"patching {mTarget} ...");
+
+            var instructions = mTarget.Body.Instructions;
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+
+            /**********************************/
+            Instruction ret = Instruction.Create(OpCodes.Ret);
+            ilProcessor.Prefix(ret);
+
+            Log.Successful();
+        }
 
         /// <summary>
         /// loads assembly with symbols
