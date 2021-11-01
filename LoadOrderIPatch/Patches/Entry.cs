@@ -1,14 +1,10 @@
 namespace LoadOrderIPatch.Patches {
-
-
-    using System;
     using Mono.Cecil;
     using Patch.API;
+    using System;
     using System.Diagnostics;
-    using System.Runtime.CompilerServices;
-    using System.Threading;
     using System.IO;
-    using System.Linq;
+    using System.Runtime.CompilerServices;
     using static Commons;
     public class Entry : IPatch {
         public static ILogger Logger { get; private set; }
@@ -39,10 +35,7 @@ namespace LoadOrderIPatch.Patches {
                 LoadDLL(Path.Combine(patcherWorkingPath, InjectionsDLL));
                 LoadDLL(Path.Combine(patcherWorkingPath, "System.Threading.dll"));
 
-                bool sman2 = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman2");
-                if (!sman2)
-                    FileUtil.CacheWSFiles();
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 Log.Exception(ex);
             }
             return assemblyDefinition;

@@ -54,12 +54,7 @@
     <Compile Remove="Settings\**" />
     <EmbeddedResource Remove="Settings\**" />
     <None Remove="Settings\**" />
-    <Compile Include="..\LoadOrderMod\Data\LoadOrderConfig.cs" Link="Data\LoadOrderConfig.cs" />
     <EditorConfigFiles Include="..\LoadOrder\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Data\" />
   </ItemGroup>
 
 

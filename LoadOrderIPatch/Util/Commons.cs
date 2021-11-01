@@ -14,8 +14,8 @@ namespace LoadOrderIPatch {
         internal const string InjectionsDLL = InjectionsAssemblyName + ".dll";
         internal const string InjectionsAssemblyName = "LoadOrderInjections";
 
-        internal static AssemblyDefinition GetInjectionsAssemblyDefinition(string dir)
-            => CecilUtil.ReadAssemblyDefinition(Path.Combine(dir, InjectionsDLL));
+        internal static AssemblyDefinition GetInjectionsAssemblyDefinition()
+            => CecilUtil.ReadAssemblyDefinition(Path.Combine(Entry.PatcherWorkingPath, InjectionsDLL));
 
         public static Assembly LoadDLL(string dllPath) {
             try {

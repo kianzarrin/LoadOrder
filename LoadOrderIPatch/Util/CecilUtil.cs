@@ -1,12 +1,10 @@
 namespace LoadOrderIPatch {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    using LoadOrderIPatch.Patches;
     using Mono.Cecil;
     using Mono.Cecil.Cil;
+    using System;
+    using System.Collections.Generic;
     using System.IO;
-    using LoadOrderIPatch.Patches;
-    using Patch.API;
 
     public static class CecilUtil {
         internal static AssemblyDefinition ReadAssemblyDefinition(string dllpath) {
@@ -29,15 +27,13 @@ namespace LoadOrderIPatch {
                     Log.Info("Assembly Definition at " + dllpath + " failed to load.");
 
                 return asm;
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 Log.Info("Assembly Definition at " + dllpath + " failed to load.\n" + ex.Message);
                 return null;
             }
         }
 
-        public static Instruction Duplicate(this Instruction instruction)
-        {
+        public static Instruction Duplicate(this Instruction instruction) {
             var ret = Instruction.Create(instruction.OpCode);
             ret.Operand = instruction.Operand;
             return ret;
@@ -76,7 +72,7 @@ namespace LoadOrderIPatch {
         }
 
         public static bool HasParameter(this MethodDefinition method, string name) {
-            foreach(var param in method.Parameters) {
+            foreach (var param in method.Parameters) {
                 if (param.Name == name)
                     return true;
             }
@@ -165,14 +161,13 @@ namespace LoadOrderIPatch {
         public static int SearchInstruction(List<Instruction> codes, Instruction instruction, int index, int dir = +1, int counter = 1) {
             try {
                 return SearchGeneric(codes, idx => IsSameInstruction(codes[idx], instruction), index, dir, counter);
-            }
-            catch (InstructionNotFoundException) {
+            } catch (InstructionNotFoundException) {
                 throw new InstructionNotFoundException(" Did not found instruction: " + instruction);
             }
         }
 
-        public static int SearchGeneric(List<Instruction> codes, Func<int,bool> predicate, int index, int dir = +1, int counter = 1, bool throwOnError=true) {
-            
+        public static int SearchGeneric(List<Instruction> codes, Func<int, bool> predicate, int index, int dir = +1, int counter = 1, bool throwOnError = true) {
+
             int count = 0;
             for (; 0 <= index && index < codes.Count; index += dir) {
                 if (predicate(index)) {
