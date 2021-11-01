@@ -62,7 +62,14 @@ namespace LoadOrderIPatch.Patches {
             AssemblyDefinition asm = GetInjectionsAssemblyDefinition(workingPath_);
 
             /**********************************/
-            {
+            bool sman2 = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman2");
+            if (sman2) {
+                var method = asm.MainModule.GetMethod("LoadOrderInjections.SubscriptionManager.DoNothing");
+                var callInjection = Instruction.Create(OpCodes.Call, module.ImportReference(method));
+                Instruction brLast = Instruction.Create(OpCodes.Br, instructions.Last()); // return
+                Instruction CallBoot = instructions.First(_c => _c.Calls("Boot"));
+                ilProcessor.InsertAfter(CallBoot, callInjection, brLast);
+            }else {
                 var method = asm.MainModule.GetMethod(
                     "LoadOrderInjections.SubscriptionManager.PostBootAction");
                 var call1 = Instruction.Create(OpCodes.Call, module.ImportReference(method));
@@ -80,14 +87,6 @@ namespace LoadOrderIPatch.Patches {
                 ilProcessor.Prefix(call2);
             }
             /**********************************/
-            bool sman2 = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman2");
-            if(sman2)
-            {
-                var method = asm.MainModule.GetMethod("LoadOrderInjections.SubscriptionManager.DoNothing");
-                var callInjection = Instruction.Create(OpCodes.Call, module.ImportReference(method));
-                Instruction brLast = Instruction.Create(OpCodes.Br, instructions.Last()); // return
-                ilProcessor.Prefix(callInjection, brLast);
-            }
 
             Log.Successful();
             return ASC;

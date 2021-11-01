@@ -39,8 +39,6 @@ namespace LoadOrderIPatch.Patches {
                 LoadDLL(Path.Combine(patcherWorkingPath, InjectionsDLL));
                 LoadDLL(Path.Combine(patcherWorkingPath, "System.Threading.dll"));
 
-                bool sman2 = Environment.GetCommandLineArgs().Any(_arg => _arg == "-sman2");
-                if (!sman2)
                     FileUtil.CacheWSFiles();
             } catch(Exception ex) {
                 Log.Exception(ex);

@@ -29,7 +29,7 @@ namespace LoadOrderIPatch.Patches {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
-            bool noReporters = Environment.GetCommandLineArgs().Any(_arg => _arg == "-norep");
+            bool noReporters = Environment.GetCommandLineArgs().Any(_arg => _arg == "-cold-reload");
             if(noReporters)
                 NoReportersPatch(assemblyDefinition);
 
