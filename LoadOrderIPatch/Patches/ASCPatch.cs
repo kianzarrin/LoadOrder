@@ -38,24 +38,17 @@ namespace LoadOrderIPatch.Patches {
             AssemblyDefinition asm = GetInjectionsAssemblyDefinition();
 
             /**********************************/
-            if(false){
-                var method = asm.MainModule.GetMethod(
-                    "LoadOrderInjections.SubscriptionManager.PostBootAction");
-                var call1 = Instruction.Create(OpCodes.Call, module.ImportReference(method));
-                Instruction CallBoot = instructions.First(_c => _c.Calls("Boot"));
-                Instruction BranchTarget = instructions.Last();// return
-                Instruction BrTrueEnd = Instruction.Create(OpCodes.Brtrue, BranchTarget);
 
-                ilProcessor.InsertAfter(CallBoot, call1, BrTrueEnd);
-            }
 
             /**********************************/
-            {
-                var method = asm.MainModule.GetMethod("LoadOrderInjections.SubscriptionManager.DoNothing");
-                var callInjection = Instruction.Create(OpCodes.Call, module.ImportReference(method));
-                Instruction brLast = Instruction.Create(OpCodes.Br, instructions.Last()); // return
-                ilProcessor.Prefix(callInjection, brLast);
-            }
+            var injectionMethod = asm.MainModule.GetMethod("LoadOrderInjections.DoNothingComponent.DoNothing");
+            var callInjection = Instruction.Create(OpCodes.Call, module.ImportReference(injectionMethod));
+            Instruction brLast = Instruction.Create(OpCodes.Br, instructions.Last()); // return
+
+            ilProcessor.Prefix(callInjection, brLast);
+
+            Instruction CallBoot = instructions.First(_c => _c.Calls("Boot"));
+            ilProcessor.InsertAfter(CallBoot, callInjection, brLast);
 
             Log.Successful();
             return ASC;
