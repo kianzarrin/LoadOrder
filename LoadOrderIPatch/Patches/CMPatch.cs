@@ -19,7 +19,8 @@ namespace LoadOrderIPatch.Patches {
             try
             {
                 Entry.Logger = logger;
-                BootPatch(assemblyDefinition); 
+                //BootPatch(assemblyDefinition);
+                NoReportersPatch(assemblyDefinition);
             } catch (Exception ex) { logger.Error(ex.ToString());  }
             return assemblyDefinition;
         }
@@ -41,8 +42,24 @@ namespace LoadOrderIPatch.Patches {
             /**********************************/
             Instruction ret = Instruction.Create(OpCodes.Ret);
             Instruction pointer = instructions.First(_c => _c.Calls("DisplayStatus"));
-            //ilProcessor.InsertAfter(pointer, ret);
+            ilProcessor.InsertAfter(pointer, ret);
         
+            Log.Successful();
+        }
+
+        public void NoReportersPatch(AssemblyDefinition CM) {
+            Log.StartPatching();
+            var module = CM.Modules.First();
+            MethodDefinition mTarget = module.GetMethod("ColossalFramework.Packaging.PackageManager.CreateReporter");
+            Log.Info($"patching {mTarget} ...");
+
+            var instructions = mTarget.Body.Instructions;
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+
+            /**********************************/
+            Instruction ret = Instruction.Create(OpCodes.Ret);
+            ilProcessor.Prefix(ret);
+
             Log.Successful();
         }
 

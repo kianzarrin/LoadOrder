@@ -1,3 +1,5 @@
+using ColossalFramework;
+using ColossalFramework.Packaging;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Patch.API;
