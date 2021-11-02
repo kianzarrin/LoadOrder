@@ -65,6 +65,7 @@ namespace LoadOrderMod.Settings.Tabs {
                         }
                     }) as UITextField;
                 tfSteamPath_.width = 650;
+                tfSteamPath_.tooltip = "Path to steam.exe";
                 g.AddButton("Redownload broken downloads [EXPERIMENTAL]", delegate () {
                     try {
                         var path = tfSteamPath_.text;
