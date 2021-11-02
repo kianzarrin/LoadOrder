@@ -20,15 +20,15 @@ namespace LoadOrderTool.UI {
         public ToolStripMenuItem tsmiRandomOrder;
         public ToolStripMenuItem tsmiHelp;
         public ToolStripMenuItem tsmiWiki;
-        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripSeparator toolStripSeparator1;
         public ToolStripMenuItem tsmiAbout;
         public ToolStripMenuItem tsmiOpenLogLocation;
         public ToolStripMenuItem tsmiDiscordSupport;
         public ToolStripMenuItem tsmiTools;
         public ToolStripMenuItem tsmiMassSubscribe;
+        public ToolStripMenuItem tsmiAdvanced;
         public ToolStripMenuItem tsmiReDownload;
 
-        public ToolStripMenuItem tsmiSync;
         public ToolStripMenuItem tsmiReloadUGC; // reload UGCs from drive.
         public ToolStripMenuItem tsmiResetCache; // reset CS cache + Steam Cache
         public ToolStripMenuItem tsmiResetAllSettings; // rese config + CS cache + steam cache
@@ -52,13 +52,13 @@ namespace LoadOrderTool.UI {
             tsmiWiki = new ToolStripMenuItem();
             tsmiDiscordSupport = new ToolStripMenuItem();
             tsmiOpenLogLocation = new ToolStripMenuItem();
-            toolStripSeparator3 = new ToolStripSeparator();
+            toolStripSeparator1 = new ToolStripSeparator();
             tsmiAbout = new ToolStripMenuItem();
             tsmiTools = new ToolStripMenuItem();
             tsmiMassSubscribe = new ToolStripMenuItem();
+            tsmiAdvanced = new ToolStripMenuItem();
             tsmiReDownload = new ToolStripMenuItem();
 
-            tsmiSync = new ToolStripMenuItem();
             tsmiResetAllSettings = new ToolStripMenuItem();
             tsmiReloadUGC = new ToolStripMenuItem();
             tsmiReloadSettings = new ToolStripMenuItem();
@@ -68,7 +68,6 @@ namespace LoadOrderTool.UI {
 
             Items.AddRange(new ToolStripItem[] {
             tsmiFile,
-            tsmiSync,
             tsmiOrder,
             tsmiTools,
             tsmiHelp});
@@ -84,7 +83,7 @@ namespace LoadOrderTool.UI {
                 tsmiAutoSave,
                 new ToolStripSeparator(),
                 tsmiReloadUGC,
-                new ToolStripSeparator(),
+                toolStripSeparator1,
                 tsmiResetCache,
                 tsmiResetAllSettings,
                 new ToolStripSeparator(),
@@ -138,7 +137,7 @@ namespace LoadOrderTool.UI {
             // 
             tsmiResetOrder.Name = "tsmiResetOrder";
             tsmiResetOrder.Size = new Size(132, 22);
-            tsmiResetOrder.Text = "&ResetOrder";
+            tsmiResetOrder.Text = "&ResetOrder (recommended)";
             // 
             // tsmiHarmonyOrder
             // 
@@ -167,7 +166,7 @@ namespace LoadOrderTool.UI {
             tsmiWiki,
             tsmiDiscordSupport,
             tsmiOpenLogLocation,
-            toolStripSeparator3,
+            new ToolStripSeparator(),
             tsmiAbout});
             tsmiHelp.Name = "tsmiHelp";
             tsmiHelp.Size = new Size(44, 20);
@@ -191,11 +190,6 @@ namespace LoadOrderTool.UI {
             tsmiOpenLogLocation.Size = new Size(180, 22);
             tsmiOpenLogLocation.Text = "Open &Log Location";
             // 
-            // toolStripSeparator3
-            // 
-            toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(177, 6);
-            // 
             // tsmiAbout
             // 
             tsmiAbout.Name = "tsmiAbout";
@@ -205,12 +199,21 @@ namespace LoadOrderTool.UI {
             // tsmiTools
             // 
             tsmiTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                tsmiAdvanced,
                 tsmiMassSubscribe,
                 tsmiReDownload,
             });
             tsmiTools.Name = "tsmiTools";
             tsmiTools.Size = new Size(46, 20);
             tsmiTools.Text = "&Tools";
+            // 
+            // tsmiAdvanced
+            // 
+            tsmiAdvanced.Name = "tsmiAdvanced";
+            tsmiAdvanced.Size = new Size(180, 22);
+            tsmiAdvanced.Text = "Show &Advanced options";
+            tsmiAdvanced.ToolTipText = "Show &Advanced options";
+            tsmiAdvanced.CheckOnClick = true;
             // 
             // tsmiMassSubscribe
             // 
@@ -222,15 +225,6 @@ namespace LoadOrderTool.UI {
             // 
             tsmiReDownload.Name = "tsmiReDownload";
             tsmiReDownload.Text = "&Redownload broken downloads [Experimental]";
-            // 
-            // tsmiSync
-            // 
-            tsmiSync.Name = "tsmiSync";
-            tsmiSync.Text = "&Refresh";
-            tsmiSync.Visible = false;
-            tsmiSync.DropDownItems.AddRange(new ToolStripItem[] {
-                //tsmiUpdateSteamCache,
-            });
             // 
             // tsmiReloadUGC
             //
@@ -274,6 +268,20 @@ namespace LoadOrderTool.UI {
             tsmiAbout.Click += TsmiAbout_Click;
             tsmiMassSubscribe.Click += TsmiMassSubscribe_Click;
             tsmiReDownload.Click += TsmiReDownload_Click;
+            tsmiAdvanced.CheckedChanged += TsmiAdvanced_CheckedChanged;
+
+            OnAdvancedChanged();
+        }
+
+        public void OnAdvancedChanged() {
+            tsmiAdvanced.Checked = ConfigWrapper.instance.Advanced;
+            var advancedItems = new ToolStripItem[] { tsmiRandomOrder, tsmiHarmonyOrder, tsmiReverseOrder, tsmiReloadSettings, tsmiResetCache, tsmiResetAllSettings, toolStripSeparator1 };
+            foreach (var item in advancedItems)
+                item.Visible = ConfigWrapper.instance.Advanced;
+        }
+
+        private void TsmiAdvanced_CheckedChanged(object sender, EventArgs e) {
+            ConfigWrapper.instance.Advanced = tsmiAdvanced.Checked;
         }
 
         private void TsmiDiscordSupport_Click(object sender, EventArgs e) =>

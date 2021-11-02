@@ -61,6 +61,16 @@ namespace LoadOrderTool.UI {
             radioButtonReleaseMono.SetTooltip("this is fast but produces inferior logs");
         }
 
+        public void OnAdvancedChanged() {
+            var advancedItems = new Control[] {
+                flowLayoutPanelLauncher, // steam.exe cities.exe
+                flowLayoutPanelMono,
+                flowLayoutPanelLoadMode, // poke pahsed
+                tableLayoutPanelExtraArgs, };
+            foreach (var item in advancedItems)
+                item.Visible = ConfigWrapper.instance.Advanced;
+        }
+
         public void LoadSettings() {
             if (UIUtil.DesignMode) return;
 
@@ -109,6 +119,8 @@ namespace LoadOrderTool.UI {
             checkBoxPoke.Checked = settings_.Poke;
 
             textBoxExtraArgs.Text = settings_.ExtraArgs;
+
+            OnAdvancedChanged();
         }
 
         void SaveSettings() {

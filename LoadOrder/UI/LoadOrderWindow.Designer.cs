@@ -602,7 +602,7 @@ namespace LoadOrderTool.UI
         private TabPage DLCTab;
         private TabPage LSMTab;
 
-        private UI.LaunchControl launchControl;
+        public UI.LaunchControl launchControl;
         private UI.DLCControl DLCControl;
         private UI.LSMControl LSMControl;
 

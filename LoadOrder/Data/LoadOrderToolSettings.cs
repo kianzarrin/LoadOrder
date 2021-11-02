@@ -11,6 +11,7 @@ namespace LoadOrderTool {
         public int FormHeight = -1;
 
         public bool AutoSave = true;
+        public bool Advanced = false;
         public string SavedGamePath, MapPath;
 
         public bool NoAssets, NoMods, NoWorkshop;
