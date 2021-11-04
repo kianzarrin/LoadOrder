@@ -23,13 +23,13 @@ namespace LoadOrderTool.UI {
             UpdateCommand();
 
             foreach (var c in this.GetAll<TextBox>())
-                c.TextChanged += Update;
+                c.TextChanged += OnChanged;
 
             foreach (var c in this.GetAll<CheckBox>())
-                c.CheckedChanged += Update;
+                c.CheckedChanged += OnChanged;
 
             foreach (var c in this.GetAll<RadioButton>())
-                c.CheckedChanged += Update;
+                c.CheckedChanged += OnChanged;
 
             checkBoxLSM.Hide();
             checkBoxNoMods.Hide();
@@ -156,11 +156,20 @@ namespace LoadOrderTool.UI {
             settings_.ExtraArgs = textBoxExtraArgs.Text;
 
             settings_.Serialize();
+
+            UpdateFiles();
         }
 
-        private void Update(object sender, EventArgs e) {
+        private void OnChanged(object sender, EventArgs e) {
             UpdateCommand();
             SaveSettings();
+        }
+
+        private void UpdateFiles() {
+            if (settings_.DebugMono)
+                AssemblyUtil.UseDebugMono();
+            else 
+                AssemblyUtil.UseReleaseMono();
         }
 
         private void UpdateCommand() {
@@ -274,12 +283,9 @@ namespace LoadOrderTool.UI {
                 }
             }
             var args = GetCommandArgs();
-            
-            if (radioButtonDebugMono.Checked)
-                AssemblyUtil.UseDebugMono();
-            else if(radioButtonReleaseMono.Checked)
-                AssemblyUtil.UseReleaseMono();
 
+            UpdateFiles();
+            
             string fileExe = radioButtonSteamExe.Checked ? DataLocation.SteamExe : DataLocation.CitiesExe;
             string dir = radioButtonSteamExe.Checked ? DataLocation.SteamPath : DataLocation.GamePath;
 
