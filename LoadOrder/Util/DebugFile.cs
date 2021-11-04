@@ -58,10 +58,17 @@ namespace LoadOrderTool.Util {
         public static MonoFile Instance = new MonoFile();
 
         public override string FilePath => Path.Combine(DataLocation.MonoPath, "mono.dll");
-
         public override string ReleaseFilePath => Path.Combine(DataLocation.MonoPath, "mono-orig.dll");
         public override string DebugFilePath => Path.Combine(DataLocation.MonoPath, "mono-debug.dll");
         public override string ResourceFileName => "mono-debug._dll";
     }
 
+    public class CitiesFile : DebugFile {
+        public static CitiesFile Instance = new CitiesFile();
+
+        public override string FilePath => Path.Combine(DataLocation.GamePath, DataLocation.CitiesExe);
+        public override string ReleaseFilePath => FilePath + ".Orig";
+        public override string DebugFilePath => FilePath + ".Profiler";
+        public override string ResourceFileName => "Cities.exe.Profiler";
+    }
 }

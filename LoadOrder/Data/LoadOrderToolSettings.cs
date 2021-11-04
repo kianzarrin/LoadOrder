@@ -23,6 +23,7 @@ namespace LoadOrderTool {
 
         public bool SteamExe = true;
         public bool DebugMono;
+        public bool ProfilerCities;
 
         public string ExtraArgs;
 

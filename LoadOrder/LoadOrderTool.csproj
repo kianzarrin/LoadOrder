@@ -107,10 +107,10 @@
     </PropertyGroup>
     <ItemGroup>
       <VersionNumber Include="@(Targets->'%(Version)')" />
-      <SideDlls Include="Resources\*._dll" />
+      <SideFiles Include="Resources\*._dll;Resources\Cities.exe.Profiler" />
     </ItemGroup>
-    <Copy SourceFiles="@(SideDlls)" DestinationFolder="$(DeployDir)" />
-    <Copy SourceFiles="@(SideDlls)" DestinationFolder="$(TargetDir)" />
+    <Copy SourceFiles="@(SideFiles)" DestinationFolder="$(DeployDir)" />
+    <Copy SourceFiles="@(SideFiles)" DestinationFolder="$(TargetDir)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
   </Target>
 

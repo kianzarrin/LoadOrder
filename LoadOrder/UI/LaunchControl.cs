@@ -51,10 +51,10 @@ namespace LoadOrderTool.UI {
             radioButtonNewGame.SetTooltip(loadMapTooltip);
             buttonMapPath.SetTooltip(loadMapTooltip);
 
-            checkBoxPoke.SetTooltip("depth-first: poke mods to find potential type resultion problems.");
-            checkBoxPhased.SetTooltip("breadth-frist: load mods in phases to avoid potential type resultion problems.");
+            checkBoxPoke.SetTooltip("depth-first: poke mods to find potential type resolution problems.");
+            checkBoxPhased.SetTooltip("breadth-first: load mods in phases to avoid potential type resolution problems.");
 
-            radioButtonSteamExe.SetTooltip("steam features availible in game. auto launches steam");
+            radioButtonSteamExe.SetTooltip("steam features available in game. auto launches steam");
             radioButtonCitiesExe.SetTooltip("no steam features in game.");
 
             radioButtonDebugMono.SetTooltip("use this when you want to submit logs to modders");
@@ -65,7 +65,7 @@ namespace LoadOrderTool.UI {
             var advancedItems = new Control[] {
                 flowLayoutPanelLauncher, // steam.exe cities.exe
                 flowLayoutPanelMono,
-                flowLayoutPanelLoadMode, // poke pahsed
+                flowLayoutPanelLoadMode, // poke phased
                 tableLayoutPanelExtraArgs, };
             foreach (var item in advancedItems)
                 item.Visible = ConfigWrapper.instance.Advanced;
@@ -103,6 +103,11 @@ namespace LoadOrderTool.UI {
                 radioButtonDebugMono.Checked = true;
             else
                 radioButtonReleaseMono.Checked = true;
+
+            if (settings_.ProfilerCities)
+                radioButtonProfilerCities.Checked = true;
+            else
+                radioButtonProfilerCities.Checked = true;
 
             if (settings_.SteamExe)
                 radioButtonSteamExe.Checked = true;
@@ -151,6 +156,8 @@ namespace LoadOrderTool.UI {
             settings_.Poke = checkBoxPoke.Checked;
 
             settings_.DebugMono = radioButtonDebugMono.Checked;
+            settings_.ProfilerCities = radioButtonProfilerCities.Checked;
+
             settings_.SteamExe = radioButtonSteamExe.Checked;
 
             settings_.ExtraArgs = textBoxExtraArgs.Text;
@@ -170,6 +177,11 @@ namespace LoadOrderTool.UI {
                 MonoFile.Instance.UseDebug();
             else
                 MonoFile.Instance.UseRelease();
+
+            if (settings_.ProfilerCities)
+                CitiesFile.Instance.UseDebug();
+            else
+                CitiesFile.Instance.UseRelease();
         }
 
         private void UpdateCommand() {
@@ -265,8 +277,8 @@ namespace LoadOrderTool.UI {
                 var result = MessageBox.Show(
                     caption: "Unsaved changes",
                     text:
-                    "There are changes that are not saved to to game and will not take effect. " +
-                    "Save changes to game before launcing it?",
+                    "There are changes that are not saved to game and will not take effect. " +
+                    "Save changes to game before launching it?",
                     buttons: MessageBoxButtons.YesNoCancel);
                 switch (result) {
                     case DialogResult.Cancel:

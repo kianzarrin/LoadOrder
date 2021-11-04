@@ -64,6 +64,11 @@ namespace LoadOrderTool.UI {
             this.labelCommand = new System.Windows.Forms.Label();
             this.btnTerminate = new System.Windows.Forms.Button();
             flowLayoutLaunch = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanelProfiler = new System.Windows.Forms.FlowLayoutPanel();
+            this.labelCities = new System.Windows.Forms.Label();
+            this.radioButtonReleaseCities = new System.Windows.Forms.RadioButton();
+            this.radioButtonProfilerCities = new System.Windows.Forms.RadioButton();
+
             this.flowLayoutPanelTopLevel.SuspendLayout();
             this.flowLayoutPanelExclusions.SuspendLayout();
             this.tableLayoutPanelLunchMode.SuspendLayout();
@@ -73,6 +78,7 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelMono.SuspendLayout();
             this.tableLayoutPanelExtraArgs.SuspendLayout();
             flowLayoutLaunch.SuspendLayout();
+            flowLayoutPanelProfiler.SuspendLayout();
             this.SuspendLayout();
             // 
             // flowLayoutPanelTopLevel
@@ -83,6 +89,7 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelLoadMode);
             this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelLauncher);
             this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelMono);
+            this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelProfiler);
             this.flowLayoutPanelTopLevel.Controls.Add(this.tableLayoutPanelExtraArgs);
             this.flowLayoutPanelTopLevel.Controls.Add(flowLayoutLaunch);
             this.flowLayoutPanelTopLevel.Controls.Add(this.lblNote);
@@ -380,44 +387,74 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelMono.Controls.Add(this.labelMono);
             this.flowLayoutPanelMono.Controls.Add(this.radioButtonReleaseMono);
             this.flowLayoutPanelMono.Controls.Add(this.radioButtonDebugMono);
-            this.flowLayoutPanelMono.Location = new System.Drawing.Point(3, 288);
             this.flowLayoutPanelMono.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.flowLayoutPanelMono.Name = "flowLayoutPanelMono";
-            this.flowLayoutPanelMono.Size = new System.Drawing.Size(362, 25);
             this.flowLayoutPanelMono.TabIndex = 8;
             this.flowLayoutPanelMono.WrapContents = false;
+                // 
+                // labelMono
+                // 
+                this.labelMono.Anchor = System.Windows.Forms.AnchorStyles.Left;
+                this.labelMono.AutoSize = true;
+                this.labelMono.Name = "labelMono";
+                this.labelMono.TabIndex = 2;
+                this.labelMono.Text = "Mono: ";
+                // 
+                // radioButtonReleaseMono
+                // 
+                this.radioButtonReleaseMono.AutoSize = true;
+                this.radioButtonReleaseMono.Name = "radioButtonReleaseMono";
+                this.radioButtonReleaseMono.TabIndex = 0;
+                this.radioButtonReleaseMono.TabStop = true;
+                this.radioButtonReleaseMono.Text = "Release Mode (faster)";
+                this.radioButtonReleaseMono.UseVisualStyleBackColor = true;
+                // 
+                // radioButtonDebugMono
+                // 
+                this.radioButtonDebugMono.AutoSize = true;
+                this.radioButtonDebugMono.Name = "radioButtonDebugMono";
+                this.radioButtonDebugMono.TabIndex = 1;
+                this.radioButtonDebugMono.TabStop = true;
+                this.radioButtonDebugMono.Text = "Debug Mode (better logs)";
+                this.radioButtonDebugMono.UseVisualStyleBackColor = true;
             // 
-            // labelMono
+            // flowLayoutPanelProfiler
             // 
-            this.labelMono.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.labelMono.AutoSize = true;
-            this.labelMono.Location = new System.Drawing.Point(3, 5);
-            this.labelMono.Name = "labelMono";
-            this.labelMono.Size = new System.Drawing.Size(45, 15);
-            this.labelMono.TabIndex = 2;
-            this.labelMono.Text = "Mono: ";
-            // 
-            // radioButtonReleaseMono
-            // 
-            this.radioButtonReleaseMono.AutoSize = true;
-            this.radioButtonReleaseMono.Location = new System.Drawing.Point(54, 3);
-            this.radioButtonReleaseMono.Name = "radioButtonReleaseMono";
-            this.radioButtonReleaseMono.Size = new System.Drawing.Size(138, 19);
-            this.radioButtonReleaseMono.TabIndex = 0;
-            this.radioButtonReleaseMono.TabStop = true;
-            this.radioButtonReleaseMono.Text = "Release Mode (faster)";
-            this.radioButtonReleaseMono.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonDebugMono
-            // 
-            this.radioButtonDebugMono.AutoSize = true;
-            this.radioButtonDebugMono.Location = new System.Drawing.Point(198, 3);
-            this.radioButtonDebugMono.Name = "radioButtonDebugMono";
-            this.radioButtonDebugMono.Size = new System.Drawing.Size(161, 19);
-            this.radioButtonDebugMono.TabIndex = 1;
-            this.radioButtonDebugMono.TabStop = true;
-            this.radioButtonDebugMono.Text = "Debug Mode (better logs)";
-            this.radioButtonDebugMono.UseVisualStyleBackColor = true;
+            this.flowLayoutPanelProfiler.AutoSize = true;
+            this.flowLayoutPanelProfiler.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanelProfiler.Controls.Add(this.labelCities);
+            this.flowLayoutPanelProfiler.Controls.Add(this.radioButtonReleaseCities);
+            this.flowLayoutPanelProfiler.Controls.Add(this.radioButtonProfilerCities);
+            this.flowLayoutPanelProfiler.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
+            this.flowLayoutPanelProfiler.Name = "flowLayoutPanelProfiler";
+            this.flowLayoutPanelProfiler.TabIndex = 9;
+            this.flowLayoutPanelProfiler.WrapContents = false;
+                // 
+                // labelCities
+                // 
+                this.labelCities.Anchor = System.Windows.Forms.AnchorStyles.Left;
+                this.labelCities.AutoSize = true;
+                this.labelCities.Name = "labelCities";
+                this.labelCities.TabIndex = 2;
+                this.labelCities.Text = "Cities.exe";
+                // 
+                // radioButtonReleaseCities
+                // 
+                this.radioButtonReleaseCities.AutoSize = true;
+                this.radioButtonReleaseCities.Name = "radioButtonReleaseCities";
+                this.radioButtonReleaseCities.TabIndex = 0;
+                this.radioButtonReleaseCities.TabStop = true;
+                this.radioButtonReleaseCities.Text = "Release Mode (faster)";
+                this.radioButtonReleaseCities.UseVisualStyleBackColor = true;
+                // 
+                // radioButtonProfilerCities
+                // 
+                this.radioButtonProfilerCities.AutoSize = true;
+                this.radioButtonProfilerCities.Name = "radioButtonProfilerCities";
+                this.radioButtonProfilerCities.TabIndex = 1;
+                this.radioButtonProfilerCities.TabStop = true;
+                this.radioButtonProfilerCities.Text = "Unity Profiler Mode";
+                this.radioButtonProfilerCities.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanelExtraArgs
             // 
@@ -531,6 +568,8 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelLauncher.PerformLayout();
             this.flowLayoutPanelMono.ResumeLayout(false);
             this.flowLayoutPanelMono.PerformLayout();
+            this.flowLayoutPanelProfiler.ResumeLayout(false);
+            this.flowLayoutPanelProfiler.PerformLayout();
             this.tableLayoutPanelExtraArgs.ResumeLayout(false);
             this.tableLayoutPanelExtraArgs.PerformLayout();
             flowLayoutLaunch.ResumeLayout(false);
@@ -577,5 +616,9 @@ namespace LoadOrderTool.UI {
         private CheckBox checkBoxNewAsset;
         private CheckBox checkBoxLSM;
         private Button btnTerminate;
+        private FlowLayoutPanel flowLayoutPanelProfiler;
+        private Label labelCities;
+        private RadioButton radioButtonReleaseCities;
+        private RadioButton radioButtonProfilerCities;
     }
 }
