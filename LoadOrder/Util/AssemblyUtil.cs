@@ -87,13 +87,6 @@ namespace LoadOrderTool.Util {
             }
         }
 
-        public static byte[] GetDebugMono() {
-            string[] resources = typeof(AssemblyUtil).Assembly.GetManifestResourceNames();
-            foreach (var resource in resources)
-                Log.Debug("resource: " + resource);
-            string debugMonoName = resources.First(r => r.ToLower().Contains("mono-debug"));
-            return ReadBytesFromGetManifestResource(debugMonoName);
-        }
         public static byte[] ReadBytesFromGetManifestResource(string name) {
             try {
                 using (var stream = typeof(AssemblyUtil).Assembly.GetManifestResourceStream(name)) {
@@ -106,56 +99,5 @@ namespace LoadOrderTool.Util {
                 return null;
             }
         }
-
-        public static string DebugMonoPath => Path.Combine(DataLocation.MonoPath, "mono-debug.dll");
-        public static string ReleaseMonoPath => Path.Combine(DataLocation.MonoPath, "mono-orig.dll");
-        public static string MonoPath => Path.Combine(DataLocation.MonoPath, "mono.dll");
-
-        public static void EnsureDebugMonoWritten() {
-            if (File.Exists(DebugMonoPath))
-                return;
-            var data = GetDebugMono();
-            File.WriteAllBytes(DebugMonoPath, data);
-        }
-
-        public static void EnsureBReleaseMonoBackedup() {
-            if (File.Exists(ReleaseMonoPath))
-                return;
-            File.Copy(MonoPath, ReleaseMonoPath);
-        }
-
-        public static bool FilesEqual(string path1, string path2) {
-            return new FileInfo(path1).Length == new FileInfo(path2).Length;
-        }
-
-        public static void UseDebugMono() {
-            try {
-                EnsureBReleaseMonoBackedup();
-                EnsureDebugMonoWritten();
-                CopyMono(source: DebugMonoPath, dest: MonoPath);
-
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-        public static void UseReleaseMono() {
-            try {
-                if(File.Exists(ReleaseMonoPath))
-                    CopyMono(source: ReleaseMonoPath, dest: MonoPath);
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
-        public static void CopyMono(string source, string dest) {
-            if (FilesEqual(source, dest))
-                return; // already the same
-            File.Delete(dest);
-            File.Copy(sourceFileName: source, destFileName: dest);
-        }
-
-
-
-
     }
 }

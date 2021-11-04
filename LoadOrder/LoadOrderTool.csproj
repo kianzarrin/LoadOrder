@@ -63,7 +63,6 @@
     <None Remove="Resources\arrow-left.png" />
     <None Remove="Resources\arrow-right.png" />
     <None Remove="Resources\LoadOrder.ico" />
-    <None Remove="Resources\mono-debug._dll" />
     <None Remove="Resources\next-arrow.png" />
     <EmbeddedResource Include="Resources\arrow-left.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -71,7 +70,6 @@
     <EmbeddedResource Include="Resources\arrow-right.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\mono-debug._dll" />
   </ItemGroup>
   
   <ItemGroup>
@@ -109,9 +107,10 @@
     </PropertyGroup>
     <ItemGroup>
       <VersionNumber Include="@(Targets->'%(Version)')" />
-      <AllFiles Include="$(TargetDir)*.*" />
+      <SideDlls Include="Resources\*._dll" />
     </ItemGroup>
-    <!--<Copy SourceFiles="@(AllFiles)" DestinationFolder="$(DeployDir)" />-->
+    <Copy SourceFiles="@(SideDlls)" DestinationFolder="$(DeployDir)" />
+    <Copy SourceFiles="@(SideDlls)" DestinationFolder="$(TargetDir)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />
   </Target>
 

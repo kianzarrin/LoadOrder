@@ -306,7 +306,7 @@ namespace CO.IO {
                 else if (isMacOSX)
                     return "Cities";
                 else
-                    return "Cities"; // unknow platform.
+                    return "Cities"; // unknown platform.
             }
         }
         public static string SteamExe {
@@ -318,7 +318,7 @@ namespace CO.IO {
                 else if (isMacOSX)
                     return "Steam";
                 else
-                    return "Steam"; // unknow platform.
+                    return "Steam"; // unknown platform.
             }
         }
 

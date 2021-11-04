@@ -167,9 +167,9 @@ namespace LoadOrderTool.UI {
 
         private void UpdateFiles() {
             if (settings_.DebugMono)
-                AssemblyUtil.UseDebugMono();
-            else 
-                AssemblyUtil.UseReleaseMono();
+                MonoFile.Instance.UseDebug();
+            else
+                MonoFile.Instance.UseRelease();
         }
 
         private void UpdateCommand() {
