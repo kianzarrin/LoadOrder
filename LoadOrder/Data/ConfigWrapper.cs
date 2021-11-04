@@ -71,12 +71,12 @@ namespace LoadOrderTool.Data {
         public bool Advanced {
             get => LoadOrderToolSettings.Instace.Advanced;
             set {
-                LoadOrderToolSettings.Instace.Advanced = value;
-                LoadOrderToolSettings.Instace.Serialize();
-                if (LoadOrderWindow.Instance != null) {
-                    LoadOrderWindow.Instance.menuStrip.OnAdvancedChanged();
-                    LoadOrderWindow.Instance.launchControl.OnAdvancedChanged();
+                if (LoadOrderToolSettings.Instace.Advanced != value) {
+                    LoadOrderToolSettings.Instace.Advanced = value;
+                    LoadOrderToolSettings.Instace.Serialize();
                 }
+                LoadOrderWindow.Instance?.menuStrip?.OnAdvancedChanged();
+                LoadOrderWindow.Instance?.launchControl?.OnAdvancedChanged();
 
             }
         }
