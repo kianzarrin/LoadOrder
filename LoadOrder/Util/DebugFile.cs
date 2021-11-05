@@ -10,8 +10,7 @@ namespace LoadOrderTool.Util {
         public string ResourceFilePath  => Path.Combine(DataLocation.assemblyDirectory, ResourceFileName);
 
         public abstract string ReleaseFilePath { get; }
-        public abstract string DebugFilePath { get; }
-        public abstract string FilePath { get; }
+        public abstract string DebugFilePath { get; }public abstract string FilePath { get; }
 
         public static bool FilesEqual(string path1, string path2) {
             return new FileInfo(path1).Length == new FileInfo(path2).Length;

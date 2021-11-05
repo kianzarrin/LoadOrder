@@ -434,7 +434,7 @@ namespace CO.IO {
 
         public static string assemblyDirectory {
             get {
-                return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                return currentDirectory; // work around: application is put inside temp folder so we can't get the path to original assembly.
             }
         }
 
