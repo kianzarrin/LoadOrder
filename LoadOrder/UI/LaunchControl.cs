@@ -107,7 +107,7 @@ namespace LoadOrderTool.UI {
             if (settings_.ProfilerCities)
                 radioButtonProfilerCities.Checked = true;
             else
-                radioButtonProfilerCities.Checked = true;
+                radioButtonReleaseCities.Checked = true;
 
             if (settings_.SteamExe)
                 radioButtonSteamExe.Checked = true;
