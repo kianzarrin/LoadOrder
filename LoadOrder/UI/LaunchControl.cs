@@ -65,6 +65,7 @@ namespace LoadOrderTool.UI {
             var advancedItems = new Control[] {
                 flowLayoutPanelLauncher, // steam.exe cities.exe
                 flowLayoutPanelMono,
+                flowLayoutPanelProfiler,
                 flowLayoutPanelLoadMode, // poke phased
                 tableLayoutPanelExtraArgs, };
             foreach (var item in advancedItems)
