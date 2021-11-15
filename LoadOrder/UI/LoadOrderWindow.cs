@@ -687,7 +687,7 @@ namespace LoadOrderTool.UI {
             } catch(Exception ex) { ex.Log(); }
         }
 
-        void UpdateBrokenDownloadsStatus() {
+        string UpdateBrokenDownloadsStatus() {
             bool red = false, orange = false;
             string reason = "the following are missing:\n";
 
@@ -706,13 +706,16 @@ namespace LoadOrderTool.UI {
             if (red) {
                 DownloadWarningLabel.Text = "There are broken downloads!";
                 DownloadWarningLabel.ForeColor = Color.Red;
-                DownloadWarningLabel.ToolTipText = reason;
+                return DownloadWarningLabel.ToolTipText = reason;
             } else if (orange) {
                 DownloadWarningLabel.Text = "There maybe broken downloads!";
                 DownloadWarningLabel.ForeColor = Color.Orange;
-                DownloadWarningLabel.ToolTipText = reason;
+                return DownloadWarningLabel.ToolTipText = reason;
             }
+            return "";
         }
+
+        
 
 
         public void RefreshAll() {
@@ -773,6 +776,7 @@ namespace LoadOrderTool.UI {
                 if(authorsUpdated) RefreshAuthors();
                 if(save) ConfigWrapper.SteamCache.Serialize();
                 SetCacheProgress(-1);
+                Log.Info(UpdateBrokenDownloadsStatus());
             } catch(Exception ex) { ex.Log(); }
         }
 

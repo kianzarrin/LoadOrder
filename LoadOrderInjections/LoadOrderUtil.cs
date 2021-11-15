@@ -53,10 +53,5 @@ namespace LoadOrderInjections.Util {
 
         internal static string DllName(this PluginInfo p) => p.userModInstance?.GetType()?.Assembly?.GetName()?.Name;
         internal static bool IsHarmonyMod(this PluginInfo p) => p.name == "2040656402" || p.name == "CitiesHarmony";
-        internal static bool IsLSM(this PluginInfo p) => p.name == "667342976" || p.name == "LoadingScreenMod";
-
-        internal static Assembly GetLSMAssembly() =>
-            AppDomain.CurrentDomain.GetAssemblies()
-            .FirstOrDefault(_asm => _asm.GetName().Name == "LoadingScreenMod");
     }
 }

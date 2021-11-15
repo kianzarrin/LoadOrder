@@ -151,7 +151,7 @@ namespace LoadOrderTool.UI {
             tsmiReverseOrder.Name = "tsmiReverseOrder";
             tsmiReverseOrder.Size = new Size(132, 22);
             tsmiReverseOrder.Text = "Re&verse";
-            tsmiReverseOrder.ToolTipText = "revese order";
+            tsmiReverseOrder.ToolTipText = "reverse order";
             // 
             // tsmiRandomOrder
             // 
@@ -311,7 +311,7 @@ namespace LoadOrderTool.UI {
                 SteamUtil.ReDownload(ids);
 
                 var res = MessageBox.Show(
-                    "You can monitor download progress in steam client. Wait for steam to finish downloading. Then press ok to refresh everyhing.\n" +
+                    "You can monitor download progress in steam client. Wait for steam to finish downloading. Then press OK to refresh everything.\n" +
                     "should this not work the first time please try again", "Wait for download");
                 ConfigWrapper.instance.CSCache.MissingDir = new ulong[0];
                 LoadOrderWindow.Instance.DownloadWarningLabel.Visible = false;
