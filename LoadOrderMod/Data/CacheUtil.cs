@@ -21,9 +21,14 @@ namespace LoadOrderMod.Data {
 
     public class CacheUtil {
         public CSCache Cache;
-        public CacheUtil() {
+        public Package.Asset[] CachedAssets;
+        public PluginInfo[] CachedPlugins;
+        public CacheUtil(Package.Asset[] assets, PluginManager.PluginInfo[] plugins) {
+            CachedAssets = assets;
+            CachedPlugins = plugins;
             Load();
         }
+
         public void Load() => Cache = CSCache.Deserialize(ConfigUtil.LocalLoadOrderPath) ?? new CSCache();
         public void Save() => Cache.Serialize(ConfigUtil.LocalLoadOrderPath);
 
@@ -50,7 +55,7 @@ namespace LoadOrderMod.Data {
                 LogCalled();
                 Cache.GamePath = DataLocation.applicationBase;
                 Log.Info("Config.GamePath=" + Cache.GamePath, true);
-                foreach (var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
+                foreach (var pluginInfo in CachedPlugins) {
                     if (pluginInfo.publishedFileID != PublishedFileId.invalid) {
                         Cache.WorkShopContentPath = Path.GetDirectoryName(pluginInfo.modPath);
                         Log.Info("Config.WorkShopContentPath=" + Cache.WorkShopContentPath, true);
@@ -65,7 +70,7 @@ namespace LoadOrderMod.Data {
 
         public void AquireModsDetails() {
             LogCalled();
-            foreach (var pluginInfo in PluginManager.instance.GetPluginsInfo()) {
+            foreach (var pluginInfo in CachedPlugins) {
                 try {
                     if (pluginInfo?.userModInstance == null) continue;
                     var cache = GetOrCreateModCache(pluginInfo);
@@ -85,14 +90,8 @@ namespace LoadOrderMod.Data {
             var timerInstantiate = new Stopwatch();
             int assetCount = 0;
 
-            // evaluate this to avoid race condition.
-            var assets = PackageManager.FilterAssets(new[] {
-                UserAssetType.CustomAssetMetaData,
-                UserAssetType.MapThemeMetaData,
-                UserAssetType.ColorCorrection,
-                UserAssetType.DistrictStyleMetaData,
-            }).ToArray();
-            foreach (var asset in assets) {
+
+            foreach (var asset in CachedAssets) {
                 try {
                     Assertion.NotNull(asset, "asset");
                     if (!asset.isMainAsset) continue;
@@ -144,13 +143,22 @@ namespace LoadOrderMod.Data {
                     Log.Info("Skipping UGCCache ...");
                     return;
                 }
-                new Thread(CacheDataImpl).Start();
+                // evaluate this to avoid race condition.
+                
+                var assets = PackageManager.FilterAssets(new[] {
+                    UserAssetType.CustomAssetMetaData,
+                    UserAssetType.MapThemeMetaData,
+                    UserAssetType.ColorCorrection,
+                    UserAssetType.DistrictStyleMetaData,
+                }).ToArray();
+                var plugins = PluginManager.instance.GetPluginsInfo().ToArray();
+                new Thread(() => CacheDataImpl(assets, plugins)).Start();
             } catch (Exception ex) { ex.Log(); }
         }
 
-        static void CacheDataImpl() {
+        static void CacheDataImpl(Package.Asset[] assets, PluginManager.PluginInfo []plugins) {
             try {
-                new CacheUtil().CacheAll();
+                new CacheUtil(assets, plugins).CacheAll();
             } catch(Exception ex) { ex.Log(); }
         }
 
