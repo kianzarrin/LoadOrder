@@ -20,12 +20,25 @@ namespace LoadOrderTool.UI {
             bSkipPath.Click += BSkipPath_Click;
             tbSkipPath.TextChanged += TbSkipPath_TextChanged;
             cbSkip.CheckedChanged += RbSkip_CheckedChanged;
+
+            cbLoadEnabled.CheckedChanged += CbLoadEnabled_CheckedChanged;
+            cbLoadUsed.CheckedChanged += CbLoadUsed_CheckedChanged;
+        }
+
+        private void CbLoadUsed_CheckedChanged(object sender, EventArgs e) {
+            LSMManager.instance.LoadEnabled = cbLoadEnabled.Checked;
+        }
+
+        private void CbLoadEnabled_CheckedChanged(object sender, EventArgs e) {
+            LSMManager.instance.LoadUsed = cbLoadUsed.Checked;
         }
 
         public void Populate() {
             if (UIUtil.DesignMode) return;
             tbSkipPath.Text = LSMManager.instance.SkipPath ?? ConfigWrapper.LSMConfig.skipFile;
             cbSkip.Checked = LSMManager.instance.SkipPrefabs; // off if file does not exist or LSM toggle is off.
+            cbLoadEnabled.Checked = LSMManager.instance.LoadEnabled;
+            cbLoadUsed.Checked = LSMManager.instance.LoadUsed;
         }
 
         private void RbSkip_CheckedChanged(object sender, EventArgs e) {

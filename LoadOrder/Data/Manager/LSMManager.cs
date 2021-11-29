@@ -6,6 +6,7 @@ using CO;
 namespace LoadOrderTool.Data {
     public class LSMManager : SingletonLite<LSMManager>, IDataManager {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
+        static LoadingScreenMod.Settings LSMConfig => ConfigWrapper.instance.LSMConfig;
         public bool IsLoading { get; private set; }
         public bool IsLoaded { get; private set; }
         public event Action EventLoaded;
@@ -27,25 +28,31 @@ namespace LoadOrderTool.Data {
         }
 
         public bool SkipPrefabs => skipPath_ != null;
+        public bool LoadEnabled { get; set; } = true;
+        public bool LoadUsed { get; set; } = true;
 
         public void Load() {
             try {
                 Log.Called();
                 IsLoading = true;
                 IsLoaded = false;
-                if (ConfigWrapper.LSMConfig.skipPrefabs)
-                    SkipPath = ConfigWrapper.LSMConfig.skipFile;
+                if (LSMConfig.skipPrefabs)
+                    SkipPath = LSMConfig.skipFile;
                 else
                     SkipPath = null;
+                LoadEnabled = LSMConfig.loadEnabled;
+                LoadUsed = LSMConfig.loadUsed;
             } catch (Exception ex) { ex.Log(); }
             try { EventLoaded?.Invoke(); } catch (Exception ex) { ex.Log(); }
         }
 
         public void Save() {
             try {
-                ConfigWrapper.LSMConfig.skipPrefabs = SkipPrefabs;
+                LSMConfig.skipPrefabs = SkipPrefabs;
                 if (SkipPrefabs)
-                    ConfigWrapper.LSMConfig.skipFile = SkipPath;
+                    LSMConfig.skipFile = SkipPath;
+                LSMConfig.loadEnabled = LoadEnabled;
+                LSMConfig.loadUsed = LoadUsed;
             } catch (Exception ex) { ex.Log(); }
         }
 
@@ -56,21 +63,27 @@ namespace LoadOrderTool.Data {
             } else if(SkipPath != profile.SkipFilePathFinal) {
                 // merge can only take place if skip files are the same.
                 // other wise just include everything to be safe.
-                SkipPath = null; 
+                SkipPath = null;
             }
+            LoadEnabled = profile.LoadEnabled;
+            LoadUsed = profile.LoadUsed;
         }
 
         public void SaveToProfile(LoadOrderProfile profile) {
             profile.SkipFilePathFinal = SkipPath;
+            profile.LoadEnabled = LoadEnabled;
+            profile.LoadUsed = LoadUsed;
         }
 
         public void ResetCache() { }
 
         public void ReloadConfig() {
-            if(ConfigWrapper.LSMConfig.skipPrefabs)
-                SkipPath = ConfigWrapper.LSMConfig.skipFile;
+            if(LSMConfig.skipPrefabs)
+                SkipPath = LSMConfig.skipFile;
             else
                 SkipPath = null;
+            LoadEnabled = LSMConfig.loadEnabled;
+            LoadUsed = LSMConfig.loadUsed;
         }
     }
 }

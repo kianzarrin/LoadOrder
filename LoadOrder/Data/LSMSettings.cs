@@ -57,6 +57,8 @@ namespace LoadingScreenMod {
                 var ret = Deserialize();
                 ret.skipFile = this.skipFile;
                 ret.skipPrefabs = this.skipPrefabs;
+                ret.loadEnabled = this.loadEnabled;
+                ret.loadUsed = this.loadUsed;
                 ret.Serialize();
                 return ret;
             } catch(Exception ex) {

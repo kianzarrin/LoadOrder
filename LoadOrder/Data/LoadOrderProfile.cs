@@ -129,6 +129,8 @@ namespace LoadOrderTool.Data {
             set => SkipFilePathFinal = ToFinalPath(value);
         }
 
+        public bool LoadEnabled = true;
+        public bool LoadUsed = true;
 
         public Mod GetMod(string includedPath) => Mods.FirstOrDefault(m => m.IncludedPathFinal == includedPath);
         public Asset GetAsset(string includedPath) => Assets.FirstOrDefault(m => m.IncludedPathFinal == includedPath);
