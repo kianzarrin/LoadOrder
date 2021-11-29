@@ -207,7 +207,7 @@ namespace CO.Packaging {
 
         private List<AssetInfo> m_Assets = new List<AssetInfo>();
 
-        public IEnumerable<AssetInfo> GetAssets() => m_Assets;
+        public IEnumerable<AssetInfo> GetAssets() => m_Assets.ToArray(); // avoid race condition when list is being modified.
 
         public string[] GetAllTags() {
             var ret = m_Assets.SelectMany(a => a.GetTags()).Distinct().ToArray();

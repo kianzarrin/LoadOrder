@@ -488,7 +488,7 @@ namespace CO.Plugins {
         public event PluginManager.PluginsChangedHandler eventPluginsStateChanged;
 
         public IEnumerable<PluginInfo> GetMods() =>
-            m_Plugins.Where(p => p.HasUserMod);
+            m_Plugins.Where(p => p.HasUserMod).ToArray(); // convert to array to avoid race conditions
 
         public IEnumerable<PluginInfo> GetCameraPluginInfos() =>
              m_Plugins.Where(p => p.isCameraScript);
