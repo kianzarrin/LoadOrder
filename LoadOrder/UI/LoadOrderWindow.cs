@@ -691,7 +691,9 @@ namespace LoadOrderTool.UI {
             bool red = false, orange = false;
             string reason = "the following are missing:\n";
 
-            foreach (var item in ConfigWrapper.instance.SteamCache.Items.Where(item=>item.Status.IsBroken())) {
+            var existingIds = ContentUtil.GetSubscribedItems();
+            foreach (var item in ConfigWrapper.instance.SteamCache.Items.Where(
+                item => item.Status.IsBroken() && existingIds.Contains(item.PublishedFileId))) {
                 red = true;
                 string type = item.Tags != null && item.Tags.Contains("Mod") ? "MOD" : "asset";
                 reason += $"{item.PublishedFileId} [{type}] {item.Name} : {item.Status}\n";

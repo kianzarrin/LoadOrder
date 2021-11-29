@@ -301,9 +301,10 @@ namespace LoadOrderTool.UI {
 
         private async void TsmiReDownload_Click(object sender, EventArgs e) {
             try {
+                var existingIDs = ContentUtil.GetSubscribedItems();
                 var steamItems = ConfigWrapper.instance.SteamCache.Items;
                 var ids = steamItems
-                    .Where(item=>item.Status.IsBroken())
+                    .Where(item=>item.Status.IsBroken() && existingIDs.Contains(item.PublishedFileId))
                     .Select(item => item.ID)
                     .Concat(ContentUtil.GetMissingDirItems()) // missing root dir
                     .Distinct()
