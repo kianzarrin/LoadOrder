@@ -25,11 +25,12 @@ namespace LoadOrderTool.UI {
             cbLoadUsed.CheckedChanged += CbLoadUsed_CheckedChanged;
         }
 
-        private void CbLoadUsed_CheckedChanged(object sender, EventArgs e) {
-            LSMManager.instance.LoadEnabled = cbLoadEnabled.Checked;
-        }
+
 
         private void CbLoadEnabled_CheckedChanged(object sender, EventArgs e) {
+            LSMManager.instance.LoadEnabled = cbLoadEnabled.Checked;
+        }
+        private void CbLoadUsed_CheckedChanged(object sender, EventArgs e) {
             LSMManager.instance.LoadUsed = cbLoadUsed.Checked;
         }
 

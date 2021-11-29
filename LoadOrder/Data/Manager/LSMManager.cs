@@ -28,8 +28,26 @@ namespace LoadOrderTool.Data {
         }
 
         public bool SkipPrefabs => skipPath_ != null;
-        public bool LoadEnabled { get; set; } = true;
-        public bool LoadUsed { get; set; } = true;
+
+        private bool loadEnabled_ = true;
+        public bool LoadEnabled {
+            get => loadEnabled_;
+            set {
+                loadEnabled_ = value;
+                ConfigWrapper.Dirty = true;
+            }
+        }
+
+        private bool LoadUsed_ = true;
+        public bool LoadUsed {
+            get => LoadUsed_;
+            set {
+                LoadUsed_ = value;
+                ConfigWrapper.Dirty = true;
+            }
+        }
+
+
 
         public void Load() {
             try {
@@ -40,8 +58,8 @@ namespace LoadOrderTool.Data {
                     SkipPath = LSMConfig.skipFile;
                 else
                     SkipPath = null;
-                LoadEnabled = LSMConfig.loadEnabled;
-                LoadUsed = LSMConfig.loadUsed;
+                loadEnabled_ = LSMConfig.loadEnabled;
+                LoadUsed_ = LSMConfig.loadUsed;
             } catch (Exception ex) { ex.Log(); }
             try { EventLoaded?.Invoke(); } catch (Exception ex) { ex.Log(); }
         }
@@ -82,8 +100,8 @@ namespace LoadOrderTool.Data {
                 SkipPath = LSMConfig.skipFile;
             else
                 SkipPath = null;
-            LoadEnabled = LSMConfig.loadEnabled;
-            LoadUsed = LSMConfig.loadUsed;
+            loadEnabled_ = LSMConfig.loadEnabled;
+            LoadUsed_ = LSMConfig.loadUsed;
         }
     }
 }
