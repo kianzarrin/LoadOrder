@@ -148,7 +148,7 @@ namespace LoadOrderTool.UI {
                 var result = MessageBox.Show(
                     caption: "Unsaved changes",
                     text:
-                    "There are changes that are not saved to to game and will not take effect. " +
+                    "There are changes that are not saved to game and will not take effect. " +
                     "Save changes to game?",
                     buttons: MessageBoxButtons.YesNoCancel);
                 switch (result) {
@@ -811,7 +811,7 @@ namespace LoadOrderTool.UI {
                     .Select(item => item.SteamCache.AuthorID)
                     .Distinct()
                     .ToArray();
-                Log.Info("Geting author names : " + missingAuthors.ToSTR());
+                Log.Info("Getting author names : " + missingAuthors.ToSTR());
                 if (!missingAuthors.Any())
                     return false;
 
@@ -853,7 +853,7 @@ namespace LoadOrderTool.UI {
                 }
             }
 
-            Log.Debug($"Author recieved: {authorId} -> {authorName}");
+            Log.Debug($"Author received: {authorId} -> {authorName}");
             AddAuthor(authorId, authorName);
             SetCacheProgress(60 + (40 * iAuthor_) / nAuthors_);
             iAuthor_++;
@@ -874,7 +874,7 @@ namespace LoadOrderTool.UI {
                 }
             }
 
-            Log.Debug($"Author recieved: {authorId} -> {authorName}");
+            Log.Debug($"Author received: {authorId} -> {authorName}");
             AddAuthor(authorId, authorName);
             SetCacheProgress(60 + (40 * iAuthor_) / nAuthors_);
             iAuthor_++;

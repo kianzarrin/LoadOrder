@@ -185,7 +185,7 @@ namespace LoadOrderIPatch.Patches {
         }
 
         /// <summary>
-        /// Load dependant dll even if the version does not match.
+        /// Load Dependant dll even if the version does not match.
         /// </summary>
         /// <param name="CM"></param>
         public void FindAssemblySoftPatch(AssemblyDefinition CM) {
@@ -306,7 +306,7 @@ namespace LoadOrderIPatch.Patches {
         }
 
         /// <summary>
-        /// moved folder to _folder if neccessary before calling getfiles.
+        /// moved folder to _folder if necessary before calling getfiles.
         /// </summary>
         public void EnsureIncludedExcludedPackagePatch(AssemblyDefinition CM) {
             Log.StartPatching();
@@ -395,7 +395,7 @@ namespace LoadOrderIPatch.Patches {
 
 #if DEBUG
         // get the stack trace for debugging purposes.
-        // modify this mehtod to print the desired stacktrace. 
+        // modify this method to print the desired stacktrace. 
         public AssemblyDefinition InsertPrintStackTrace(AssemblyDefinition CM)
         {
             Log.StartPatching();
@@ -424,7 +424,7 @@ namespace LoadOrderIPatch.Patches {
 
 
         /// <summary>
-        /// Sorts Assembly dictionary (hackish) at the begining of PluginManager.LoadAssemblies()
+        /// Sorts Assembly dictionary (hackish) at the beginning of PluginManager.LoadAssemblies()
         /// </summary>
         public AssemblyDefinition LoadAssembliesPatch(AssemblyDefinition CM)
         {
@@ -453,7 +453,7 @@ namespace LoadOrderIPatch.Patches {
         }
 
         /// <summary>
-        /// loads LoadOrderInjections.dll at the beggning of PluginManger.LoadPlugins()
+        /// loads LoadOrderInjections.dll at the beginning of PluginManger.LoadPlugins()
         /// </summary>
         public AssemblyDefinition LoadPluginsPatch(AssemblyDefinition CM)
         {

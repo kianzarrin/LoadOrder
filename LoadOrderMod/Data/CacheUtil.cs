@@ -85,7 +85,7 @@ namespace LoadOrderMod.Data {
             var timerInstantiate = new Stopwatch();
             int assetCount = 0;
 
-            // evaluate this to avoid race condtion.
+            // evaluate this to avoid race condition.
             var assets = PackageManager.FilterAssets(new[] {
                 UserAssetType.CustomAssetMetaData,
                 UserAssetType.MapThemeMetaData,

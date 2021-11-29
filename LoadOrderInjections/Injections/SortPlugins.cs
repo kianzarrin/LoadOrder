@@ -22,7 +22,7 @@ namespace LoadOrderInjections.Injections {
                 return +1;
 
             // if neither have order, use string comparison
-            // then builin first, workshop second, local last
+            // then built-in first, workshop second, local last
             // otherwise use string comparison
             if (!p1.HasLoadOrder() && !p2.HasLoadOrder()) {
                 int order(PluginInfo _p) =>

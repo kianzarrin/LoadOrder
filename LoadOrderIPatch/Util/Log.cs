@@ -50,7 +50,7 @@ namespace LoadOrderIPatch {
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void Successful() {
             string caller = new StackFrame(1).GetMethod().Name;
-            Log.Info($"Successfuly applied {caller}!");
+            Log.Info($"Successfully applied {caller}!");
 
         }
 

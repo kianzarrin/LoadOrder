@@ -33,15 +33,15 @@ namespace LoadOrderMod.Settings.Tabs {
             button = panelHelper.AddButton("Refresh workshop items (checks for bad items)", RequestItemDetails) as UIButton;
             button.tooltip = "checks for missing/partially downloaded/outdated items";
 
-            button = panelHelper.AddButton("unsubscribe from depricated workshop items [EXPERIMENTAL] ", () => CheckSubsUtil.Instance.UnsubDepricated()) as UIButton;
-            button.tooltip = "if steam does not return item path, i assume its depricated.";
+            button = panelHelper.AddButton("unsubscribe from deprecated workshop items [EXPERIMENTAL] ", () => CheckSubsUtil.Instance.UnsubDepricated()) as UIButton;
+            button.tooltip = "if steam does not return item path, i assume its deprecated.";
 
-            button = panelHelper.AddButton("Resubribe to all broken downloads (exits game) [EXPERIMENTAL]", CheckSubsUtil.ResubcribeExternally) as UIButton;
+            button = panelHelper.AddButton("Resubscribe to all broken downloads (exits game) [EXPERIMENTAL]", CheckSubsUtil.ResubcribeExternally) as UIButton;
             button.tooltip = "less steam can hide problems. if you use less steam please click 'Refresh workshop items' to get all broken downloads";
             button.isVisible = false; //hide for now.
 
             checkBox = panelHelper.AddCheckbox(
-                "Delete unsubscibed items on startup",
+                "Delete unsubscribed items on startup",
                 Config.DeleteUnsubscribedItemsOnLoad,
                 val => {
                     ConfigUtil.Config.DeleteUnsubscribedItemsOnLoad = val;

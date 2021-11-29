@@ -28,7 +28,7 @@ namespace LoadOrderMod {
                 Util.LoadOrderUtil.ApplyGameLoggingImprovements();
 
                 var args = Environment.GetCommandLineArgs();
-                Log.Info("comamnd line args are: " + string.Join(" ", args));
+                Log.Info("command line args are: " + string.Join(" ", args));
 
                 Log.ShowGap = true;
 #if DEBUG

@@ -13,7 +13,7 @@ namespace LoadOrderInjections.Injections {
         public static void PreCreateUserModInstance(PluginInfo p) {
             var m_UserModInstance = GetFieldValue(p, "m_UserModInstance");
             if (m_UserModInstance != null)
-                return; // too late. already instanciated.
+                return; // too late. already instantiated.
 
             BeforeUserModCtor(p);
             if (p.userModInstance == null) {
@@ -25,13 +25,13 @@ namespace LoadOrderInjections.Injections {
             AfterUserModCtor(p);
         }
         public static void BeforeUserModCtor(PluginInfo p) {
-            Log.Info($"adding(instanciating) plugin {p} loadOrder={p.GetLoadOrder()} ");
+            Log.Info($"adding(instantiating) plugin {p} loadOrder={p.GetLoadOrder()} ");
         
         }
         public static void AfterUserModCtor(PluginInfo p) {
             string modName = (p.userModInstance as IUserMod)?.Name;
             string dirName = p.name;
-            Log.Info($"plugin `{dirName}:{modName}` added sucessfully!", true);
+            Log.Info($"plugin `{dirName}:{modName}` added successfully!", true);
         }
 
         public static void BeforeEnable(PluginInfo p) {
@@ -40,7 +40,7 @@ namespace LoadOrderInjections.Injections {
         }
         public static void AfterEnable(PluginInfo p) {
             string modName = (p.userModInstance as IUserMod)?.Name;
-            Log.Info($"plugin `{modName}` enabled sucessfully", true);
+            Log.Info($"plugin `{modName}` enabled successfully", true);
         }
 
         public static void BeforeAddAssembliesGetExportedTypes(Assembly assembly) {

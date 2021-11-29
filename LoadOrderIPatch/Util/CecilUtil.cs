@@ -63,7 +63,7 @@ namespace LoadOrderIPatch {
         }
 
         /// <summary>
-        /// Post condtion: for instnace method add one to get argument location
+        /// Post condition: for instance method add one to get argument location
         /// </summary>
         public static byte GetParameterLoc(this MethodDefinition method, string name) {
             var parameters = method.Parameters;

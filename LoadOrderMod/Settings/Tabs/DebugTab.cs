@@ -10,7 +10,7 @@ namespace LoadOrderMod.Settings.Tabs {
         public static void Make(ExtUITabstrip tabStrip) {
             UIHelper panelHelper = tabStrip.AddTabPage("Developer");
             panelHelper.AddCheckbox(
-                "Soft assembly dependancy",
+                "Soft assembly dependency",
                 ConfigUtil.Config.SoftDLLDependancy,
                 val => {
                     ConfigUtil.Config.SoftDLLDependancy = val;
@@ -21,7 +21,7 @@ namespace LoadOrderMod.Settings.Tabs {
             //g.AddButton("QueryItems", OnQueryItemsClicked);
             panelHelper.AddButton("RunCallbacks", OnRunCallbacksClicked);
 
-            var bufferedToggle = panelHelper.AddCheckbox("Bufferred Log", Log.Buffered, (val) => Log.Buffered = val) as UICheckBox;
+            var bufferedToggle = panelHelper.AddCheckbox("Buffered Log", Log.Buffered, (val) => Log.Buffered = val) as UICheckBox;
             bufferedToggle.eventVisibilityChanged += new PropertyChangedEventHandler<bool>( (_,___) => bufferedToggle.isChecked = Log.Buffered);
         }
 

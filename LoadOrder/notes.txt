@@ -7,7 +7,7 @@ mass enabling mods will trigger the following for every mod enabled:
 	PluginManager.eventPluginsStateChanged
 	UserMod.OnSettingsUI()
 mass disabling mods will do the above but also additionally
-	gets ugc detials for all mods/assets two times
+	gets ugc details for all mods/assets two times
 
-TriggerEventPluginsChanged checks PluginManager.m_EventsEnabled == 0 to avoid trigering events.
+TriggerEventPluginsChanged checks PluginManager.m_EventsEnabled == 0 to avoid triggering events.
 	so m_EventsEnabled++ can be used to prevent calling OnSettingsUI too many times.

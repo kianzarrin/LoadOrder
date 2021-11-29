@@ -422,12 +422,12 @@ namespace LoadOrderInjections {
             } else if (SteamUtilities.GetMassSub(out _)) {
                 new GameObject().AddComponent<Camera>();
                 //new GameObject("base").AddComponent<Example>();
-                new GameObject("mass subscirbe go").AddComponent<MassSubscribe>();
+                new GameObject("mass subscribe go").AddComponent<MassSubscribe>();
                 return true;
             } else if(SteamUtilities.GetMassUnSub(out _)) {
                 new GameObject().AddComponent<Camera>();
                 //new GameObject("base").AddComponent<Example>();
-                new GameObject("mass unsubscirbe go").AddComponent<MassUnSubscribe>();
+                new GameObject("mass unsubscribe go").AddComponent<MassUnSubscribe>();
                 return true;
             } else {
                 return false.LogRet(ThisMethod);
@@ -494,7 +494,7 @@ namespace LoadOrderInjections {
 
         public static void RegisterEvents() {
             if (Initialized) return;
-            Initialized = true; // used to check if patch loader is effetive.
+            Initialized = true; // used to check if patch loader is effective.
             Log.Debug(Environment.StackTrace);
             PlatformService.eventSteamControllerInit += OnInitSteamController;
 
@@ -696,7 +696,7 @@ namespace LoadOrderInjections {
             }
 
             if (updatedLocal == DateTime.MinValue) {
-                reason = $"Error geting local time at {localPath}";
+                reason = $"Error getting local time at {localPath}";
                 return DownloadStatus.NotDownloaded;
             } else if (updatedLocal < updatedServer) {
                 bool sure =

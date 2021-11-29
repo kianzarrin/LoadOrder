@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -63,9 +63,9 @@ namespace PresentationControls
 
         private bool acceptAlt = true;
         /// <summary>
-        /// Gets or sets a value indicating whether presing the alt key should close the pop-up.
+        /// Gets or sets a value indicating whether pressing the alt key should close the pop-up.
         /// </summary>
-        /// <value><c>true</c> if presing the alt key does not close the pop-up; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if pressing the alt key does not close the pop-up; otherwise, <c>false</c>.</value>
         public bool AcceptAlt
         {
             get { return acceptAlt; }
@@ -135,7 +135,7 @@ namespace PresentationControls
         /// </summary>
         /// <param name="content">The content of the pop-up.</param>
         /// <remarks>
-        /// Pop-up will be disposed immediately after disposion of the content control.
+        /// Pop-up will be disposed immediately after disposition of the content control.
         /// </remarks>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="content" /> is <code>null</code>.</exception>
         public Popup(Control content)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +48,7 @@ namespace PresentationControls
 
         /// <summary>
         /// An indicator of how many items with the specified status is available for the current filter level.
-        /// Thaught this would make the app a bit more user-friendly and help not to miss items in Statusses
+        /// Thought this would make the app a bit more user-friendly and help not to miss items in Statuses
         /// that are not often used.
         /// </summary>
         public int Count

@@ -54,7 +54,7 @@ namespace LoadOrderTool {
                     return ser.Deserialize(fs) as LoadOrderToolSettings;
                 }
             } catch {
-                Log.Warning("Deserialize exception catched");
+                Log.Warning("Deserialize exception caught");
                 return null;
             } finally {
 

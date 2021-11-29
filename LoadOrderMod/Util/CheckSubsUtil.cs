@@ -70,7 +70,7 @@ namespace LoadOrderMod.Util {
         public Coroutine UnsubDepricated() => StartCoroutine(UnsubDepricatedCoroutine());
 
         public IEnumerator UnsubDepricatedCoroutine() {
-            Log.DisplayMesage($"Unsubscribing from depricated items ...");
+            Log.DisplayMesage($"Unsubscribing from deprecated items ...");
 
             var items = PlatformService.workshop.GetSubscribedItems();
             if (items == null || items.Length == 0)
@@ -81,7 +81,7 @@ namespace LoadOrderMod.Util {
             foreach(var item in items) {
                 string path = PlatformService.workshop.GetSubscribedItemPath(item);
                 if(path == null) {
-                    Log.DisplayWarning($"Depricated item will be unsubbed: {item}");
+                    Log.DisplayWarning($"Deprecated item will be unsubbed: {item}");
                     PlatformService.workshop.Unsubscribe(item);
                     nUnsubbed++;
                 }
@@ -92,7 +92,7 @@ namespace LoadOrderMod.Util {
                 }
             }
 
-            Log.DisplayMesage($"Unsubscribing from {nUnsubbed} depricated items.");
+            Log.DisplayMesage($"Unsubscribing from {nUnsubbed} deprecated items.");
         }
 
         public static List<PublishedFileId> GetBrokenDownloads() {
@@ -110,7 +110,7 @@ namespace LoadOrderMod.Util {
                 }
             }
             var missing = SteamUtilities.GetMissingItems().ToArray();
-            Log.Debug("missings items = " + missing.ToSTR(), false);
+            Log.Debug("missing items = " + missing.ToSTR(), false);
             ids.AddRange(missing);
             return ids;
         }

@@ -1,4 +1,4 @@
-﻿namespace LoadOrderInjections.Injections {
+namespace LoadOrderInjections.Injections {
     using System;
     using System.Linq;
     using System.Collections.Generic;
@@ -66,7 +66,7 @@
                     
                     Log.Info("calling GetExportedTypes()");
                     asm.GetExportedTypes(); // public only
-                    Log.Info("GetExportedTypes sucessfull!");
+                    Log.Info("GetExportedTypes successful!");
 
                     var t = asm.GetImplementationOf(typeof(IUserMod));
                     if(t is not null) { 
@@ -86,7 +86,7 @@
 
                     Log.Info("calling asm.GetTypes()");
                     asm.GetTypes(); // including non-public
-                    Log.Info("GetTypes() sucessfull!");
+                    Log.Info("GetTypes() successful!");
                 }
             } catch (Exception ex) {
                 Log.Exception(ex);
@@ -117,12 +117,12 @@
                     }
                 }
 
-                Log.Info("Instanciating IUserMod Implementations", true);
+                Log.Info("Instantiating IUserMod Implementations", true);
                 foreach (var plugin in plugins.Values) {
                     try {
                         Logs.PreCreateUserModInstance(plugin);
                     } catch (Exception ex) {
-                        Log.Exception(ex, "Instanciating IUserMod Implementation failed for " + plugin);
+                        Log.Exception(ex, "Instantiating IUserMod Implementation failed for " + plugin);
                     }
                 }
 
@@ -134,7 +134,7 @@
                             Log.Exception(ex, "GetType() failed for " + plugin);
                         }
                     }
-                    Log.Info("GetTypes() sucessfull!");
+                    Log.Info("GetTypes() successful!");
                 }
             }
         }

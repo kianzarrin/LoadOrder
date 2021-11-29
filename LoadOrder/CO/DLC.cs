@@ -54,7 +54,7 @@ namespace CO {
         [DLCInfo("Campus", DLCType.Main)]
         CampusDLC = 944071,
 
-        [DLCInfo("Sunset Harbour", DLCType.Main)]
+        [DLCInfo("Sunset Harbor", DLCType.Main)]
         UrbanDLC = 1146930,
 
         [DLCInfo("Pearls From the East", DLCType.Misc)]

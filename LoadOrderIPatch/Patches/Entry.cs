@@ -31,7 +31,7 @@ namespace LoadOrderIPatch.Patches {
                 Log.Init();
 
                 var args = Environment.GetCommandLineArgs();
-                Log.Info("comamnd line args are: " + string.Join(" ", args));
+                Log.Info("command line args are: " + string.Join(" ", args));
 
                 if (IsDebugMono())
                     Log.Warning("Debug mono is slow! use Load order tool to change it.");

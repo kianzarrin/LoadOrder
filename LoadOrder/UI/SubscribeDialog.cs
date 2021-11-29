@@ -79,7 +79,7 @@ namespace LoadOrderTool.UI {
             string text = File.ReadAllText(filePath);
             int i1 = text.IndexOf("The following custom assets are used in this city");
             int i2 = text.IndexOf("The following enabled assets are currently unnecessary");
-            text = text.Substring(i1, i2 - i1); // cout out the desired text;
+            text = text.Substring(i1, i2 - i1); // count out the desired text;
             return GetHTMLIDs(text);
         }
 

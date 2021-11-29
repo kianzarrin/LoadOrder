@@ -166,10 +166,10 @@ namespace LoadOrderTool {
                     var res = prompt.ShowDialog();
                     Log.Info("ThreadExceptionDialog result = " + res);
                     if (res == DialogResult.Abort) {
-                        Log.Info("Killing processs");
+                        Log.Info("Killing process");
                         Process.GetCurrentProcess().Kill();
                     }
-                    Log.Info("Continueing after ThreadExceptionDialog ...");
+                    Log.Info("Continuing after ThreadExceptionDialog ...");
                 }
             } catch(Exception ex) {
                 new ThreadExceptionDialog(new Exception("could not show advanced exception panel.", ex)).ShowDialog();
@@ -219,7 +219,7 @@ namespace LoadOrderTool {
                     Console.WriteLine(m);
                 }
             } catch (Exception ex) {
-                new ThreadExceptionDialog(new Exception("log impl fialed at" + Environment.StackTrace, ex))
+                new ThreadExceptionDialog(new Exception("LogImpl failed at" + Environment.StackTrace, ex))
                     .ShowDialog();
             }
         }
@@ -238,10 +238,10 @@ namespace LoadOrderTool {
 
     internal static class LogExtensions {
         /// <summary>
-        /// useful for easily debuggin inline functions
+        /// useful for easily debugging inline functions
         /// to be used like this example:
         /// TYPE inlinefunctionname(...) => expression
-        /// TYPE inlinefunctionname(...) => expression.LogRet("messege");
+        /// TYPE inlinefunctionname(...) => expression.LogRet("message");
         /// </summary>
         internal static T LogRet<T>(this T a, string m) {
             LoadOrderTool.Log.Debug(m + a);

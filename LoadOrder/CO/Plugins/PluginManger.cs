@@ -234,7 +234,7 @@ namespace CO.Plugins {
                     if (newPath == targetPath)
                         return true; // no need to move if ensuring moved the directory for us.
                     if (Directory.Exists(targetPath))
-                        throw new Exception($"cannot move because targetPath alreadty exists ({targetPath})"); // unreachable code.
+                        throw new Exception($"cannot move because targetPath already exists ({targetPath})"); // unreachable code.
                     if (!Directory.Exists(newPath))
                         throw new Exception($"cannot move because source path does not exists ({newPath})"); // unreachable code.
 
@@ -510,7 +510,7 @@ namespace CO.Plugins {
                 await Task.Run(LoadPluginsImpl);
 
                 m_Plugins = m_Plugins.Where(p => p.HasUserMod).ToList();
-                Log.Debug($"{m_Plugins.Count} pluggins remained after purging non-mods.");
+                Log.Debug($"{m_Plugins.Count} plugins remained after purging non-mods.");
 
                 Config.Mods = Config.Mods
                     .Union(m_Plugins.Select(item => item.ModInfo))
@@ -538,7 +538,7 @@ namespace CO.Plugins {
                 this.LoadWorkshopPluginInfos();
             }
             //this.LoadAssemblies();
-            Log.Debug($"{m_Plugins.Count} pluggins loaded.");
+            Log.Debug($"{m_Plugins.Count} plugins loaded.");
             ModDataGrid.SetProgress(50);
 
             // purge plugins without a IUserMod Implementation. this also filters out non-cs mods.
@@ -579,7 +579,7 @@ namespace CO.Plugins {
                         m_Plugins.Add(new PluginInfo(subscribedItemPath, false, id));
                         ModDataGrid.SetProgress((i * 50) / subscribedItems.Length);
                     } else {
-                        Log.Debug("direcotry does not exist: " + subscribedItemPath);
+                        Log.Debug("directory does not exist: " + subscribedItemPath);
                     }
                 }
             }
@@ -599,7 +599,7 @@ namespace CO.Plugins {
                 if (modProfile != null) {
                     bool included0 = pluginInfo.IsIncludedPending;
                     bool enabled0 = pluginInfo.IsEnabledPending;
-                    modProfile.WriteTo(pluginInfo); // wite load order.
+                    modProfile.WriteTo(pluginInfo); // write load order.
                     if (!replace) {
                         pluginInfo.IsIncludedPending |= included0;
                         pluginInfo.IsEnabledPending |= enabled0;

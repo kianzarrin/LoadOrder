@@ -36,7 +36,7 @@ namespace CO.IO {
                 var data = CSCache.Deserialize(LocalLOMData);
                 if(data == null) {
                     data = new CSCache();
-                    // backward compatiblity.
+                    // backward compatibility.
                     var data2 = LoadOrderConfig.Deserialize(LocalLOMData);
                     if(data2 != null) {
                         data.WorkShopContentPath = data2.WorkShopContentPath;
@@ -55,11 +55,11 @@ namespace CO.IO {
                         GamePath = RealPath(data.GamePath);
                         m += "\nreal game path is: " + GamePath;
                     } else if (!Util.IsGamePath(GamePath)) {
-                        m += "\ngetting game path from regisitry ...";
+                        m += "\ngetting game path from registry ...";
                         using (RegistryKey key = Registry.LocalMachine.OpenSubKey(installLocationSubKey_)) {
                             GamePath = key?.GetValue(installLocationKey_) as string;
                             GamePath = RealPath(GamePath);
-                            m += "\ngame path from regisitery: " + GamePath;
+                            m += "\ngame path from registry: " + GamePath;
                         }
                     }
                     m += "\n[P1] game path so far is:" + GamePath;
@@ -74,11 +74,11 @@ namespace CO.IO {
                         SteamPath = RealPath(data.SteamPath);
                         m += "\nreal SteamPath is: " + SteamPath;
                     } else if (!Util.IsSteamPath(SteamPath)) {
-                        m += "\ngetting SteamPath from regisitry ...";
+                        m += "\ngetting SteamPath from registry ...";
                         using (RegistryKey key = Registry.CurrentUser.OpenSubKey(SteamPathSubKey_)) {
                             SteamPath = key?.GetValue(SteamPathKey_) as string;
                             SteamPath = RealPath(SteamPath);
-                            m += "\nSteamPath from regisitery: " + SteamPath;
+                            m += "\nSteamPath from registry: " + SteamPath;
                         }
                     }
                     m += "\n[P2] SteamPath so far is:" + SteamPath;

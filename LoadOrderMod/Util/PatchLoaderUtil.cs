@@ -157,7 +157,7 @@ namespace LoadOrderMod {
         private void ShowError() {
             if(_errorModalOpened) return;
 
-            string reason = "An error occured while attempting to automatically subscribe to PatchLoader mod (no network connection?)";
+            string reason = "An error occurred while attempting to automatically subscribe to PatchLoader mod (no network connection?)";
             string solution = "You can manually download the PatchLoader mod from github.com/CitiesSkylinesMods/PatchLoader/releases";
             if(PlatformService.platformType != PlatformType.Steam) {
                 reason = "Patch Loader mod could not be installed automatically because you are using a platform other than Steam.";

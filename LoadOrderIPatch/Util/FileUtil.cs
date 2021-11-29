@@ -101,7 +101,7 @@ namespace LoadOrderIPatch {
         }
 
         /// <summary>open and close files to cache improve the speed of first time load.</summary>
-        /// precondition: all dependant dlls are loaded
+        /// precondition: all dependent dlls are loaded
         public static void CacheWSFiles() {
             Log.Called();
             new Thread(CacheWSFilesImpl2).Start();

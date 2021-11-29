@@ -80,7 +80,7 @@ namespace LoadOrderTool.Data {
         }
 
 
-        // do not use! only for persistancy
+        // do not use! only for persistency
         public Item[] Items = new Item[0];
         public Persona[] People = new Persona[0];
 

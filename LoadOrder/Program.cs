@@ -110,12 +110,12 @@ namespace LoadOrderTool {
 
         private static void UnhandledThreadExceptionHandler(object sender, ThreadExceptionEventArgs args) {
             Exception ex = (Exception)args.Exception;
-            Log.Exception(ex, "Unhandled Exception Occured.");
+            Log.Exception(ex, "Unhanded Exception Occurred.");
         }
 
         private static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args) {
             Exception ex = (Exception)args.ExceptionObject;
-            Log.Exception(ex, "Unhandled Exception Occured.");
+            Log.Exception(ex, "Unhanded Exception Occurred.");
         }
 
         private static Assembly ResolveInterface(object sender, ResolveEventArgs args) {

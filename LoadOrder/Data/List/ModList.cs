@@ -46,7 +46,7 @@ namespace LoadOrderTool {
                 return +1;
 
             // if neither have order, use string comparison
-            // then builin first, workshop second, local last
+            // then built-in first, workshop second, local last
             // otherwise use string comparison
             if (!p1.HasLoadOrder() && !p2.HasLoadOrder()) {
                 int order(PluginInfo _p) =>
@@ -193,7 +193,7 @@ namespace LoadOrderTool {
                 return;
             }
 
-            // work around: hyarmony without load order comes first:
+            // work around: harmony without load order comes first:
             if (newLoadOrder < DefaultLoadOrder) {
                 foreach (var p2 in this) {
                     if (p2 != movingItem && p2.IsHarmonyMod() && !p2.HasLoadOrder())

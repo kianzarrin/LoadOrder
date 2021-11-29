@@ -53,7 +53,7 @@ FOR /L %%s IN (1,1,3) DO (
 	xcopy /y %GAME_DATA%\Logs\*.log !RESULTS_DIR!	
 )
 
-REM resatore state
+REM restore state
 xcopy /y %BACUP_DIR%\* %APP_DATA%
 set STEAM_PATH=
 set GAME_DATA=

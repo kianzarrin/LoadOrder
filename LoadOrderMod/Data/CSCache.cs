@@ -25,7 +25,7 @@ namespace LoadOrderShared {
         public string SteamPath;
 
 
-        // do not use these directly. use Add/GetItem insteaed.
+        // do not use these directly. use Add/GetItem instead.
         public Mod[] Mods = new Mod[0];
         public Asset[] Assets = new Asset[0];
 

@@ -265,7 +265,7 @@ namespace LoadOrderTool.Util {
             k_EResultLimitExceeded = 25,                // Too much of a good thing
             k_EResultRevoked = 26,                      // Access has been revoked (used for revoked guest passes)
             k_EResultExpired = 27,                      // License/Guest pass the user is trying to access is expired
-            k_EResultAlreadyRedeemed = 28,              // Guest pass has already been redeemed by account, cannot be acked again
+            k_EResultAlreadyRedeemed = 28,              // Guest pass has already been redeemed by account, cannot be hacked again
             k_EResultDuplicateRequest = 29,             // The request is a duplicate and the action has already occurred in the past, ignored this time
             k_EResultAlreadyOwned = 30,                 // All the games in this guest pass redemption request are already owned by the user
             k_EResultIPNotFound = 31,                   // IP address not found

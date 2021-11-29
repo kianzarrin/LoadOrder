@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,7 +125,7 @@ namespace PresentationControls
         }
         /// <summary>
         /// Creates a ObjectSelectionWrapper item.
-        /// Note that the constructor signature of sub classes classes are important.
+        /// Note that the constructor signature of sub classes are important.
         /// </summary>
         /// <param name="Object"></param>
         /// <returns></returns>

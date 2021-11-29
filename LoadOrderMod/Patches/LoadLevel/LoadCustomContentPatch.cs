@@ -38,7 +38,7 @@ namespace LoadOrderMod.Patches {
             float ms = sw.ElapsedMilliseconds;
             if (__result == false) {
                 float ms_total = sw_total.ElapsedMilliseconds;
-                Log.Info($"LoadCustomContent.MoveNext() breaked. duration = {ms:#,0}ms ", false);
+                Log.Info($"LoadCustomContent.MoveNext() braked. duration = {ms:#,0}ms ", false);
                 Log.Info($"LoadCustomContent() finished! total duration = {ms_total:#,0}ms", true);
                 Log.Flush();
             } else {

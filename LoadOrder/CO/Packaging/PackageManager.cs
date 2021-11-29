@@ -267,7 +267,7 @@ namespace CO.Packaging {
                         LoadPackages(subscribedItemPath, id);
                         ModDataGrid.SetProgress((i * 80) / subscribedItems.Length);
                     } else {
-                        //Log.Debug("direcotry does not exist: " + subscribedItemPath);
+                        //Log.Debug("directory does not exist: " + subscribedItemPath);
                     }
                 }
             }
@@ -330,7 +330,7 @@ namespace CO.Packaging {
                 var assetProfile = profile.GetAsset(assetInfo.AssetPath);
                 if (assetProfile != null) {
                     bool included0 = assetInfo.IsIncludedPending;
-                    assetProfile.WriteTo(assetInfo); // wite load order.
+                    assetProfile.WriteTo(assetInfo); // write load order.
                     if (!replace) {
                         assetInfo.IsIncludedPending |= included0;
                     }

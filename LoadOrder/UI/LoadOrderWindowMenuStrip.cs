@@ -31,7 +31,7 @@ namespace LoadOrderTool.UI {
 
         public ToolStripMenuItem tsmiReloadUGC; // reload UGCs from drive.
         public ToolStripMenuItem tsmiResetCache; // reset CS cache + Steam Cache
-        public ToolStripMenuItem tsmiResetAllSettings; // rese config + CS cache + steam cache
+        public ToolStripMenuItem tsmiResetAllSettings; // reset config + CS cache + steam cache
         public ToolStripMenuItem tsmiReloadSettings; // reload config + CS cache
         public ToolStripMenuItem tsmiUpdateSteamCache; // update Steam Cache
 

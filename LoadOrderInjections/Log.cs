@@ -22,7 +22,7 @@ namespace KianCommons {
         private static readonly bool ShowLevel = true;
 
         /// <summary>
-        /// Set to <c>true</c> to include timestamp in log entries.
+        /// Set to <c>true</c> to include timestamps in log entries.
         /// </summary>
         private static readonly bool ShowTimestamp = true;
 
@@ -342,7 +342,7 @@ namespace KianCommons {
 
                 if (copyToGameLog) {
                     // copying to game log is slow anyways so
-                    // this is a good time to flush if neccessary.
+                    // this is a good time to flush if necessary.
                     Flush();
                     m = " LoadOrder | " + m;
                     m = RemoveExtraNewLine(m);
@@ -394,10 +394,10 @@ namespace KianCommons {
 
     public static class LogExtensions {
         /// <summary>
-        /// useful for easily debuggin inline functions
+        /// useful for easily debugging inline functions
         /// to be used like this example:
         /// TYPE inlinefunctionname(...) => expression
-        /// TYPE inlinefunctionname(...) => expression.LogRet("messege");
+        /// TYPE inlinefunctionname(...) => expression.LogRet("message");
         /// </summary>
         public static T LogRet<T>(this T a, string m) {
             KianCommons.Log.Debug(m + " -> " + a);
