@@ -57,6 +57,9 @@ namespace CO {
         [DLCInfo("Sunset Harbor", DLCType.Main)]
         UrbanDLC = 1146930,
 
+        [DLCInfo("Airports", DLCType.Main)]
+        AirportDLC = 1726380,
+
         [DLCInfo("Pearls From the East", DLCType.Misc)]
         OrientalBuildings = 563850,
 
@@ -97,7 +100,12 @@ namespace CO {
         ModderPack7 = 1531470,
 
         [DLCInfo("CCP: Bridges & Piers", DLCType.ContentCreator)]
-        ModderPack8,
+        ModderPack8 = 1531471,
 
+        [DLCInfo("CCP: Map Pack", DLCType.ContentCreator)]
+        ModderPack9 = 1726382,
+
+        [DLCInfo("CCP: Vehicles of the World", DLCType.ContentCreator)]
+        ModderPack10 = 1726381,
     }
 }
