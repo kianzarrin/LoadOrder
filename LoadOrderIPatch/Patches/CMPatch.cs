@@ -237,6 +237,7 @@ namespace LoadOrderIPatch.Patches {
             var loi = GetInjectionsAssemblyDefinition(workingPath_);
 
             if (poke) {
+                Log.Info("poke");
                 var mInjection = loi.MainModule.GetMethod("LoadOrderInjections.Injections.LoadingApproach.AddAssemblyPrefix");
                 var mrInjection = module.ImportReference(mInjection);
                 var callInjection = Instruction.Create(OpCodes.Call, mrInjection);
@@ -247,8 +248,10 @@ namespace LoadOrderIPatch.Patches {
             } 
             
             if (breadthFirst) {
+                Log.Info("breadthFirst");
                 var callAdd = instructions.First(_c => _c.Calls("Add"));
                 var ret = Instruction.Create(OpCodes.Ret);
+                ilProcessor.InsertAfter(callAdd, ret);
             }
 
             var tLogs = loi.MainModule.GetType("LoadOrderInjections.Injections.Logs");
@@ -262,7 +265,20 @@ namespace LoadOrderIPatch.Patches {
                 ilProcessor.InsertBefore(callBeforeAddAssembliesGetExportedTypes, loadAsm);
             }
 
+            {
+                var mLogExceptionInLOM = GetType().GetMethod(nameof(LogExceptionInLOM));
+                var callLogExceptioninLOM = Instruction.Create(
+                    OpCodes.Call, module.ImportReference(mLogExceptionInLOM)); ;
+                var callLogException = instructions.First(_c => _c.Calls("LogException"));
+                var loadException = callLogException.Previous.Duplicate();
+                ilProcessor.InsertBefore(callLogException, loadException, callLogExceptioninLOM);
+            }
+
             Log.Successful();
+        }
+
+        public static void LogExceptionInLOM(Exception ex) {
+            Injections.KianCommons.Log.Exception(ex, showInPanel:true);
         }
 
         public AssemblyDefinition NoCustomAssetsPatch(AssemblyDefinition CM)

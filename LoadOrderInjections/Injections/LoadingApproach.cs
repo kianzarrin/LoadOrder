@@ -43,8 +43,6 @@ namespace LoadOrderInjections.Injections {
             return null;
         }
 
-
-
         public static void AddAssemblyPrefix(Assembly asm) {
             try {
                 if (poke && !breadthFirst) {
