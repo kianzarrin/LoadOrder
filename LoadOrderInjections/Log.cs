@@ -257,6 +257,13 @@ namespace KianCommons {
             return null;
         }
 
+        static string LoaderExceptions(Exception ex) {
+            if(ex is ReflectionTypeLoadException rtle) {
+                return "LoaderExceptions = " + rtle.LoaderExceptions.ToSTR();
+            }
+            return null;
+        }
+
         public static void Exception(this Exception ex, string m = "", bool showInPanel = true) {
             if (ex == null)
                 Log.Error("null argument e was passed to Log.Exception()");
@@ -268,6 +275,11 @@ namespace KianCommons {
                 var data = ExceptionData(ex);
                 if (!string.IsNullOrEmpty(data))
                     message = data + "\n" + message;
+
+                var loaderExceptions = LoaderExceptions(ex);
+                if (!string.IsNullOrEmpty(loaderExceptions))
+                    message = loaderExceptions + "\n" + message;
+
 
                 LogImpl(message, LogLevel.Exception, true);
                 if (showInPanel)
