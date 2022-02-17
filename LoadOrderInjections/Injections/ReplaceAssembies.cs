@@ -43,7 +43,7 @@ namespace LoadOrderInjections.Injections {
                     var version0 = asm.Name.Version.Take(3);
                     var version = latest.Value.Name.Version.Take(3);
                     if (version > version0) {
-                        Log.Info($"Replacing {asm.Name.Name} V{asm.Name.Version} with V{latest.Value.Name.Version}");
+                        Log.Info($"Replacing {asm.Name.Name} V{asm.Name.Version} with V{latest.Value.Name.Version}", true);
                         return latest.Key;
                     }
                 }
