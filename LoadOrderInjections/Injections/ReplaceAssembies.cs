@@ -21,7 +21,7 @@ namespace LoadOrderInjections.Injections {
                     string modPath = pluginInfo.modPath;
                     string[] dllPaths = Directory.GetFiles(modPath, "*.dll", SearchOption.AllDirectories);
                     foreach (string dllPath in dllPaths) {
-                        var asm = ReadAssemblyDefinition(dllPath);
+                        var asm = LoadingApproach.ReadAssemblyDefinition(dllPath);
                         if (asm != null) {
                             asms_[dllPath] = asm;
                         }
@@ -30,29 +30,6 @@ namespace LoadOrderInjections.Injections {
             } catch(Exception ex) { ex.Log(); }
         }
 
-        internal static AssemblyDefinition ReadAssemblyDefinition(string dllpath) {
-            try {
-                Log.Called(dllpath);
-                var r = new MyAssemblyResolver();
-                var readerParameters = new ReaderParameters {
-                    ReadWrite = false,
-                    InMemory = true,
-                    AssemblyResolver = r,
-                };
-                r.ReaderParameters = readerParameters;
-                var asm = AssemblyDefinition.ReadAssembly(dllpath, readerParameters);
-
-                if (asm != null)
-                    Log.Info("Assembly Definition loaded: " + asm);
-                else
-                    Log.Info("Assembly Definition at " + dllpath + " failed to load.");
-
-                return asm;
-            } catch (Exception ex) {
-                Log.Info("Assembly Definition at " + dllpath + " failed to load.\n" + ex.Message);
-                return null;
-            }
-        }
         internal static Version Take(this Version version, int fieldCount) =>
             new Version(version.ToString(fieldCount));
 

@@ -23,9 +23,7 @@ namespace LoadOrderIPatch {
                 r.ReaderParameters = readerParameters;
                 var asm = AssemblyDefinition.ReadAssembly(dllpath, readerParameters);
 
-                if (asm != null)
-                    Log.Info("Assembly Definition loaded: " + asm);
-                else
+                if (asm == null)
                     Log.Info("Assembly Definition at " + dllpath + " failed to load.");
 
                 return asm;

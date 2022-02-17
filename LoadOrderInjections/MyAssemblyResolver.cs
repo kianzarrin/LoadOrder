@@ -4,6 +4,17 @@ namespace LoadOrderInjections {
     using Mono.Cecil;
 
     public class MyAssemblyResolver : BaseAssemblyResolver {
+        public static MyAssemblyResolver CreateDefault() {
+            var r = new MyAssemblyResolver();
+            var readerParameters = new ReaderParameters {
+                ReadWrite = false,
+                InMemory = true,
+                AssemblyResolver = r,
+            };
+            r.ReaderParameters = readerParameters;
+            return r;
+        }
+
         private readonly IDictionary<string, AssemblyDefinition> cache
             = new Dictionary<string, AssemblyDefinition>(StringComparer.Ordinal);
 

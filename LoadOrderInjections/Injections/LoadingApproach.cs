@@ -139,15 +139,9 @@ namespace LoadOrderInjections.Injections {
 
         public static AssemblyDefinition ReadAssemblyDefinition(string dllpath) {
             try {
-                var readInMemory = new ReaderParameters {
-                    ReadWrite = false,
-                    InMemory = true,
-                };
-                var asm = AssemblyDefinition.ReadAssembly(dllpath, readInMemory);
-
-                if (asm != null)
-                    Log.Info("Assembly Definition loaded: " + asm);
-                else
+                var r = MyAssemblyResolver.CreateDefault();
+                var asm = AssemblyDefinition.ReadAssembly(dllpath, r.ReaderParameters);
+                if (asm == null)
                     Log.Info("Assembly Definition at " + dllpath + " failed to load.");
 
                 return asm;
