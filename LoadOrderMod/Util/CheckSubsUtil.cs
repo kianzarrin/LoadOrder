@@ -280,6 +280,10 @@ namespace LoadOrderMod.Util {
         private static void OnUGCRequestUGCDetailsCompleted(UGCDetails ugc, bool ioError) {
             ThreadPool.QueueUserWorkItem((_) => {
                 try {
+                    if (SteamUtilities.IsExcludedMod(ugc.publishedFileId)) {
+                        // ignore excluded item
+                        return;
+                    }
                     var status = SteamUtilities.IsUGCUpToDate(ugc, out string reason);
                     if (status != DownloadStatus.DownloadOK) {
                         string m =

@@ -687,13 +687,21 @@ namespace LoadOrderTool.UI {
             } catch(Exception ex) { ex.Log(); }
         }
 
+        bool IsExcludedMod(PublishedFileId id) {
+            var mod = dataGridMods?.ModList?.FirstOrDefault(item => item.PublishedFileId == item.PublishedFileId);
+            return mod == null || !mod.IsIncluded;
+        }
+
         string UpdateBrokenDownloadsStatus() {
             bool red = false, orange = false;
             string reason = "the following are missing:\n";
 
             var existingIds = ContentUtil.GetSubscribedItems();
             foreach (var item in ConfigWrapper.instance.SteamCache.Items.Where(
-                item => item.Status.IsBroken() && existingIds.Contains(item.PublishedFileId))) {
+                item => item.Status.IsBroken() &&
+                existingIds.Contains(item.PublishedFileId) &&
+                !IsExcludedMod(item.PublishedFileId)
+                )) {
                 red = true;
                 string type = item.Tags != null && item.Tags.Contains("Mod") ? "MOD" : "asset";
                 reason += $"{item.PublishedFileId} [{type}] {item.Name} : {item.Status}\n";

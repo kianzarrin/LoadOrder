@@ -593,6 +593,10 @@ namespace LoadOrderInjections {
 
         public static void OnUGCRequestUGCDetailsCompleted(UGCDetails result, bool ioError) {
             ThreadPool.QueueUserWorkItem((_) => {
+                if (IsExcludedMod(result.publishedFileId)) {
+                    // ignore excluded item
+                    return;
+                }
                 bool good = IsUGCUpToDate(result, out string reason) == DownloadStatus.DownloadOK;
                 if (!good) {
                     Log.Warning($"subscribed item not installed properly:{result.publishedFileId} {result.title} " +
@@ -767,6 +771,13 @@ namespace LoadOrderInjections {
             if (!file.StartsWith("_"))
                 file = "_" + file;
             return Path.Combine(parent, file);
+        }
+
+        public static bool IsExcludedMod(PublishedFileId publishedFileId) {
+            var path = PlatformService.workshop.GetSubscribedItemPath(publishedFileId);
+            var excludedPath = ToExcludedPath2(path);
+            return Directory.Exists(excludedPath);
+            return true;
         }
 
         public static void EnsureIncludedOrExcluded(PublishedFileId id) {
