@@ -689,7 +689,7 @@ namespace LoadOrderTool.UI {
 
         bool IsExcludedMod(PublishedFileId id) {
             var mod = dataGridMods?.ModList?.FirstOrDefault(item => item.PublishedFileId == item.PublishedFileId);
-            return mod == null || !mod.IsIncluded;
+            return mod != null && !mod.IsIncluded;
         }
 
         string UpdateBrokenDownloadsStatus() {
