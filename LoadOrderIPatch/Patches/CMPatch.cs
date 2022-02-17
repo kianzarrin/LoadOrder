@@ -36,10 +36,9 @@ namespace LoadOrderIPatch.Patches {
             if (!poke && Config.SoftDLLDependancy) {
                 FindAssemblySoftPatch(assemblyDefinition);
             }
-            
-            // TODO uncomment after understanding how CS prevents double loading during hot reload
-            // NoDoubleLoadPatch(assemblyDefinition);
-            
+
+            LoadAssembliesROPatch(assemblyDefinition);
+
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
             //assemblyDefinition = LoadPluginsPatch(assemblyDefinition); // its loaded in ASCPatch.LoadDLL() instead
             AddAssemlyPatch(assemblyDefinition);
@@ -147,6 +146,8 @@ namespace LoadOrderIPatch.Patches {
         /// <summary>
         /// if the assembly already exists in the current domain, 
         /// do not double load it.
+        /// Note: this patch is never used at the moment. Also if I do use it, it might be incompatible with FPSBooster
+        /// Note2: THis does not prevent FPSBooster from double loading assemblies.
         /// </summary>
         /// <param name="CM"></param>
         public void NoDoubleLoadPatch(AssemblyDefinition CM) {
@@ -180,6 +181,31 @@ namespace LoadOrderIPatch.Patches {
 
              */
             ilProcessor.Prefix(loadDllPath, callExistingAssembly, storeResult, GotoToReturnResultIfNotNull);
+
+            Log.Successful();
+        }
+
+        /// <summary>
+        /// only load latest version of shared assemblies.
+        /// </summary>
+        public void LoadAssembliesROPatch(AssemblyDefinition CM) {
+            Log.StartPatching();
+            var module = CM.MainModule;
+            var tPluginManager = module.GetType("ColossalFramework.Plugins.PluginManager");
+            var mTarget = tPluginManager.GetMethod("LoadAssembliesRO");
+
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            var instructions = mTarget.Body.Instructions;
+
+            var loi = GetInjectionsAssemblyDefinition(workingPath_);
+
+            {
+                var mReplaceAssemblyPath = loi.MainModule.GetMethod("LoadOrderInjections.Injections.ReplaceAssembies.ReplaceAssemblyPath");
+                var callReplaceAssemblyPath = Instruction.Create(
+                    OpCodes.Call, module.ImportReference(mReplaceAssemblyPath));
+                var storeFile = instructions.Single(_c => _c.OpCode == OpCodes.Stloc_3); // foreach(file in files)
+                ilProcessor.InsertBefore(storeFile, callReplaceAssemblyPath);
+            }
 
             Log.Successful();
         }
@@ -224,7 +250,6 @@ namespace LoadOrderIPatch.Patches {
         public void AddAssemlyPatch(AssemblyDefinition CM) {
             Log.StartPatching();
             var module = CM.MainModule;
-            Log.Info("PluginInfo is :" +  module.Types.FirstOrDefault(t => t.Name.EndsWith("PluginManager")).FullName);
 
             var type1 = module.GetType("ColossalFramework.Plugins.PluginManager");
             var type2 = type1.NestedTypes.Single(_t => _t.Name == "PluginInfo");
@@ -276,7 +301,6 @@ namespace LoadOrderIPatch.Patches {
 
             Log.Successful();
         }
-
         public static void LogExceptionInLOM(Exception ex) {
             Injections.KianCommons.Log.Exception(ex, showInPanel:true);
         }

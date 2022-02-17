@@ -104,10 +104,15 @@ namespace LoadOrderInjections.Injections {
                 Log.Info("Sorting assemblies ...", true);
                 list.Sort((p1, p2) => HarmonyComparison(p1.Value, p2.Value));
 
+                foreach(var p in list) {
+
+                }
+
                 plugins.Clear();
                 foreach (var pair in list)
                     plugins.Add(pair.Key, pair.Value);
 
+                ReplaceAssembies.Init(plugins.Values.ToArray());
                 Log.Info("\n=========================== plugins.Values: =======================", false);
                 foreach (var p in plugins.Values) {
                     var dllFiles = Directory.GetFiles(p.modPath, "*.dll", SearchOption.AllDirectories);
