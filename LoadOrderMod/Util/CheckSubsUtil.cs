@@ -276,7 +276,6 @@ namespace LoadOrderMod.Util {
             PlatformService.workshop.eventUGCRequestUGCDetailsCompleted += OnUGCRequestUGCDetailsCompleted;
         }
 
-
         private static void OnUGCRequestUGCDetailsCompleted(UGCDetails ugc, bool ioError) {
             ThreadPool.QueueUserWorkItem((_) => {
                 try {

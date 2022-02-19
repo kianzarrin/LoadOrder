@@ -593,12 +593,8 @@ namespace LoadOrderInjections {
 
         public static void OnUGCRequestUGCDetailsCompleted(UGCDetails result, bool ioError) {
             ThreadPool.QueueUserWorkItem((_) => {
-                if (IsExcludedMod(result.publishedFileId)) {
-                    // ignore excluded item
-                    return;
-                }
-                bool good = IsUGCUpToDate(result, out string reason) == DownloadStatus.DownloadOK;
-                if (!good) {
+               bool good = IsUGCUpToDate(result, out string reason) == DownloadStatus.DownloadOK;
+                if (!good && !IsExcludedMod(result.publishedFileId)) {
                     Log.Warning($"subscribed item not installed properly:{result.publishedFileId} {result.title} " +
                         $"reason={reason}. " +
                         $"try reinstalling the item.",
