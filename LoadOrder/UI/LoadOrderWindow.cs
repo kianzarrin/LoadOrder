@@ -699,7 +699,11 @@ namespace LoadOrderTool.UI {
             if (mod != null)
                 return !mod.IsIncludedPending;
 
-            return !dataGridAssets.AssetList.Original.Any(item => item.PublishedFileId == id && item.IsIncludedPending);
+            var assets = dataGridAssets?.AssetList?.Original;
+            if (assets != null)
+                return assets.Any(item => item.PublishedFileId == id && item.IsIncludedPending);
+            else
+                return false;
         }
 
         string UpdateBrokenDownloadsStatus() {
