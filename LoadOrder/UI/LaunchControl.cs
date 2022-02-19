@@ -273,6 +273,10 @@ namespace LoadOrderTool.UI {
             Launch();
         }
 
+        private void FocusSteam() {
+            ContentUtil.Execute(DataLocation.SteamPath, DataLocation.SteamExe, null);
+        }
+
         private void Launch() {
             if (!ConfigWrapper.AutoSave && ConfigWrapper.Dirty) {
                 var result = MessageBox.Show(
@@ -298,10 +302,9 @@ namespace LoadOrderTool.UI {
             var args = GetCommandArgs();
 
             UpdateFiles();
-            
+
             string fileExe = radioButtonSteamExe.Checked ? DataLocation.SteamExe : DataLocation.CitiesExe;
             string dir = radioButtonSteamExe.Checked ? DataLocation.SteamPath : DataLocation.GamePath;
-
             ContentUtil.Execute(dir, fileExe, string.Join(" ", args));
         }
 
