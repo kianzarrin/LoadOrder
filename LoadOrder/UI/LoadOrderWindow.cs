@@ -687,12 +687,19 @@ namespace LoadOrderTool.UI {
             } catch(Exception ex) { ex.Log(); }
         }
 
+        bool IsExcludedMod(PublishedFileId id) {
+            var mod = dataGridMods?.ModList?.FirstOrDefault(item => item.PublishedFileId == id);
+            if (mod != null)
+                return !mod.IsIncludedPending;
+            return false;
+        }
+
         bool IsExcluded(PublishedFileId id) {
             var mod = dataGridMods?.ModList?.FirstOrDefault(item => item.PublishedFileId == id);
             if (mod != null)
-                return !mod.IsIncluded;
+                return !mod.IsIncludedPending;
 
-            return !dataGridAssets.AssetList.Original.Any(item => item.PublishedFileId == id && item.IsIncluded);
+            return !dataGridAssets.AssetList.Original.Any(item => item.PublishedFileId == id && item.IsIncludedPending);
         }
 
         string UpdateBrokenDownloadsStatus() {
@@ -703,7 +710,7 @@ namespace LoadOrderTool.UI {
             foreach (var item in ConfigWrapper.instance.SteamCache.Items.Where(
                 item => item.Status.IsBroken() &&
                 existingIds.Contains(item.PublishedFileId) &&
-                !IsExcluded(item.PublishedFileId)
+                !IsExcludedMod(item.PublishedFileId)
                 )) {
                 red = true;
                 string type = item.Tags != null && item.Tags.Contains("Mod") ? "MOD" : "asset";
