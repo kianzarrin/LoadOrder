@@ -200,7 +200,7 @@ namespace LoadOrderIPatch.Patches {
             var loi = GetInjectionsAssemblyDefinition(workingPath_);
 
             {
-                var mReplaceAssemblyPath = loi.MainModule.GetMethod("LoadOrderInjections.Injections.ReplaceAssembies.ReplaceAssemblyPath");
+                var mReplaceAssemblyPath = loi.MainModule.GetMethod("LoadOrderInjections.Injections.ReplaceAssembies.ReplaceAssemblyPacth");
                 var callReplaceAssemblyPath = Instruction.Create(
                     OpCodes.Call, module.ImportReference(mReplaceAssemblyPath));
                 var storeFile = instructions.Single(_c => _c.OpCode == OpCodes.Stloc_3); // foreach(file in files)

@@ -33,7 +33,7 @@ namespace LoadOrderInjections.Injections {
         internal static Version Take(this Version version, int fieldCount) =>
             new Version(version.ToString(fieldCount));
 
-        public static string ReplaceAssemblyPath(string dllPath) {
+        public static string ReplaceAssemblyPacth(string dllPath) {
             try {
                 if (asms_.TryGetValue(dllPath, out var asm)) {
                     string name = asm.Name.Name;
