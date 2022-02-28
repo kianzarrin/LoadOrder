@@ -35,16 +35,21 @@ namespace LoadOrderInjections.Injections {
 
         public static string ReplaceAssemblyPath(string dllPath) {
             try {
-                if (asms_.TryGetValue(dllPath, out var asm) && shared_.Contains(asm.Name.Name)) {
-                    var varients = asms_.Where(item => item.Value.Name.Name == asm.Name.Name).ToArray();
-                    var latest = varients.MaxBy(item => item.Value.Name.Version);
+                if (asms_.TryGetValue(dllPath, out var asm)) {
+                    string name = asm.Name.Name;
+                    if (shared_.Contains(name)) {
+                        var varients = asms_.Where(item => item.Value.Name.Name == name).ToArray();
+                        var latest = varients.MaxBy(item => item.Value.Name.Version);
 
-                    // if only the revision is different then return the current assembly (good for hot-reload).
-                    var version0 = asm.Name.Version.Take(3);
-                    var version = latest.Value.Name.Version.Take(3);
-                    if (version > version0) {
-                        Log.Info($"Replacing {asm.Name.Name} V{asm.Name.Version} with V{latest.Value.Name.Version}", true);
-                        return latest.Key;
+                        // if only the revision is different then return the current assembly (good for hot-reload).
+                        var version0 = asm.Name.Version.Take(3);
+                        var version = latest.Value.Name.Version.Take(3);
+                        if (version > version0) {
+                            if (name == "UnifiedUILib" && version < new Version(2, 2))
+                                return dllPath; // older versions are incompatible
+                            Log.Info($"Replacing {asm.Name.Name} V{asm.Name.Version} with V{latest.Value.Name.Version}", true);
+                            return latest.Key;
+                        }
                     }
                 }
             } catch (Exception ex) { ex.Log(); }
