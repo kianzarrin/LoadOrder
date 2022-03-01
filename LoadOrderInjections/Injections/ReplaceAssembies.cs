@@ -45,8 +45,8 @@ namespace LoadOrderInjections.Injections {
                         var version0 = asm.Name.Version.Take(3);
                         var version = latest.Value.Name.Version.Take(3);
                         if (version > version0) {
-                            if (name == "UnifiedUILib" && version < new Version(2, 2))
-                                return dllPath; // older versions are incompatible
+                            if (name == "UnifiedUILib" && version0 == new Version(1,2,0) && version < new Version(2, 2))
+                                return dllPath; // macsurgey's UUI is incompatible with UUI V2.1 or bellow
                             Log.Info($"Replacing {asm.Name.Name} V{asm.Name.Version} with V{latest.Value.Name.Version}", true);
                             return latest.Key;
                         }
