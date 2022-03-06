@@ -58,7 +58,11 @@ namespace CO.IO {
                         m += "\ngetting game path from registry ...";
                         using (RegistryKey key = Registry.LocalMachine.OpenSubKey(installLocationSubKey_)) {
                             GamePath = key?.GetValue(installLocationKey_) as string;
-                            GamePath = RealPath(GamePath);
+                            if (Util.IsGamePath(GamePath)) {
+                                GamePath = RealPath(GamePath);
+                            } else {
+                                GamePath = null;
+                            }
                             m += "\ngame path from registry: " + GamePath;
                         }
                     }
@@ -77,7 +81,11 @@ namespace CO.IO {
                         m += "\ngetting SteamPath from registry ...";
                         using (RegistryKey key = Registry.CurrentUser.OpenSubKey(SteamPathSubKey_)) {
                             SteamPath = key?.GetValue(SteamPathKey_) as string;
-                            SteamPath = RealPath(SteamPath);
+                            if (Util.IsSteamPath(data?.SteamPath)) {
+                                SteamPath = RealPath(SteamPath);
+                            } else {
+                                SteamPath = null;
+                            }
                             m += "\nSteamPath from registry: " + SteamPath;
                         }
                     }

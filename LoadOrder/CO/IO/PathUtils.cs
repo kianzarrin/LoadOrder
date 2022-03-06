@@ -44,7 +44,12 @@ namespace CO.IO {
 
         public static string RealPath(string path) {
             if (!Directory.Exists(path) && !File.Exists(path)) {
-                Log.Exception(new Exception("path not fount:" + path), showInPanel:false);
+                if(path is null) {
+                    path = "<null>";
+                } else if(path == "") {
+                    path = "<empty>";
+                }
+                Log.Exception(new Exception("path not fount:" + path ?? "<null>"), showInPanel:false);
                 return "";
             }
             try {
