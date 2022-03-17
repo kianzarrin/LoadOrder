@@ -607,7 +607,8 @@ namespace CO.Plugins {
                 } else if (replace) {
                     Log.Info("mod profile with path not found: " + pluginInfo.IncludedPath);
                     pluginInfo.LoadOrder = LoadOrderConfig.DefaultLoadOrder;
-                    pluginInfo.IsIncluded = false;
+                    pluginInfo.IsIncludedPending = false;
+                    pluginInfo.IsEnabledPending = false;
                 }
             }
         }
@@ -616,7 +617,7 @@ namespace CO.Plugins {
             var list = new List<LoadOrderProfile.Mod>(this.m_Plugins.Count);
             foreach (var pluginInfo in m_Plugins) {
                 var modProfile = new LoadOrderProfile.Mod(pluginInfo);
-                if (modProfile.IsIncluded) {
+                if (modProfile.IsIncluded || modProfile.IsEnabled) {
                     list.Add(modProfile);
                 }
             }

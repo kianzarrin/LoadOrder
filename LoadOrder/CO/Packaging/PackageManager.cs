@@ -336,7 +336,7 @@ namespace CO.Packaging {
                     }
                 } else if (replace) {
                     //Log.Debug("asset profile with path not found: " + assetInfo.AssetPath);
-                    assetInfo.IsIncluded = false;
+                    assetInfo.IsIncludedPending = false;
                 }
             }
         }
