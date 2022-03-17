@@ -599,7 +599,7 @@ namespace CO.Plugins {
                 if (modProfile != null) {
                     bool included0 = pluginInfo.IsIncludedPending;
                     bool enabled0 = pluginInfo.IsEnabledPending;
-                    modProfile.WriteTo(pluginInfo); // write load order.
+                    modProfile.WriteTo(pluginInfo);
                     if (!replace) {
                         pluginInfo.IsIncludedPending |= included0;
                         pluginInfo.IsEnabledPending |= enabled0;
@@ -616,7 +616,9 @@ namespace CO.Plugins {
             var list = new List<LoadOrderProfile.Mod>(this.m_Plugins.Count);
             foreach (var pluginInfo in m_Plugins) {
                 var modProfile = new LoadOrderProfile.Mod(pluginInfo);
-                list.Add(modProfile);
+                if (modProfile.IsIncluded) {
+                    list.Add(modProfile);
+                }
             }
             profile.Mods = list.ToArray();
         }

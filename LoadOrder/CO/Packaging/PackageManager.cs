@@ -330,7 +330,7 @@ namespace CO.Packaging {
                 var assetProfile = profile.GetAsset(assetInfo.AssetPath);
                 if (assetProfile != null) {
                     bool included0 = assetInfo.IsIncludedPending;
-                    assetProfile.WriteTo(assetInfo); // write load order.
+                    assetProfile.WriteTo(assetInfo);
                     if (!replace) {
                         assetInfo.IsIncludedPending |= included0;
                     }
@@ -345,7 +345,9 @@ namespace CO.Packaging {
             var list = new List<LoadOrderProfile.Asset>(m_Assets.Count);
             foreach (var assetInfo in m_Assets) {
                 var assetProfile = new LoadOrderProfile.Asset(assetInfo);
-                list.Add(assetProfile);
+                if (assetProfile.IsIncluded) {
+                    list.Add(assetProfile);
+                }
             }
             profile.Assets = list.ToArray();
         }
