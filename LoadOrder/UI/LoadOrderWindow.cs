@@ -778,7 +778,7 @@ namespace LoadOrderTool.UI {
                     int i = 0;
                     List<Task> tasks = new List<Task>(32);
                     await foreach(var data in SteamUtil.LoadDataAsyncInChunks(ids)) {
-                        Assertion.NotNull(data);
+                        Assertion.NotNull(data, "Internet connection problem?");
                         var task = Task.Run(() => DTO2Cache(data));
                         tasks.Add(task);
                         i += data.Length;
@@ -868,6 +868,8 @@ namespace LoadOrderTool.UI {
                 } catch(Exception ex) {
                     if(authorId == 76561197978975775) {
                         authorName = "Feindbild"; // hard code stubborn profile!
+                    } else if (authorId == 76561198025140529) {
+                        authorName = "76561198025140529"; // hard code removed profile!
                     } else {
                         numErrors++;
                         if(numErrors > 3) throw;

@@ -98,7 +98,6 @@ namespace LoadOrderTool.Util {
                     return await Task.Run(() => HttpResponse2DTOs(httpResponse2));
                 }
                 Log.Error("failed to get httpResponse");
-                new Dictionary<object, object>();
                 return null;
             }
         }
