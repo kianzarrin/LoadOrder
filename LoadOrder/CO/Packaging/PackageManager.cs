@@ -57,7 +57,7 @@ namespace CO.Packaging {
                         string assetFile = Path.GetFileName(AssetPath);
                         if (string.IsNullOrEmpty(displayText_))
                             displayText_ = assetFile;
-                        else
+                        else if(string.IsNullOrEmpty(CSAssetCache?.Name))
                             displayText_ += $"({assetFile})";
                     }
                     return displayText_;
