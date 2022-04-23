@@ -60,6 +60,7 @@
   <data name="label1.Text" xml:space="preserve">
     <value>option 1: drag-n-drop LSM report file into the text box to subscribe to all missing assets
 option 2: select the portion of the LSM report you want to subscribe to and then drag-n-drop the selection into the text box.
-option 3: type in the workshop ids of the mods./assets that you want to subscribe to manually in the text box.</value>
+option 3: select items in workshop collection you want to subscribe to and then drag-n-drop the selection into the text box.
+option 4: type in the workshop ids of the mods./assets that you want to subscribe to manually in the text box.</value>
   </data>
 </root>

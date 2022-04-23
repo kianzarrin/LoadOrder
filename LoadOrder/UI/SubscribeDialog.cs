@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CO.PlatformServices;
 using CO.Packaging;
+using CO.Plugins;
 
 namespace LoadOrderTool.UI {
     public partial class SubscribeDialog : Form {
@@ -16,6 +17,8 @@ namespace LoadOrderTool.UI {
             tbIDs.DragEnter += tbAssets_DragEnter;
             tbIDs.DragLeave+= tbAssets_DragLeave;
             tbIDs.DragDrop += tbAssets_DragDrop;
+            btnIncludeAll.SetTooltip("Include/Enable all mods/assets listed above");
+            SubscribeAll.SetTooltip("opens CS in mass sub mode and subscribes to all workshop items listed above.");
         }
 
         private void tbAssets_DragDrop(object sender, DragEventArgs e) {
@@ -97,11 +100,19 @@ namespace LoadOrderTool.UI {
             CleanupTextBox();
             var ids = GetIDs(tbIDs.Text);
             var assets = PackageManager.instance.GetAssets();
+            var mods = PluginManager.instance.GetMods();
             foreach (var id in ids) {
                 var publishedFileId = new PublishedFileId(ulong.Parse(id));
-                var asset = assets.FirstOrDefault(_a => _a.IsWorkshop && _a.PublishedFileId == publishedFileId);
-                if (asset == null) continue;
-                asset.IsIncludedPending = true;
+                foreach(var mod in mods) {
+                    if(mod.IsWorkshop && mod.PublishedFileId == publishedFileId) {
+                        mod.IsIncludedPending = mod.IsEnabledPending = true;
+                    }
+                }
+                foreach (var asset in assets) {
+                    if (asset.IsWorkshop && asset.PublishedFileId == publishedFileId) {
+                        asset.IsIncludedPending = true;
+                    }
+                }
             }
             LoadOrderWindow.Instance.dataGridAssets.Refresh();
         }
