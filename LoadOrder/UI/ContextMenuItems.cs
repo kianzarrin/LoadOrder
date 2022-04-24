@@ -15,6 +15,7 @@ namespace LoadOrderTool.UI {
     class ContextMenuItems : ContextMenuStrip {
         string path_;
         string url_;
+        ulong id_;
 
         public ContextMenuItems(string path, PublishedFileId id) {
             path_ = path;
@@ -27,11 +28,18 @@ namespace LoadOrderTool.UI {
                 var itemOpenURL = new ToolStripMenuItem("Open In Workshop");
                 itemOpenURL.Click += ItemOpenURL_Click; ;
                 Items.Add(itemOpenURL);
+
+                id_ = id.AsUInt64;
+                var itemRedownload = new ToolStripMenuItem("Redownload");
+                itemRedownload.Click += ItemRedownload_Click;
+                Items.Add(itemRedownload);
             }
         }
 
         private void ItemOpenURL_Click(object sender, EventArgs e) => ContentUtil.OpenURL(url_);
 
         private void ItemOpenFile_Click(object sender, EventArgs e) => ContentUtil.OpenPath(path_);
+
+        private void ItemRedownload_Click(object sender, EventArgs e) => SteamUtil.ReDownload(new[] { id_ });
     }
 }
