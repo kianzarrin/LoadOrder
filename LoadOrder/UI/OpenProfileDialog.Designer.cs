@@ -27,6 +27,7 @@ namespace LoadOrderTool.UI {
         /// </summary>
         private void InitializeComponent() {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            PresentationControls.CheckBoxProperties checkBoxProperties1 = new PresentationControls.CheckBoxProperties();
             this.lblMissingItems = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.cID = new System.Windows.Forms.DataGridViewLinkColumn();
@@ -37,7 +38,7 @@ namespace LoadOrderTool.UI {
             this.btnAppend = new System.Windows.Forms.Button();
             this.btnReplace = new System.Windows.Forms.Button();
             this.btnReload = new System.Windows.Forms.Button();
-            this.cbItemType = new CheckBoxComboBox();
+            this.cbItemType = new PresentationControls.CheckBoxComboBox();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnSubscribeAll = new System.Windows.Forms.Button();
             this.btnSubscribeMissing = new System.Windows.Forms.Button();
@@ -77,7 +78,7 @@ namespace LoadOrderTool.UI {
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.RowHeadersWidth = 62;
             this.dataGridView1.RowTemplate.Height = 27;
-            this.dataGridView1.Size = new System.Drawing.Size(1017, 873);
+            this.dataGridView1.Size = new System.Drawing.Size(1131, 845);
             this.dataGridView1.TabIndex = 1;
             // 
             // cID
@@ -118,17 +119,17 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanel1.Controls.Add(this.btnSubscribeMissing);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 853);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 825);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1017, 45);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1131, 45);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // btnCancel
             // 
             this.btnCancel.AutoSize = true;
             this.btnCancel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnCancel.Location = new System.Drawing.Point(940, 5);
+            this.btnCancel.Location = new System.Drawing.Point(1054, 5);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(73, 35);
@@ -140,7 +141,7 @@ namespace LoadOrderTool.UI {
             // 
             this.btnAppend.AutoSize = true;
             this.btnAppend.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnAppend.Location = new System.Drawing.Point(846, 5);
+            this.btnAppend.Location = new System.Drawing.Point(960, 5);
             this.btnAppend.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnAppend.Name = "btnAppend";
             this.btnAppend.Size = new System.Drawing.Size(86, 35);
@@ -152,7 +153,7 @@ namespace LoadOrderTool.UI {
             // 
             this.btnReplace.AutoSize = true;
             this.btnReplace.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnReplace.Location = new System.Drawing.Point(756, 5);
+            this.btnReplace.Location = new System.Drawing.Point(870, 5);
             this.btnReplace.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnReplace.Name = "btnReplace";
             this.btnReplace.Size = new System.Drawing.Size(82, 35);
@@ -164,7 +165,7 @@ namespace LoadOrderTool.UI {
             // 
             this.btnReload.AutoSize = true;
             this.btnReload.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnReload.Location = new System.Drawing.Point(672, 5);
+            this.btnReload.Location = new System.Drawing.Point(786, 5);
             this.btnReload.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnReload.Name = "btnReload";
             this.btnReload.Size = new System.Drawing.Size(76, 35);
@@ -174,12 +175,15 @@ namespace LoadOrderTool.UI {
             // 
             // cbItemType
             // 
+            checkBoxProperties1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.cbItemType.CheckBoxProperties = checkBoxProperties1;
+            this.cbItemType.DisplayMemberSingleItem = "";
             this.cbItemType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbItemType.FormattingEnabled = true;
-            this.cbItemType.Location = new System.Drawing.Point(453, 5);
+            this.cbItemType.Location = new System.Drawing.Point(483, 5);
             this.cbItemType.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbItemType.Name = "cbItemType";
-            this.cbItemType.Size = new System.Drawing.Size(211, 33);
+            this.cbItemType.Size = new System.Drawing.Size(295, 33);
             this.cbItemType.TabIndex = 1;
             // 
             // flowLayoutPanel2
@@ -187,7 +191,7 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanel2.AutoSize = true;
             this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(449, 0);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(479, 0);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(0, 0);
@@ -197,7 +201,7 @@ namespace LoadOrderTool.UI {
             // 
             this.btnSubscribeAll.AutoSize = true;
             this.btnSubscribeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnSubscribeAll.Location = new System.Drawing.Point(231, 5);
+            this.btnSubscribeAll.Location = new System.Drawing.Point(261, 5);
             this.btnSubscribeAll.Margin = new System.Windows.Forms.Padding(4, 5, 29, 5);
             this.btnSubscribeAll.Name = "btnSubscribeAll";
             this.btnSubscribeAll.Size = new System.Drawing.Size(189, 35);
@@ -210,7 +214,7 @@ namespace LoadOrderTool.UI {
             // 
             this.btnSubscribeMissing.AutoSize = true;
             this.btnSubscribeMissing.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnSubscribeMissing.Location = new System.Drawing.Point(55, 5);
+            this.btnSubscribeMissing.Location = new System.Drawing.Point(20, 5);
             this.btnSubscribeMissing.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnSubscribeMissing.Name = "btnSubscribeMissing";
             this.btnSubscribeMissing.Size = new System.Drawing.Size(233, 35);
@@ -223,7 +227,7 @@ namespace LoadOrderTool.UI {
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1017, 898);
+            this.ClientSize = new System.Drawing.Size(1131, 870);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.lblMissingItems);
