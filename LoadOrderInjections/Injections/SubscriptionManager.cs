@@ -521,6 +521,9 @@ namespace LoadOrderInjections {
             firstTime = false;
 
             Log.Debug(Environment.StackTrace);
+            var items = PlatformService.workshop.GetSubscribedItems();
+            Log.Info("Subscribed Items are: " + items.ToSTR());
+
             if (sman)
                 EnsureAll();
             else {

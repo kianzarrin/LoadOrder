@@ -11,6 +11,8 @@ namespace LoadOrderMod {
     using UnityEngine;
     using ColossalFramework;
     using LoadOrderMod.Data;
+    using ColossalFramework.PlatformServices;
+    using System.Linq;
 
     public class LoadOrderUserMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderUserMod).Assembly.GetName().Version;
@@ -36,6 +38,8 @@ namespace LoadOrderMod {
 #else
                 Log.Buffered = true;
 #endif
+                var items = PlatformService.workshop.GetSubscribedItems();
+                Log.Info("Subscribed Items are: " + items.ToSTR());
 
                 //Log.Debug("Testing StackTrace:\n" + new StackTrace(true).ToString(), copyToGameLog: true);
                 //KianCommons.UI.TextureUtil.EmbededResources = false;

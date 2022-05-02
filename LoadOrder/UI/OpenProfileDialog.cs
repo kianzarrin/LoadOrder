@@ -57,6 +57,7 @@ namespace LoadOrderTool.UI {
 
             btnAppend.SetTooltip("current mods/assets + profile mods/assets");
             btnReplace.SetTooltip("profile mods/assets only");
+            SubscribeAll.SetTooltip("subscribe to all the missing workshop items from the table above");
             cbItemType.AutoSize();
         }
 
