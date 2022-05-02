@@ -39,7 +39,8 @@ namespace LoadOrderTool.UI {
             this.btnReload = new System.Windows.Forms.Button();
             this.cbItemType = new CheckBoxComboBox();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.SubscribeAll = new System.Windows.Forms.Button();
+            this.btnSubscribeAll = new System.Windows.Forms.Button();
+            this.btnSubscribeMissing = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -113,7 +114,8 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanel1.Controls.Add(this.btnReload);
             this.flowLayoutPanel1.Controls.Add(this.cbItemType);
             this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel2);
-            this.flowLayoutPanel1.Controls.Add(this.SubscribeAll);
+            this.flowLayoutPanel1.Controls.Add(this.btnSubscribeAll);
+            this.flowLayoutPanel1.Controls.Add(this.btnSubscribeMissing);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 853);
@@ -191,18 +193,31 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanel2.Size = new System.Drawing.Size(0, 0);
             this.flowLayoutPanel2.TabIndex = 5;
             // 
-            // SubscribeAll
+            // btnSubscribeAll
             // 
-            this.SubscribeAll.AutoSize = true;
-            this.SubscribeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.SubscribeAll.Location = new System.Drawing.Point(231, 5);
-            this.SubscribeAll.Margin = new System.Windows.Forms.Padding(4, 5, 29, 5);
-            this.SubscribeAll.Name = "SubscribeAll";
-            this.SubscribeAll.Size = new System.Drawing.Size(189, 35);
-            this.SubscribeAll.TabIndex = 6;
-            this.SubscribeAll.Text = "Subscribe To all in CS";
-            this.SubscribeAll.UseVisualStyleBackColor = true;
-            this.SubscribeAll.Click += new System.EventHandler(this.SubscribeAll_Click);
+            this.btnSubscribeAll.AutoSize = true;
+            this.btnSubscribeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnSubscribeAll.Location = new System.Drawing.Point(231, 5);
+            this.btnSubscribeAll.Margin = new System.Windows.Forms.Padding(4, 5, 29, 5);
+            this.btnSubscribeAll.Name = "btnSubscribeAll";
+            this.btnSubscribeAll.Size = new System.Drawing.Size(189, 35);
+            this.btnSubscribeAll.TabIndex = 6;
+            this.btnSubscribeAll.Text = "Subscribe To all in CS";
+            this.btnSubscribeAll.UseVisualStyleBackColor = true;
+            this.btnSubscribeAll.Click += new System.EventHandler(this.SubscribeAll_Click);
+            // 
+            // btnSubscribeMissing
+            // 
+            this.btnSubscribeMissing.AutoSize = true;
+            this.btnSubscribeMissing.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnSubscribeMissing.Location = new System.Drawing.Point(55, 5);
+            this.btnSubscribeMissing.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnSubscribeMissing.Name = "btnSubscribeMissing";
+            this.btnSubscribeMissing.Size = new System.Drawing.Size(233, 35);
+            this.btnSubscribeMissing.TabIndex = 7;
+            this.btnSubscribeMissing.Text = "Subscribe To Missing in CS";
+            this.btnSubscribeMissing.UseVisualStyleBackColor = true;
+            this.btnSubscribeMissing.Click += new System.EventHandler(this.SubscribeMissing_Click);
             // 
             // OpenProfileDialog
             // 
@@ -237,6 +252,7 @@ namespace LoadOrderTool.UI {
         private System.Windows.Forms.DataGridViewTextBoxColumn cName;
         private System.Windows.Forms.Button btnReload;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
-        private System.Windows.Forms.Button SubscribeAll;
+        private System.Windows.Forms.Button btnSubscribeAll;
+        private System.Windows.Forms.Button btnSubscribeMissing;
     }
 }

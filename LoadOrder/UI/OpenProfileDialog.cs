@@ -57,7 +57,8 @@ namespace LoadOrderTool.UI {
 
             btnAppend.SetTooltip("current mods/assets + profile mods/assets");
             btnReplace.SetTooltip("profile mods/assets only");
-            SubscribeAll.SetTooltip("subscribe to all the missing workshop items from the table above");
+            btnSubscribeAll.SetTooltip("subscribe to all items in imported profile in CS whether or not they are missing.");
+            btnSubscribeMissing.SetTooltip("subscribe to all the missing workshop items from the table above.");
             cbItemType.AutoSize();
         }
 
@@ -99,7 +100,8 @@ namespace LoadOrderTool.UI {
             if (!anyMissingItems) {
                 lblMissingItems.Text = "No Missing Items.";
             }
-            SubscribeAll.Enabled = GetMissingIDs().Length > 0;
+            btnSubscribeAll.Enabled = GetAllWSIDs().Length > 0;
+            btnSubscribeMissing.Enabled = GetMissingIDs().Length > 0;
         }
 
         protected void DataGridView1_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e) {
@@ -183,9 +185,26 @@ namespace LoadOrderTool.UI {
             }
             return ids.ToArray();
         }
+        public ulong[] GetAllWSIDs() {
+            List<ulong> ids = new List<ulong>();
+            foreach (var item in Profile.Mods) {
+                if (item.TryGetID(out ulong id))
+                    ids.Add(id);
+            }
+            foreach (var item in Profile.Assets) {
+                if (item.TryGetID(out ulong id))
+                    ids.Add(id);
+            }
+            return ids.ToArray();
+        }
 
-        private void SubscribeAll_Click(object sender, EventArgs e) {
+
+
+        private void SubscribeMissing_Click(object sender, EventArgs e) {
             ContentUtil.Subscribe(GetMissingIDs());
+        }
+        private void SubscribeAll_Click(object sender, EventArgs e) {
+            ContentUtil.Subscribe(GetAllWSIDs());
         }
     }
 }
