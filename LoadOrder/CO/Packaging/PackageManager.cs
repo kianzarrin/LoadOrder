@@ -57,7 +57,7 @@ namespace CO.Packaging {
                         string assetFile = Path.GetFileName(AssetPath);
                         if (string.IsNullOrEmpty(displayText_))
                             displayText_ = assetFile;
-                        else if(string.IsNullOrEmpty(CSAssetCache?.Name))
+                        else //if(string.IsNullOrEmpty(CSAssetCache?.Name))
                             displayText_ += $"({assetFile})";
                     }
                     return displayText_;
@@ -118,7 +118,7 @@ namespace CO.Packaging {
 
             string searchText_;
             public string SearchText => searchText_ ??=
-                $"{CSAssetCache?.Name} {SteamCache?.Name} {Path.GetFileName(AssetPath)} {PublishedFileId} {Author}".Trim();
+                $"{CSAssetCache?.Name} {SteamCache?.Name} {FileName} {PublishedFileId} {Author}".Trim();
 
             public PublishedFileId PublishedFileId => this.m_PublishedFileId;
 
