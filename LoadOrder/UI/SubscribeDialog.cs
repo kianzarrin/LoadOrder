@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using CO.PlatformServices;
 using CO.Packaging;
 using CO.Plugins;
+using LoadOrderTool.Data;
 
 namespace LoadOrderTool.UI {
     public partial class SubscribeDialog : Form {
@@ -98,26 +99,23 @@ namespace LoadOrderTool.UI {
 
         private void btnIncludeOnly_Click(object _, EventArgs __) {
             CleanupTextBox();
-            var ids = GetIDs(tbIDs.Text);
+            var ids = GetIDs(tbIDs.Text).Select(item => new PublishedFileId(ulong.Parse(item))).ToArray();
             var assets = PackageManager.instance.GetAssets();
             var mods = PluginManager.instance.GetMods();
-            foreach (var id in ids) {
-                var publishedFileId = new PublishedFileId(ulong.Parse(id));
-                foreach (var mod in mods) {
-                    if (mod.IsWorkshop) {
-                        bool include = mod.PublishedFileId == publishedFileId;
-                        mod.IsIncludedPending = mod.IsEnabledPending = include;
-                    }
+            foreach (var mod in mods) {
+                if (mod.IsWorkshop) {
+                    bool include = ids.Contains(mod.PublishedFileId);
+                    mod.IsIncludedPending = mod.IsEnabledPending = include;
                 }
-                foreach (var asset in assets) {
-                    if (asset.IsWorkshop) {
-                        bool include = asset.PublishedFileId == publishedFileId;
-                        asset.IsIncludedPending = include;
-                    }
+            }
+            foreach (var asset in assets) {
+                if (asset.IsWorkshop) {
+                    bool include = ids.Contains(asset.PublishedFileId);
+                    asset.IsIncludedPending = include;
                 }
             }
             LoadOrderWindow.Instance.dataGridAssets.Refresh();
-            LoadOrderWindow.Instance.dataGridMods.Refresh();
+            LoadOrderWindow.Instance.dataGridMods.RefreshModList();
         }
 
         private void CreateProfile_Click(object sender, EventArgs e) {
@@ -148,7 +146,7 @@ namespace LoadOrderTool.UI {
                 }
             }
             LoadOrderWindow.Instance.dataGridAssets.Refresh();
-            LoadOrderWindow.Instance.dataGridMods.Refresh();
+            LoadOrderWindow.Instance.dataGridMods.RefreshModList();
         }
     }
 }
