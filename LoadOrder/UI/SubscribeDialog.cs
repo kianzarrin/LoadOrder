@@ -51,7 +51,7 @@ namespace LoadOrderTool.UI {
 
         }
 
-        private void tbAssets_DragLeave(object sender, EventArgs e) {
+        private void tbAssets_DragLeave(object _, EventArgs __) {
             tbIDs.BackColor = Color.White;
         }
 
@@ -86,17 +86,49 @@ namespace LoadOrderTool.UI {
             return GetHTMLIDs(text);
         }
 
-        private void SubscribeAll_Click(object sender, EventArgs e) {
+        private void SubscribeAll_Click(object _, EventArgs __) {
             CleanupTextBox();
             var ids = GetIDs(tbIDs.Text);
             ContentUtil.Subscribe(ids);
         }
+        private async void Reload_Click(object _, EventArgs __) {
+            await LoadOrderWindow.Instance.ReloadAll();
+        }
 
-        private void btnCancel_Click(object sender, EventArgs e) => Close();
+        private void IncludeOnly_Click(object _, EventArgs __) {
+            CleanupTextBox();
+            var ids = GetIDs(tbIDs.Text);
+            var assets = PackageManager.instance.GetAssets();
+            var mods = PluginManager.instance.GetMods();
+            foreach (var id in ids) {
+                var publishedFileId = new PublishedFileId(ulong.Parse(id));
+                foreach (var mod in mods) {
+                    if (mod.IsWorkshop) {
+                        bool include = mod.PublishedFileId == publishedFileId;
+                        mod.IsIncludedPending = mod.IsEnabledPending = include;
+                    }
+                }
+                foreach (var asset in assets) {
+                    if (asset.IsWorkshop) {
+                        bool include = asset.PublishedFileId == publishedFileId;
+                        asset.IsIncludedPending = include;
+                    }
+                }
+            }
+            LoadOrderWindow.Instance.dataGridAssets.Refresh();
+            LoadOrderWindow.Instance.dataGridMods.Refresh();
+        }
+
+        private void CreateProfile_Click(object sender, EventArgs e) {
+            IncludeOnly_Click(sender, e);
+            LoadOrderWindow.Instance.Export_Click(sender, e);
+        }
+
+        private void btnCancel_Click(object _, EventArgs __) => Close();
 
         void CleanupTextBox() => tbIDs.Text = GetIDs(tbIDs.Text).Join(" ");
 
-        private void btnIncludeAll_Click(object sender, EventArgs e) {
+        private void btnIncludeAll_Click(object _, EventArgs __) {
             CleanupTextBox();
             var ids = GetIDs(tbIDs.Text);
             var assets = PackageManager.instance.GetAssets();
@@ -115,6 +147,7 @@ namespace LoadOrderTool.UI {
                 }
             }
             LoadOrderWindow.Instance.dataGridAssets.Refresh();
+            LoadOrderWindow.Instance.dataGridMods.Refresh();
         }
     }
 }

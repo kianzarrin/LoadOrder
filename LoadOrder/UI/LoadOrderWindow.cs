@@ -208,7 +208,7 @@ namespace LoadOrderTool.UI {
             UpdateStatus();
         }
 
-        private void Export_Click(object sender, EventArgs e) {
+        public void Export_Click(object _, EventArgs __) {
             SaveFileDialog diaglog = new SaveFileDialog();
             diaglog.Filter = "xml files (*.xml)|*.xml";
             diaglog.InitialDirectory = LoadOrderProfile.DIR;
