@@ -35,6 +35,7 @@ namespace LoadOrderTool.UI {
             checkBoxNoMods.Hide();
             checkBoxNewAsset.SetTooltip("Create asset based on existing asset, as opposed to loading asset.");
             checkBoxLHT.SetTooltip("Traffic drives on left.");
+            checkBoxResetAssets.SetTooltip("");
 
             string loadSaveTooltip =
                 "empty => continue last save.\n" +
@@ -75,6 +76,7 @@ namespace LoadOrderTool.UI {
         public void LoadSettings() {
             if (UIUtil.DesignMode) return;
 
+            checkBoxResetAssets .Checked = settings_.ResetAssets;
             checkBoxNoAssets.Checked = settings_.NoAssets;
             //checkBoxNoMods.Checked = settings_.NoMods;
             checkBoxNoWorkshop.Checked = settings_.NoWorkshop;
@@ -130,6 +132,7 @@ namespace LoadOrderTool.UI {
         }
 
         void SaveSettings() {
+            settings_.ResetAssets = checkBoxResetAssets.Checked;
             settings_.NoAssets = checkBoxNoAssets.Checked;
             settings_.NoMods = checkBoxNoMods.Checked;
             settings_.NoWorkshop = checkBoxNoWorkshop.Checked;
@@ -199,6 +202,8 @@ namespace LoadOrderTool.UI {
 
             if (checkBoxNoWorkshop.Checked)
                 args.Add("-noWorkshop");
+            if (checkBoxResetAssets.Checked)
+                args.Add("-reset-assets");
             if (checkBoxNoAssets.Checked)
                 args.Add("-noAssets");
             if (checkBoxNoMods.Checked)

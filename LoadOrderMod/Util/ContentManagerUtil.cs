@@ -1,23 +1,17 @@
 namespace LoadOrderMod.Util {
     using ColossalFramework;
     using ColossalFramework.Globalization;
-    using ColossalFramework.IO;
     using ColossalFramework.Packaging;
     using ColossalFramework.PlatformServices;
-    using ColossalFramework.Plugins;
     using ColossalFramework.UI;
     using HarmonyLib;
     using KianCommons;
-    using KianCommons.Plugins;
-    using LoadOrderMod.Util;
-    using LoadOrderShared;
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
+    using UnityEngine;
     using static ColossalFramework.Plugins.PluginManager;
     using static KianCommons.ReflectionHelpers;
-    using UnityEngine;
 
     public static class ContentManagerUtil {
         const string ASSET_CATEGORY_NAME = "Assets";
@@ -35,14 +29,14 @@ namespace LoadOrderMod.Util {
         }
 
         public static CategoryContentPanel GetCategory(string name) {
-            foreach(var c in GameObject.FindObjectsOfType<UIComponent>()) {
+            foreach (var c in GameObject.FindObjectsOfType<UIComponent>()) {
                 if (c.name != name) continue;
                 CategoryContentPanel c2 = c.GetComponentInChildren<CategoryContentPanel>();
                 if (c2) return c2;
             }
             throw new Exception($"CategoryContentPanel for '{name}' was not found");
         }
-        
+
         private static CategoryContentPanel assetCategory_;
         private static CategoryContentPanel modCategory_;
         public static CategoryContentPanel AssetCategory => assetCategory_ ??= GetCategory(ASSET_CATEGORY_NAME);
@@ -76,7 +70,7 @@ namespace LoadOrderMod.Util {
             string ret = a.GetEntryData()?.authorName;
             if (ret.IsAuthorNameValid())
                 return ret;
-            else if(fallback)
+            else if (fallback)
                 return ResolveName(a.package.packageAuthor);
             return null;
         }
@@ -124,6 +118,15 @@ namespace LoadOrderMod.Util {
                 }
             }
             return assetName;
+        }
+
+        public static void RefreshAllEntries() {
+            var contentManagerPanel = AssetCategory?.GetComponentInParent<ContentManagerPanel>();
+            if (contentManagerPanel != null) {
+                foreach (var cat in contentManagerPanel.GetComponentsInChildren<CategoryContentPanel>()) {
+                    InvokeMethod(cat, "RefreshEntries");
+                }
+            }
         }
     }
 }

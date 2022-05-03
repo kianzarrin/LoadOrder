@@ -14,7 +14,7 @@ namespace LoadOrderTool {
         public bool Advanced = false;
         public string SavedGamePath, MapPath;
 
-        public bool NoAssets, NoMods, NoWorkshop;
+        public bool NoAssets, NoMods, NoWorkshop, ResetAssets;
         public bool NewAsset;
         public bool LSM = false;
         public bool LHT;

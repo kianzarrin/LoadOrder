@@ -66,6 +66,10 @@ namespace LoadOrderMod {
                 if (introLoaded) {
                     CacheUtil.CacheData();
                 } else {
+                    bool resetIsEnabledForAssets = Environment.GetCommandLineArgs().Any(_arg => _arg == "-reset-assets");
+                    if (resetIsEnabledForAssets) {
+                        LoadOrderUtil.ResetIsEnabledForAssets();
+                    }
                     LoadingManager.instance.m_introLoaded += CacheUtil.CacheData;
                 }
 
