@@ -32,7 +32,9 @@ namespace LoadOrderTool.UI
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SubscribeDialog));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.btnIncludeOnly = new System.Windows.Forms.Button();
             this.btnIncludeAll = new System.Windows.Forms.Button();
+            this.btnReload = new System.Windows.Forms.Button();
             this.SubscribeAll = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tbIDs = new System.Windows.Forms.TextBox();
@@ -44,7 +46,9 @@ namespace LoadOrderTool.UI
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel1.Controls.Add(this.btnCancel);
+            this.flowLayoutPanel1.Controls.Add(this.btnIncludeOnly);
             this.flowLayoutPanel1.Controls.Add(this.btnIncludeAll);
+            this.flowLayoutPanel1.Controls.Add(this.btnReload);
             this.flowLayoutPanel1.Controls.Add(this.SubscribeAll);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
@@ -65,11 +69,24 @@ namespace LoadOrderTool.UI
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // btnIncludeOnly
+            // 
+            this.btnIncludeOnly.AutoSize = true;
+            this.btnIncludeOnly.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnIncludeOnly.Location = new System.Drawing.Point(903, 5);
+            this.btnIncludeOnly.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnIncludeOnly.Name = "btnIncludeOnly";
+            this.btnIncludeOnly.Size = new System.Drawing.Size(121, 35);
+            this.btnIncludeOnly.TabIndex = 4;
+            this.btnIncludeOnly.Text = "Include Only";
+            this.btnIncludeOnly.UseVisualStyleBackColor = true;
+            this.btnIncludeOnly.Click += new System.EventHandler(this.btnIncludeOnly_Click);
+            // 
             // btnIncludeAll
             // 
             this.btnIncludeAll.AutoSize = true;
             this.btnIncludeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnIncludeAll.Location = new System.Drawing.Point(920, 5);
+            this.btnIncludeAll.Location = new System.Drawing.Point(791, 5);
             this.btnIncludeAll.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnIncludeAll.Name = "btnIncludeAll";
             this.btnIncludeAll.Size = new System.Drawing.Size(104, 35);
@@ -78,11 +95,24 @@ namespace LoadOrderTool.UI
             this.btnIncludeAll.UseVisualStyleBackColor = true;
             this.btnIncludeAll.Click += new System.EventHandler(this.btnIncludeAll_Click);
             // 
+            // btnReload
+            // 
+            this.btnReload.AutoSize = true;
+            this.btnReload.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnReload.Location = new System.Drawing.Point(707, 5);
+            this.btnReload.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(76, 35);
+            this.btnReload.TabIndex = 3;
+            this.btnReload.Text = "Reload";
+            this.btnReload.UseVisualStyleBackColor = true;
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
+            // 
             // SubscribeAll
             // 
             this.SubscribeAll.AutoSize = true;
             this.SubscribeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.SubscribeAll.Location = new System.Drawing.Point(721, 5);
+            this.SubscribeAll.Location = new System.Drawing.Point(508, 5);
             this.SubscribeAll.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.SubscribeAll.Name = "SubscribeAll";
             this.SubscribeAll.Size = new System.Drawing.Size(191, 35);
@@ -139,5 +169,7 @@ namespace LoadOrderTool.UI
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbIDs;
         private System.Windows.Forms.Button btnIncludeAll;
+        private System.Windows.Forms.Button btnIncludeOnly;
+        private System.Windows.Forms.Button btnReload;
     }
 }

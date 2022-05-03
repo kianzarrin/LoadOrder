@@ -17,8 +17,9 @@ namespace LoadOrderTool.UI {
             tbIDs.DragEnter += tbAssets_DragEnter;
             tbIDs.DragLeave+= tbAssets_DragLeave;
             tbIDs.DragDrop += tbAssets_DragDrop;
-            btnIncludeAll.SetTooltip("Include/Enable all mods/assets listed above");
             SubscribeAll.SetTooltip("opens CS in mass sub mode and subscribes to all workshop items listed above.");
+            btnIncludeAll.SetTooltip("Include/Enable all mods/assets listed above (ignores items that are not downloaded)");
+            btnReload.SetTooltip("Include/Enable only all mods/assets listed above (exclude everything else - ignores items that are not downloaded)");
         }
 
         private void tbAssets_DragDrop(object sender, DragEventArgs e) {
@@ -91,11 +92,11 @@ namespace LoadOrderTool.UI {
             var ids = GetIDs(tbIDs.Text);
             ContentUtil.Subscribe(ids);
         }
-        private async void Reload_Click(object _, EventArgs __) {
+        private async void btnReload_Click(object _, EventArgs __) {
             await LoadOrderWindow.Instance.ReloadAll();
         }
 
-        private void IncludeOnly_Click(object _, EventArgs __) {
+        private void btnIncludeOnly_Click(object _, EventArgs __) {
             CleanupTextBox();
             var ids = GetIDs(tbIDs.Text);
             var assets = PackageManager.instance.GetAssets();
@@ -120,7 +121,7 @@ namespace LoadOrderTool.UI {
         }
 
         private void CreateProfile_Click(object sender, EventArgs e) {
-            IncludeOnly_Click(sender, e);
+            btnIncludeOnly_Click(sender, e);
             LoadOrderWindow.Instance.Export_Click(sender, e);
         }
 
