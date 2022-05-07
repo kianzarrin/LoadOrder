@@ -6,7 +6,7 @@ namespace LoadOrderShared {
     }
 
     public class ModInfo : ItemInfo {
-        public int LoadOrder;
+        public int LoadOrder = 1000;
     }
 
     public class AssetInfo: ItemInfo {
