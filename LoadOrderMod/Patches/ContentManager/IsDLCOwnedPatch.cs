@@ -15,7 +15,7 @@ namespace LoadOrderMod.Patches.ContentManager {
             if (ExcludedDLCs != null) return;
             var dlcs = new List<SteamHelper.DLC>();
             foreach(string item in ConfigUtil.Config.ExcludedDLCs) {
-                if(item == "MusicDLCs") {
+                if (item == "MusicDLCs") {
                     dlcs.Add(SteamHelper.DLC.RadioStation1);
                     dlcs.Add(SteamHelper.DLC.RadioStation2);
                     dlcs.Add(SteamHelper.DLC.RadioStation3);
@@ -26,6 +26,13 @@ namespace LoadOrderMod.Patches.ContentManager {
                     dlcs.Add(SteamHelper.DLC.RadioStation9);
                     dlcs.Add(SteamHelper.DLC.RadioStation10);
                     dlcs.Add(SteamHelper.DLC.RadioStation11);
+                } else if (item == "Football") {
+                    dlcs.Add(SteamHelper.DLC.Football);
+                    dlcs.Add(SteamHelper.DLC.Football2);
+                    dlcs.Add(SteamHelper.DLC.Football3);
+                    dlcs.Add(SteamHelper.DLC.Football4);
+                    dlcs.Add(SteamHelper.DLC.Football5);
+                    dlcs.Add(SteamHelper.DLC.Football2345);
                 } else {
                     dlcs.Add((SteamHelper.DLC)Enum.Parse(typeof(SteamHelper.DLC), item));
                 }
