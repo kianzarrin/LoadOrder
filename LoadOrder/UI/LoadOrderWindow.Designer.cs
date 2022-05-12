@@ -504,10 +504,18 @@ namespace LoadOrderTool.UI
             DownloadWarningLabel = new ToolStripStatusLabel {
                 BorderSides = ToolStripStatusLabelBorderSides.Left,
                 BorderStyle = Border3DStyle.Etched,
-                Visible = true,
+                Visible = false,
                 ForeColor = Color.Red,
                 Font =  new Font(SystemFonts.DefaultFont, FontStyle.Bold),
                 Text = "There are broken downloads!",
+            };
+            InternetConnectionWarningLabel = new ToolStripStatusLabel {
+                BorderSides = ToolStripStatusLabelBorderSides.Left,
+                BorderStyle = Border3DStyle.Etched,
+                Visible = false,
+                ForeColor = Color.Red,
+                Font = new Font(SystemFonts.DefaultFont, FontStyle.Bold),
+                Text = "Internet connection failure!",
             };
             ModCountLabel = new ToolStripStatusLabel {
                 BorderSides = ToolStripStatusLabelBorderSides.Left,
@@ -524,7 +532,7 @@ namespace LoadOrderTool.UI
                 BorderStyle = Border3DStyle.Etched,
                 Visible = true,
             };
-            statusStrip.Items.AddRange(new[] { DownloadWarningLabel, DLCNoticeLabel, ModCountLabel, AssetCountLabel, LastProfileLabel });
+            statusStrip.Items.AddRange(new[] { InternetConnectionWarningLabel, DownloadWarningLabel, DLCNoticeLabel, ModCountLabel, AssetCountLabel, LastProfileLabel });
 
             // 
             // LoadOrderWindow
@@ -608,6 +616,7 @@ namespace LoadOrderTool.UI
 
         private StatusStrip statusStrip;
         public ToolStripStatusLabel DownloadWarningLabel;
+        public ToolStripStatusLabel InternetConnectionWarningLabel;
         public ToolStripStatusLabel DLCNoticeLabel;
         public ToolStripStatusLabel ModCountLabel;
         public ToolStripStatusLabel AssetCountLabel;

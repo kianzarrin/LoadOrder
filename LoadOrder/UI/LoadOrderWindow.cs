@@ -84,7 +84,9 @@ namespace LoadOrderTool.UI {
             }
         }
 
+         bool loading_;
         public async Task LoadAsync() {
+            loading_ = true;
             try {
                 menuStrip.tsmiAutoSave.Checked = ConfigWrapper.AutoSave;
 
@@ -116,6 +118,8 @@ namespace LoadOrderTool.UI {
                 await CacheWSDetails();
             } catch (Exception ex) {
                 ex.Log();
+            } finally {
+                loading_ = true;
             }
         }
 
@@ -707,6 +711,13 @@ namespace LoadOrderTool.UI {
         }
 
         string UpdateBrokenDownloadsStatus() {
+            InternetConnectionWarningLabel.Visible = InternetConnectionFailure;
+
+            if (loading_) {
+                DownloadWarningLabel.Visible = false;
+                return "";
+            }
+
             bool red = false, orange = false;
             string reason = "the following are missing:\n";
 
@@ -739,9 +750,6 @@ namespace LoadOrderTool.UI {
             return "";
         }
 
-        
-
-
         public void RefreshAll() {
             dataGridMods.RefreshModList();
             dataGridAssets.Refresh();
@@ -768,8 +776,15 @@ namespace LoadOrderTool.UI {
             AssetDataGrid.SetProgress(percent, UIUtil.WIN32Color.Warning);
         }
 
+        public bool InternetConnectionFailure = false;
         public async Task CacheWSDetails(bool save = true) {
             try {
+                InternetConnectionFailure = !await SteamUtil.CheckForInternetConnectionAsync();
+                Log.Info(UpdateBrokenDownloadsStatus());
+                if (InternetConnectionFailure) {
+                    return;
+                }
+
                 SetCacheProgress(5);
                 var ids = (await Task.Run(ContentUtil.GetSubscribedItems)).ToArray();
                 SetCacheProgress(10);
@@ -777,7 +792,7 @@ namespace LoadOrderTool.UI {
                 try {
                     int i = 0;
                     List<Task> tasks = new List<Task>(32);
-                    await foreach(var data in SteamUtil.LoadDataAsyncInChunks(ids)) {
+                    await foreach (var data in SteamUtil.LoadDataAsyncInChunks(ids)) {
                         Assertion.NotNull(data, "Internet connection problem?");
                         var task = Task.Run(() => DTO2Cache(data));
                         tasks.Add(task);
@@ -785,7 +800,7 @@ namespace LoadOrderTool.UI {
                         SetCacheProgress(10 + (30 * i) / ids.Length);
                     }
                     await Task.WhenAll(tasks.ToArray());
-                } catch(Exception ex) { ex.Log(); }
+                } catch (Exception ex) { ex.Log(); }
                 SetCacheProgress(45);
                 RefreshAll();
                 SetCacheProgress(50);
@@ -793,12 +808,12 @@ namespace LoadOrderTool.UI {
                 bool authorsUpdated = true;
                 try {
                     authorsUpdated = await Task.Run(CacheAuthors);
-                } catch(Exception ex) {
+                } catch (Exception ex) {
                     ex.Log();
                 }
                 SetCacheProgress(100);
-                if(authorsUpdated) RefreshAuthors();
-                if(save) ConfigWrapper.SteamCache.Serialize();
+                if (authorsUpdated) RefreshAuthors();
+                if (save) ConfigWrapper.SteamCache.Serialize();
                 SetCacheProgress(-1);
                 Log.Info(UpdateBrokenDownloadsStatus());
             } catch(Exception ex) { ex.Log(); }

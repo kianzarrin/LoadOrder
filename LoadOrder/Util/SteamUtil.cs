@@ -14,6 +14,22 @@ namespace LoadOrderTool.Util {
     using System.Diagnostics;
 
     public static class SteamUtil {
+
+        public static async Task<bool>  CheckForInternetConnectionAsync() {
+            return await Task.Run(CheckForInternetConnection);
+        }
+        public static bool CheckForInternetConnection() {
+            try {
+                using (var client = new WebClient())
+                using (var stream = client.OpenRead("https://steamcommunity.com/")) {
+                    return true;
+                }
+            } catch {
+                return false;
+            }
+        }
+
+
         public static void ExecuteSteam(string args) {
             ContentUtil.Execute(DataLocation.SteamPath, DataLocation.SteamExe, args).WaitForExit();
             Thread.Sleep(30);
