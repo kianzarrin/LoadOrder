@@ -94,12 +94,15 @@ namespace LoadOrderTool.Util {
             }
         }
 
-        public static Process Subscribe(IEnumerable<PublishedFileId> ids) => Subscribe(ids.Select(id => id.AsUInt64));
-        public static Process Subscribe(IEnumerable<string> ids) => Subscribe(UGCListTransfer.ToNumber(ids));
-        public static Process Subscribe(IEnumerable<ulong> ids) {
+        public static Process Subscribe(IEnumerable<PublishedFileId> ids, bool unsub=false) => Subscribe(ids.Select(id => id.AsUInt64),unsub);
+        public static Process Subscribe(IEnumerable<string> ids, bool unsub = false) => Subscribe(UGCListTransfer.ToNumber(ids), unsub);
+        public static Process Subscribe(IEnumerable<ulong> ids, bool unsub = false) {
             if (ids.IsNullorEmpty()) return null;
             UGCListTransfer.SendList(ids, DataLocation.LocalLOMData, false);
-            return Execute(DataLocation.SteamPath, DataLocation.SteamExe, $"-applaunch 255710 -subscribe");
+            string command = unsub ?
+                $"-applaunch 255710 -unsubscribe" :
+                $"-applaunch 255710 -subscribe";
+            return Execute(DataLocation.SteamPath, DataLocation.SteamExe, command);
         }
 
         public static bool IsPathIncluded(string fullPath) {

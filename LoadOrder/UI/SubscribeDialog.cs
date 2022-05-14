@@ -93,6 +93,13 @@ namespace LoadOrderTool.UI {
             var ids = GetIDs(tbIDs.Text);
             ContentUtil.Subscribe(ids);
         }
+
+        private void btnUnsubscribeAll_Click(object sender, EventArgs e) {
+            CleanupTextBox();
+            var ids = GetIDs(tbIDs.Text);
+            ContentUtil.Subscribe(ids, unsub: true);
+        }
+
         private async void btnReload_Click(object _, EventArgs __) {
             await LoadOrderWindow.Instance.ReloadAll();
         }

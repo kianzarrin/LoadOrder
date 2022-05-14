@@ -38,6 +38,7 @@ namespace LoadOrderTool.UI
             this.SubscribeAll = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tbIDs = new System.Windows.Forms.TextBox();
+            this.btnUnsubscribeAll = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,6 +51,7 @@ namespace LoadOrderTool.UI
             this.flowLayoutPanel1.Controls.Add(this.btnIncludeAll);
             this.flowLayoutPanel1.Controls.Add(this.btnReload);
             this.flowLayoutPanel1.Controls.Add(this.SubscribeAll);
+            this.flowLayoutPanel1.Controls.Add(this.btnUnsubscribeAll);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 702);
@@ -143,6 +145,19 @@ namespace LoadOrderTool.UI
             this.tbIDs.Size = new System.Drawing.Size(1143, 602);
             this.tbIDs.TabIndex = 4;
             // 
+            // btnUnsubscribeAll
+            // 
+            this.btnUnsubscribeAll.AutoSize = true;
+            this.btnUnsubscribeAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnUnsubscribeAll.Location = new System.Drawing.Point(267, 5);
+            this.btnUnsubscribeAll.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnUnsubscribeAll.Name = "btnUnsubscribeAll";
+            this.btnUnsubscribeAll.Size = new System.Drawing.Size(233, 35);
+            this.btnUnsubscribeAll.TabIndex = 5;
+            this.btnUnsubscribeAll.Text = "Unsubscribe from All in CS";
+            this.btnUnsubscribeAll.UseVisualStyleBackColor = true;
+            this.btnUnsubscribeAll.Click += new System.EventHandler(this.btnUnsubscribeAll_Click);
+            // 
             // SubscribeDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -171,5 +186,6 @@ namespace LoadOrderTool.UI
         private System.Windows.Forms.Button btnIncludeAll;
         private System.Windows.Forms.Button btnIncludeOnly;
         private System.Windows.Forms.Button btnReload;
+        private System.Windows.Forms.Button btnUnsubscribeAll;
     }
 }
