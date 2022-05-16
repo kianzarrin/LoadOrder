@@ -129,6 +129,7 @@ namespace LoadOrderInjections {
                 int counter = 0;
                 foreach (var item in Items)
                 {
+                    yield return new WaitForSeconds(0.05f);
                     item.Subscribe();
                     counter++;
                     if (counter % 100 == 0)
