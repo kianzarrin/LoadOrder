@@ -219,7 +219,7 @@ namespace LoadOrderTool {
                     Console.WriteLine(m);
                 }
             } catch (Exception ex) {
-                new ThreadExceptionDialog(new Exception("LogImpl failed at" + Environment.StackTrace, ex))
+                new ThreadExceptionDialog(new Exception("LogImpl failed" + Environment.StackTrace, ex))
                     .ShowDialog();
             }
         }
