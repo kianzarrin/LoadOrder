@@ -12,19 +12,19 @@ namespace LoadOrderMod.Patches.HotReload {
         /// pluginInfo.name that is being added. the name of the containing directory.
         /// (different than IUserMod.Name).
         /// </summary>        
-        public static string name;
+        public static string dirName;
 
         static void Prefix(string path) {
             LogCalled(path);
             try {
-                name = Path.GetFileNameWithoutExtension(path);
+                dirName = Path.GetFileNameWithoutExtension(path);
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
         }
         static void Finalizer(Exception __exception) {
             LogCalled();
-            name = null;
+            dirName = null;
             if (__exception != null) Log.Exception(__exception);
         }
     }

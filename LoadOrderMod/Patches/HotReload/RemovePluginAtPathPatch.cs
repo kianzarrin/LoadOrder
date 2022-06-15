@@ -6,6 +6,7 @@ namespace LoadOrderMod.Patches.HotReload {
     using System;
     using KianCommons;
     using static KianCommons.ReflectionHelpers;
+    using LoadOrderMod.Util;
 
     [HarmonyPatch(typeof(PluginManager), "RemovePluginAtPath")]
     public static class RemovePluginAtPathPatch {
@@ -19,7 +20,7 @@ namespace LoadOrderMod.Patches.HotReload {
             try {
                 LogCalled(path);
                 if (___m_Plugins.TryGetValue(path, out var p) && p.isEnabled) {
-                    name = p.name;
+                    name = p.GetUserModName();
                 }
             } catch (Exception ex) {
                 Log.Exception(ex);

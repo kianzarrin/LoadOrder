@@ -11,9 +11,6 @@ namespace LoadOrderMod.Util {
     using ICities;
     using System.Reflection;
     using HarmonyLib;
-    using System.Reflection.Emit;
-    using ColossalFramework.Plugins;
-    using System.Linq;
 
     public static class HotReloadUtil {
         public static List<UIComponent> m_Dummies(this OptionsMainPanel optionsMainPanel) =>
@@ -38,21 +35,22 @@ namespace LoadOrderMod.Util {
 
         public static void DropCategory(this OptionsMainPanel optionsMainPanel, string name) {
             try {
-                LogCalled();
+                Log.Called(name);
                 if (name == null) throw new ArgumentNullException("name");
                 var categories = optionsMainPanel.m_Categories();
                 int index = (categories.items as IList<string>).IndexOf(name);
+                Log.Debug("index = " + index);
                 if (index < 0) return;
                 int selectedIndex = categories.selectedIndex;
 
-                Log.Info("Dropping category :" + name);
                 var dummies = optionsMainPanel.m_Dummies();
                 var category = dummies.Find(c => c.name == name);
+                Log.Debug($"removing category component: "+ category);
                 dummies.Remove(category);
                 GameObject.DestroyImmediate(category);
                 categories.items = categories.items.RemoveAt(index);
 
-                categories.selectedIndex = selectedIndex;
+                categories.selectedIndex = Math.Max(selectedIndex, categories.items.Length - 1);
             } catch(Exception ex) {
                 Log.Exception(ex);
             }
@@ -64,10 +62,10 @@ namespace LoadOrderMod.Util {
                 LogCalled();
                 if (!p.isEnabled)
                     return;
-                if (p?.GetUserModInstance() is not IUserMod userMod)
+                if (p?.userModInstance is not IUserMod userMod)
                     return;
 
-                string name = p.name;
+                string name = userMod.Name;
                 MethodInfo mOnSettingsUI = userMod.GetType().GetMethod("OnSettingsUI", BindingFlags.Instance | BindingFlags.Public);
                 if (mOnSettingsUI != null) {
                     Log.Info("Adding category :" + name);
@@ -86,6 +84,8 @@ namespace LoadOrderMod.Util {
             }
         }
 
+        public static string GetUserModName(this PluginInfo p) =>
+            p?.GetUserModInstance()?.Name ?? p?.name ?? "<null>";
 
     }
 }

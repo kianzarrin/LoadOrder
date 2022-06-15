@@ -19,9 +19,9 @@ namespace LoadOrderMod.Patches.HotReload {
                     __instance.DropCategory(RemovePluginAtPathPatch.name);
                     MonoStatus.Instance?.ModUnloaded();
                     return false;
-                } else if (LoadPluginAtPathPatch.name != null) {
+                } else if (LoadPluginAtPathPatch.dirName != null) {
                     var p = PluginManager.instance.GetPluginsInfo().FirstOrDefault(
-                        item => item.isEnabled && item.name == LoadPluginAtPathPatch.name);
+                        item => item.isEnabled && item.name == LoadPluginAtPathPatch.dirName);
                     if (p != null)
                         __instance.AddCategory(p);
                     MonoStatus.Instance?.ModLoaded();
