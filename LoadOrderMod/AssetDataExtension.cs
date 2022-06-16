@@ -37,12 +37,33 @@ namespace LoadOrderMod {
                 return;
             }
 
+            var editPrefabInfo = ToolsModifierControl.toolController.m_editPrefabInfo;
             foreach(var asset2UserData in assets2UserData) {
                 var asset = asset2UserData.Key;
                 var userData = asset2UserData.Value;
-                if(asset)
+                if (asset) {
+                    if (editPrefabInfo) {
+                        // asset editor work around
+                        asset = FindLoadedCounterPart<NetInfo>(asset);
+                    }
                     OnAssetLoadedImpl(asset.name, asset, userData);
+                }
             }
         }
+
+        /// <summary>
+        // OnLoad() calls IntializePrefab() which can create duplicates. Therefore we should match by name.
+        /// </summary>
+        static PrefabInfo FindLoadedCounterPart<T>(PrefabInfo source) where T : PrefabInfo {
+            int n = PrefabCollection<T>.LoadedCount();
+            for (uint i = 0; i < n; ++i) {
+                T prefab = PrefabCollection<T>.GetLoaded(i);
+                if (prefab?.name == source.name) {
+                    return prefab;
+                }
+            }
+            return source;
+        }
+
     }
 }
