@@ -2,6 +2,7 @@ namespace LoadOrderMod {
     using System.Collections.Generic;
     using ICities;
     using System;
+    using KianCommons;
 
     /// <summary>
     /// record user data to aid hot reload.
@@ -23,6 +24,7 @@ namespace LoadOrderMod {
 
         /// <summary>
         /// code to be used by other mods
+        /// might need to copy ReadTypeMetadataPatch (search github)
         /// </summary>
         public static void HotReload() {
             var assets2UserData = Type.GetType("LoadOrderMod.LOMAssetDataExtension, LoadOrderMod", throwOnError:false)
@@ -31,7 +33,7 @@ namespace LoadOrderMod {
                 as Dictionary<PrefabInfo, Dictionary<string, byte[]>>;
 
             if( null == assets2UserData) {
-                UnityEngine.Debug.LogWarning("Could not hot reload assets because LoadOrderMod was not found");
+                Log.Warning("Could not hot reload assets because LoadOrderMod was not found");
                 return;
             }
 
