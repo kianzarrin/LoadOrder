@@ -73,8 +73,11 @@ namespace LoadOrderIPatch {
                 return string.Join(", ", args.Select(a => a.ToString()).ToArray());
         }
 
+        static object logLock_ = new();
+
         static void LogImpl(string level, string text) {
-            File.AppendAllText(FilePath, $"[{level}] {text}\n");
+            lock(logLock_)
+                File.AppendAllText(FilePath, $"[{level}] {text}\n");
         }
     }
 }

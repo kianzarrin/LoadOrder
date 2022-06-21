@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using PluginInfo = ColossalFramework.Plugins.PluginManager.PluginInfo;
 
 namespace LoadOrderInjections.Injections {
@@ -48,12 +49,41 @@ namespace LoadOrderInjections.Injections {
                             if (name == "UnifiedUILib" && version0 == new Version(1,2,0) && version < new Version(2, 2))
                                 return dllPath; // macsurgey's UUI is incompatible with UUI V2.1 or bellow
                             Log.Info($"Replacing {asm.Name.Name} V{asm.Name.Version} with V{latest.Value.Name.Version}", true);
+
+
+                            // CS will not be able to detect dependency if assembly version changes. therefore we pre-load it here.
+                            // if the same DLL is loaded 2 times, nothing happens.
+                            LoadDLL(latest.Key); 
+
                             return latest.Key;
                         }
                     }
                 }
             } catch (Exception ex) { ex.Log(); }
             return dllPath;
+        }
+
+        public static Assembly LoadDLL(string dllPath) {
+            try {
+                Assembly assembly;
+                string symPath = dllPath + ".mdb";
+                if (File.Exists(symPath)) {
+                    Log.Info("\nLoading " + dllPath + "\nSymbols " + symPath);
+                    assembly = Assembly.Load(File.ReadAllBytes(dllPath), File.ReadAllBytes(symPath));
+                } else {
+                    Log.Info("Loading " + dllPath);
+                    assembly = Assembly.Load(File.ReadAllBytes(dllPath));
+                }
+                if (assembly != null) {
+                    Log.Info("Assembly " + assembly.FullName + " loaded.\n");
+                } else {
+                    Log.Info("Assembly at " + dllPath + " failed to load.\n");
+                }
+                return assembly;
+            } catch (Exception ex) {
+                Log.Error("Assembly at " + dllPath + " failed to load.\n" + ex.ToString());
+                return null;
+            }
         }
     }
 }
