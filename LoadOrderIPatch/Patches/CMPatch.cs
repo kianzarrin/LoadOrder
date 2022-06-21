@@ -4,6 +4,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Patch.API;
 using System;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -56,6 +57,7 @@ namespace LoadOrderIPatch.Patches {
                 ExcludeAssetFilePatch(assemblyDefinition);
                 ExcludeAssetDirPatch(assemblyDefinition);
             }
+            LoadCloudPackagesPatch(assemblyDefinition);
 
             LoadPluginPatch(assemblyDefinition);
 
@@ -303,6 +305,36 @@ namespace LoadOrderIPatch.Patches {
         }
         public static void LogExceptionInLOM(Exception ex) {
             Injections.KianCommons.Log.Exception(ex, showInPanel:true);
+        }
+
+        public void LoadCloudPackagesPatch(AssemblyDefinition CM) {
+            Log.Called();
+            var module = CM.MainModule;
+            var mTarget = module.GetMethod("ColossalFramework.PlatformServices.Cloud.GetEnumerator");
+            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            var instructions = mTarget.Body.Instructions;
+            var ret = instructions.Last();
+
+            var mGetCloudEnumerator = typeof(CMPatch).GetMethod(nameof(GetCloudEnumerator));
+            var callGetCloudEnumerator = Instruction.Create(OpCodes.Call, module.ImportReference(mGetCloudEnumerator));
+
+            // if GetCloudEnumerator returned non-null, return it.
+            // otherwise continue with the main code.
+            var returnIfTrue = Instruction.Create(OpCodes.Brtrue_S, ret);
+
+            ilProcessor.Prefix(
+                callGetCloudEnumerator,
+                returnIfTrue);
+
+            Log.Successful();
+        }
+
+        public static IEnumerator GetCloudEnumerator() {
+            if(ColossalFramework.PlatformServices.PlatformService.cloud.enabled) {
+                return null; // fall back to default behavior.
+            } else {
+                return new object[0].GetEnumerator(); // no cloud objects
+            }
         }
 
         public AssemblyDefinition NoCustomAssetsPatch(AssemblyDefinition CM)

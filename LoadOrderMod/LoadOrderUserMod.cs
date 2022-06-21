@@ -28,6 +28,7 @@ namespace LoadOrderMod {
             try {
                 Log.Called();
                 Util.LoadOrderUtil.ApplyGameLoggingImprovements();
+                Log.Info("Cloud.enabled=" + (PlatformService.cloud?.enabled).ToSTR(), true);
 
                 var args = Environment.GetCommandLineArgs();
                 Log.Info("command line args are: " + string.Join(" ", args));
