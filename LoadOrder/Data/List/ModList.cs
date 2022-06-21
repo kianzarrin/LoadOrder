@@ -83,7 +83,7 @@ namespace LoadOrderTool {
         public static int HarmonyComparison(PluginInfo p1, PluginInfo p2) {
             var savedOrder1 = p1.LoadOrder;
             var savedOrder2 = p2.LoadOrder;
-
+            
             // orderless harmony comes first
             if (!p1.HasLoadOrder() && p1.IsHarmonyMod())
                 return -1;
@@ -103,16 +103,32 @@ namespace LoadOrderTool {
                         return o1 - o2;
                 }
                 {
-                    // builtin first, workshop second, local last
-                    static int order(PluginInfo _p) =>
-                        _p.isBuiltin ? 0 :
-                        (_p.PublishedFileId != PublishedFileId.invalid ? 1 : 2);
-                    if (order(p1) != order(p2))
-                        return order(p1) - order(p2);
+                    // builtin first, workshop/local-withID second, local last
+                    static int order(PluginInfo _p) {
+                        if (_p.isBuiltin) {
+                            return 0; // built in
+                        } else if (_p.PublishedFileId != PublishedFileId.invalid) {
+                            return 1; // WS
+                        } else if(GetWSID(_p.name, out _)) {
+                            return 1; // local with WS ID treat as if WS.
+                        } else {
+                            return 2; // local without ID
+                        }
+                    }
                 }
                 {
-                    // use string comparison
-                    return p1.name.CompareTo(p2.name);
+                    if (GetWSID(p1.name, out uint id1) && GetWSID(p2.name, out uint id2)) {
+                        // if both are WS or have number in their folder name using number comparison
+                        return id1.CompareTo(id2);
+                    } else {
+                        // if at least one has name other than a WS number then use string comparison
+                        return p1.name.CompareTo(p2.name);
+                    }
+                }
+                static bool GetWSID(string name, out uint id) {
+                    return uint.TryParse(name, out id) &&
+                        id != 0 &&
+                        id != PublishedFileId.invalid.AsUInt64;
                 }
             }
 
