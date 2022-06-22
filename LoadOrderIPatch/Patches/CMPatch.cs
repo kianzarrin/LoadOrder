@@ -23,15 +23,15 @@ namespace LoadOrderIPatch.Patches {
         private string workingPath_;
 
         public AssemblyDefinition Execute(
-            AssemblyDefinition assemblyDefinition, 
-            ILogger logger, 
+            AssemblyDefinition assemblyDefinition,
+            ILogger logger,
             string patcherWorkingPath,
             IPaths gamePaths) {
             logger_ = logger;
             workingPath_ = patcherWorkingPath;
 
             bool noReporters = Environment.GetCommandLineArgs().Any(_arg => _arg == "-cold-reload");
-            if(noReporters)
+            if (noReporters)
                 NoReportersPatch(assemblyDefinition);
 
             if (!poke && Config.SoftDLLDependancy) {
@@ -47,7 +47,7 @@ namespace LoadOrderIPatch.Patches {
 #if DEBUG
             //assemblyDefinition = InsertPrintStackTrace(assemblyDefinition);
 #endif
-            
+
             EnsureIncludedExcludedPackagePatch(assemblyDefinition);
 
             bool noAssets = Environment.GetCommandLineArgs().Any(_arg => _arg == "-noAssets");
@@ -170,7 +170,7 @@ namespace LoadOrderIPatch.Patches {
             var callExistingAssembly = Instruction.Create(OpCodes.Call, mrInjection);
             var storeResult = Instruction.Create(OpCodes.Stloc_0);
             var returnResult = instructions.Last(
-                c => c.OpCode == OpCodes.Ldloc_0 && 
+                c => c.OpCode == OpCodes.Ldloc_0 &&
                 c.Next?.OpCode == OpCodes.Ret);
             var GotoToReturnResultIfNotNull = Instruction.Create(OpCodes.Brfalse, returnResult);
 
@@ -231,9 +231,9 @@ namespace LoadOrderIPatch.Patches {
 
             // find return null;
             Instruction ldnull = null;
-            for(int i=0; i < instructions.Count; ++i) {
-                if(instructions[i].OpCode == OpCodes.Ldnull &&
-                   instructions[i+1].OpCode == OpCodes.Ret) {
+            for (int i = 0; i < instructions.Count; ++i) {
+                if (instructions[i].OpCode == OpCodes.Ldnull &&
+                   instructions[i + 1].OpCode == OpCodes.Ret) {
                     ldnull = instructions[i];
                 }
             }
@@ -272,8 +272,8 @@ namespace LoadOrderIPatch.Patches {
 
                 ilProcessor.InsertBefore(first, callInjection);
                 ilProcessor.InsertBefore(callInjection, ldAsm);
-            } 
-            
+            }
+
             if (breadthFirst) {
                 Log.Info("breadthFirst");
                 var callAdd = instructions.First(_c => _c.Calls("Add"));
@@ -304,7 +304,7 @@ namespace LoadOrderIPatch.Patches {
             Log.Successful();
         }
         public static void LogExceptionInLOM(Exception ex) {
-            Injections.KianCommons.Log.Exception(ex, showInPanel:true);
+            Injections.KianCommons.Log.Exception(ex, showInPanel: true);
         }
 
         public void LoadCloudPackagesPatch(AssemblyDefinition CM) {
@@ -323,8 +323,7 @@ namespace LoadOrderIPatch.Patches {
             Log.Successful();
         }
 
-        public static bool IsCloudEnabled() =>
-            ColossalFramework.PlatformServices.PlatformService.cloud?.enabled ?? false;
+        public static bool IsCloudEnabled() => SteamUtilities.IsCloudEnabled();
 
         public AssemblyDefinition NoCustomAssetsPatch(AssemblyDefinition CM)
         {

@@ -537,6 +537,15 @@ namespace LoadOrderInjections {
             SteamInitialized = true;
         }
 
+        public static bool IsCloudEnabled() {
+            var ret = PlatformService.cloud?.enabled ?? false;
+            Log.Info("Cloud.enabled=" + ret);
+            if (!ret) {
+                Log.Info("Skipping cloud packages.");
+            }
+            return ret;
+        }
+
         /// <summary>
         /// returns a list of items that are subscribed but not downloaded (excluding deleted items).
         /// </summary>
