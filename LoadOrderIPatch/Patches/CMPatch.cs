@@ -310,32 +310,21 @@ namespace LoadOrderIPatch.Patches {
         public void LoadCloudPackagesPatch(AssemblyDefinition CM) {
             Log.Called();
             var module = CM.MainModule;
-            var mTarget = module.GetMethod("ColossalFramework.PlatformServices.Cloud.GetEnumerator");
+            var mTarget = module.GetMethod("ColossalFramework.Packaging.PackageManager.LoadCloudPackages");
             ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
             var instructions = mTarget.Body.Instructions;
-            var ret = instructions.Last();
+            var last = instructions.Last();
 
-            var mGetCloudEnumerator = typeof(CMPatch).GetMethod(nameof(GetCloudEnumerator));
-            var callGetCloudEnumerator = Instruction.Create(OpCodes.Call, module.ImportReference(mGetCloudEnumerator));
+            var mIsCloudEnabled = typeof(CMPatch).GetMethod(nameof(IsCloudEnabled));
+            var callIsCloudEnabled = Instruction.Create(OpCodes.Call, module.ImportReference(mIsCloudEnabled));
+            var skipIfFalse = Instruction.Create(OpCodes.Brfalse, last);
 
-            // if GetCloudEnumerator returned non-null, return it.
-            // otherwise continue with the main code.
-            var returnIfTrue = Instruction.Create(OpCodes.Brtrue_S, ret);
-
-            ilProcessor.Prefix(
-                callGetCloudEnumerator,
-                returnIfTrue);
-
+            ilProcessor.Prefix(callIsCloudEnabled, skipIfFalse);
             Log.Successful();
         }
 
-        public static IEnumerator GetCloudEnumerator() {
-            if(ColossalFramework.PlatformServices.PlatformService.cloud.enabled) {
-                return null; // fall back to default behavior.
-            } else {
-                return new object[0].GetEnumerator(); // no cloud objects
-            }
-        }
+        public static bool IsCloudEnabled() =>
+            ColossalFramework.PlatformServices.PlatformService.cloud?.enabled ?? false;
 
         public AssemblyDefinition NoCustomAssetsPatch(AssemblyDefinition CM)
         {
