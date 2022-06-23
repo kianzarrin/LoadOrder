@@ -104,7 +104,7 @@ namespace LoadOrderIPatch.Patches {
             var ilprocessor = mTarget.Body.GetILProcessor();
             var instructions = mTarget.Body.Instructions;
 
-            string fpsMethod = "LoadOrScanAndPatch";
+            const string fpsMethod = "LoadOrScanAndPatch";
             bool touchedByFPS = instructions.Any(code => code.Calls(fpsMethod));
             if (touchedByFPS) {
                 Log.Info("ignoring LoadPluginPatch because FPSBooster already loads symbols");
