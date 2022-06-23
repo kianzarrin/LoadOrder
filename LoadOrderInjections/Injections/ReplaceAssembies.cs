@@ -1,3 +1,4 @@
+using ColossalFramework.Plugins;
 using KianCommons;
 using Mono.Cecil;
 using System;
@@ -65,23 +66,14 @@ namespace LoadOrderInjections.Injections {
 
         public static Assembly LoadDLL(string dllPath) {
             try {
-                Assembly assembly;
-                string symPath = dllPath + ".mdb";
-                if (File.Exists(symPath)) {
-                    Log.Info("\nLoading " + dllPath + "\nSymbols " + symPath);
-                    assembly = Assembly.Load(File.ReadAllBytes(dllPath), File.ReadAllBytes(symPath));
-                } else {
-                    Log.Info("Loading " + dllPath);
-                    assembly = Assembly.Load(File.ReadAllBytes(dllPath));
-                }
-                if (assembly != null) {
-                    Log.Info("Assembly " + assembly.FullName + " loaded.\n");
-                } else {
-                    Log.Info("Assembly at " + dllPath + " failed to load.\n");
-                }
-                return assembly;
+                // use LoadPlugin to ensure FPSBooster will get a chance to patch assembly.
+                return ReflectionHelpers.InvokeMethod(
+                    PluginManager.instance,
+                    "LoadPlugin",
+                    dllPath
+                    ) as Assembly;
             } catch (Exception ex) {
-                Log.Error("Assembly at " + dllPath + " failed to load.\n" + ex.ToString());
+                ex.Log(false);
                 return null;
             }
         }
