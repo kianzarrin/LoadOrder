@@ -27,6 +27,10 @@ namespace LoadOrderTool.UI {
         private DataGridViewTextBoxColumn cStatus;
 
         public AssetDataGrid() {
+
+            // Drastically improve redraw performance
+            DoubleBuffered = true;
+
             cIncluded = new DataGridViewCheckBoxColumn();
             cAssetID = new DataGridViewLinkColumn();
             cName = new DataGridViewTextBoxColumn();
