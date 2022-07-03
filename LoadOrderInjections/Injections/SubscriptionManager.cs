@@ -891,8 +891,8 @@ namespace LoadOrderInjections {
                     string path1 = ToIncludedPath(dir);
                     string path2 = ToExcludedPath2(dir);
                     if(dirs.Contains(path1) && dirs.Contains(path2)) {
-                        Assertion.Assert(Directory.Exists(path1), "path1 exists");
-                        Assertion.Assert(Directory.Exists(path1), "path2 exists");
+                        Assertion.Assert(Directory.Exists(path1), "path1 exists:" + path1);
+                        Assertion.Assert(Directory.Exists(path2), "path2 exists:" + path2);
                         Directory.Delete(path2, true);
                         Directory.Move(path1, path2);
                     }
