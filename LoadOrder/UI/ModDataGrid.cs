@@ -27,6 +27,10 @@ namespace LoadOrderTool.UI {
         public DataGridViewTextBoxColumn CStatus;
 
         public ModDataGrid() {
+
+            // Drastically improve redraw performance
+            DoubleBuffered = true;
+
             COrder = new DataGridViewTextBoxColumn();
             CIsIncluded = new DataGridViewCheckBoxColumn();
             CEnabled = new DataGridViewCheckBoxColumn();
