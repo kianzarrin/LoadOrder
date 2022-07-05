@@ -8,6 +8,7 @@ namespace LoadOrderTool.Data {
     using System.Collections.Generic;
     using LoadOrderTool.Util;
     using CO.PlatformServices;
+    using LoadOrder.Util;
 
     public static class DownloadStatusExtension {
         public static bool IsBroken(this SteamCache.DownloadStatus status) {
@@ -97,7 +98,7 @@ namespace LoadOrderTool.Data {
                 Items = itemTable_.Values.ToArray();
                 People = peopleTable_.Values.ToArray();
 
-                ser.Serialize(fs, this);
+                ser.Serialize(fs, this, XMLUtil.NoNamespaces);
             }
         }
 

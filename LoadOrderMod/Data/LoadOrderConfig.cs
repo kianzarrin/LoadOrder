@@ -39,10 +39,18 @@ namespace LoadOrderShared {
         public AssetInfo[] Assets = new AssetInfo[0];
         public string[] ExcludedDLCs = new string[0];
 
+        public static XmlSerializerNamespaces NoNamespaces {
+            get {
+                var ret = new XmlSerializerNamespaces();
+                ret.Add("", "");
+                return ret;
+            }
+        }
+
         public void Serialize(string dir) {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));
             using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Create, FileAccess.Write)) {
-                ser.Serialize(fs, this);
+                ser.Serialize(fs, this, NoNamespaces);
             }
         }
         

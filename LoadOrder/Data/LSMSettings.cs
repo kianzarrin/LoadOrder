@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Xml.Serialization;
 using CO.IO;
+using LoadOrder.Util;
 using LoadOrderTool;
 using LoadOrderTool.Util;
 
@@ -46,7 +47,7 @@ namespace LoadingScreenMod {
             try {
                 XmlSerializer serializer = new XmlSerializer(typeof(Settings));
                 using (StreamWriter writer = new StreamWriter(FilePath))
-                    serializer.Serialize(writer, this);
+                    serializer.Serialize(writer, this, XMLUtil.NoNamespaces);
             } catch (Exception ex) {
                 ex.Log();
             }

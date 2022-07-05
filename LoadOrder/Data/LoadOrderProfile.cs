@@ -5,6 +5,7 @@ namespace LoadOrderTool.Data {
     using System.Linq;
     using System.Xml.Serialization;
     using LoadOrderTool.Util;
+    using LoadOrder.Util;
 
     public interface IProfileItem {
         string GetIncludedPath();
@@ -140,7 +141,7 @@ namespace LoadOrderTool.Data {
                 Log.Called();
                 XmlSerializer ser = new XmlSerializer(typeof(LoadOrderProfile));
                 using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write)) {
-                    ser.Serialize(fs, this);
+                    ser.Serialize(fs, this, XMLUtil.NoNamespaces);
                 }
             } catch (Exception ex) { ex.Log(); }
         }

@@ -1,7 +1,6 @@
 namespace LoadOrderShared {
     using System.IO;
     using System.Xml.Serialization;
-    using System.Collections.Generic;
     using System.Collections;
     using System.Linq;
 
@@ -48,7 +47,7 @@ namespace LoadOrderShared {
             XmlSerializer ser = new XmlSerializer(typeof(CSCache));
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Create, FileAccess.Write)) {
-                ser.Serialize(fs, this);
+                ser.Serialize(fs, this, LoadOrderConfig.NoNamespaces);
             }
         }
 

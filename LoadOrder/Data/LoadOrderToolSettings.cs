@@ -2,9 +2,7 @@ namespace LoadOrderTool {
     using System.IO;
     using System.Xml.Serialization;
     using CO.IO;
-    using System.Linq;
-    using System.Windows.Forms;
-    using System.Drawing;
+    using LoadOrder.Util;
 
     public class LoadOrderToolSettings {
         public int FormWidth = -1;
@@ -42,7 +40,7 @@ namespace LoadOrderTool {
         public void Serialize() {
             XmlSerializer ser = new XmlSerializer(typeof(LoadOrderToolSettings));
             using (FileStream fs = new FileStream(PATH, FileMode.Create, FileAccess.Write)) {
-                ser.Serialize(fs, this);
+                ser.Serialize(fs, this, XMLUtil.NoNamespaces);
             }
         }
 
