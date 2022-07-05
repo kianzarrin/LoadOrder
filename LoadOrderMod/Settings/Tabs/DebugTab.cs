@@ -16,7 +16,7 @@ namespace LoadOrderMod.Settings.Tabs {
                     ConfigUtil.Config.SoftDLLDependancy = val;
                     ConfigUtil.SaveConfig();
                 });
-            panelHelper.AddButton("Ensure All", CheckSubsUtil.EnsureAll);
+            //panelHelper.AddButton("Ensure All", CheckSubsUtil.EnsureAll);
             //g.AddButton("RequestItemDetails", OnRequestItemDetailsClicked);
             //g.AddButton("QueryItems", OnQueryItemsClicked);
             panelHelper.AddButton("RunCallbacks", OnRunCallbacksClicked);

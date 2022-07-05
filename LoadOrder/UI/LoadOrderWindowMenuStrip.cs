@@ -278,7 +278,7 @@ namespace LoadOrderTool.UI {
             var advancedItems = new ToolStripItem[] { tsmiRandomOrder, tsmiHarmonyOrder, tsmiReverseOrder, tsmiReloadSettings, tsmiResetCache, tsmiResetAllSettings, toolStripSeparator1 };
             foreach (var item in advancedItems)
                 item.Visible = ConfigWrapper.instance.Advanced;
-#if !CO_STEAM_API
+#if NO_CO_STEAM_API
             tsmiMassSubscribe.Visible = false;
 #endif
         }

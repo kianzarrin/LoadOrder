@@ -35,14 +35,14 @@ namespace LoadOrderInjections {
         void Start() => Log.Debug("TestComponent.Start() was called");
 
         void OnGUI() {
-            if (GUILayout.Button("Check Installed"))
-                SteamUtilities.EnsureAll();
+            //if (GUILayout.Button("Check Installed"))
+            //    SteamUtilities.EnsureAll();
             if (GUILayout.Button("Delete UnInstalled"))
                 SteamUtilities.DeleteUnsubbed();
         }
     }
 
-#if CO_STEAM_API
+#if !NO_CO_STEAM_API
     public class MassSubscribe : MonoBehaviour
     {
         public enum StateT
@@ -419,7 +419,7 @@ namespace LoadOrderInjections {
             Log.Called();
             if (SteamUtilities.sman) {
                 new GameObject().AddComponent<Camera>();
-#if CO_STEAM_API
+#if !NO_CO_STEAM_API
                 new GameObject("base").AddComponent<Example>();
                 new GameObject("test go").AddComponent<TestComponent>();
 #endif
@@ -427,14 +427,14 @@ namespace LoadOrderInjections {
             } else if (SteamUtilities.GetMassSub(out _)) {
                 new GameObject().AddComponent<Camera>();
                 //new GameObject("base").AddComponent<Example>();
-#if CO_STEAM_API
+#if !NO_CO_STEAM_API
                 new GameObject("mass subscribe go").AddComponent<MassSubscribe>();
 #endif
                 return true;
             } else if(SteamUtilities.GetMassUnSub(out _)) {
                 new GameObject().AddComponent<Camera>();
                 //new GameObject("base").AddComponent<Example>();
-#if CO_STEAM_API
+#if !NO_CO_STEAM_API
                 new GameObject("mass unsubscribe go").AddComponent<MassUnSubscribe>();
 #endif
                 return true;
@@ -533,15 +533,9 @@ namespace LoadOrderInjections {
             var items = PlatformService.workshop.GetSubscribedItems();
             Log.Info("Subscribed Items are: " + items.ToSTR());
 
-            if (sman)
-                EnsureAll();
-            else {
-                //foreach (var id in PlatformService.workshop.GetSubscribedItems())
-                //    EnsureIncludedOrExcluded(id);
-                EnsureIncludedOrExcludedAllFast();
-                if (Config.DeleteUnsubscribedItemsOnLoad)
-                    DeleteUnsubbed();
-            }
+            EnsureIncludedOrExcludedAllFast();
+            if (Config.DeleteUnsubscribedItemsOnLoad)
+                DeleteUnsubbed();
             SteamInitialized = true;
         }
 
@@ -860,15 +854,15 @@ namespace LoadOrderInjections {
             Log.Succeeded();
         }
 
-        public static void EnsureAll() {
-            Log.Called();
-            var items = PlatformService.workshop.GetSubscribedItems();
-            foreach (var id in items) {
-                EnsureIncludedOrExcluded(id);
-                //PlatformService.workshop.RequestItemDetails(id)
-                //    .LogRet($"RequestItemDetails({id.AsUInt64})");
-            }
-        }
+        //public static void EnsureAll() {
+        //    Log.Called();
+        //    var items = PlatformService.workshop.GetSubscribedItems();
+        //    foreach (var id in items) {
+        //        EnsureIncludedOrExcluded(id);
+        //        PlatformService.workshop.RequestItemDetails(id)
+        //            .LogRet($"RequestItemDetails({id.AsUInt64})");
+        //    }
+        //}
 
 
         public static DirectoryInfo FindWSDir() {

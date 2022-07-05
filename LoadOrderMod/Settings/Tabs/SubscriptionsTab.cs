@@ -33,7 +33,7 @@ namespace LoadOrderMod.Settings.Tabs {
             //button = panelHelper.AddButton("Refresh workshop items (checks for bad items)", RequestItemDetails) as UIButton;
             //button.tooltip = "checks for missing/partially downloaded/outdated items";
 
-#if CO_STEAM_API
+#if !NO_CO_STEAM_API
             button = panelHelper.AddButton("unsubscribe from deprecated workshop items [EXPERIMENTAL] ", () => CheckSubsUtil.Instance.UnsubDepricated()) as UIButton;
             button.tooltip = "if steam does not return item path, i assume its deprecated.";
 #endif
@@ -102,11 +102,11 @@ namespace LoadOrderMod.Settings.Tabs {
             return true;
         }
 
-        static void OnPerformAllClicked() {
-            Log.Debug("Perform all pressed");
-            CheckSubsUtil.EnsureAll();
-            SteamUtilities.DeleteUnsubbed();
-        }
+        //static void OnPerformAllClicked() {
+        //    Log.Debug("Perform all pressed");
+        //    CheckSubsUtil.EnsureAll();
+        //    SteamUtilities.DeleteUnsubbed();
+        //}
         //static void RequestItemDetails() => CheckSubsUtil.Instance.RequestItemDetails();
     }
 }

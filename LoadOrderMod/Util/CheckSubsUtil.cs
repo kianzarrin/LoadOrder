@@ -32,10 +32,10 @@ namespace LoadOrderMod.Util {
             }
         }
 
-        public static void EnsureAll() {
-            Instance.EnsureIncludedOrExcluded();
-            //Instance.RequestItemDetails();
-        }
+        //public static void EnsureAll() {
+        //    Instance.EnsureIncludedOrExcluded();
+        //    //Instance.RequestItemDetails();
+        //}
 
         public Coroutine EnsureIncludedOrExcluded() => StartCoroutine(EnsureIncludedOrExcludedCoroutine());
         public IEnumerator EnsureIncludedOrExcludedCoroutine() {
@@ -67,7 +67,7 @@ namespace LoadOrderMod.Util {
         //    }
         //}
 
-#if CO_SREAM_API
+#if !NO_CO_STEAM_API
         public Coroutine UnsubDepricated() => StartCoroutine(UnsubDepricatedCoroutine());
 
         public IEnumerator UnsubDepricatedCoroutine() {

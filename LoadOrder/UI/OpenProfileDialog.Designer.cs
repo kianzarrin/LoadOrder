@@ -222,7 +222,7 @@ namespace LoadOrderTool.UI {
             this.btnSubscribeMissing.Text = "Subscribe To Missing in CS";
             this.btnSubscribeMissing.UseVisualStyleBackColor = true;
             this.btnSubscribeMissing.Click += new System.EventHandler(this.SubscribeMissing_Click);
-#if !CO_STEAM_API
+#if NO_CO_STEAM_API
             btnSubscribeAll.Visible = false;
             btnSubscribeMissing.Visible = false;
 #endif

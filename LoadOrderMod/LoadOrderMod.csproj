@@ -9,8 +9,6 @@
     <DebugSymbols>true</DebugSymbols>
     <PathMap>$(MSBuildProjectDirectory)/=$(ProjectName)/</PathMap>
     <DefineConstants Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">DEBUG;TRACE</DefineConstants>
-    <DefineConstants Condition="'$(Configuration)|$(Platform)'=='DEBUG2|AnyCPU'">DEBUG;TRACE</DefineConstants>
-    <Configurations>Debug;Release;DEBUG2</Configurations>
   </PropertyGroup>
   <PropertyGroup>
     <ManagedDLLPath>../dependencies</ManagedDLLPath>

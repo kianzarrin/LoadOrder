@@ -6,7 +6,7 @@
     <Product>Load Order Tool</Product>
     <LangVersion>latest</LangVersion>
     <Description>Helps to manage your mods and assets</Description>
-    <Configurations>Debug;Release;DEBUG2</Configurations>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
   <PropertyGroup>
     <Deterministic>false</Deterministic>
@@ -23,12 +23,6 @@
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DEBUG2|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>embedded</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-     
   <ItemGroup>
     <Compile Remove="CO\Plugins\**" />
     <EmbeddedResource Remove="CO\Plugins\**" />
