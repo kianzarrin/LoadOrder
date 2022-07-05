@@ -9,6 +9,8 @@
     <DebugSymbols>true</DebugSymbols>
     <PathMap>$(MSBuildProjectDirectory)/=$(ProjectName)/</PathMap>
     <DefineConstants Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">DEBUG;TRACE</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)|$(Platform)'=='DEBUG2|AnyCPU'">DEBUG;TRACE</DefineConstants>
+    <Configurations>Debug;Release;DEBUG2</Configurations>
   </PropertyGroup>
   <PropertyGroup>
     <ManagedDLLPath>../dependencies</ManagedDLLPath>
@@ -148,7 +150,7 @@
 
     <Copy SourceFiles="@(AuxiliaryFiles)" DestinationFolder="$(DeployDir)" />
     <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="$(DeployDir)Resources" />
-    <Move  SourceFiles="$(DeployDir)Resources/PreviewImage.png" DestinationFolder="$(DeployDir)" />
+    <Move SourceFiles="$(DeployDir)Resources/PreviewImage.png" DestinationFolder="$(DeployDir)" />
     <Delete Files="$(DeployDir)$(TargetFileName)" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />
     <Message Importance="high" Text="AssemblyVersion=@(VersionNumber) time=$(Now)" />

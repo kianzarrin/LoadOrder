@@ -42,6 +42,7 @@ namespace LoadOrderInjections {
         }
     }
 
+#if CO_STEAM_API
     public class MassSubscribe : MonoBehaviour
     {
         public enum StateT
@@ -316,6 +317,7 @@ namespace LoadOrderInjections {
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
     }
+#endif
 
 
     public class Example : MonoBehaviour {
@@ -417,18 +419,24 @@ namespace LoadOrderInjections {
             Log.Called();
             if (SteamUtilities.sman) {
                 new GameObject().AddComponent<Camera>();
-                //new GameObject("base").AddComponent<Example>();
+#if CO_STEAM_API
+                new GameObject("base").AddComponent<Example>();
                 new GameObject("test go").AddComponent<TestComponent>();
+#endif
                 return true;
             } else if (SteamUtilities.GetMassSub(out _)) {
                 new GameObject().AddComponent<Camera>();
                 //new GameObject("base").AddComponent<Example>();
+#if CO_STEAM_API
                 new GameObject("mass subscribe go").AddComponent<MassSubscribe>();
+#endif
                 return true;
             } else if(SteamUtilities.GetMassUnSub(out _)) {
                 new GameObject().AddComponent<Camera>();
                 //new GameObject("base").AddComponent<Example>();
+#if CO_STEAM_API
                 new GameObject("mass unsubscribe go").AddComponent<MassUnSubscribe>();
+#endif
                 return true;
             } else {
                 return false.LogRet(ThisMethod);
@@ -568,17 +576,17 @@ namespace LoadOrderInjections {
             return default;
         }
 
-        public static void OnRequestItemDetailsClicked() {
-            Log.Debug("RequestItemDetails pressed");
-            foreach (var id in PlatformService.workshop.GetSubscribedItems())
-                PlatformService.workshop.RequestItemDetails(id).LogRet($"RequestItemDetails({id.AsUInt64})");
-            //var id = new PublishedFileId(2040656402ul);
-            //PlatformService.workshop.RequestItemDetails(id).LogRet($"RequestItemDetails({id.AsUInt64})");
-        }
-        public static void OnQueryItemsClicked() {
-            Log.Debug("QueryItems pressed");
-            PlatformService.workshop.QueryItems().LogRet($"QueryItems()"); ;
-        }
+        //public static void OnRequestItemDetailsClicked() {
+        //    Log.Debug("RequestItemDetails pressed");
+        //    foreach (var id in PlatformService.workshop.GetSubscribedItems())
+        //        PlatformService.workshop.RequestItemDetails(id).LogRet($"RequestItemDetails({id.AsUInt64})");
+        //    //var id = new PublishedFileId(2040656402ul);
+        //    //PlatformService.workshop.RequestItemDetails(id).LogRet($"RequestItemDetails({id.AsUInt64})");
+        //}
+        //public static void OnQueryItemsClicked() {
+        //    Log.Debug("QueryItems pressed");
+        //    PlatformService.workshop.QueryItems().LogRet($"QueryItems()"); ;
+        //}
 
         private static void OnSubmitItemUpdate(SubmitItemUpdateResult result, bool ioError) {
             Log.Debug($"PlatformService.workshop.eventSubmitItemUpdate(result:{result.result}, {ioError})");
@@ -857,8 +865,8 @@ namespace LoadOrderInjections {
             var items = PlatformService.workshop.GetSubscribedItems();
             foreach (var id in items) {
                 EnsureIncludedOrExcluded(id);
-                PlatformService.workshop.RequestItemDetails(id)
-                    .LogRet($"RequestItemDetails({id.AsUInt64})");
+                //PlatformService.workshop.RequestItemDetails(id)
+                //    .LogRet($"RequestItemDetails({id.AsUInt64})");
             }
         }
 

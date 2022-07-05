@@ -34,7 +34,7 @@ namespace LoadOrderMod.Util {
 
         public static void EnsureAll() {
             Instance.EnsureIncludedOrExcluded();
-            Instance.RequestItemDetails();
+            //Instance.RequestItemDetails();
         }
 
         public Coroutine EnsureIncludedOrExcluded() => StartCoroutine(EnsureIncludedOrExcludedCoroutine());
@@ -51,22 +51,23 @@ namespace LoadOrderMod.Util {
             }
         }
 
-        public Coroutine RequestItemDetails() => StartCoroutine(RequiestItemDetailsCoroutine());
-        public IEnumerator RequiestItemDetailsCoroutine() {
-            Log.DisplayMesage($"Checking all items ...");
-            RegisterEvents();
-            var items = PlatformService.workshop.GetSubscribedItems();
-            int counter = 0;
-            foreach (var id in items) {
-                PlatformService.workshop.RequestItemDetails(id)
-                    .LogRet($"RequestItemDetails({id.AsUInt64})");
-                if (counter >= 100) {
-                    counter = 0;
-                    yield return 0;
-                }
-            }
-        }
+        //public Coroutine RequestItemDetails() => StartCoroutine(RequiestItemDetailsCoroutine());
+        //public IEnumerator RequiestItemDetailsCoroutine() {
+        //    Log.DisplayMesage($"Checking all items ...");
+        //    RegisterEvents();
+        //    var items = PlatformService.workshop.GetSubscribedItems();
+        //    int counter = 0;
+        //    foreach (var id in items) {
+        //        PlatformService.workshop.RequestItemDetails(id)
+        //            .LogRet($"RequestItemDetails({id.AsUInt64})");
+        //        if (counter >= 100) {
+        //            counter = 0;
+        //            yield return 0;
+        //        }
+        //    }
+        //}
 
+#if CO_SREAM_API
         public Coroutine UnsubDepricated() => StartCoroutine(UnsubDepricatedCoroutine());
 
         public IEnumerator UnsubDepricatedCoroutine() {
@@ -94,6 +95,7 @@ namespace LoadOrderMod.Util {
 
             Log.DisplayMesage($"Unsubscribing from {nUnsubbed} deprecated items.");
         }
+#endif
 
         public static List<PublishedFileId> GetBrokenDownloads() {
             List<PublishedFileId> ids = new List<PublishedFileId>();
@@ -249,23 +251,23 @@ namespace LoadOrderMod.Util {
             }
         }
 
-        public Coroutine Resubscribe(PublishedFileId id) => StartCoroutine(ResubscribeCoroutine(id));
-        public IEnumerator ResubscribeCoroutine(PublishedFileId id) {
-            Log.Called(id);
-            if (id != PublishedFileId.invalid) {
-                try { PlatformService.workshop.Unsubscribe(id); } catch(Exception ex) { ex.Log(); }
+        //public Coroutine Resubscribe(PublishedFileId id) => StartCoroutine(ResubscribeCoroutine(id));
+        //public IEnumerator ResubscribeCoroutine(PublishedFileId id) {
+        //    Log.Called(id);
+        //    if (id != PublishedFileId.invalid) {
+        //        try { PlatformService.workshop.Unsubscribe(id); } catch(Exception ex) { ex.Log(); }
 
-                yield return new WaitForSeconds(3);
+        //        yield return new WaitForSeconds(3);
 
-                try {
-                    //string path = PlatformService.workshop.GetSubscribedItemPath(id);
-                    //if (Directory.Exists(path))
-                    //    Directory.Delete(path, true);
-                } catch(Exception ex) { ex.Log(); }
+        //        try {
+        //            //string path = PlatformService.workshop.GetSubscribedItemPath(id);
+        //            //if (Directory.Exists(path))
+        //            //    Directory.Delete(path, true);
+        //        } catch(Exception ex) { ex.Log(); }
 
-                try { PlatformService.workshop.Subscribe(id); } catch (Exception ex) { ex.Log(); }
-            }
-        }
+        //        try { PlatformService.workshop.Subscribe(id); } catch (Exception ex) { ex.Log(); }
+        //    }
+        //}
 
         public static void RemoveEvents() {
             PlatformService.workshop.eventUGCRequestUGCDetailsCompleted -= OnUGCRequestUGCDetailsCompleted;

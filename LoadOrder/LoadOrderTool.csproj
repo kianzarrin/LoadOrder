@@ -6,6 +6,7 @@
     <Product>Load Order Tool</Product>
     <LangVersion>latest</LangVersion>
     <Description>Helps to manage your mods and assets</Description>
+    <Configurations>Debug;Release;DEBUG2</Configurations>
   </PropertyGroup>
   <PropertyGroup>
     <Deterministic>false</Deterministic>
@@ -18,6 +19,11 @@
     <ApplicationIcon>Resources\LoadOrder.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DEBUG2|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>

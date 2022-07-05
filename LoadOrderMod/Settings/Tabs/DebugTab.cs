@@ -33,10 +33,10 @@ namespace LoadOrderMod.Settings.Tabs {
                 Log.Exception(ex);
             }
         }
-        static void OnQueryItemsClicked() {
-            Log.Debug("QueryItems pressed");
-            PlatformService.workshop.QueryItems().LogRet($"QueryItems()"); ;
-        }
+        //static void OnQueryItemsClicked() {
+        //    Log.Debug("QueryItems pressed");
+        //    PlatformService.workshop.QueryItems().LogRet($"QueryItems()"); ;
+        //}
 
         static void OnUGCQueryCompleted(UGCDetails result, bool ioError) {
             Log.Debug($"OnUGCQueryCompleted(result:{result.result} {result.publishedFileId}, ioError:{ioError})");

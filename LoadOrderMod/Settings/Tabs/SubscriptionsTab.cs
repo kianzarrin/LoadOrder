@@ -30,11 +30,13 @@ namespace LoadOrderMod.Settings.Tabs {
             UICheckBox checkBox;
             //g.AddButton("Perform All", OnPerformAllClicked);
 
-            button = panelHelper.AddButton("Refresh workshop items (checks for bad items)", RequestItemDetails) as UIButton;
-            button.tooltip = "checks for missing/partially downloaded/outdated items";
+            //button = panelHelper.AddButton("Refresh workshop items (checks for bad items)", RequestItemDetails) as UIButton;
+            //button.tooltip = "checks for missing/partially downloaded/outdated items";
 
+#if CO_STEAM_API
             button = panelHelper.AddButton("unsubscribe from deprecated workshop items [EXPERIMENTAL] ", () => CheckSubsUtil.Instance.UnsubDepricated()) as UIButton;
             button.tooltip = "if steam does not return item path, i assume its deprecated.";
+#endif
 
             button = panelHelper.AddButton("Resubscribe to all broken downloads (exits game) [EXPERIMENTAL]", CheckSubsUtil.ResubcribeExternally) as UIButton;
             button.tooltip = "less steam can hide problems. if you use less steam please click 'Refresh workshop items' to get all broken downloads";
@@ -105,6 +107,6 @@ namespace LoadOrderMod.Settings.Tabs {
             CheckSubsUtil.EnsureAll();
             SteamUtilities.DeleteUnsubbed();
         }
-        static void RequestItemDetails() => CheckSubsUtil.Instance.RequestItemDetails();
+        //static void RequestItemDetails() => CheckSubsUtil.Instance.RequestItemDetails();
     }
 }
