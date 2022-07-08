@@ -890,13 +890,19 @@ namespace LoadOrderInjections {
                 Log.Called();
                 var dirs = new HashSet<string>(RootDir.GetDirectories().Select(item => item.FullName));
                 foreach (var dir in dirs) {
-                    string path1 = ToIncludedPath(dir);
-                    string path2 = ToExcludedPath2(dir);
-                    if(dirs.Contains(path1) && dirs.Contains(path2)) {
-                        Assertion.Assert(Directory.Exists(path1), "path1 exists:" + path1);
-                        Assertion.Assert(Directory.Exists(path2), "path2 exists:" + path2);
-                        Directory.Delete(path2, true);
-                        Directory.Move(path1, path2);
+                    try {
+                        string path1 = ToIncludedPath(dir);
+                        string path2 = ToExcludedPath2(dir);
+                        if (dirs.Contains(path1) && dirs.Contains(path2)) {
+                            Assertion.Assert(Directory.Exists(path1),
+                                $"path1 exists: '{path1}' failed. dirs.Contains(path1)={dirs.Contains(path1)}");
+                            Assertion.Assert(Directory.Exists(path2),
+                                $"path2 exists: '{path2}' failed. dirs.Contains(path2)={dirs.Contains(path2)}");
+                            Directory.Delete(path2, true);
+                            Directory.Move(path1, path2);
+                        }
+                    } catch(Exception ex) {
+                        ex.Log($"dir='{dir}', dirs='{dirs.ToSTR()}'",false);
                     }
                 }
             } catch (Exception ex) {
