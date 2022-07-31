@@ -13,6 +13,8 @@ namespace LoadOrderMod {
     using LoadOrderMod.Data;
     using ColossalFramework.PlatformServices;
     using System.Linq;
+    using LoadOrderMod.UI.EntryStatus;
+    using LoadOrderMod.UI.EntryAction;
 
     public class LoadOrderUserMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderUserMod).Assembly.GetName().Version;
@@ -85,7 +87,10 @@ namespace LoadOrderMod {
 
         public void OnDisabled() {
             try {
-                foreach(var item in GameObject.FindObjectsOfType<EntryStatusPanel>()) {
+                foreach (var item in GameObject.FindObjectsOfType<EntryStatusPanel>()) {
+                    GameObject.DestroyImmediate(item?.gameObject);
+                }
+                foreach (var item in GameObject.FindObjectsOfType<EntryActionPanel>()) {
                     GameObject.DestroyImmediate(item?.gameObject);
                 }
 

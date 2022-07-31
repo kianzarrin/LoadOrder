@@ -1,4 +1,4 @@
-namespace LoadOrderMod.UI {
+namespace LoadOrderMod.UI.EntryStatus {
     extern alias Injections;
     using ColossalFramework.PlatformServices;
     using ColossalFramework.UI;
