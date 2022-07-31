@@ -14,6 +14,11 @@ namespace LoadOrderMod.UI.EntryAction {
     public class WSButton : ActionButton {
         protected override string FilePath { get; } = "Resources/clipboard.png";
 
+        public override void Awake() {
+            base.Awake();
+            tooltip = "copy WS item IDs to clipboard";
+        }
+
         protected override void Clicked() {
             try {
                 Log.Called();
@@ -58,7 +63,6 @@ namespace LoadOrderMod.UI.EntryAction {
                 canFocus = false;
                 name = GetType().Name;
                 SetupSprites();
-                isVisible = false;
                 isEnabled = true;
             } catch (Exception ex) { Log.Exception(ex); }
         }

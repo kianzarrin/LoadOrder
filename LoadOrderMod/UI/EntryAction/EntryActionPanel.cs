@@ -35,7 +35,7 @@ namespace LoadOrderMod.UI.EntryAction {
         public static void Update(PackageEntry packageEntry) {
             try {
                 Assertion.NotNull(packageEntry, "packageEntry");
-                if (packageEntry.asset.Instantiate<SaveGameMetaData>() is SaveGameMetaData saveGameMetaData) {
+                if (packageEntry.asset?.Instantiate<SaveGameMetaData>() is SaveGameMetaData saveGameMetaData) {
                     //Log.Debug("[p2] entry name=" + packageEntry.entryName);
                     GetOrCreateActionPanel(packageEntry).ActionButton.PackageEntry = packageEntry;
                 } else {
