@@ -16,7 +16,7 @@ namespace LoadOrderMod.Patches.ContentManager {
         static void SetEntry_Postfix(PackageEntry __instance, EntryData data) {
             //Log.Called($"entry: {data.publishedFileId} {data.entryName}");
             EntryStatusPanel.UpdateDownloadStatusSprite(__instance);
-            EntryActionPanel.Update(__instance);
+            EntryActionPanel.UpdateEntry(__instance);
 
         }
 

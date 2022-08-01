@@ -32,7 +32,7 @@ namespace LoadOrderMod.UI.EntryAction {
             relativePosition = pos;
         }
 
-        public static void Update(PackageEntry packageEntry) {
+        public static void UpdateEntry(PackageEntry packageEntry) {
             try {
                 Assertion.NotNull(packageEntry, "packageEntry");
                 if (packageEntry.asset?.Instantiate<SaveGameMetaData>() is SaveGameMetaData saveGameMetaData) {
