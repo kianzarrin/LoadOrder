@@ -11,7 +11,7 @@
   <PropertyGroup>
     <Deterministic>false</Deterministic>
     <OutputType>Exe</OutputType> 
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PathMap>$(MSBuildProjectDirectory)\=$(ProjectName)\</PathMap>
