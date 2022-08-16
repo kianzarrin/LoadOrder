@@ -8,3 +8,6 @@ dotnet_diagnostic.HAA0101.severity = none
 
 # HAA0601: Value type to reference type conversion causing boxing allocation
 dotnet_diagnostic.HAA0601.severity = none
+
+# IDE0003: Remove qualification
+dotnet_diagnostic.IDE0003.severity = none
