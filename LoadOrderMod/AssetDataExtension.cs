@@ -22,23 +22,21 @@ namespace LoadOrderMod {
                 Assets2UserData.Add(asset, userData);
         }
 
-        /// <summary>
-        /// code to be used by other mods
-        /// might need to copy ReadTypeMetadataPatch (search github)
-        /// </summary>
+        // code to be used by other mods
+        // might need to copy ReadTypeMetadataPatch (search github)
         public static void HotReload() {
-            var assets2UserData = Type.GetType("LoadOrderMod.LOMAssetDataExtension, LoadOrderMod", throwOnError:false)
+            var assets2UserData = Type.GetType("LoadOrderMod.LOMAssetDataExtension, LoadOrderMod", throwOnError: false)
                 ?.GetField("Assets2UserData")
                 ?.GetValue(null)
                 as Dictionary<PrefabInfo, Dictionary<string, byte[]>>;
 
-            if( null == assets2UserData) {
+            if (assets2UserData == null) {
                 Log.Warning("Could not hot reload assets because LoadOrderMod was not found");
                 return;
             }
 
             var editPrefabInfo = ToolsModifierControl.toolController.m_editPrefabInfo;
-            foreach(var asset2UserData in assets2UserData) {
+            foreach (var asset2UserData in assets2UserData) {
                 var asset = asset2UserData.Key;
                 var userData = asset2UserData.Value;
                 if (asset) {
@@ -52,9 +50,10 @@ namespace LoadOrderMod {
         }
 
         /// <summary>
-        // OnLoad() calls IntializePrefab() which can create duplicates. Therefore we should match by name.
+        /// OnLoad() calls IntializePrefab() which can create duplicates. Therefore we should match by name.
         /// </summary>
-        static PrefabInfo FindLoadedCounterPart<T>(PrefabInfo source) where T : PrefabInfo {
+        private static PrefabInfo FindLoadedCounterPart<T>(PrefabInfo source)
+            where T : PrefabInfo {
             int n = PrefabCollection<T>.LoadedCount();
             for (uint i = 0; i < n; ++i) {
                 T prefab = PrefabCollection<T>.GetLoaded(i);
@@ -64,6 +63,5 @@ namespace LoadOrderMod {
             }
             return source;
         }
-
     }
 }
