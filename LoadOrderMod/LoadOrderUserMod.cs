@@ -15,6 +15,7 @@ namespace LoadOrderMod {
     using System.Linq;
     using LoadOrderMod.UI.EntryStatus;
     using LoadOrderMod.UI.EntryAction;
+    using ColossalFramework.Plugins;
 
     public class LoadOrderUserMod : IUserMod {
         public static Version ModVersion => typeof(LoadOrderUserMod).Assembly.GetName().Version;
@@ -26,9 +27,30 @@ namespace LoadOrderMod {
         //static LoadOrderMod() => Log.Debug("Static Ctor "   + Environment.StackTrace);
         //public LoadOrderMod() => Log.Debug("Instance Ctor " + Environment.StackTrace);
 
+        static bool HasDuplicate() {
+            var currentASM = typeof(LoadOrderUserMod).Assembly;
+            foreach (var plugin in PluginManager.instance.GetPluginsInfo()) {
+                foreach(var a in plugin.GetAssemblies()) {
+                    if (a != currentASM && a.Name() == currentASM.Name()) return true;
+                }
+            }
+            return false;
+        }
+
+        void CheckDuplicate() {
+            if (HasDuplicate()) {
+                string m = "There are multiple versions of Load Order Mod. Please exluclude all but one.";
+                Log.DisplayError(m);
+                throw new Exception(m);
+            }
+        }
+
         public void OnEnabled() {
+            CheckDuplicate();
             try {
                 Log.Called();
+ 
+
                 Util.LoadOrderUtil.ApplyGameLoggingImprovements();
                 Log.Info("Cloud.enabled=" + (PlatformService.cloud?.enabled).ToSTR(), true);
 
