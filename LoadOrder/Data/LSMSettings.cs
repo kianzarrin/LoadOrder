@@ -9,11 +9,11 @@ using LoadOrder.Util;
 using LoadOrderTool;
 
 namespace LoadingScreenMod {
+
+    [XmlRoot("LoadingScreenModRevisited")]
     public class Settings {
-        const string FILE_NAME_LEGACY = "LoadingScreenMod.xml";
-        const string FILE_NAME_REVISITED = "LoadingScreenModRevisited.xml";
-        static string FilePathLegacy => Path.Combine(DataLocation.GamePath, FILE_NAME_LEGACY);
-        static string FilePathRevisited => Path.Combine(DataLocation.localApplicationData, FILE_NAME_REVISITED);
+        const string FILE_NAME = "LoadingScreenModRevisited.xml";
+        static string FILE_PATH => Path.Combine(DataLocation.localApplicationData, FILE_NAME);
 
         public static string DefaultSkipPath => Path.Combine(DataLocation.mapLocation, "SkippedPrefabs");
         public static string DefaultSkipFile => Path.Combine(DefaultSkipPath, "skip.txt");
@@ -51,53 +51,23 @@ namespace LoadingScreenMod {
         #endregion
 
         public static Settings Deserialize() {
-            Settings ret = null;
             try {
-                DateTime tLegacy = default;
-                DateTime tRevisited = default;
-                if (File.Exists(FilePathLegacy)) {
-                    tLegacy = File.GetLastWriteTimeUtc(FilePathLegacy);
-                }
-                if (File.Exists(FilePathRevisited)) {
-                    tRevisited = File.GetLastWriteTimeUtc(FilePathRevisited);
-                }
-
-                if (tLegacy > tRevisited) {
-                    ret = Deserialize(FilePathLegacy);
-                } else if(tRevisited != default) {
-                    ret = Deserialize(FilePathRevisited);
-                }
-            } catch(Exception ex) {
-                ex.Log();
-            }
-            ret ??= new Settings();
-            return ret;
-        }
-        public static Settings Deserialize(string file) {
-            try {
-                if (File.Exists(file)) {
+                if (File.Exists(FILE_PATH)) {
                     XmlSerializer serializer = new XmlSerializer(typeof(Settings));
 
-                    using (StreamReader reader = new StreamReader(file))
+                    using (StreamReader reader = new StreamReader(FILE_PATH))
                         return (Settings)serializer.Deserialize(reader);
                 }
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 ex.Log();
             }
-            return null;
+            return new Settings();
         }
 
-public void Serialize() {
-    if (File.Exists(FilePathLegacy) || !File.Exists(FilePathRevisited)) {
-        Serialize(FilePathLegacy);
-    }
-    Serialize(FilePathRevisited);
-}
-
-        private void Serialize(string file) {
+        private void Serialize() {
             try {
                 var serializer = new XmlSerializer(typeof(Settings));
-                using (StreamWriter writer = new StreamWriter(file))
+                using (StreamWriter writer = new StreamWriter(FILE_PATH))
                     serializer.Serialize(writer, this, XMLUtil.NoNamespaces);
             } catch (Exception ex) {
                 ex.Log();
@@ -113,7 +83,7 @@ public void Serialize() {
                 ret.loadUsed = this.loadUsed;
                 ret.Serialize();
                 return ret;
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 ex.Log();
                 return this;
             }
