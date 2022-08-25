@@ -87,10 +87,12 @@ namespace LoadingScreenMod {
             return null;
         }
 
-        public void Serialize() {
-            Serialize(FilePathLegacy);
-            Serialize(FilePathRevisited);
-        }
+public void Serialize() {
+    if (File.Exists(FilePathLegacy) || !File.Exists(FilePathRevisited)) {
+        Serialize(FilePathLegacy);
+    }
+    Serialize(FilePathRevisited);
+}
 
         private void Serialize(string file) {
             try {
