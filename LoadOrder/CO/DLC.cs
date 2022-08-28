@@ -60,6 +60,9 @@ namespace CO {
         [DLCInfo("Airports", DLCType.Main)]
         AirportDLC = 1726380,
 
+        [DLCInfo("Plazas & Promenades", DLCType.Main)]
+        PlazasAndPromenadesDLC = 2008400,
+
         [DLCInfo("Pearls From the East", DLCType.Misc)]
         OrientalBuildings = 563850,
 
@@ -107,5 +110,11 @@ namespace CO {
 
         [DLCInfo("CCP: Vehicles of the World", DLCType.ContentCreator)]
         ModderPack10 = 1726381,
+
+        [DLCInfo("CCP: Mid-Century Modern", DLCType.ContentCreator)]
+        ModderPack11 = 1992290,
+
+        [DLCInfo("CCP: Seaside Resorts", DLCType.ContentCreator)]
+        ModderPack12 = 1992291,
     }
 }
