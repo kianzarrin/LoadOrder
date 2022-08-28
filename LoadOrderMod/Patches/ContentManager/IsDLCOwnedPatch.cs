@@ -31,7 +31,11 @@ namespace LoadOrderMod.Patches.ContentManager {
                     var footballDLCs = DLCsStartingWith("Football");
                     dlcs.AddRange(footballDLCs);
                 } else {
-                    dlcs.Add((SteamHelper.DLC)Enum.Parse(typeof(SteamHelper.DLC), item));
+                    try {
+                        dlcs.Add((SteamHelper.DLC)Enum.Parse(typeof(SteamHelper.DLC), item));
+                    } catch (Exception ex) {
+                        Log.Warning($"could not find DLC {item}.\n" + ex);
+                    }
                 }
             }
             ExcludedDLCs = dlcs.ToArray();
