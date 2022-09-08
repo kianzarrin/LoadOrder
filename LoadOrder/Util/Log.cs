@@ -66,8 +66,8 @@ namespace LoadOrderTool {
                 }
 
                 AssemblyName details = typeof(Log).Assembly.GetName();
-                
-                Info($"{details.Name} v{details.Version.ToString()}", true);
+                Info($"{details.Name} v{details.Version}", true);
+                Info($"Now = {DateTime.Now}");
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
