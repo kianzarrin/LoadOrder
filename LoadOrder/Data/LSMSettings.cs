@@ -1,19 +1,25 @@
+using CO.IO;
+using LoadOrder.Util;
+using LoadOrderTool;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using CO.IO;
-using LoadOrder.Util;
-using LoadOrderTool;
+
+using System;
+using System.IO;
+using System.Xml;
 
 namespace LoadingScreenMod {
-
-    [XmlRoot("LoadingScreenModRevisited")]
-    public class Settings {
-        const string FILE_NAME = "LoadingScreenModRevisited.xml";
-        static string FILE_PATH => Path.Combine(DataLocation.localApplicationData, FILE_NAME);
+    public class LSMSettings {
+        const string ROOT = "LoadingScreenModRevisited";
+        const string LEGACY_ROOT = "Settings";
+        const string FILE_NAME_LEGACY = "LoadingScreenMod.xml";
+        const string FILE_NAME_REVISITED = "LoadingScreenModRevisited.xml";
+        static string FilePathLegacy => Path.Combine(DataLocation.GamePath, FILE_NAME_LEGACY);
+        static string FilePathRevisited => Path.Combine(DataLocation.localApplicationData, FILE_NAME_REVISITED);
 
         public static string DefaultSkipPath => Path.Combine(DataLocation.mapLocation, "SkippedPrefabs");
         public static string DefaultSkipFile => Path.Combine(DefaultSkipPath, "skip.txt");
@@ -50,31 +56,65 @@ namespace LoadingScreenMod {
         }
         #endregion
 
-        public static Settings Deserialize() {
+        public static LSMSettings Deserialize() {
+            LSMSettings ret = null;
             try {
-                if (File.Exists(FILE_PATH)) {
-                    XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+                DateTime tLegacy = default;
+                DateTime tRevisited = default;
+                if (File.Exists(FilePathLegacy)) {
+                    tLegacy = File.GetLastWriteTimeUtc(FilePathLegacy);
+                }
+                if (File.Exists(FilePathRevisited)) {
+                    tRevisited = File.GetLastWriteTimeUtc(FilePathRevisited);
+                }
 
-                    using (StreamReader reader = new StreamReader(FILE_PATH))
-                        return (Settings)serializer.Deserialize(reader);
+                if (tLegacy > tRevisited) {
+                    ret = Deserialize(FilePathLegacy, LEGACY_ROOT);
+                } else if (tRevisited != default) {
+                    ret = Deserialize(FilePathRevisited,ROOT);
                 }
             } catch (Exception ex) {
                 ex.Log();
             }
-            return new Settings();
+            ret ??= new LSMSettings();
+            return ret;
+        }
+        public static LSMSettings Deserialize(string file, string root) {
+            try {
+                if (File.Exists(file)) {
+                    XmlSerializer serializer = new XmlSerializer(typeof(LSMSettings), root: new XmlRootAttribute(root));
+                    using (StreamReader reader = new StreamReader(file))
+                        return (LSMSettings)serializer.Deserialize(reader);
+                }
+            } catch (Exception ex) {
+                ex.Log();
+            }
+            return null;
         }
 
-        private void Serialize() {
+        public void Serialize() {
+            if (File.Exists(FilePathLegacy) || !File.Exists(FilePathRevisited)) {
+                Serialize(FilePathLegacy, LEGACY_ROOT);
+            }
+            Serialize(FilePathRevisited, ROOT);
+        }
+
+        private void Serialize(string file, string root) {
             try {
-                var serializer = new XmlSerializer(typeof(Settings));
-                using (StreamWriter writer = new StreamWriter(FILE_PATH))
-                    serializer.Serialize(writer, this, XMLUtil.NoNamespaces);
+                var serializer = new XmlSerializer(typeof(LSMSettings), root: new XmlRootAttribute(root));
+                using (StreamWriter tw = new StreamWriter(file)) {
+                    using (XmlTextWriter xmlw = new XmlTextWriter(tw)) {
+                        xmlw.Formatting = Formatting.Indented;
+                        xmlw.Indentation = 2;
+                        serializer.Serialize(xmlw, this, XMLUtil.NoNamespaces);
+                    }
+                }
             } catch (Exception ex) {
                 ex.Log();
             }
         }
 
-        public Settings SyncAndSerialize() {
+        public LSMSettings SyncAndSerialize() {
             try {
                 var ret = Deserialize();
                 ret.skipFile = this.skipFile;

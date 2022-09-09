@@ -15,7 +15,7 @@ namespace LoadOrderTool.Data {
         public SteamCache SteamCache;
         public CSCache CSCache;
 
-        public LoadingScreenMod.Settings LSMConfig;
+        public LoadingScreenMod.LSMSettings LSMConfig;
 
         bool dirty_;
         public bool Dirty {
@@ -37,7 +37,7 @@ namespace LoadOrderTool.Data {
                 ?? new LoadOrderConfig();
             SteamCache = SteamCache.Deserialize() ?? new SteamCache();
             ReloadCSCache();
-            LSMConfig = LoadingScreenMod.Settings.Deserialize();
+            LSMConfig = LoadingScreenMod.LSMSettings.Deserialize();
             Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
             if(!CommandLine.Parse.CommandLine)
                 StartSaveThread();
@@ -134,7 +134,7 @@ namespace LoadOrderTool.Data {
                 Config = LoadOrderConfig.Deserialize(DataLocation.LocalLOMData)
                     ?? new LoadOrderConfig();
                 ReloadCSCache();
-                LSMConfig = LoadingScreenMod.Settings.Deserialize();
+                LSMConfig = LoadingScreenMod.LSMSettings.Deserialize();
                 Log.Succeeded();
             } catch(Exception ex) {
                 ex.Log();
