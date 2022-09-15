@@ -10,7 +10,7 @@ namespace LoadOrderMod.Patches {
     public static class LoadCustomContentPatch {
         static IEnumerable<MethodBase> TargetMethods() {
             yield return GetCoroutineMoveNext(typeof(LoadingManager), "LoadCustomContent");
-            foreach(var tAssetLoader in GetTypeFromBothLSMs("AssetLoader")) {
+            foreach(var tAssetLoader in GetTypeFromLSMS("AssetLoader")) {
                 yield return GetCoroutineMoveNext(tAssetLoader, "LoadCustomContent");
             }
         }

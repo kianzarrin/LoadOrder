@@ -14,7 +14,7 @@ namespace LoadOrderMod.Patches {
     public static class SimulationDataReadyPatch {
         static IEnumerable<MethodBase> TargetMethods() {
             yield return GetCoroutineMoveNext(typeof(LoadingManager), "LoadLevelCoroutine");
-            foreach(var tLevelLoader in GetTypeFromBothLSMs("LevelLoader")){
+            foreach(var tLevelLoader in GetTypeFromLSMS("LevelLoader")){
                 yield return GetCoroutineMoveNext(tLevelLoader, "LoadLevelCoroutine");
             }
         }
@@ -28,7 +28,6 @@ namespace LoadOrderMod.Patches {
                 return;
             }
 
-            Assertion.AssertNotNull(e);
             Log.Info($"invoking LoadingManager.m_SimulationDataReady()", copyToGameLog: true);
             Log.Flush();
             sw_total.Reset();
@@ -54,12 +53,8 @@ namespace LoadOrderMod.Patches {
             Log.Flush();
         }
 
-        static MethodInfo mSpecialInvoke = GetMethod(
-            typeof(SimulationDataReadyPatch),
-            nameof(SpecialInvoke));
-        static MethodInfo m_Invoke = GetMethod(
-            typeof(SimulationDataReadyHandler),
-            nameof(SimulationDataReadyHandler.Invoke));
+        static MethodInfo mSpecialInvoke = typeof(SimulationDataReadyPatch).GetMethod(nameof(SpecialInvoke), true);
+        static MethodInfo m_Invoke = typeof(SimulationDataReadyHandler).GetMethod(nameof(SimulationDataReadyHandler.Invoke), true);
 
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original) {
             foreach (var code in instructions) {
@@ -67,12 +62,10 @@ namespace LoadOrderMod.Patches {
                     var m = code.operand as MethodInfo;
                     string name = m.DeclaringType.FullName + "::" + m.Name;
                     var name2 = original.DeclaringType.FullName + "::" + original.Name;
-                    Log.Info(
-                        $"replacing call to {name} with SpecialInvoke() in {name2}");
+                    Log.Info($"replacing call to {name} with SpecialInvoke() in {name2}");
                     var ret = new CodeInstruction(OpCodes.Call, mSpecialInvoke);
                     MoveLabels(code, ret);
                     yield return ret;
-
                 } else {
                     yield return code;
                 }

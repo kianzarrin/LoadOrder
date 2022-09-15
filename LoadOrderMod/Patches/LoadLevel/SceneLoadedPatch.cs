@@ -12,7 +12,7 @@ namespace LoadOrderMod.Patches {
     public static class SceneLoadedPatch {
         static IEnumerable<MethodBase> TargetMethods() {
             yield return GetCoroutineMoveNext(typeof(LoadingManager), "LoadLevelCoroutine");
-            foreach(var tLevelLoader in GetTypeFromBothLSMs("LevelLoader")) {
+            foreach(var tLevelLoader in GetTypeFromLSMS("LevelLoader")) {
                 yield return GetCoroutineMoveNext(tLevelLoader, "LoadLevelCoroutine");
             }
         }
