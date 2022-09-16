@@ -113,7 +113,7 @@ namespace CO.Plugins {
                         if (modName.IsNullorEmpty()) {
                             displayText_ = DispalyPath;
                         } else {
-                            displayText_ = $"{modName} ({DispalyPath})";
+                            displayText_ = $"{modName} ({DispalyPath} V{UserModAssemblyVersion})";
                         }
                     }
                     return displayText_;
@@ -416,6 +416,8 @@ namespace CO.Plugins {
 
             public TypeDefinition userModImplementation =>
                 m_UserModImplementation ??= GetImplementation(PluginManager.kUserMod);
+
+            public Version UserModAssemblyVersion => userModImplementation.Module.Assembly.Name.Version;
 
             public TypeDefinition GetImplementation(string fullInterfaceName) =>
                 AssemblyUtil.FindImplementation(DllPaths, fullInterfaceName, out dllPath_);
