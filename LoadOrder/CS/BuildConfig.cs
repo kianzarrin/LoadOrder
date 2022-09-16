@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -143,10 +143,15 @@ public class BuildConfig
 					ret = asm;
 			}
 		}
-		if (ret != null)
-			Log.Info($"Assembly '{name0}' resolved to '{ret}'");
-		else
-			Log.Error($"Assembly resolution failure. No assembly named '{name0}' was found.");
+        if (ret != null)
+            Log.Info($"Assembly '{name0}' resolved to '{ret}'");
+        else {
+            if (name0 == "Mono.Runtime") {
+                Log.Info($"[harmless] Assembly resolution failure. No assembly named '{name0}' was found.");
+            } else {
+                Log.Error($"Assembly resolution failure. No assembly named '{name0}' was found.");
+            }
+        }
 		return ret;
 	}
 
