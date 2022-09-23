@@ -6,10 +6,12 @@ using System.Reflection;
 using KianCommons;
 using static KianCommons.ReflectionHelpers;
 using static LoadOrderMod.Util.LSMUtil;
+using System.Linq;
 
 namespace LoadOrderMod.Patches {
     [HarmonyPatch]
     public static class PrintLoadInfoPatch {
+        static bool Prepare() => TargetMethods().Any();
         static IEnumerable<MethodBase> TargetMethods() {
             yield return GetMethod(typeof(LoadingManager), "LoadLevelCoroutine");
         }
@@ -32,11 +34,13 @@ namespace LoadOrderMod.Patches {
 
     [HarmonyPatch]
     static class PrintLoadInfoPatch2 {
+        static bool Prepare() => TargetMethods().Any();
         static IEnumerable<MethodBase> TargetMethods() {
             foreach (var tLevelLoader in GetTypeFromLSMS("LevelLoader")) {
                 yield return GetMethod(tLevelLoader, "LoadLevelCoroutine");
             }
         }
+
         static void Prefix(Package.Asset savegame, string playerScene, string uiScene, SimulationMetaData ngs, bool forceEnvironmentReload) {
             PrintLoadInfoPatch.Prefix(savegame, playerScene, uiScene, ngs, forceEnvironmentReload);
         }
