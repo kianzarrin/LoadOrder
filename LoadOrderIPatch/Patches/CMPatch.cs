@@ -499,15 +499,13 @@ namespace LoadOrderIPatch.Patches {
                 .First(_t => _t.Name == "SortPlugins");
             MethodDefinition mdSort = tSortPlugins.Methods
                 .First(_m => _m.Name == "Sort");
+            MethodReference mrSort = tPluginManager.Module.ImportReference(mdSort);
 
-            MethodReference mrInjection = tPluginManager.Module.ImportReference(mdSort);
+            Instruction loadPlugins = Instruction.Create(OpCodes.Ldarg_1);
+            Instruction callSort = Instruction.Create(OpCodes.Call, mrSort);
             ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+            ilProcessor.Prefix(loadPlugins, callSort);
 
-            Instruction loadArg1 = Instruction.Create(OpCodes.Ldarg_1);
-            Instruction callInjection = Instruction.Create(OpCodes.Call, mrInjection);
-            Instruction first = mTarget.Body.Instructions.First();
-            ilProcessor.InsertBefore(first, loadArg1); // load pluggins arg
-            ilProcessor.InsertAfter(loadArg1, callInjection);
             Log.Successful();
             return CM;
         }
