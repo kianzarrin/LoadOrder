@@ -119,7 +119,7 @@ namespace LoadOrderTool.UI {
             } catch (Exception ex) {
                 ex.Log();
             } finally {
-                loading_ = true;
+                loading_ = false;
             }
         }
 
@@ -711,6 +711,7 @@ namespace LoadOrderTool.UI {
         }
 
         string UpdateBrokenDownloadsStatus() {
+            Log.Called();
             InternetConnectionWarningLabel.Visible = InternetConnectionFailure;
 
             if (loading_) {
