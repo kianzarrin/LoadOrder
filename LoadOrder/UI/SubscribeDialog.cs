@@ -9,7 +9,8 @@ using System.Windows.Forms;
 using CO.PlatformServices;
 using CO.Packaging;
 using CO.Plugins;
-using LoadOrderTool.Data;
+using System.Collections.Generic;
+using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace LoadOrderTool.UI {
     public partial class SubscribeDialog : Form {
@@ -33,7 +34,7 @@ namespace LoadOrderTool.UI {
                 tbIDs.Text += " " + ids.Join(" ");
             } else if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
                 foreach(var filePath in  (e.Data as DataObject).GetFileDropList()) {
-                    tbIDs.Text += " " + GetIDsFromFile(filePath).Join(" ");
+                    tbIDs.Text += " " + GetMissingIDSFromLSMReport(filePath).Join(" ");
                 }
             }
             CleanupTextBox();
@@ -78,14 +79,12 @@ namespace LoadOrderTool.UI {
             return mc.Select(m => m.Groups[1].Value).ToArray();
         }
 
-
-        public static string[] GetIDsFromFile(string filePath) {
+        public static IEnumerable<string> GetMissingIDSFromLSMReport(string filePath) {
             Log.Called(filePath);
-            string text = File.ReadAllText(filePath);
-            int i1 = text.IndexOf("The following custom assets are used in this city");
-            int i2 = text.IndexOf("The following enabled assets are currently unnecessary");
-            text = text.Substring(i1, i2 - i1); // count out the desired text;
-            return GetHTMLIDs(text);
+            var doc = new HtmlDocument();
+            doc.Load(filePath);
+            var nodes = doc.DocumentNode.SelectNodes("//a[@data-lomtag='missing']");
+            return nodes.SelectMany(node => GetHTMLIDs(node.InnerText));
         }
 
         private void SubscribeAll_Click(object _, EventArgs __) {
