@@ -48,8 +48,15 @@ namespace LoadOrderInjections.Injections {
         }
 
 
+        public static bool IsOrderlessHarmony(PluginInfo p) => !p.HasLoadOrder() && p.IsHarmonyMod();
+
         public static int HarmonyComparison(PluginInfo p1, PluginInfo p2) {
-            int ret = p1.GetLoadOrder().CompareTo(p2.GetLoadOrder());
+            int ret;
+            // order less harmony comes first
+            ret = -IsOrderlessHarmony(p1).CompareTo(IsOrderlessHarmony(p2));
+            if (ret != 0) return ret;
+
+            ret = p1.GetLoadOrder().CompareTo(p2.GetLoadOrder());
             if (ret != 0) return ret; // if both 1000(default) then go to next line
 
             ret = GetHarmonyOrder(p1).CompareTo(GetHarmonyOrder(p2));

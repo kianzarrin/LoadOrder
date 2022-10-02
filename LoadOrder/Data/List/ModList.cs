@@ -71,9 +71,15 @@ namespace LoadOrderTool {
             return isWS;
         }
 
+        public static bool IsOrderlessHarmony(PluginInfo p) => !p.HasLoadOrder() && p.IsHarmonyMod();
 
         public static int HarmonyComparison(PluginInfo p1, PluginInfo p2) {
-            int ret = p1.LoadOrder.CompareTo(p2.LoadOrder);
+            int ret;
+            // order less harmony comes first
+            ret = -IsOrderlessHarmony(p1).CompareTo(IsOrderlessHarmony(p2));
+            if (ret != 0) return ret; 
+
+            ret = p1.LoadOrder.CompareTo(p2.LoadOrder);
             if (ret != 0) return ret; // if both 1000(default) then go to next line
 
             ret = GetHarmonyOrder(p1).CompareTo(GetHarmonyOrder(p2));
@@ -83,7 +89,6 @@ namespace LoadOrderTool {
             ret = -GetWSID(p1.name, out uint id1).CompareTo(GetWSID(p2.name, out uint id2));
             if (ret != 0) return ret;
 
-            
             ret = id1.CompareTo(id2); // compare WS mods
             if (ret != 0) return ret;
 
