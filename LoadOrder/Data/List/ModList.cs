@@ -35,32 +35,6 @@ namespace LoadOrderTool {
         public static int LoadOrderComparison(PluginInfo p1, PluginInfo p2) =>
             p1.LoadOrder.CompareTo(p2.LoadOrder);
 
-        public static int OldDefaultComparison(PluginInfo p1, PluginInfo p2) {
-            var savedOrder1 = p1.LoadOrder;
-            var savedOrder2 = p2.LoadOrder;
-
-            // orderless harmony comes first
-            if (!p1.HasLoadOrder() && p1.IsHarmonyMod())
-                return -1;
-            if (!p2.HasLoadOrder() && p2.IsHarmonyMod())
-                return +1;
-
-            // if neither have order, use string comparison
-            // then built-in first, workshop second, local last
-            // otherwise use string comparison
-            if (!p1.HasLoadOrder() && !p2.HasLoadOrder()) {
-                int order(PluginInfo _p) =>
-                    _p.isBuiltin ? 0 :
-                    (_p.PublishedFileId != PublishedFileId.invalid ? 1 : 2);
-                if (order(p1) != order(p2))
-                    return order(p1) - order(p2);
-                return p1.name.CompareTo(p2.name);
-            }
-
-            // use assigned or default values
-            return savedOrder1 - savedOrder2;
-        }
-
         /// <summary>
         /// 1st: harmony mod 
         /// 2nd: harmony 2 
