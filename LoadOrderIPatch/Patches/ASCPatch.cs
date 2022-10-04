@@ -206,7 +206,6 @@ namespace LoadOrderIPatch.Patches {
             AppDomain.CurrentDomain.AssemblyResolve += resolver;
             AppDomain.CurrentDomain.TypeResolve += resolver;
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
             Log.Successful();
         }
 
@@ -219,7 +218,6 @@ namespace LoadOrderIPatch.Patches {
             ResolveEventHandler resolver = LoadOrderHarmonyResolver;
             AppDomain.CurrentDomain.AssemblyResolve += resolver;
             AppDomain.CurrentDomain.TypeResolve += resolver;
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += resolver;
 
             Log.Successful();
