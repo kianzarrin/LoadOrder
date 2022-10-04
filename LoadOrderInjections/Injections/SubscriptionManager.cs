@@ -889,7 +889,7 @@ namespace LoadOrderInjections {
             try {
                 Log.Called();
                 var dirs = new HashSet<string>(RootDir.GetDirectories().Select(item => item.FullName));
-                foreach (var dir in dirs) {
+                foreach (var dir in dirs.ToArray() /* need clone*/) {
                     try {
                         string path1 = ToIncludedPath(dir);
                         string path2 = ToExcludedPath2(dir);
@@ -900,6 +900,7 @@ namespace LoadOrderInjections {
                                 $"path2 exists: '{path2}' failed. dirs.Contains(path2)={dirs.Contains(path2)}");
                             Directory.Delete(path2, true);
                             Directory.Move(path1, path2);
+                            dirs.Remove(path1);
                         }
                     } catch(Exception ex) {
                         ex.Log($"dir='{dir}', dirs='{dirs.ToSTR()}'",false);
