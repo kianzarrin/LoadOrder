@@ -17,6 +17,7 @@ namespace LoadOrderTool.UI {
         public ToolStripMenuItem tsmiResetOrder;
         public ToolStripMenuItem tsmiHarmonyOrder;
         public ToolStripMenuItem tsmiReverseOrder;
+        public ToolStripMenuItem tsmiWSIDOrder;
         public ToolStripMenuItem tsmiRandomOrder;
         public ToolStripMenuItem tsmiHelp;
         public ToolStripMenuItem tsmiWiki;
@@ -47,6 +48,7 @@ namespace LoadOrderTool.UI {
             tsmiResetOrder = new ToolStripMenuItem();
             tsmiHarmonyOrder = new ToolStripMenuItem();
             tsmiReverseOrder = new ToolStripMenuItem();
+            tsmiWSIDOrder = new ToolStripMenuItem();
             tsmiRandomOrder = new ToolStripMenuItem();
             tsmiHelp = new ToolStripMenuItem();
             tsmiWiki = new ToolStripMenuItem();
@@ -128,6 +130,7 @@ namespace LoadOrderTool.UI {
             tsmiResetOrder,
             tsmiHarmonyOrder,
             tsmiReverseOrder,
+            tsmiWSIDOrder,
             tsmiRandomOrder});
             tsmiOrder.Name = "tsmiOrder";
             tsmiOrder.Size = new Size(49, 20);
@@ -152,6 +155,13 @@ namespace LoadOrderTool.UI {
             tsmiReverseOrder.Size = new Size(132, 22);
             tsmiReverseOrder.Text = "Re&verse";
             tsmiReverseOrder.ToolTipText = "reverse order";
+            // 
+            // tsmiWSIDOrder
+            // 
+            tsmiWSIDOrder.Name = "tsmiWSIDOrder";
+            tsmiWSIDOrder.Size = new Size(132, 22);
+            tsmiWSIDOrder.Text = "&ID";
+            tsmiWSIDOrder.ToolTipText = "sort by id then by name";
             // 
             // tsmiRandomOrder
             // 
@@ -275,7 +285,8 @@ namespace LoadOrderTool.UI {
 
         public void OnAdvancedChanged() {
             tsmiAdvanced.Checked = ConfigWrapper.instance.Advanced;
-            var advancedItems = new ToolStripItem[] { tsmiRandomOrder, tsmiHarmonyOrder, tsmiReverseOrder, tsmiReloadSettings, tsmiResetCache, tsmiResetAllSettings, toolStripSeparator1 };
+            var advancedItems = new ToolStripItem[] {
+                tsmiRandomOrder, tsmiHarmonyOrder, tsmiReverseOrder, tsmiWSIDOrder, tsmiReloadSettings, tsmiResetCache, tsmiResetAllSettings, toolStripSeparator1 };
             foreach (var item in advancedItems)
                 item.Visible = ConfigWrapper.instance.Advanced;
 #if NO_CO_STEAM_API

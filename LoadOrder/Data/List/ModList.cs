@@ -96,6 +96,27 @@ namespace LoadOrderTool {
             return ret;
         }
 
+        public static int WSIDComparison(PluginInfo p1, PluginInfo p2) {
+            int ret;
+            ret = GetID(p1).CompareTo(GetID(p2));
+            if (ret != 0) return ret;
+
+            ret = p1.name.CompareTo(p2.name); // compare local mods
+            return ret;
+
+            static uint GetID(PluginInfo p) {
+                if (p.isBuiltin)
+                    return 0; // built-in comes first
+                else if (uint.TryParse(p.name, out uint id))
+                    return id;
+                else
+                    return uint.MaxValue; //alphanumerical comes last
+            }
+        }
+
+        public void WSIDSort() => SortBy(WSIDComparison);
+        
+
         public void ResetLoadOrders() {
             foreach (var p in this)
                 p.ResetLoadOrder();

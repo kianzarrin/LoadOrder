@@ -336,6 +336,7 @@ namespace LoadOrderTool.UI {
             menuStrip.tsmiHarmonyOrder.Click += SortByHarmony_Click;
             menuStrip.tsmiReverseOrder.Click += ReverseOrder_Click;
             menuStrip.tsmiRandomOrder.Click += RandomizeOrder_Click;
+            menuStrip.tsmiWSIDOrder.Click += WSIDOrder_Click;
             menuStrip.tsmiResetOrder.Click += ResetOrder_Click;
             IncludeAllMods.Click += IncludeAllMods_Click;
             ExcludeAllMods.Click += ExcludeAllMods_Click;
@@ -444,6 +445,11 @@ namespace LoadOrderTool.UI {
 
         private void RandomizeOrder_Click(object sender, EventArgs e) {
             dataGridMods.ModList.RandomizeOrder();
+            dataGridMods.RefreshModList();
+        }
+
+        private void WSIDOrder_Click(object sender, EventArgs e) {
+            dataGridMods.ModList.WSIDSort();
             dataGridMods.RefreshModList();
         }
 
