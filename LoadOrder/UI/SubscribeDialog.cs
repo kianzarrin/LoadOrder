@@ -20,7 +20,10 @@ namespace LoadOrderTool.UI {
             tbIDs.DragLeave+= tbAssets_DragLeave;
             tbIDs.DragDrop += tbAssets_DragDrop;
             SubscribeAll.SetTooltip("opens CS in mass sub mode and subscribes to all workshop items listed above.");
+            btnUnsubscribeAll.SetTooltip("opens CS in mass unsub mode and unsubscribes from all workshop items listed above.");
             btnIncludeAll.SetTooltip("Include/Enable all mods/assets listed above (ignores items that are not downloaded)");
+            btnIncludeOnly.SetTooltip("Include/Enable all mods/assets listed above (ignores items that are not downloaded)\n" +
+                "and disables are other mods/assets");
             btnReload.SetTooltip("Include/Enable only all mods/assets listed above (exclude everything else - ignores items that are not downloaded)");
         }
 

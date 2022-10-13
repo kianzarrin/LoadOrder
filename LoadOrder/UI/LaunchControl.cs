@@ -35,7 +35,11 @@ namespace LoadOrderTool.UI {
             checkBoxNoMods.Hide();
             checkBoxNewAsset.SetTooltip("Create asset based on existing asset, as opposed to loading asset.");
             checkBoxLHT.SetTooltip("Traffic drives on left.");
-            checkBoxResetAssets.SetTooltip("");
+            checkBoxResetAssets.SetTooltip("Enables all assets on load (that you disabled from CS content manager).");
+            checkBoxNoAssets.SetTooltip("no asset is loaded (local or workshop).");
+            checkBoxNoWorkshop.SetTooltip(
+                "all workshop (not local) mods/assets are not loaded.\n" +
+                "if Load Order Mod is on workshop then other options will not work.");
 
             string loadSaveTooltip =
                 "empty => continue last save.\n" +

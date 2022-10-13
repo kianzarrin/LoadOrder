@@ -34,11 +34,11 @@ namespace LoadOrderMod.Settings.Tabs {
             //button.tooltip = "checks for missing/partially downloaded/outdated items";
 
 #if !NO_CO_STEAM_API
-            button = panelHelper.AddButton("unsubscribe from deprecated workshop items [EXPERIMENTAL] ", () => CheckSubsUtil.Instance.UnsubDepricated()) as UIButton;
+            button = panelHelper.AddButton("unsubscribe from deprecated workshop items", () => CheckSubsUtil.Instance.UnsubDepricated()) as UIButton;
             button.tooltip = "if steam does not return item path, i assume its deprecated.";
 #endif
 
-            button = panelHelper.AddButton("Resubscribe to all broken downloads (exits game) [EXPERIMENTAL]", CheckSubsUtil.ResubcribeExternally) as UIButton;
+            button = panelHelper.AddButton("Resubscribe to all broken downloads (exits game)", CheckSubsUtil.ResubcribeExternally) as UIButton;
             button.tooltip = "less steam can hide problems. if you use less steam please click 'Refresh workshop items' to get all broken downloads";
             button.isVisible = false; //hide for now.
 
@@ -68,7 +68,7 @@ namespace LoadOrderMod.Settings.Tabs {
                     }) as UITextField;
                 tfSteamPath_.width = 650;
                 tfSteamPath_.tooltip = "Path to steam.exe";
-                g.AddButton("Redownload broken downloads [EXPERIMENTAL]", delegate () {
+                g.AddButton("Redownload broken downloads", delegate () {
                     try {
                         var path = tfSteamPath_.text;
                         if (CheckSteamPath(path)) {
