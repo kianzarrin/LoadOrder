@@ -192,7 +192,7 @@ namespace LoadOrderTool.UI {
                 else
                     CitiesFile.Instance.UseRelease();
             } catch (Exception ex){
-                if(MonoFile.Instance.ReleaseIsUsed() is bool releaseMono) {
+                if (MonoFile.Instance.ReleaseIsUsed() is bool releaseMono) {
                     radioButtonReleaseMono.Checked = releaseMono;
                 }
                 if (CitiesFile.Instance.ReleaseIsUsed() is bool releaseCities) {
@@ -200,7 +200,6 @@ namespace LoadOrderTool.UI {
                 }
                 ex.Log();
             }
-
         }
 
         private void UpdateCommand() {
