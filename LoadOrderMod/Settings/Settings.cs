@@ -9,6 +9,7 @@ namespace LoadOrderMod.Settings {
     using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
     using LoadOrderMod.UI;
     using LoadOrderMod.Settings.Tabs;
+    using KianCommons.UI;
 
     public static class Settings {
         static LoadOrderConfig Config => ConfigUtil.Config;
@@ -16,8 +17,11 @@ namespace LoadOrderMod.Settings {
         public static void OnSettingsUI(UIHelper helper) {
             try {
                 Log.Debug(Environment.StackTrace);
-                ExtUITabstrip tabStrip = ExtUITabstrip.Create(helper);
+                if (!Helpers.InStartupMenu) {
+                    helper.AddLabel("Only available in startup menu");
+                }
 
+                ExtUITabstrip tabStrip = ExtUITabstrip.Create(helper);
                 SubscriptionsTab.Make(tabStrip);
                 StartupTab.Make(tabStrip);
                 LoggingTab.Make(tabStrip);
