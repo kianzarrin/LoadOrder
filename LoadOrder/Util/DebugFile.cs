@@ -51,6 +51,21 @@ namespace LoadOrderTool.Util {
                 Log.Exception(ex);
             }
         }
+
+        /// <returns>
+        /// true if release version is used,
+        /// false if debug version is used,
+        /// null if cannot determine.
+        /// </returns>
+        public bool? ReleaseIsUsed() {
+            static bool Equal(string path1, string path2) =>
+                File.Exists(path1) && File.Exists(path2) && FilesEqual(path1, path2);
+            if (Equal(ReleaseFilePath, FilePath)) return true;
+            if (Equal(DebugFilePath, FilePath)) return false;
+            if (Equal(ResourceFilePath, FilePath)) return false;
+            if (!File.Exists(ReleaseFilePath)) return true;
+            return null;
+        }
     }
 
     public class MonoFile : DebugFile {

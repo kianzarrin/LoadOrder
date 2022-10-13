@@ -181,15 +181,26 @@ namespace LoadOrderTool.UI {
         }
 
         private void UpdateFiles() {
-            if (settings_.DebugMono)
-                MonoFile.Instance.UseDebug();
-            else
-                MonoFile.Instance.UseRelease();
+            try {
+                if (settings_.DebugMono)
+                    MonoFile.Instance.UseDebug();
+                else
+                    MonoFile.Instance.UseRelease();
 
-            if (settings_.ProfilerCities)
-                CitiesFile.Instance.UseDebug();
-            else
-                CitiesFile.Instance.UseRelease();
+                if (settings_.ProfilerCities)
+                    CitiesFile.Instance.UseDebug();
+                else
+                    CitiesFile.Instance.UseRelease();
+            } catch (Exception ex){
+                if(MonoFile.Instance.ReleaseIsUsed() is bool releaseMono) {
+                    radioButtonReleaseMono.Checked = releaseMono;
+                }
+                if (CitiesFile.Instance.ReleaseIsUsed() is bool releaseCities) {
+                    radioButtonReleaseCities.Checked = releaseCities;
+                }
+                ex.Log();
+            }
+
         }
 
         private void UpdateCommand() {
