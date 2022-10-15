@@ -292,7 +292,7 @@ namespace LoadOrderMod.Util {
                             $"\n\t(reason={reason})";
                         ThreadHelper.dispatcher.Dispatch(() => Log.DisplayWarning(m));
                     }
-                } catch (Exception ex) { ex.Log(); }
+                } catch (Exception ex) { ex.Log("ugc.publishedFileId=" + ugc.publishedFileId); }
             });
         }
 

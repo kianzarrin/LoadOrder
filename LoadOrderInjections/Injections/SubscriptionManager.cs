@@ -767,9 +767,11 @@ namespace LoadOrderInjections {
         }
 
         public static bool IsPathIncluded(string fullPath) {
+            Assertion.Assert(!fullPath.IsNullorEmpty(), "fullPath=" + fullPath);
             return Path.GetFileName(fullPath).StartsWith("_");
         }
         public static string ToIncludedPath(string fullPath) {
+            Assertion.Assert(!fullPath.IsNullorEmpty(), "fullPath=" + fullPath);
             string parent = Path.GetDirectoryName(fullPath);
             string file = Path.GetFileName(fullPath);
             if (file.StartsWith("_"))
@@ -777,6 +779,7 @@ namespace LoadOrderInjections {
             return Path.Combine(parent, file);
         }
         public static string ToExcludedPath2(string fullPath) {
+            Assertion.Assert(!fullPath.IsNullorEmpty(), "fullPath=" + fullPath);
             string parent = Path.GetDirectoryName(fullPath);
             string file = Path.GetFileName(fullPath);
             if (!file.StartsWith("_"))
@@ -785,10 +788,15 @@ namespace LoadOrderInjections {
         }
 
         public static bool IsExcludedMod(PublishedFileId publishedFileId) {
-            var path = PlatformService.workshop.GetSubscribedItemPath(publishedFileId);
-            var excludedPath = ToExcludedPath2(path);
-            return Directory.Exists(excludedPath);
-            return true;
+            try {
+                var path = PlatformService.workshop.GetSubscribedItemPath(publishedFileId);
+                var excludedPath = ToExcludedPath2(path);
+                return Directory.Exists(excludedPath);
+                return true;
+            } catch (Exception ex) {
+                ex.Log("publishedFileId=" + publishedFileId);
+                throw;
+            }
         }
 
         public static void EnsureIncludedOrExcluded(PublishedFileId id) {
