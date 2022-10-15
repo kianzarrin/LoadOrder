@@ -2,7 +2,7 @@
   <Import Project="../Version.props" />
   <PropertyGroup>
     <Company>Kian Zarrin</Company>
-    <Copyright>@2021 MIT license</Copyright>
+    <Copyright>@2022 MIT license</Copyright>
     <Product>Load Order Tool</Product>
     <LangVersion>latest</LangVersion>
     <Description>Helps to manage your mods and assets</Description>
