@@ -6,7 +6,6 @@ namespace LoadOrderTool.UI {
     using System.Diagnostics;
     using LoadOrderTool.Util;
     using LoadOrderTool.Data;
-    using System.ComponentModel;
 
     public partial class LaunchControl : UserControl {
         LoadOrderToolSettings settings_ => LoadOrderToolSettings.Instace;
@@ -176,28 +175,40 @@ namespace LoadOrderTool.UI {
         }
 
         private void OnChanged(object sender, EventArgs e) {
+            Log.Called((sender as Control)?.Name + " " + sender);
             UpdateCommand();
             SaveSettings();
         }
 
         private void UpdateFiles() {
             try {
-                if (settings_.DebugMono)
-                    MonoFile.Instance.UseDebug();
-                else
-                    MonoFile.Instance.UseRelease();
+                bool success;
+                if (settings_.DebugMono) {
+                    success = MonoFile.Instance.UseDebug();
+                } else {
+                    success = MonoFile.Instance.UseRelease();
+                }
+                if (!success) {
+                    if (MonoFile.Instance.ReleaseIsUsed() is bool bReleaseMono) {
+                        Log.Warning("reverting radioButtonReleaseMono.Checked to " + bReleaseMono);
+                        radioButtonDebugMono.Checked = !bReleaseMono;
+                        radioButtonReleaseMono.Checked = bReleaseMono;
+                    }
+                }
 
-                if (settings_.ProfilerCities)
-                    CitiesFile.Instance.UseDebug();
-                else
-                    CitiesFile.Instance.UseRelease();
-            } catch (Exception ex){
-                if (MonoFile.Instance.ReleaseIsUsed() is bool releaseMono) {
-                    radioButtonReleaseMono.Checked = releaseMono;
+                if (settings_.ProfilerCities) {
+                    success = CitiesFile.Instance.UseDebug();
+                } else {
+                    success = CitiesFile.Instance.UseRelease();
                 }
-                if (CitiesFile.Instance.ReleaseIsUsed() is bool releaseCities) {
-                    radioButtonReleaseCities.Checked = releaseCities;
+                if (!success) {
+                    if (CitiesFile.Instance.ReleaseIsUsed() is bool bReleaseCities) {
+                        Log.Warning("reverting radioButtonReleaseMono.Checked to " + bReleaseCities);
+                        radioButtonProfilerCities.Checked = !bReleaseCities;
+                        radioButtonReleaseCities.Checked = bReleaseCities;
+                    }
                 }
+            } catch (Exception ex) {
                 ex.Log();
             }
         }

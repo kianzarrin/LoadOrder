@@ -33,23 +33,27 @@ namespace LoadOrderTool.Util {
             File.Copy(FilePath, ReleaseFilePath);
         }
 
-        public  void UseDebug() {
+        public bool UseDebug() {
             try {
                 EnsureBReleaseBackedup();
                 EnsureDebugWritten();
                 CopyFile(source: DebugFilePath, dest: FilePath);
-
+                return true;
             } catch (Exception ex) {
-                Log.Exception(ex);
+                Log.Exception(ex, "can't move files if CS is running");
             }
+            return false;
         }
-        public  void UseRelease() {
+        public bool UseRelease() {
             try {
-                if (File.Exists(ReleaseFilePath))
+                if (File.Exists(ReleaseFilePath)) {
                     CopyFile(source: ReleaseFilePath, dest: FilePath);
+                }
+                return true;
             } catch (Exception ex) {
-                Log.Exception(ex);
+                Log.Exception(ex,"can't move files if CS is running");
             }
+            return false;
         }
 
         /// <returns>
