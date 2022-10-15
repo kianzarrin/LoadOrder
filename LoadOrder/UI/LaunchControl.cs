@@ -6,6 +6,8 @@ namespace LoadOrderTool.UI {
     using System.Diagnostics;
     using LoadOrderTool.Util;
     using LoadOrderTool.Data;
+    using CO.Plugins;
+    using System.Linq;
 
     public partial class LaunchControl : UserControl {
         LoadOrderToolSettings settings_ => LoadOrderToolSettings.Instace;
@@ -184,6 +186,21 @@ namespace LoadOrderTool.UI {
             try {
                 bool success;
                 if (settings_.DebugMono) {
+                    var fpsBooster = PluginManager.instance.GetMods()
+                        .FirstOrDefault(mod => mod.dllName == "FPS_Booster");
+                    if (fpsBooster != null &&
+                        fpsBooster.IsEnabledPending &&
+                        fpsBooster.IsIncludedPending) {
+                        DialogResult result = MessageBox.Show(
+                            caption: "Disable FPS Booster",
+                            text:
+                            "Disable FPS Booster to show logs?",
+                            buttons: MessageBoxButtons.YesNoCancel);
+                        if (result == DialogResult.Yes) {
+                            fpsBooster.IsIncluded = false;
+                            LoadOrderWindow.Instance?.dataGridMods?.RefreshModList();
+                        }
+                    }
                     success = MonoFile.Instance.UseDebug();
                 } else {
                     success = MonoFile.Instance.UseRelease();
@@ -308,11 +325,13 @@ namespace LoadOrderTool.UI {
         }
 
         private void Launch() {
+            UpdateFiles(); // auto disabling FPS booster causes unsaved changes so this comes first.
+
             if (!ConfigWrapper.AutoSave && ConfigWrapper.Dirty) {
                 var result = MessageBox.Show(
                     caption: "Unsaved changes",
                     text:
-                    "There are changes that are not saved to game and will not take effect. " +
+                    "There are changes that are not saved to game and will not take efFfect. " +
                     "Save changes to game before launching it?",
                     buttons: MessageBoxButtons.YesNoCancel);
                 switch (result) {
@@ -330,8 +349,6 @@ namespace LoadOrderTool.UI {
                 }
             }
             var args = GetCommandArgs();
-
-            UpdateFiles();
 
             string fileExe = radioButtonSteamExe.Checked ? DataLocation.SteamExe : DataLocation.CitiesExe;
             string dir = radioButtonSteamExe.Checked ? DataLocation.SteamPath : DataLocation.GamePath;

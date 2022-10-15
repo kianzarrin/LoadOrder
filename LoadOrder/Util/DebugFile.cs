@@ -4,6 +4,7 @@ namespace LoadOrderTool.Util {
     using CO.IO;    
     using System.Collections.Generic;
     using System.Text;
+    using CO.Plugins;
 
     public abstract class DebugFile {
         public abstract string ResourceFileName { get; }
@@ -33,7 +34,7 @@ namespace LoadOrderTool.Util {
             File.Copy(FilePath, ReleaseFilePath);
         }
 
-        public bool UseDebug() {
+        public virtual bool UseDebug() {
             try {
                 EnsureBReleaseBackedup();
                 EnsureDebugWritten();
@@ -44,7 +45,7 @@ namespace LoadOrderTool.Util {
             }
             return false;
         }
-        public bool UseRelease() {
+        public virtual bool UseRelease() {
             try {
                 if (File.Exists(ReleaseFilePath)) {
                     CopyFile(source: ReleaseFilePath, dest: FilePath);
