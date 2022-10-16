@@ -76,6 +76,7 @@ namespace LoadOrderTool.UI {
 
         public static string[] GetHTMLIDs(string html) {
             Log.Called(html);
+            if(html == null) return new string[0];
             // https://steamcommunity.com/sharedfiles/filedetails/\?id=([0-9]+)
             string pattern = "https://steamcommunity.com/sharedfiles/filedetails/\\?id=([0-9]+)";
             MatchCollection mc = Regex.Matches(html, pattern);
@@ -87,7 +88,8 @@ namespace LoadOrderTool.UI {
             var doc = new HtmlDocument();
             doc.Load(filePath);
             var nodes = doc.DocumentNode.SelectNodes("//a[@data-lomtag='missing']");
-            return nodes.SelectMany(node => GetHTMLIDs(node.InnerText));
+            Log.Debug("nodes.Count=" + nodes.Count);
+            return nodes.SelectMany(node => GetHTMLIDs(node.Attributes["href"].Value));
         }
 
         private void SubscribeAll_Click(object _, EventArgs __) {
