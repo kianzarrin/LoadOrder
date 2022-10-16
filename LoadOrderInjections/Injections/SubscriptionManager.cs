@@ -790,6 +790,8 @@ namespace LoadOrderInjections {
         public static bool IsExcludedMod(PublishedFileId publishedFileId) {
             try {
                 var path = PlatformService.workshop.GetSubscribedItemPath(publishedFileId);
+                if (path == null)
+                    return false; // none-existing item.
                 var excludedPath = ToExcludedPath2(path);
                 return Directory.Exists(excludedPath);
                 return true;
