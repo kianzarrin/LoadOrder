@@ -1,4 +1,4 @@
-﻿namespace LoadOrderTool.UI {
+namespace LoadOrderTool.UI {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -28,7 +28,8 @@
                         return titleAttribute.Title;
                     }
                 }
-                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+
+                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
             }
         }
 

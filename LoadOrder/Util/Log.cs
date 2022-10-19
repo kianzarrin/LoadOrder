@@ -93,7 +93,7 @@ namespace LoadOrderTool {
             float diff = seconds + 1;
             if (id < 0) id = -id;
             id = System.Math.Abs(id % MAX_WAIT_ID);
-            if (times_[id] != null) {
+            if (times_[id] != default) {
                 var diff0 = DateTime.Now - times_[id];
                 diff = diff0.Seconds;
             }

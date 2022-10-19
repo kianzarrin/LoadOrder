@@ -20,8 +20,8 @@ namespace LoadOrderTool.Util {
         }
         public static bool CheckForInternetConnection() {
             try {
-                using (var client = new WebClient())
-                using (var stream = client.OpenRead("https://steamcommunity.com/")) {
+                using (var client = new HttpClient())
+                using (var stream = client.GetStreamAsync("https://steamcommunity.com/").Result) {
                     return true;
                 }
             } catch {

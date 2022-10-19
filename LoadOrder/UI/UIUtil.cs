@@ -53,7 +53,7 @@ namespace LoadOrderTool.UI {
                 return values[combo.SelectedIndex];
             } catch (Exception ex) {
                 Log.Exception(ex, $"SelectedIndex={combo?.SelectedIndex} values={string.Join(", ", values)}");
-                throw ex;
+                throw;
             }
         }
 

@@ -96,16 +96,17 @@ namespace CO {
             }
         }
 
-        public GameSettings() {
+        public override void Awake() {
+            base.Awake();
             try {
                 sInstance = this;
                 Log.Info("Creating GameSettings Monitor ...");
                 Log.Debug(Environment.StackTrace);
-                GameSettings.m_SaveThread = new Thread(new ThreadStart(GameSettings.MonitorSave));
-                GameSettings.m_SaveThread.Name = "SaveSettingsThread";
-                GameSettings.m_SaveThread.IsBackground = true;
-                GameSettings.m_Run = true;
-                GameSettings.m_SaveThread.Start();
+                m_SaveThread = new Thread(new ThreadStart(GameSettings.MonitorSave));
+                m_SaveThread.Name = "SaveSettingsThread";
+                m_SaveThread.IsBackground = true;
+                m_Run = true;
+                m_SaveThread.Start();
             } catch (Exception ex) { ex.Log(); }
         }
 

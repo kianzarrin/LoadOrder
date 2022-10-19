@@ -155,7 +155,7 @@ namespace LoadOrderTool {
 
         private int[] RandomNumber(int count) {
             var orderedList = Enumerable.Range(0, count);
-            int randomSeed = RNGCryptoServiceProvider.GetInt32(0, int.MaxValue);
+            int randomSeed = RandomNumberGenerator.GetInt32(0, int.MaxValue);
             var rng = new Random(randomSeed);
             return orderedList.OrderBy(c => rng.Next()).ToArray();
         }

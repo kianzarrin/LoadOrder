@@ -29,7 +29,7 @@ namespace LoadOrderTool.Util {
                     ?? throw new Exception(file + " not find");
             } catch(Exception ex) {
                 Log.Exception(ex);
-                throw ex;
+                throw;
             }
         }
     }

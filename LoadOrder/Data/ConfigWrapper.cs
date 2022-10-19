@@ -31,8 +31,8 @@ namespace LoadOrderTool.Data {
         bool m_Run = true;
         object m_LockObject = new object();
 
-        public ConfigWrapper() {
-            sInstance = this;
+        public override void Awake() {
+            base.Awake();
             var sw = System.Diagnostics.Stopwatch.StartNew();
             Config = LoadOrderConfig.Deserialize(DataLocation.LocalLOMData)
                 ?? new LoadOrderConfig();
