@@ -32,27 +32,28 @@ namespace CO.IO {
         static DataLocation() {
             var sw = System.Diagnostics.Stopwatch.StartNew();
             string m = "Delayed messages: "; // delayed message;
+            CSCache csCache = null;
             try {
-                var data = CSCache.Deserialize(LocalLOMData);
-                if(data == null) {
-                    data = new CSCache();
+                csCache = CSCache.Deserialize(LocalLOMData);
+                if(csCache == null) {
+                    csCache = new CSCache();
                     // backward compatibility.
                     var data2 = LoadOrderConfig.Deserialize(LocalLOMData);
                     if(data2 != null) {
-                        data.WorkShopContentPath = data2.WorkShopContentPath;
-                        data.GamePath = data2.GamePath;
-                        data.SteamPath = data2.SteamPath;
+                        csCache.WorkShopContentPath = data2.WorkShopContentPath;
+                        csCache.GamePath = data2.GamePath;
+                        csCache.SteamPath = data2.SteamPath;
                     }
                 }
 
                 sw.Stop();
 
                 try {
-                    m += "\ndata is " + (data is null ? "null" : "not null");
-                    m += $"\ndata?.GamePath={data?.GamePath ?? "<null>"}";
-                    if (Util.IsGamePath(data?.GamePath)) {
-                        m += "\ngame path found: " + data.GamePath;
-                        GamePath = RealPath(data.GamePath);
+                    m += "\ndata is " + (csCache is null ? "null" : "not null");
+                    m += $"\ndata?.GamePath={csCache?.GamePath ?? "<null>"}";
+                    if (Util.IsGamePath(csCache?.GamePath)) {
+                        m += "\ngame path found: " + csCache.GamePath;
+                        GamePath = RealPath(csCache.GamePath);
                         m += "\nreal game path is: " + GamePath;
                     } else if (!Util.IsGamePath(GamePath)) {
                         m += "\ngetting game path from registry ...";
@@ -72,16 +73,16 @@ namespace CO.IO {
                 }
 
                 try {
-                    m += $"\ndata?.SteamPath={data?.SteamPath ?? "<null>"}";
-                    if (Util.IsSteamPath(data?.SteamPath)) {
-                        m += "\nSteamPath found: " + data.SteamPath;
-                        SteamPath = RealPath(data.SteamPath);
+                    m += $"\ndata?.SteamPath={csCache?.SteamPath ?? "<null>"}";
+                    if (Util.IsSteamPath(csCache?.SteamPath)) {
+                        m += "\nSteamPath found: " + csCache.SteamPath;
+                        SteamPath = RealPath(csCache.SteamPath);
                         m += "\nreal SteamPath is: " + SteamPath;
                     } else if (!Util.IsSteamPath(SteamPath)) {
                         m += "\ngetting SteamPath from registry ...";
                         using (RegistryKey key = Registry.CurrentUser.OpenSubKey(SteamPathSubKey_)) {
                             SteamPath = key?.GetValue(SteamPathKey_) as string;
-                            if (Util.IsSteamPath(data?.SteamPath)) {
+                            if (Util.IsSteamPath(csCache?.SteamPath)) {
                                 SteamPath = RealPath(SteamPath);
                             } else {
                                 SteamPath = null;
@@ -94,9 +95,9 @@ namespace CO.IO {
                     Log.Exception(ex);
                 }
 
-                m += $"\ndata?.WorkShopContentPath={data?.WorkShopContentPath ?? "<null>"}";
-                if (Util.IsWSPath(data?.WorkShopContentPath)) {
-                    WorkshopContentPath = RealPath(data.WorkShopContentPath);
+                m += $"\ndata?.WorkShopContentPath={csCache?.WorkShopContentPath ?? "<null>"}";
+                if (Util.IsWSPath(csCache?.WorkShopContentPath)) {
+                    WorkshopContentPath = RealPath(csCache.WorkShopContentPath);
                     m += "\nWorkshopContentPath found: " + WorkshopContentPath;
                 }
                 m += "\n[P3]WorkshopContentPath so far is: " + WorkshopContentPath;
@@ -123,11 +124,11 @@ namespace CO.IO {
                         m += "\nSteamPath=" + (SteamPath ?? "<null>");
                         m += "\nWorkshopContentPath=" + (WorkshopContentPath ?? "<null>");
 
-                        data ??= new CSCache();
-                        data.GamePath = GamePath;
-                        data.SteamPath = SteamPath;
-                        data.WorkShopContentPath = WorkshopContentPath;
-                        data.Serialize(LocalLOMData);
+                        csCache ??= new CSCache();
+                        csCache.GamePath = GamePath;
+                        csCache.SteamPath = SteamPath;
+                        csCache.WorkShopContentPath = WorkshopContentPath;
+                        csCache.Serialize(LocalLOMData);
                     } else {
                         Log.Info(m);
                         Process.GetCurrentProcess().Kill();
@@ -148,6 +149,7 @@ namespace CO.IO {
             } finally {
                 Log.Info(m);
                 VerifyPaths();
+                if (csCache != null) ValidatePathMatch(csCache: csCache);
                 Log.Debug($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
                 DataLocation.DisplayStatus();
             }
@@ -288,6 +290,23 @@ namespace CO.IO {
             }
         }
 
+        public static void ValidatePathMatch(CSCache csCache) {
+            foreach (var mod in csCache.ItemTable.Values.OfType<CSCache.Mod>()) {
+                string WSDirName = "255710";
+                int i = mod.IncludedPath.IndexOf(WSDirName);
+                if (i > 0) {
+                    string WSDirPath = mod.IncludedPath.Substring(0, i + WSDirName.Length);
+                    string m =
+                        $"tool uses '{WorkshopContentPath}'\n" +
+                        $"game uses '{WSDirPath}'";
+                    Log.Debug(m);
+                    if (WorkshopContentPath != WSDirPath) {
+                        new Exception($"Path mismatch! enabling/disabling may not work.\n" + m).Log();
+                    }
+                }
+            }
+        }
+
         public static bool VerifyPaths() {
             try {
                 bool good =
@@ -296,13 +315,12 @@ namespace CO.IO {
                     Util.IsSteamPath(SteamPath);
                 if (good)
                     return true;
-                MessageBox.Show("could not find paths\n" + PrintPaths()); ;
+                MessageBox.Show("could not find paths\n" + PrintPaths());
             } catch (Exception ex) {
                 MessageBox.Show("could not find paths\n" + PrintPaths()); ;
                 ex.Log();
             }
             return false;
-
         }
 
         public static string CitiesExe {

@@ -3,6 +3,8 @@ namespace LoadOrderShared {
     using System.Xml.Serialization;
     using System.Collections;
     using System.Linq;
+    using System.Collections.Generic;
+    using System;
 
     public class CSCache {
         public class Item {
@@ -33,13 +35,13 @@ namespace LoadOrderShared {
         /// </summary>
         public ulong[] MissingDir = new ulong[0];
 
-        internal Hashtable ItemTable = new Hashtable(100000);
+        internal Dictionary<string, Item> ItemTable = new (100000);
 
         public void AddItem(Item item) {
             ItemTable[item.IncludedPath] = item;
         }
 
-        public Item GetItem(string path) => ItemTable[path] as Item;
+        public Item GetItem(string path) => ItemTable.GetValueOrDefault(path) as Item;
 
         public void Serialize(string dir) {
             Mods = ItemTable.Values.OfType<Mod>().ToArray();
@@ -50,7 +52,6 @@ namespace LoadOrderShared {
                 ser.Serialize(fs, this, LoadOrderConfig.NoNamespaces);
             }
         }
-
         public static CSCache Deserialize(string dir) {
             try {
                 XmlSerializer ser = new XmlSerializer(typeof(CSCache));
