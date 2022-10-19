@@ -177,56 +177,58 @@ namespace CO {
         }
 
         private void Serialize(Stream stream) {
-            Dictionary<string, int> dictionary;
-            lock (this.m_SettingsIntValues) {
-                dictionary = new Dictionary<string, int>(this.m_SettingsIntValues);
-            }
-            Dictionary<string, bool> dictionary2;
-            lock (this.m_SettingsBoolValues) {
-                dictionary2 = new Dictionary<string, bool>(this.m_SettingsBoolValues);
-            }
-            Dictionary<string, float> dictionary3;
-            lock (this.m_SettingsFloatValues) {
-                dictionary3 = new Dictionary<string, float>(this.m_SettingsFloatValues);
-            }
-            Dictionary<string, string> dictionary4;
-            lock (this.m_SettingsStringValues) {
-                dictionary4 = new Dictionary<string, string>(this.m_SettingsStringValues);
-            }
-            Dictionary<string, InputKey> dictionary5;
-            lock (this.m_SettingsInputKeyValues) {
-                dictionary5 = new Dictionary<string, InputKey>(this.m_SettingsInputKeyValues);
-            }
-            using (BinaryWriter binaryWriter = new BinaryWriter(stream)) {
-                binaryWriter.Write(this.settingsIdentifier);
-                binaryWriter.Write(this.settingsVersion);
-                binaryWriter.Write(dictionary.Count);
-                foreach (KeyValuePair<string, int> keyValuePair in dictionary) {
-                    binaryWriter.Write(keyValuePair.Key);
-                    binaryWriter.Write(keyValuePair.Value);
+            try {
+                Dictionary<string, int> dictionary;
+                lock (this.m_SettingsIntValues) {
+                    dictionary = new Dictionary<string, int>(this.m_SettingsIntValues);
                 }
-                binaryWriter.Write(dictionary2.Count);
-                foreach (KeyValuePair<string, bool> keyValuePair2 in dictionary2) {
-                    binaryWriter.Write(keyValuePair2.Key);
-                    binaryWriter.Write(keyValuePair2.Value);
+                Dictionary<string, bool> dictionary2;
+                lock (this.m_SettingsBoolValues) {
+                    dictionary2 = new Dictionary<string, bool>(this.m_SettingsBoolValues);
                 }
-                binaryWriter.Write(dictionary3.Count);
-                foreach (KeyValuePair<string, float> keyValuePair3 in dictionary3) {
-                    binaryWriter.Write(keyValuePair3.Key);
-                    binaryWriter.Write(keyValuePair3.Value);
+                Dictionary<string, float> dictionary3;
+                lock (this.m_SettingsFloatValues) {
+                    dictionary3 = new Dictionary<string, float>(this.m_SettingsFloatValues);
                 }
-                binaryWriter.Write(dictionary4.Count);
-                foreach (KeyValuePair<string, string> keyValuePair4 in dictionary4) {
-                    binaryWriter.Write(keyValuePair4.Key);
-                    binaryWriter.Write(keyValuePair4.Value);
+                Dictionary<string, string> dictionary4;
+                lock (this.m_SettingsStringValues) {
+                    dictionary4 = new Dictionary<string, string>(this.m_SettingsStringValues);
                 }
-                binaryWriter.Write(dictionary5.Count);
-                foreach (KeyValuePair<string, InputKey> keyValuePair5 in dictionary5) {
-                    binaryWriter.Write(keyValuePair5.Key);
-                    binaryWriter.Write(keyValuePair5.Value);
+                Dictionary<string, InputKey> dictionary5;
+                lock (this.m_SettingsInputKeyValues) {
+                    dictionary5 = new Dictionary<string, InputKey>(this.m_SettingsInputKeyValues);
                 }
-                binaryWriter.Flush();
-            }
+                using (BinaryWriter binaryWriter = new BinaryWriter(stream)) {
+                    binaryWriter.Write(this.settingsIdentifier);
+                    binaryWriter.Write(this.settingsVersion);
+                    binaryWriter.Write(dictionary.Count);
+                    foreach (KeyValuePair<string, int> keyValuePair in dictionary) {
+                        binaryWriter.Write(keyValuePair.Key);
+                        binaryWriter.Write(keyValuePair.Value);
+                    }
+                    binaryWriter.Write(dictionary2.Count);
+                    foreach (KeyValuePair<string, bool> keyValuePair2 in dictionary2) {
+                        binaryWriter.Write(keyValuePair2.Key);
+                        binaryWriter.Write(keyValuePair2.Value);
+                    }
+                    binaryWriter.Write(dictionary3.Count);
+                    foreach (KeyValuePair<string, float> keyValuePair3 in dictionary3) {
+                        binaryWriter.Write(keyValuePair3.Key);
+                        binaryWriter.Write(keyValuePair3.Value);
+                    }
+                    binaryWriter.Write(dictionary4.Count);
+                    foreach (KeyValuePair<string, string> keyValuePair4 in dictionary4) {
+                        binaryWriter.Write(keyValuePair4.Key);
+                        binaryWriter.Write(keyValuePair4.Value);
+                    }
+                    binaryWriter.Write(dictionary5.Count);
+                    foreach (KeyValuePair<string, InputKey> keyValuePair5 in dictionary5) {
+                        binaryWriter.Write(keyValuePair5.Key);
+                        binaryWriter.Write(keyValuePair5.Value);
+                    }
+                    binaryWriter.Flush();
+                }
+            } catch(Exception ex) { ex.Log(); }
         }
 
         private bool ValidateID(char[] id) {
@@ -239,82 +241,91 @@ namespace CO {
         }
 
         private void Deserialize(Stream stream) {
-            using (BinaryReader binaryReader = new BinaryReader(stream)) {
-                if (this.ValidateID(binaryReader.ReadChars(4))) {
-                    this.m_Version = binaryReader.ReadUInt16();
-                    if (this.m_Version < 2) {
-                        throw new GameHandledException("Setting file '" + this.fileName + "' version is incompatible. The internal format of settings files has changed and your settings will be reset.");
-                    }
-                    lock (this.m_SettingsIntValues) {
-                        this.m_SettingsIntValues.Clear();
-                        int num = binaryReader.ReadInt32();
-                        for (int i = 0; i < num; i++) {
-                            string key = binaryReader.ReadString();
-                            int value = binaryReader.ReadInt32();
-                            this.m_SettingsIntValues.Add(key, value);
+            try {
+                using (BinaryReader binaryReader = new BinaryReader(stream)) {
+                    if (this.ValidateID(binaryReader.ReadChars(4))) {
+                        this.m_Version = binaryReader.ReadUInt16();
+                        if (this.m_Version < 2) {
+                            throw new GameHandledException("Setting file '" + this.fileName + "' version is incompatible. The internal format of settings files has changed and your settings will be reset.");
                         }
-                    }
-                    lock (this.m_SettingsBoolValues) {
-                        this.m_SettingsBoolValues.Clear();
-                        int num2 = binaryReader.ReadInt32();
-                        for (int j = 0; j < num2; j++) {
-                            string key2 = binaryReader.ReadString();
-                            bool value2 = binaryReader.ReadBoolean();
-                            this.m_SettingsBoolValues.Add(key2, value2);
+                        lock (this.m_SettingsIntValues) {
+                            this.m_SettingsIntValues.Clear();
+                            int num = binaryReader.ReadInt32();
+                            for (int i = 0; i < num; i++) {
+                                string key = binaryReader.ReadString();
+                                int value = binaryReader.ReadInt32();
+                                this.m_SettingsIntValues.Add(key, value);
+                            }
                         }
-                    }
-                    lock (this.m_SettingsFloatValues) {
-                        this.m_SettingsFloatValues.Clear();
-                        int num3 = binaryReader.ReadInt32();
-                        for (int k = 0; k < num3; k++) {
-                            string key3 = binaryReader.ReadString();
-                            float value3 = binaryReader.ReadSingle();
-                            this.m_SettingsFloatValues.Add(key3, value3);
+                        lock (this.m_SettingsBoolValues) {
+                            this.m_SettingsBoolValues.Clear();
+                            int num2 = binaryReader.ReadInt32();
+                            for (int j = 0; j < num2; j++) {
+                                string key2 = binaryReader.ReadString();
+                                bool value2 = binaryReader.ReadBoolean();
+                                this.m_SettingsBoolValues.Add(key2, value2);
+                            }
                         }
-                    }
-                    lock (this.m_SettingsStringValues) {
-                        this.m_SettingsStringValues.Clear();
-                        int num4 = binaryReader.ReadInt32();
-                        for (int l = 0; l < num4; l++) {
-                            string key4 = binaryReader.ReadString();
-                            string value4 = binaryReader.ReadString();
-                            this.m_SettingsStringValues.Add(key4, value4);
+                        lock (this.m_SettingsFloatValues) {
+                            this.m_SettingsFloatValues.Clear();
+                            int num3 = binaryReader.ReadInt32();
+                            for (int k = 0; k < num3; k++) {
+                                string key3 = binaryReader.ReadString();
+                                float value3 = binaryReader.ReadSingle();
+                                this.m_SettingsFloatValues.Add(key3, value3);
+                            }
                         }
-                    }
-                    lock (this.m_SettingsInputKeyValues) {
-                        this.m_SettingsInputKeyValues.Clear();
-                        int num5 = binaryReader.ReadInt32();
-                        for (int m = 0; m < num5; m++) {
-                            string key5 = binaryReader.ReadString();
-                            InputKey value5 = binaryReader.ReadInt32();
-                            this.m_SettingsInputKeyValues.Add(key5, value5);
+                        lock (this.m_SettingsStringValues) {
+                            this.m_SettingsStringValues.Clear();
+                            int num4 = binaryReader.ReadInt32();
+                            for (int l = 0; l < num4; l++) {
+                                string key4 = binaryReader.ReadString();
+                                string value4 = binaryReader.ReadString();
+                                this.m_SettingsStringValues.Add(key4, value4);
+                            }
                         }
+                        lock (this.m_SettingsInputKeyValues) {
+                            this.m_SettingsInputKeyValues.Clear();
+                            int num5 = binaryReader.ReadInt32();
+                            for (int m = 0; m < num5; m++) {
+                                string key5 = binaryReader.ReadString();
+                                InputKey value5 = binaryReader.ReadInt32();
+                                this.m_SettingsInputKeyValues.Add(key5, value5);
+                            }
+                        }
+                        return;
                     }
-                    return;
+                    throw new GameHandledException("Setting file '" + this.fileName + "' header mismatch. The internal format of settings files has changed.");
                 }
-                throw new GameHandledException("Setting file '" + this.fileName + "' header mismatch. The internal format of settings files has changed and your settings will be reset.");
-            }
+            } catch (Exception ex) { ex.Log(); }
         }
 
         internal void Load() {
-            if (this.IsValid()) {
-                Log.Info("Loading " + this.m_PathName);
-                using (Stream stream = this.CreateReadStream()) {
-                    this.Deserialize(stream);
+            try {
+                if (this.IsValid()) {
+                    Log.Info("Loading " + this.m_PathName);
+                    Log.Debug(Environment.StackTrace);
+                    using (Stream stream = this.CreateReadStream()) {
+                        this.Deserialize(stream);
+                        Log.Info(message: "Loaded " + this.m_PathName);
+                    }
                 }
-            }
+            } catch (Exception ex) { ex.Log(); }
         }
 
         internal void Save() {
-            if (!this.dontSave && !string.IsNullOrEmpty(this.pathName)) {
-                lock (this.m_Saving) {
-                    using (Stream stream = this.CreateWriteStream()) {
-                        this.Serialize(stream);
+            try {
+                if (!this.dontSave && !string.IsNullOrEmpty(this.pathName)) {
+                    Log.Info(message: "Saving " + this.m_PathName);
+                    lock (this.m_Saving) {
+                        using (Stream stream = this.CreateWriteStream()) {
+                            this.Serialize(stream);
+                            Log.Info(message: "Saved " + this.m_PathName);
+                        }
                     }
+                    this.m_IsDirty = false;
                 }
-                this.m_IsDirty = false;
-                Log.Info("Saving " + this.m_PathName);
-            }
+            }catch(Exception ex) { ex.Log(); }
         }
 
         public void MarkDirty() {
@@ -381,13 +392,7 @@ namespace CO {
         internal void SetValue(string name, bool val) {
             bool flag;
             if (!this.m_SettingsBoolValues.TryGetValue(name, out flag) || flag != val) {
-                Log.Debug(string.Concat(new object[]
-                {
-                                        "Setting ",
-                                        name,
-                                        " updated to ",
-                                        val
-                }));
+                Log.Debug("Setting " + name + " updated to " + val);
                 this.m_SettingsBoolValues[name] = val;
                 this.MarkDirty();
             }
@@ -405,13 +410,7 @@ namespace CO {
         internal void SetValue(string name, int val) {
             int num;
             if (!this.m_SettingsIntValues.TryGetValue(name, out num) || num != val) {
-                Log.Debug(string.Concat(new object[]
-                {
-                                        "Setting ",
-                                        name,
-                                        " updated to ",
-                                        val
-                }));
+                Log.Debug("Setting " + name + " updated to " + val);
                 this.m_SettingsIntValues[name] = val;
                 this.MarkDirty();
             }
@@ -429,13 +428,7 @@ namespace CO {
         internal void SetValue(string name, InputKey val) {
             InputKey value;
             if (!this.m_SettingsInputKeyValues.TryGetValue(name, out value) || value != val) {
-                Log.Debug(string.Concat(new object[]
-                {
-                                        "Setting ",
-                                        name,
-                                        " updated to ",
-                                        val
-                }));
+                Log.Debug("Setting " + name + " updated to " + val);
                 this.m_SettingsInputKeyValues[name] = val;
                 this.MarkDirty();
             }
@@ -453,13 +446,7 @@ namespace CO {
         internal void SetValue(string name, float val) {
             if (!this.m_SettingsFloatValues.TryGetValue(name, out _) ||
                     Math.Abs(m_SettingsFloatValues[name] - val) > float.Epsilon) {
-                Log.Debug(string.Concat(new object[]
-                {
-                                        "Setting ",
-                                        name,
-                                        " updated to ",
-                                        val
-                }));
+                Log.Debug("Setting " + name + " updated to " + val);
                 this.m_SettingsFloatValues[name] = val;
                 this.MarkDirty();
             }

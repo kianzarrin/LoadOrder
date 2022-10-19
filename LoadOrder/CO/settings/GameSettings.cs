@@ -1,4 +1,5 @@
 using LoadOrderTool;
+using LoadOrderTool.Util;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -27,6 +28,7 @@ namespace CO {
                     try {
                         settingsFiles[i].Load();
                         this.m_SettingsFiles.Add(settingsFiles[i].fileName, settingsFiles[i]);
+                        Log.Debug("Settings file added. settings files are :" + m_SettingsFiles.Keys.ToSTR());
                     } catch (Exception ex) {
                         new Exception($"could not load {settingsFiles[i]} (maybe try launching CS?)",ex).Log();
                     }

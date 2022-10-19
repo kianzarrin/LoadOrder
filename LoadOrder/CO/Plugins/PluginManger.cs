@@ -501,12 +501,12 @@ namespace CO.Plugins {
         public void Load() => LoadPlugins().Wait();
         public async Task LoadPlugins() {
             Log.Info("Loading Plugins ...", true);
+            Log.Debug(Environment.StackTrace);
             IsLoading = true;
             IsLoaded = false;
 
 
             try {
-                Log.Info("Loading Plugins ...", true);
                 IsLoading = true;
                 IsLoaded = false;
 
