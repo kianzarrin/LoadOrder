@@ -82,6 +82,7 @@ namespace CO {
 
         private static void MonitorSave() {
             try {
+                Log.Info("GameSettings Monitor Started...");
                 while (GameSettings.m_Run) {
                     GameSettings.SaveAll();
                     lock (GameSettings.m_LockObject) {
@@ -96,12 +97,16 @@ namespace CO {
         }
 
         public GameSettings() {
-            Log.Info("GameSettings Monitor Started...");
-            GameSettings.m_SaveThread = new Thread(new ThreadStart(GameSettings.MonitorSave));
-            GameSettings.m_SaveThread.Name = "SaveSettingsThread";
-            GameSettings.m_SaveThread.IsBackground = true;
-            GameSettings.m_Run = true;
-            GameSettings.m_SaveThread.Start();
+            try {
+                sInstance = this;
+                Log.Info("Creating GameSettings Monitor ...");
+                Log.Debug(Environment.StackTrace);
+                GameSettings.m_SaveThread = new Thread(new ThreadStart(GameSettings.MonitorSave));
+                GameSettings.m_SaveThread.Name = "SaveSettingsThread";
+                GameSettings.m_SaveThread.IsBackground = true;
+                GameSettings.m_Run = true;
+                GameSettings.m_SaveThread.Start();
+            } catch (Exception ex) { ex.Log(); }
         }
 
         ~GameSettings() => Terminate();
