@@ -9,6 +9,7 @@ namespace LoadOrderTool.Data {
     using LoadOrderTool.UI;
     using LoadOrderShared;
     using LoadOrderTool.Util;
+    using System.IO;
 
     public class ConfigWrapper : SingletonLite<ConfigWrapper> {
         public LoadOrderConfig Config;
@@ -53,7 +54,7 @@ namespace LoadOrderTool.Data {
             Log.Info("LoadOrderConfig terminated");
         }
 
-        public bool AutoSave {
+        public bool AutoSync {
             get {
                 if(m_SaveThread == null)
                     return false; // command line
@@ -97,7 +98,7 @@ namespace LoadOrderTool.Data {
         }
 
         public void ResetAllConfig() {
-            AutoSave = false;
+            AutoSync = false;
 
             Config = new LoadOrderConfig {
                 WorkShopContentPath = DataLocation.WorkshopContentPath,
@@ -123,9 +124,8 @@ namespace LoadOrderTool.Data {
             LoadOrderToolSettings.Instace.Serialize();
             
             Dirty = false;
-            AutoSave = LoadOrderToolSettings.Instace.AutoSave;
+            AutoSync = LoadOrderToolSettings.Instace.AutoSave;
         }
-
 
         public void ReloadAllConfig() {
             try {
@@ -136,14 +136,55 @@ namespace LoadOrderTool.Data {
                     ?? new LoadOrderConfig();
                 ReloadCSCache();
                 LSMConfig = LoadingScreenMod.Settings.Deserialize();
+                PluginManager.instance.ModStateSettingsFile.Load(); // deserialize
                 Log.Succeeded();
+                OnSynched();
             } catch(Exception ex) {
                 ex.Log();
             }
         }
 
+        DateTime LastSynched = DateTime.MinValue;
+        public void OnSynched() => LastSynched = DateTime.UtcNow;
+
+        public void ReloadIfNewer() {
+            try {
+                Assertion.Assert(Paused, "pause config before doing this");
+                string dir = DataLocation.LocalLOMData;
+                DateTime maxUTC = DateTime.MinValue;
+
+                DateTime utc = File.GetLastWriteTimeUtc(Path.Combine(DataLocation.LocalLOMData, LoadOrderConfig.FILE_NAME));
+                if (utc > maxUTC) maxUTC = utc;
+
+                utc = File.GetLastWriteTimeUtc(Path.Combine(DataLocation.LocalLOMData, CSCache.FILE_NAME));
+                if (utc > maxUTC) maxUTC = utc;
+
+                utc = PluginManager.instance?.ModStateSettingsFile?.GetLastWriteTimeUtc() ?? default;
+                if (utc > maxUTC) maxUTC = utc;
+
+                utc = File.GetLastWriteTimeUtc(LoadingScreenMod.Settings.FILE_PATH);
+                if (utc > maxUTC) maxUTC = utc;
+
+                if(utc > LastSynched) {
+                    Paused = true;
+                    ReloadAllConfig();
+
+                    ManagerList.instance?.ReloadConfig();
+                    LoadOrderWindow.Instance?.launchControl?.LoadSettings();
+
+                    Dirty = false;
+                    Paused = false;
+                    LoadOrderWindow.Instance?.RefreshAll();
+                }
+
+                Log.Succeeded();
+            } catch (Exception ex) {
+                ex.Log();
+            }
+        }
+
         public void SaveConfig() {
-            if (!AutoSave) {
+            if (!AutoSync) {
                 SaveConfigImpl();
             } else if (Thread.CurrentThread != m_SaveThread) {
                 Dirty = true;
@@ -157,6 +198,7 @@ namespace LoadOrderTool.Data {
             Config.Serialize(DataLocation.LocalLOMData);
             SteamCache.Serialize();
             LSMConfig = LSMConfig.SyncAndSerialize();
+            OnSynched();
             Log.Info($"SaveConfigImpl() done. (Dirty={Dirty})");
         }
 
@@ -171,8 +213,14 @@ namespace LoadOrderTool.Data {
         private void MonitorSave() {
             try {
                 while (m_Run) {
-                    if (AutoSave && Dirty)
-                        SaveConfigImpl();
+                    if(AutoSync) {
+                        if (Dirty) {
+                            SaveConfigImpl();
+                        } else {
+                            ReloadIfNewer();
+                        }
+                    }
+
                     lock (m_LockObject)
                         Monitor.Wait(m_LockObject, 100);
                     while (m_Run && Paused) {

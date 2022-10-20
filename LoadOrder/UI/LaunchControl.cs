@@ -327,7 +327,7 @@ namespace LoadOrderTool.UI {
         private void Launch() {
             UpdateFiles(); // auto disabling FPS booster causes unsaved changes so this comes first.
 
-            if (!ConfigWrapper.AutoSave && ConfigWrapper.Dirty) {
+            if (!ConfigWrapper.AutoSync && ConfigWrapper.Dirty) {
                 var result = MessageBox.Show(
                     caption: "Unsaved changes",
                     text:

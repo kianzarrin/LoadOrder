@@ -88,7 +88,7 @@ namespace LoadOrderTool.UI {
         public async Task LoadAsync() {
             loading_ = true;
             try {
-                menuStrip.tsmiAutoSave.Checked = ConfigWrapper.AutoSave;
+                menuStrip.tsmiAutoSave.Checked = ConfigWrapper.AutoSync;
 
                 await Task.Run(ContentUtil.EnsureSubscribedItems);
                 var modTask = InitializeModTab();
@@ -148,7 +148,7 @@ namespace LoadOrderTool.UI {
         }
 
         private void LoadOrderWindow_FormClosing(object sender, FormClosingEventArgs e) {
-            if (!ConfigWrapper.AutoSave && ConfigWrapper.Dirty) {
+            if (!ConfigWrapper.AutoSync && ConfigWrapper.Dirty) {
                 var result = MessageBox.Show(
                     caption: "Unsaved changes",
                     text:
@@ -200,7 +200,7 @@ namespace LoadOrderTool.UI {
             }
         }
         private void TsmiAutoSave_CheckedChanged(object sender, EventArgs e) {
-            ConfigWrapper.AutoSave = menuStrip.tsmiAutoSave.Checked;
+            ConfigWrapper.AutoSync = menuStrip.tsmiAutoSave.Checked;
         }
 
         private void TsmiAutoSave_Click(object sender, EventArgs e) =>
@@ -277,7 +277,7 @@ namespace LoadOrderTool.UI {
 
         private void TsmiReloadSettings_Click(object sender, EventArgs e) {
             if(Dirty) {
-                if(ConfigWrapper.AutoSave) { 
+                if(ConfigWrapper.AutoSync) { 
                     ConfigWrapper.SaveConfig();
                 } else {
                     var res = MessageBox.Show(

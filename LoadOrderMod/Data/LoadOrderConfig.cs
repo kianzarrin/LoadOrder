@@ -1,4 +1,5 @@
 namespace LoadOrderShared {
+    using System;
     using System.IO;
     using System.Xml.Serialization;
     public class ItemInfo {
@@ -58,7 +59,8 @@ namespace LoadOrderShared {
             try {
                 XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));
                 if(!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-                using(FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Open, FileAccess.Read)) {
+                string filePath = Path.Combine(dir, FILE_NAME);
+                using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Open, FileAccess.Read)) {
                     return ser.Deserialize(fs) as LoadOrderConfig;
                 }
             }

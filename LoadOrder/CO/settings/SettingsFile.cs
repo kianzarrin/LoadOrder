@@ -108,6 +108,10 @@ namespace CO {
         //	}
         //}
 
+        internal DateTime GetLastWriteTimeUtc() {
+            return File.GetLastWriteTimeUtc(m_PathName);
+        }
+
         internal Stream CreateReadStream() {
             //if (this.m_UseCloud)
             //{
@@ -305,9 +309,11 @@ namespace CO {
                 if (this.IsValid()) {
                     Log.Info("Loading " + this.m_PathName);
                     Log.Debug(Environment.StackTrace);
-                    using (Stream stream = this.CreateReadStream()) {
-                        this.Deserialize(stream);
-                        Log.Info(message: "Loaded " + this.m_PathName);
+                    lock (this.m_Saving) {
+                        using (Stream stream = this.CreateReadStream()) {
+                            this.Deserialize(stream);
+                            Log.Info(message: "Loaded " + this.m_PathName);
+                        }
                     }
                 }
             } catch (Exception ex) { ex.Log(); }

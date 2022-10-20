@@ -355,7 +355,7 @@ namespace CO.Plugins {
             }
             public string savedEnabledKey_ =>
                 name + GetLegacyHashCode(IncludedPath).ToString() + ".enabled";
-            public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, assetStateSettingsFile, def: false, autoUpdate: true);
+            public SavedBool SavedEnabled => new SavedBool(savedEnabledKey_, modStateSettingsFileName, def: false, autoUpdate: true);
             public bool isEnabled {
                 get => SavedEnabled.value;
                 set => SavedEnabled.value = isEnabledPending_ = value;
@@ -475,7 +475,7 @@ namespace CO.Plugins {
         private List<PluginInfo> m_Plugins = new List<PluginInfo>();
 
 
-        public static string assetStateSettingsFile => "userGameState";
+        public static string modStateSettingsFileName => "userGameState";
 
         //public static Type userModType => Type.GetType("ICities.IUserMod, ICities");
         public const string kUserMod = "ICities.IUserMod";
@@ -490,6 +490,7 @@ namespace CO.Plugins {
 
         public event PluginManager.PluginsChangedHandler eventPluginsStateChanged;
 
+        public SettingsFile ModStateSettingsFile => GameSettings.FindSettingsFileByName(modStateSettingsFileName);
         public IEnumerable<PluginInfo> GetMods() =>
             m_Plugins.Where(p => p.HasUserMod).ToArray(); // convert to array to avoid race conditions
 

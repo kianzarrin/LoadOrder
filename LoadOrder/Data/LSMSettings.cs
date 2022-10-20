@@ -13,7 +13,7 @@ namespace LoadingScreenMod {
     [XmlRoot("LoadingScreenModRevisited")]
     public class Settings {
         const string FILE_NAME = "LoadingScreenModRevisited.xml";
-        static string FILE_PATH => Path.Combine(DataLocation.localApplicationData, FILE_NAME);
+        internal static string FILE_PATH => Path.Combine(DataLocation.localApplicationData, FILE_NAME);
 
         public static string DefaultSkipPath => Path.Combine(DataLocation.mapLocation, "SkippedPrefabs");
         public static string DefaultSkipFile => Path.Combine(DefaultSkipPath, "skip.txt");
