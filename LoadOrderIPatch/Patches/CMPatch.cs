@@ -34,16 +34,16 @@ namespace LoadOrderIPatch.Patches {
             if (noReporters)
                 NoReportersPatch(assemblyDefinition);
 
-            if (!poke && Config.SoftDLLDependancy) {
-                FindAssemblySoftPatch(assemblyDefinition);
-            }
+            //if (!poke && Config.SoftDLLDependancy) {
+            //    FindAssemblySoftPatch(assemblyDefinition);
+            //}
 
             LoadAssembliesROPatch(assemblyDefinition);
 
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
             //assemblyDefinition = LoadPluginsPatch(assemblyDefinition); // its loaded in ASCPatch.LoadDLL() instead
-            AddAssemlyPatch(assemblyDefinition);
-            assemblyDefinition = AddPluginsPatch(assemblyDefinition);
+            //AddAssemlyPatch(assemblyDefinition); 
+            // assemblyDefinition = AddPluginsPatch(assemblyDefinition); // changed
 #if DEBUG
             //assemblyDefinition = InsertPrintStackTrace(assemblyDefinition);
 #endif
@@ -249,6 +249,7 @@ namespace LoadOrderIPatch.Patches {
             Log.Successful();
         }
 
+        [Obsolete("incompatible with keksi", true)]
         public void AddAssemlyPatch(AssemblyDefinition CM) {
             Log.StartPatching();
             var module = CM.MainModule;
@@ -366,7 +367,8 @@ namespace LoadOrderIPatch.Patches {
         }
 
         /// <summary>
-        /// moved folder to _folder if necessary before calling getfiles.
+        /// if excluded mod is updated then we have both 'folder' and '_folder'.
+        /// this patch moves 'folder' to '_folder'
         /// </summary>
         public void EnsureIncludedExcludedPackagePatch(AssemblyDefinition CM) {
             Log.StartPatching();

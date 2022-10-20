@@ -1,4 +1,7 @@
-fix deserializing list of types in hot reload.
+keksi:
+    - mod instantiate enable/disable logs should move
+
+
 
 ------------------------------------------
 - IMT like supports tab (including log file option)
