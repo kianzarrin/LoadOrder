@@ -41,7 +41,12 @@ namespace LoadOrderShared {
             ItemTable[item.IncludedPath] = item;
         }
 
-        public Item GetItem(string path) => ItemTable.GetValueOrDefault(path) as Item;
+        public Item GetItem(string path) {
+            if (ItemTable.TryGetValue(path, out var ret))
+                return ret;
+            else
+                return null;
+        }
 
         public void Serialize(string dir) {
             Mods = ItemTable.Values.OfType<Mod>().ToArray();
