@@ -8,7 +8,7 @@ namespace LoadOrderTool {
         public int FormWidth = -1;
         public int FormHeight = -1;
 
-        public bool AutoSave = true;
+        public bool AutoSync = true;
         public bool Advanced = false;
         public string SavedGamePath, MapPath;
 

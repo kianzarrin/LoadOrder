@@ -88,7 +88,7 @@ namespace LoadOrderTool.UI {
         public async Task LoadAsync() {
             loading_ = true;
             try {
-                menuStrip.tsmiAutoSave.Checked = ConfigWrapper.AutoSync;
+                menuStrip.tsmiAutoSync.Checked = ConfigWrapper.AutoSync;
 
                 await Task.Run(ContentUtil.EnsureSubscribedItems);
                 var modTask = InitializeModTab();
@@ -98,8 +98,8 @@ namespace LoadOrderTool.UI {
 
                 UpdateStatus();
 
-                menuStrip.tsmiAutoSave.CheckedChanged += TsmiAutoSave_CheckedChanged;
-                menuStrip.tsmiAutoSave.Click += TsmiAutoSave_Click;
+                menuStrip.tsmiAutoSync.CheckedChanged += TsmiAutoSync_CheckedChanged;
+                menuStrip.tsmiAutoSync.Click += TsmiAutoSync_Click;
 
                 menuStrip.tsmiReloadUGC.Click += ReloadAll_Click;
                 menuStrip.tsmiResetCache.Click += TsmiResetCache_Click;
@@ -199,11 +199,11 @@ namespace LoadOrderTool.UI {
                 ConfigWrapper.instance.SaveConfig();
             }
         }
-        private void TsmiAutoSave_CheckedChanged(object sender, EventArgs e) {
-            ConfigWrapper.AutoSync = menuStrip.tsmiAutoSave.Checked;
+        private void TsmiAutoSync_CheckedChanged(object sender, EventArgs e) {
+            ConfigWrapper.AutoSync = menuStrip.tsmiAutoSync.Checked;
         }
 
-        private void TsmiAutoSave_Click(object sender, EventArgs e) =>
+        private void TsmiAutoSync_Click(object sender, EventArgs e) =>
             menuStrip.tsmiFile.ShowDropDown(); // prevent hiding menu when clicking auto-save
 
         public void UpdateLastProfileName(string fullPath) {

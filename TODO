@@ -1,5 +1,3 @@
-fix deserializing list of types in hot reload.
-
 ------------------------------------------
 - IMT like supports tab (including log file option)
 - bug[?]: if I build a new mod, and then press reload in tool, the enable is not always accurate.

@@ -40,6 +40,8 @@ namespace LoadOrderTool.Data {
             SteamCache = SteamCache.Deserialize() ?? new SteamCache();
             ReloadCSCache();
             LSMConfig = LoadingScreenMod.Settings.Deserialize();
+            Dirty = false;
+            OnSynched();
             Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
             if(!CommandLine.Parse.CommandLine)
                 StartSaveThread();
@@ -59,13 +61,16 @@ namespace LoadOrderTool.Data {
                 if(m_SaveThread == null)
                     return false; // command line
                 else
-                    return LoadOrderToolSettings.Instace.AutoSave;
+                    return LoadOrderToolSettings.Instace.AutoSync;
             }
             set {
-                LoadOrderToolSettings.Instace.AutoSave = value;
-                LoadOrderToolSettings.Instace.Serialize();
-                if(LoadOrderWindow.Instance != null)
-                    LoadOrderWindow.Instance.menuStrip.tsmiAutoSave.Checked = value;
+                if (value != LoadOrderToolSettings.Instace.AutoSync) {
+                    LoadOrderToolSettings.Instace.AutoSync = value;
+                    LoadOrderToolSettings.Instace.Serialize();
+                }
+                if (LoadOrderWindow.Instance != null) {
+                    LoadOrderWindow.Instance.menuStrip.tsmiAutoSync.Checked = value;
+                }
             }
         }
 
@@ -124,7 +129,7 @@ namespace LoadOrderTool.Data {
             LoadOrderToolSettings.Instace.Serialize();
             
             Dirty = false;
-            AutoSync = LoadOrderToolSettings.Instace.AutoSave;
+            AutoSync = LoadOrderToolSettings.Instace.AutoSync;
         }
 
         public void ReloadAllConfig() {
@@ -150,13 +155,9 @@ namespace LoadOrderTool.Data {
         public void ReloadIfNewer() {
             try {
                 Assertion.Assert(Paused, "pause config before doing this");
-                string dir = DataLocation.LocalLOMData;
-                DateTime maxUTC = DateTime.MinValue;
+                DateTime maxUTC = File.GetLastWriteTimeUtc(Path.Combine(DataLocation.LocalLOMData, LoadOrderConfig.FILE_NAME));
 
-                DateTime utc = File.GetLastWriteTimeUtc(Path.Combine(DataLocation.LocalLOMData, LoadOrderConfig.FILE_NAME));
-                if (utc > maxUTC) maxUTC = utc;
-
-                utc = File.GetLastWriteTimeUtc(Path.Combine(DataLocation.LocalLOMData, CSCache.FILE_NAME));
+                DateTime utc = File.GetLastWriteTimeUtc(Path.Combine(DataLocation.LocalLOMData, CSCache.FILE_NAME));
                 if (utc > maxUTC) maxUTC = utc;
 
                 utc = PluginManager.instance?.ModStateSettingsFile?.GetLastWriteTimeUtc() ?? default;

@@ -12,7 +12,7 @@ namespace LoadOrderTool.UI {
         public ToolStripMenuItem tsmiSave;
         public ToolStripMenuItem tsmiExport;
         public ToolStripMenuItem tsmiImport;
-        public ToolStripMenuItem tsmiAutoSave;
+        public ToolStripMenuItem tsmiAutoSync;
         public ToolStripMenuItem tsmiOrder;
         public ToolStripMenuItem tsmiResetOrder;
         public ToolStripMenuItem tsmiHarmonyOrder;
@@ -41,7 +41,7 @@ namespace LoadOrderTool.UI {
             tsmiFile = new ToolStripMenuItem();
             tsmiReloadUGC = new ToolStripMenuItem();
             tsmiSave = new ToolStripMenuItem();
-            tsmiAutoSave = new ToolStripMenuItem();
+            tsmiAutoSync = new ToolStripMenuItem();
             tsmiExport = new ToolStripMenuItem();
             tsmiImport = new ToolStripMenuItem();
             tsmiOrder = new ToolStripMenuItem();// no need to move if ensuring move the directory for us.
@@ -82,7 +82,7 @@ namespace LoadOrderTool.UI {
             tsmiFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 tsmiReloadSettings,
                 tsmiSave,
-                tsmiAutoSave,
+                tsmiAutoSync,
                 new ToolStripSeparator(),
                 tsmiReloadUGC,
                 toolStripSeparator1,
@@ -105,12 +105,12 @@ namespace LoadOrderTool.UI {
             tsmiSave.ToolTipText = "Save settings to game";
             tsmiSave.Image = ResourceUtil.GetImage("arrow-right.png");
             // 
-            // tsmiAutoSave
+            // tsmiAutoSync
             // 
-            tsmiAutoSave.CheckOnClick = true;
-            tsmiAutoSave.Name = "tsmiAutoSave";
-            tsmiAutoSave.Size = new Size(147, 22);
-            tsmiAutoSave.Text = "&Auto-save";
+            tsmiAutoSync.CheckOnClick = true;
+            tsmiAutoSync.Name = "tsmiAutoSync";
+            tsmiAutoSync.Size = new Size(147, 22);
+            tsmiAutoSync.Text = "&Auto-sync";
             // 
             // tsmiExport
             // 
