@@ -1,10 +1,7 @@
 namespace LoadOrderShared {
     using System.IO;
-    using System.Xml.Serialization;
-    using System.Collections;
     using System.Linq;
     using System.Collections.Generic;
-    using System;
 
     public class CSCache {
         public class Item {
@@ -48,27 +45,22 @@ namespace LoadOrderShared {
                 return null;
         }
 
-        public void Serialize(string dir) {
+        public static string FilePath => Path.Combine(SharedUtil.LocalLOMData, FILE_NAME);
+
+        public void Serialize() {
             Mods = ItemTable.Values.OfType<Mod>().ToArray();
             Assets = ItemTable.Values.OfType<Asset>().ToArray();
-            XmlSerializer ser = new XmlSerializer(typeof(CSCache));
-            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-            using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Create, FileAccess.Write)) {
-                ser.Serialize(fs, this, LoadOrderConfig.NoNamespaces);
-            }
+            SharedUtil.Serialize(this, FilePath);
         }
-        public static CSCache Deserialize(string dir) {
+
+        public static CSCache Deserialize() {
             try {
-                XmlSerializer ser = new XmlSerializer(typeof(CSCache));
-                using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Open, FileAccess.Read)) {
-                    var ret = ser.Deserialize(fs) as CSCache;
-                    foreach (var item in ret.Mods) ret.ItemTable[item.IncludedPath] = item;
-                    foreach (var item in ret.Assets) ret.ItemTable[item.IncludedPath] = item;
-                    return ret;
-                }
-            } catch {
-                return null;
-            }
+                var ret =  SharedUtil.Deserialize<CSCache>(FilePath);
+                foreach (var item in ret.Mods) ret.ItemTable[item.IncludedPath] = item;
+                foreach (var item in ret.Assets) ret.ItemTable[item.IncludedPath] = item;
+                return ret;
+            } catch { }
+            return null;
         }
     }
 }

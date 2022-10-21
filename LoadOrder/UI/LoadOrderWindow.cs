@@ -298,7 +298,7 @@ namespace LoadOrderTool.UI {
 
             ConfigWrapper.Dirty = false;
             ConfigWrapper.Paused = false;
-            RefreshAll();
+            ReloadAllTabs();
         }
 
         private async void TsmiResetCache_Click(object sender, EventArgs e) => await ResetCache();
@@ -762,6 +762,14 @@ namespace LoadOrderTool.UI {
             dataGridAssets.Refresh();
             UpdateStatus();
         }
+        public void ReloadAllTabs() {
+            Log.Called();
+            dataGridMods.RefreshModList(true);
+            PopulateAssets();
+            DLCControl.PopulateDLCs();
+            LSMControl.Populate();
+        }
+
 
         public async Task ReloadAll() {
             try {

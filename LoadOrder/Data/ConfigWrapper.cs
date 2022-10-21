@@ -35,7 +35,7 @@ namespace LoadOrderTool.Data {
         public override void Awake() {
             base.Awake();
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            Config = LoadOrderConfig.Deserialize(DataLocation.LocalLOMData)
+            Config = LoadOrderConfig.Deserialize()
                 ?? new LoadOrderConfig();
             SteamCache = SteamCache.Deserialize() ?? new SteamCache();
             ReloadCSCache();
@@ -44,7 +44,7 @@ namespace LoadOrderTool.Data {
             OnSynched();
             Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
             if(!CommandLine.Parse.CommandLine)
-                StartSaveThread();
+                StartSyncThread();
         }
 
         ~ConfigWrapper() => Terminate();
@@ -92,14 +92,14 @@ namespace LoadOrderTool.Data {
         public void Suspend() => Paused = true;
         public void Resume() => Paused = false;
 
-        public void ReloadCSCache() => CSCache = CSCache.Deserialize(DataLocation.LocalLOMData) ?? new CSCache();
+        public void ReloadCSCache() => CSCache = CSCache.Deserialize() ?? new CSCache();
         public void ResetCSCache() {
             CSCache = new CSCache() {
                 WorkShopContentPath = CSCache?.WorkShopContentPath,
                 SteamPath = CSCache?.SteamPath,
                 GamePath = CSCache?.GamePath,
             };
-            CSCache.Serialize(DataLocation.LocalLOMData);
+            CSCache.Serialize();
         }
 
         public void ResetAllConfig() {
@@ -110,7 +110,7 @@ namespace LoadOrderTool.Data {
                 GamePath = DataLocation.GamePath,
                 SteamPath = DataLocation.SteamPath,
             };
-            Config.Serialize(DataLocation.LocalLOMData);
+            Config.Serialize();
 
             ResetCSCache();
             SteamCache = new SteamCache();
@@ -137,10 +137,11 @@ namespace LoadOrderTool.Data {
                 Log.Called();
                 Assertion.Assert(Paused, "pause config before doing this");
                 Dirty = false;
-                Config = LoadOrderConfig.Deserialize(DataLocation.LocalLOMData)
+                Config = LoadOrderConfig.Deserialize()
                     ?? new LoadOrderConfig();
                 ReloadCSCache();
                 LSMConfig = LoadingScreenMod.Settings.Deserialize();
+                Log.Debug($"LSMConfig.loadEnabled={LSMConfig.loadEnabled}");
                 PluginManager.instance.ModStateSettingsFile.Load(); // deserialize
                 Log.Succeeded();
                 OnSynched();
@@ -150,7 +151,10 @@ namespace LoadOrderTool.Data {
         }
 
         DateTime LastSynched = DateTime.MinValue;
-        public void OnSynched() => LastSynched = DateTime.UtcNow;
+        public void OnSynched() {
+            Log.Called($"LastSynched: {LastSynched}->{DateTime.UtcNow}");
+            LastSynched = DateTime.UtcNow;
+        }
 
         public void ReloadIfNewer() {
             try {
@@ -163,9 +167,13 @@ namespace LoadOrderTool.Data {
                 if (utc > maxUTC) maxUTC = utc;
 
                 utc = File.GetLastWriteTimeUtc(LoadingScreenMod.Settings.FILE_PATH);
+                Log.DebugWait($"'{LoadingScreenMod.Settings.FILE_PATH}' last updated '{utc}'");
                 if (utc > maxUTC) maxUTC = utc;
 
-                if(utc > LastSynched) {
+                Log.DebugWait($"LastSynched={LastSynched} and lastestChange={utc}");
+
+                if (utc > LastSynched) {
+                    Log.Info("Reloading because newer ...");
                     Paused = true;
                     ReloadAllConfig();
 
@@ -174,10 +182,9 @@ namespace LoadOrderTool.Data {
 
                     Dirty = false;
                     Paused = false;
-                    LoadOrderWindow.Instance?.RefreshAll();
+                    LoadOrderWindow.Instance?.ReloadAllTabs();
+                    Log.Debug($"LSMConfig.loadEnabled={LSMConfig.loadEnabled}");
                 }
-
-                Log.Succeeded();
             } catch (Exception ex) {
                 ex.Log();
             }
@@ -195,22 +202,23 @@ namespace LoadOrderTool.Data {
             Dirty = false;
             ManagerList.instance.Save(); // saves but not serialize
             PluginManager.instance.ApplyPendingValues(); // saves to game config and moves folders.
-            Config.Serialize(DataLocation.LocalLOMData);
+            Config.Serialize();
             SteamCache.Serialize();
             LSMConfig = LSMConfig.SyncAndSerialize();
             OnSynched();
             Log.Info($"SaveConfigImpl() done. (Dirty={Dirty})");
         }
 
-        private void StartSaveThread() {
-            Log.Info("Load Order Config Monitor Started...");
-            m_SaveThread = new Thread(new ThreadStart(MonitorSave));
+        private void StartSyncThread() {
+            Log.Called();
+            m_SaveThread = new Thread(new ThreadStart(MonitorSync));
             m_SaveThread.Name = "SaveSettingsThread";
             m_SaveThread.IsBackground = true;
             m_SaveThread.Start();
         }
 
-        private void MonitorSave() {
+        private void MonitorSync() {
+            Log.Called();
             try {
                 while (m_Run) {
                     if(AutoSync) {

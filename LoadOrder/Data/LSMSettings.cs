@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using CO.IO;
@@ -54,7 +55,6 @@ namespace LoadingScreenMod {
             try {
                 if (File.Exists(FILE_PATH)) {
                     XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-
                     using (StreamReader reader = new StreamReader(FILE_PATH))
                         return (Settings)serializer.Deserialize(reader);
                 }
@@ -66,12 +66,8 @@ namespace LoadingScreenMod {
 
         private void Serialize() {
             try {
-                var serializer = new XmlSerializer(typeof(Settings));
-                using (StreamWriter writer = new StreamWriter(FILE_PATH))
-                    serializer.Serialize(writer, this, XMLUtil.NoNamespaces);
-            } catch (Exception ex) {
-                ex.Log();
-            }
+                XMLUtil.Serialize(this, FILE_PATH);
+            } catch (Exception ex) { ex.Log(); }
         }
 
         public Settings SyncAndSerialize() {

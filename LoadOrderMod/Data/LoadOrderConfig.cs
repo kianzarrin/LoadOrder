@@ -48,25 +48,15 @@ namespace LoadOrderShared {
             }
         }
 
-        public void Serialize(string dir) {
-            XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));
-            using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Create, FileAccess.Write)) {
-                ser.Serialize(fs, this, NoNamespaces);
-            }
-        }
-        
-        public static LoadOrderConfig Deserialize(string dir) {
+        public static string FilePath => Path.Combine(SharedUtil.LocalLOMData, FILE_NAME);
+
+        public void Serialize() => SharedUtil.Serialize(this, FilePath);
+
+        public static LoadOrderConfig Deserialize() {
             try {
-                XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));
-                if(!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-                string filePath = Path.Combine(dir, FILE_NAME);
-                using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Open, FileAccess.Read)) {
-                    return ser.Deserialize(fs) as LoadOrderConfig;
-                }
-            }
-            catch {
-                return null;
-            }
+                return SharedUtil.Deserialize<LoadOrderConfig>(FilePath);
+            } catch { }
+            return null;
         }
     }
 }
