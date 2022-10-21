@@ -41,14 +41,6 @@ namespace LoadOrderShared {
         public AssetInfo[] Assets = new AssetInfo[0];
         public string[] ExcludedDLCs = new string[0];
 
-        public static XmlSerializerNamespaces NoNamespaces {
-            get {
-                var ret = new XmlSerializerNamespaces();
-                ret.Add("", "");
-                return ret;
-            }
-        }
-
         public static string FilePath => Path.Combine(SharedUtil.LocalLOMData, FILE_NAME);
 
         public void Serialize() => SharedUtil.Serialize(this, FilePath);
