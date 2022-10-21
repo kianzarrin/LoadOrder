@@ -154,7 +154,6 @@ namespace LoadOrderTool.Data {
 
         public void ReloadIfNewer() {
             try {
-                Assertion.Assert(Paused, "pause config before doing this");
                 DateTime maxUTC = File.GetLastWriteTimeUtc(Path.Combine(DataLocation.LocalLOMData, LoadOrderConfig.FILE_NAME));
 
                 DateTime utc = File.GetLastWriteTimeUtc(Path.Combine(DataLocation.LocalLOMData, CSCache.FILE_NAME));
