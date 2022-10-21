@@ -98,7 +98,7 @@ namespace LoadOrderTool.Util {
         public static Process Subscribe(IEnumerable<string> ids, bool unsub = false) => Subscribe(UGCListTransfer.ToNumber(ids), unsub);
         public static Process Subscribe(IEnumerable<ulong> ids, bool unsub = false) {
             if (ids.IsNullorEmpty()) return null;
-            UGCListTransfer.SendList(ids, DataLocation.LocalLOMData, false);
+            UGCListTransfer.SendList(ids, false);
             string command = unsub ?
                 $"-applaunch 255710 -unsubscribe" :
                 $"-applaunch 255710 -subscribe";

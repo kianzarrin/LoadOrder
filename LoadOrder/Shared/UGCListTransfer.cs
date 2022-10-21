@@ -5,12 +5,12 @@ namespace LoadOrderShared {
     using System.Linq;
 
     public static class UGCListTransfer {
-        const string FILE_NAME = "UGCListTransfer.txt";
+        public const string FILE_NAME = "UGCListTransfer.txt";
         const string MISSING = "missing";
-        static string GetFilePath(string localLOMData) => Path.Combine(localLOMData, FILE_NAME);
+        public static string FilePath => Path.Combine(SharedUtil.LocalLOMData, FILE_NAME);
 
-        public static void SendList(IEnumerable<ulong> ids, string localLOMData, bool missing) =>
-            SendListToFile(ids, GetFilePath(localLOMData), missing);
+        public static void SendList(IEnumerable<ulong> ids, bool missing) =>
+            SendListToFile(ids, FilePath, missing);
         public static void SendListToFile(IEnumerable<ulong> ids, string filePath, bool missing) {
             if(ids == null) throw new ArgumentNullException("ids");
             static bool IsValid(ulong id) => id != 0 && id != ulong.MaxValue;
@@ -24,8 +24,8 @@ namespace LoadOrderShared {
         }
 
 
-        public static List<ulong> GetList(string localLOMData, out bool missing) =>
-            GetListFromFile(GetFilePath(localLOMData), out missing);
+        public static List<ulong> GetList(out bool missing) =>
+            GetListFromFile(FilePath, out missing);
         public static List<ulong> GetListFromFile(string filePath, out bool missing) {
             string text = File.ReadAllText(filePath);
             var ids = text.Split(';', ',', ' ', '\t').Distinct().ToList();
@@ -33,8 +33,8 @@ namespace LoadOrderShared {
             return ToNumber(ids);
         }
 
-        public static void DeleteFile(string localLOMData) {
-            string path = GetFilePath(localLOMData);
+        public static void DeleteFile() {
+            string path = FilePath;
             if (File.Exists(path))
                 File.Delete(path);
         }
