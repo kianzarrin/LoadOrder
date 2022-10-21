@@ -1,7 +1,7 @@
 namespace LoadOrderShared {
     using System.IO;
-    using System.Xml.Serialization;
     using System.Xml;
+    using System.Xml.Serialization;
 
     internal class SharedUtil {
 #if TOOL
@@ -27,23 +27,19 @@ namespace LoadOrderShared {
         internal static void Serialize<T>(T obj, string filePath) {
             var serializer = new XmlSerializer(typeof(T));
             using (StreamWriter writer = new StreamWriter(filePath)) {
-                using (var xmlWriter = XmlWriter.Create(writer, Indented)) {
-                    xmlWriter.Settings.Indent = true;
+                using (var xmlWriter = new XmlTextWriter(writer)) {
+                    xmlWriter.Formatting = Formatting.Indented;
                     serializer.Serialize(xmlWriter, obj, NoNamespaces);
                 }
             }
         }
 
         public static T Deserialize<T>(string filePath) where T : class {
-            try {
-                XmlSerializer ser = new XmlSerializer(typeof(T));
-                var dirInfo = new FileInfo(filePath).Directory;
-                if (dirInfo.Exists) dirInfo.Create();
-                using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
-                    return ser.Deserialize(fs) as T;
-                }
-            } catch {
-                return null;
+            XmlSerializer ser = new XmlSerializer(typeof(T));
+            var dirInfo = new FileInfo(filePath).Directory;
+            if (dirInfo.Exists) dirInfo.Create();
+            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
+                return ser.Deserialize(fs) as T;
             }
         }
     }
