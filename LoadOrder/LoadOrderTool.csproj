@@ -7,6 +7,9 @@
     <LangVersion>latest</LangVersion>
     <Description>Helps to manage your mods and assets</Description>
     <Configurations>Debug;Release</Configurations>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>$(DefineConstants);TOOL</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <Deterministic>false</Deterministic>
@@ -17,11 +20,6 @@
     <PathMap>$(MSBuildProjectDirectory)\=$(ProjectName)\</PathMap>
     <StartupObject>LoadOrderTool.Program</StartupObject>
     <ApplicationIcon>Resources\LoadOrder.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>embedded</DebugType>
-    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="CO\Plugins\**" />
@@ -45,8 +43,9 @@
   
   
   <ItemGroup>
-    <Compile Include="..\LoadOrderMod\Data\LoadOrderConfig.cs" Link="Data\LoadOrderConfig.cs" />
-    <Compile Include="..\LoadOrderMod\Data\CSCache.cs" Link="Data\CSCache.cs" />
+    <Compile Include="..\LoadOrderMod\Shared\LoadOrderConfig.cs" Link="Shared\LoadOrderConfig.cs" />
+    <Compile Include="..\LoadOrderMod\Shared\CSCache.cs" Link="Shared\CSCache.cs" />
+    <Compile Include="..\LoadOrderMod\Shared\SharedUtil.cs" Link="Shared\SharedUtil.cs" />
     <Compile Include="CO\Plugins\PluginManger.cs" />
   </ItemGroup>
   

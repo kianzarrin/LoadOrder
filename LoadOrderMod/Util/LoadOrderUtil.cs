@@ -1,6 +1,7 @@
 using ColossalFramework;
 using ColossalFramework.Packaging;
 using KianCommons;
+using LoadOrderShared;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -9,7 +10,7 @@ using static KianCommons.ReflectionHelpers;
 
 namespace LoadOrderMod.Util {
     internal static class LoadOrderUtil {
-        static LoadOrderShared.LoadOrderConfig Config =>
+        static LoadOrderConfig Config =>
             Settings.ConfigUtil.Config;
         internal static string DllName(this PluginInfo p) =>
             p.userModInstance?.GetType()?.Assembly?.GetName()?.Name;

@@ -18,7 +18,7 @@ namespace LoadOrderInjections.Util {
             get {
                 try {
                     return config_ ??=
-                        LoadOrderConfig.Deserialize(LocalLOMData)
+                        LoadOrderConfig.Deserialize()
                         ?? new LoadOrderConfig();
                 } catch (Exception ex) {
                     Log.Exception(ex);

@@ -29,8 +29,8 @@ namespace LoadOrderMod.Data {
             Load();
         }
 
-        public void Load() => Cache = CSCache.Deserialize(ConfigUtil.LocalLoadOrderPath) ?? new CSCache();
-        public void Save() => Cache.Serialize(ConfigUtil.LocalLoadOrderPath);
+        public void Load() => Cache = CSCache.Deserialize() ?? new CSCache();
+        public void Save() => Cache.Serialize();
 
         internal CSCache.Mod GetOrCreateModCache(PluginInfo p) {
             var ret = Cache.GetItem(p.modPath) as CSCache.Mod;

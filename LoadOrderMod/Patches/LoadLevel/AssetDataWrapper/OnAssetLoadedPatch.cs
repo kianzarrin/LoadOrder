@@ -8,13 +8,14 @@ namespace LoadOrderMod.Patches._AssetDataWrapper {
     using System.Reflection.Emit;
     using static KianCommons.Patches.TranspilerUtils;
     using System;
+    using LoadOrderShared;
 
     [HarmonyPatch(typeof(AssetDataWrapper))]
     [HarmonyPatch(nameof(AssetDataWrapper.OnAssetLoaded))]
     public static class OnAssetLoadedPatch {
         static Stopwatch sw = new Stopwatch();
         static Stopwatch sw_total = new Stopwatch();
-        static LoadOrderShared.LoadOrderConfig Config =>
+        static LoadOrderConfig Config =>
             LoadOrderMod.Settings.ConfigUtil.Config;
 
         public static IAssetDataExtension BeforeOnAssetLoaded(IAssetDataExtension extension) {

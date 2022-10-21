@@ -5,7 +5,6 @@ namespace LoadOrderTool.Data {
     using System.Linq;
     using System.Xml.Serialization;
     using LoadOrderTool.Util;
-    using LoadOrder.Util;
 
     public interface IProfileItem {
         string GetIncludedPath();
@@ -139,19 +138,13 @@ namespace LoadOrderTool.Data {
         public void Serialize(string path) {
             try {
                 Log.Called();
-                XmlSerializer ser = new XmlSerializer(typeof(LoadOrderProfile));
-                using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write)) {
-                    ser.Serialize(fs, this, XMLUtil.NoNamespaces);
-                }
+                LoadOrderShared.SharedUtil.Serialize(this, path);
             } catch (Exception ex) { ex.Log(); }
         }
 
         public static LoadOrderProfile Deserialize(string path) {
             try {
-                XmlSerializer ser = new XmlSerializer(typeof(LoadOrderProfile));
-                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read)) {
-                    return ser.Deserialize(fs) as LoadOrderProfile;
-                }
+                return LoadOrderShared.SharedUtil.Deserialize<LoadOrderProfile>(path);
             } catch {
                 return null;
             }

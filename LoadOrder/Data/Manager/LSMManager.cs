@@ -6,7 +6,7 @@ using CO;
 namespace LoadOrderTool.Data {
     public class LSMManager : SingletonLite<LSMManager>, IDataManager {
         static ConfigWrapper ConfigWrapper => ConfigWrapper.instance;
-        static LoadingScreenMod.Settings LSMConfig => ConfigWrapper.instance.LSMConfig;
+        static LoadingScreenMod.LSMSettings LSMConfig => ConfigWrapper.instance.LSMConfig;
         public bool IsLoading { get; private set; }
         public bool IsLoaded { get; private set; }
         public event Action EventLoaded;
