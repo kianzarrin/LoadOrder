@@ -50,9 +50,8 @@
     <Compile Remove="Settings\**" />
     <EmbeddedResource Remove="Settings\**" />
     <None Remove="Settings\**" />
-    <Compile Include="..\LoadOrderMod\Shared\LoadOrderConfig.cs" Link="Shared\LoadOrderConfig.cs" />
-    <Compile Include="..\LoadOrderMod\Shared\SharedUtil.cs" Link="Shared\SharedUtil.cs" />
-    <EditorConfigFiles Include="..\LoadOrder\.editorconfig" Link=".editorconfig" />
+    <Compile Include="..\LoadOrder\Shared\LoadOrderConfig.cs" Link="Shared\LoadOrderConfig.cs" />
+    <Compile Include="..\LoadOrder\Shared\SharedUtil.cs" Link="Shared\SharedUtil.cs" />
   </ItemGroup>
   
   <Target Name="DeployToModDirectory" AfterTargets="Build">

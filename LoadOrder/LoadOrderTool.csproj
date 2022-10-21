@@ -43,9 +43,6 @@
   
   
   <ItemGroup>
-    <Compile Include="..\LoadOrderMod\Shared\LoadOrderConfig.cs" Link="Shared\LoadOrderConfig.cs" />
-    <Compile Include="..\LoadOrderMod\Shared\CSCache.cs" Link="Shared\CSCache.cs" />
-    <Compile Include="..\LoadOrderMod\Shared\SharedUtil.cs" Link="Shared\SharedUtil.cs" />
     <Compile Include="CO\Plugins\PluginManger.cs" />
   </ItemGroup>
   
