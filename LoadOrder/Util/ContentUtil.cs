@@ -308,7 +308,11 @@ namespace LoadOrderTool.Util {
                 string be = sure ? "is" : "may be";
                 reason = $"subscribed item {be} out of date.\n\t" +
                     $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
-                return DownloadStatus.OutOfDate;
+                const ulong CR = 123; // TODO replace ID.
+                if(det.PublishedFileID == CR)
+                    return DownloadStatus.CatalogOutOfDate;
+                else 
+                    return DownloadStatus.OutOfDate;
             }
 
             if (localSize < sizeServer) // could be smaller if user has its own files in there.

@@ -62,6 +62,7 @@ namespace LoadOrderMod.UI.EntryStatus {
         public void SetStatus(DownloadStatus status, string result) {
             //LogCalled(status, result);
             isVisible = status != DownloadStatus.DownloadOK;
+            if (status == DownloadStatus.CatalogOutOfDate) status = DownloadStatus.OutOfDate; // replace sprite
             disabledFgSprite = focusedFgSprite = normalFgSprite = hoveredFgSprite = pressedFgSprite = status.ToString();
             tooltip = result;
             if (!Settings.Tabs.SubscriptionsTab.SteamExePath.IsNullorEmpty())

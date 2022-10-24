@@ -19,6 +19,7 @@ namespace LoadOrderInjections {
     public enum DownloadStatus {
         DownloadOK,
         OutOfDate,
+        CatalogOutOfDate,
         NotDownloaded,
         PartiallyDownloaded,
         Gone,
@@ -718,9 +719,17 @@ namespace LoadOrderInjections {
                     localSize < sizeServer ||
                     updatedLocal < updatedServer.AddHours(-24);
                 string be = sure ? "is" : "may be";
-                reason = $"subscribed item {be} out of date.\n\t" +
+
+                PublishedFileId CR = new(123); // TODO replace ID.
+                if (det.publishedFileId == CR) {
+                    reason = $"Compatibility report Catalog {be} out of date.\n\t" +
                     $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
-                return DownloadStatus.OutOfDate;
+                    return DownloadStatus.CatalogOutOfDate;
+                } else {
+                    reason = $"subscribed item {be} out of date.\n\t" +
+                    $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
+                    return DownloadStatus.OutOfDate;
+                }
             }
 
             if (localSize < sizeServer) // could be bigger if user has its own files in there.

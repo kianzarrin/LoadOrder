@@ -26,6 +26,7 @@ namespace LoadOrderTool.Data {
             OK = 1,
             Unknown = 2,
             OutOfDate,
+            CatalogOutOfDate,
             NotDownloaded,
             PartiallyDownloaded,
             Removed,
