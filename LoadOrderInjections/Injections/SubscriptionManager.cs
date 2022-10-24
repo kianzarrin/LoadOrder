@@ -606,16 +606,27 @@ namespace LoadOrderInjections {
                 $"ioError:{ioError})");
         }
 
+        public static string Class(ref this UGCDetails ugc) {
+            var tags = ugc.tags.Split(",").Select(tag => tag.Trim().ToLower()).ToArray();
+            if (tags.Contains("mod"))
+                return "Mod";
+            else if (tags.Length > 0)
+                return "Asset";
+            else
+                return "subscribed item";
+        }
+
+
         public static void OnUGCRequestUGCDetailsCompleted(UGCDetails result, bool ioError) {
             ThreadPool.QueueUserWorkItem((_) => {
                bool good = IsUGCUpToDate(result, out string reason) == DownloadStatus.DownloadOK;
                 if (!good && !IsExcludedMod(result.publishedFileId)) {
-                    Log.Warning($"subscribed item not installed properly:{result.publishedFileId} {result.title} " +
+                    Log.Warning($"{result.Class()} not installed properly:{result.publishedFileId} {result.title} " +
                         $"reason={reason}. " +
                         $"try reinstalling the item.",
                         true);
                 } else {
-                    Log.Debug($"subscribed item is good:{result.publishedFileId} {result.title}");
+                    Log.Debug($"{result.Class()} is good:{result.publishedFileId} {result.title}");
                 }
             });
         }
@@ -694,7 +705,7 @@ namespace LoadOrderInjections {
 
             string localPath = GetFinalPath(path);
             if (localPath == null) {
-                reason = "subscribed item is not downloaded. path does not exits: " +
+                reason = $"{det.Class()} is not downloaded. path does not exits: " +
                     PlatformService.workshop.GetSubscribedItemPath(det.publishedFileId);
                 return DownloadStatus.NotDownloaded;
             }
@@ -705,7 +716,7 @@ namespace LoadOrderInjections {
             var localSize = GetTotalSize(localPath);
 
             if(localSize == 0) {
-                reason = $"subscribed item is not downloaded (empty folder '{localPath}'): " +
+                reason = $"{det.Class()} is not downloaded (empty folder '{localPath}'): " +
                     PlatformService.workshop.GetSubscribedItemPath(det.publishedFileId);
                 return DownloadStatus.NotDownloaded;
             }
@@ -718,14 +729,14 @@ namespace LoadOrderInjections {
                     localSize < sizeServer ||
                     updatedLocal < updatedServer.AddHours(-24);
                 string be = sure ? "is" : "may be";
-                reason = $"subscribed item {be} out of date.\n\t" +
+                reason = $"{det.Class()} {be} out of date.\n\t" +
                     $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
                 return DownloadStatus.OutOfDate;
             }
 
             if (localSize < sizeServer) // could be bigger if user has its own files in there.
             {
-                reason = $"subscribed item download is incomplete. server-size={sizeServer}) local-size={localSize})";
+                reason = $"{det.Class()} download is incomplete. server-size={sizeServer}) local-size={localSize})";
                 return DownloadStatus.PartiallyDownloaded;
             }
 
