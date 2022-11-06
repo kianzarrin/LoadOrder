@@ -223,7 +223,6 @@ namespace LoadOrderMod.Util {
 
         static Package.Asset GetAssetByPath(string path) {
             var package = new Package(null, path);
-            //PackageManager.Add(package);
             return package.Find(package.packageMainAsset);
         }
 
