@@ -204,6 +204,7 @@ namespace LoadOrderTool.Util {
             public ulong Size;
             public string PreviewURL;
             public string[] Tags;
+            public string Class;
             public PublishedFileDTO(dynamic publishedfiledetail) {
                 Result = (EResult)publishedfiledetail.result;
                 if (Result == EResult.k_EResultOK) {
@@ -218,6 +219,13 @@ namespace LoadOrderTool.Util {
                         ?.Where(item => !item.Contains("compatible", StringComparison.OrdinalIgnoreCase))
                         ?.ToArray();
                     //Log.Debug($"item[{PublishedFileID}]: Date Updated = {publishedfiledetail.time_updated}ticks =>  {Updated}");
+                    if (Tags.Any(tag => tag.ToLower() == "mod"))
+                        Class = "Mod";
+                    else if (Tags.Any())
+                        Class = "Asset";
+                    else
+                        Class = "subscribed item";
+
                 }
             }
         }

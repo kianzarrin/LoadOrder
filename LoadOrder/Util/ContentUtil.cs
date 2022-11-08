@@ -293,7 +293,7 @@ namespace LoadOrderTool.Util {
             string localPath = GetSubscribedItemPath(det.PublishedFileID);
 
             if (localPath == null) {
-                reason = "subscribed item is not downloaded. path does not exits: " + localPath;
+                reason = det.Class + " is not downloaded. path does not exits: " + localPath;
                 return DownloadStatus.NotDownloaded;
             }
 
@@ -306,7 +306,7 @@ namespace LoadOrderTool.Util {
                     localSize < sizeServer ||
                     updatedLocal < updatedServer.AddHours(-24);
                 string be = sure ? "is" : "may be";
-                reason = $"subscribed item {be} out of date.\n\t" +
+                reason = $"{det.Class} {be} out of date.\n\t" +
                     $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
                 const ulong CR = 123; // TODO replace ID.
                 if(det.PublishedFileID == CR)
@@ -317,7 +317,7 @@ namespace LoadOrderTool.Util {
 
             if (localSize < sizeServer) // could be smaller if user has its own files in there.
             {
-                reason = $"subscribed item download is incomplete. server-size={sizeServer}) local-size={localSize})";
+                reason = $"{det.Class} download is incomplete. server-size={sizeServer}) local-size={localSize})";
                 return DownloadStatus.PartiallyDownloaded;
             }
 
