@@ -13,7 +13,5 @@ namespace LoadOrderIPatch {
         
         public static bool HasArg(string arg) =>
             Environment.GetCommandLineArgs().Any(_arg => _arg == arg);
-        public static bool breadthFirst = HasArg("-phased");
-        public static bool poke = HasArg("-poke");
     }
 }

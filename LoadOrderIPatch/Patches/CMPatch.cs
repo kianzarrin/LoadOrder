@@ -34,14 +34,9 @@ namespace LoadOrderIPatch.Patches {
             if (noReporters)
                 NoReportersPatch(assemblyDefinition);
 
-            //if (!poke && Config.SoftDLLDependancy) {
-            //    FindAssemblySoftPatch(assemblyDefinition);
-            //}
-
             LoadAssembliesROPatch(assemblyDefinition);
 
             assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
-            //assemblyDefinition = LoadPluginsPatch(assemblyDefinition); // its loaded in ASCPatch.LoadDLL() instead
             //AddAssemlyPatch(assemblyDefinition); 
             // assemblyDefinition = AddPluginsPatch(assemblyDefinition); // changed
 #if DEBUG
@@ -212,43 +207,6 @@ namespace LoadOrderIPatch.Patches {
             Log.Successful();
         }
 
-        /// <summary>
-        /// Load Dependant dll even if the version does not match.
-        /// </summary>
-        /// <param name="CM"></param>
-        public void FindAssemblySoftPatch(AssemblyDefinition CM) {
-            Log.StartPatching();
-            var cm = CM.MainModule;
-            var mTarget = cm.GetMethod(
-                "ColossalFramework.Plugins.PluginManager.FindPluginAssemblyByName");
-            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
-            var instructions = mTarget.Body.Instructions;
-
-            var loi = GetInjectionsAssemblyDefinition(workingPath_);
-            var mInjection = loi.MainModule.GetMethod(
-                "LoadOrderInjections.Injections.LoadingApproach.FindDependancySoft");
-            var mrInjection = cm.ImportReference(mInjection);
-
-            // find return null;
-            Instruction ldnull = null;
-            for (int i = 0; i < instructions.Count; ++i) {
-                if (instructions[i].OpCode == OpCodes.Ldnull &&
-                   instructions[i + 1].OpCode == OpCodes.Ret) {
-                    ldnull = instructions[i];
-                }
-            }
-
-            // replace 'return null' with 'return FindDependancySoft(asmName, asms)'
-            var ldarg1 = Instruction.Create(OpCodes.Ldarg_1);
-            var ldarg2 = Instruction.Create(OpCodes.Ldarg_2);
-            var callInjection = Instruction.Create(OpCodes.Call, mrInjection);
-            ilProcessor.Replace(ldnull, ldarg1);
-            ilProcessor.InsertAfter(ldarg1, ldarg2);
-            ilProcessor.InsertAfter(ldarg2, callInjection);
-
-            Log.Successful();
-        }
-
         [Obsolete("incompatible with keksi", true)]
         public void AddAssemlyPatch(AssemblyDefinition CM) {
             Log.StartPatching();
@@ -263,24 +221,6 @@ namespace LoadOrderIPatch.Patches {
             var first = instructions.First();
 
             var loi = GetInjectionsAssemblyDefinition(workingPath_);
-
-            if (poke) {
-                Log.Info("poke");
-                var mInjection = loi.MainModule.GetMethod("LoadOrderInjections.Injections.LoadingApproach.AddAssemblyPrefix");
-                var mrInjection = module.ImportReference(mInjection);
-                var callInjection = Instruction.Create(OpCodes.Call, mrInjection);
-                var ldAsm = Instruction.Create(OpCodes.Ldarg_1);
-
-                ilProcessor.InsertBefore(first, callInjection);
-                ilProcessor.InsertBefore(callInjection, ldAsm);
-            }
-
-            if (breadthFirst) {
-                Log.Info("breadthFirst");
-                var callAdd = instructions.First(_c => _c.Calls("Add"));
-                var ret = Instruction.Create(OpCodes.Ret);
-                ilProcessor.InsertAfter(callAdd, ret);
-            }
 
             var tLogs = loi.MainModule.GetType("LoadOrderInjections.Injections.Logs");
             {

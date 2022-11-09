@@ -47,9 +47,6 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelAssetEditorOptions = new System.Windows.Forms.FlowLayoutPanel();
             this.checkBoxNewAsset = new System.Windows.Forms.CheckBox();
             this.checkBoxLSM = new System.Windows.Forms.CheckBox();
-            this.flowLayoutPanelLoadMode = new System.Windows.Forms.FlowLayoutPanel();
-            this.checkBoxPoke = new System.Windows.Forms.CheckBox();
-            this.checkBoxPhased = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanelLauncher = new System.Windows.Forms.FlowLayoutPanel();
             this.labelLauncher = new System.Windows.Forms.Label();
             this.radioButtonSteamExe = new System.Windows.Forms.RadioButton();
@@ -74,7 +71,6 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelExclusions.SuspendLayout();
             this.tableLayoutPanelLunchMode.SuspendLayout();
             this.flowLayoutPanelAssetEditorOptions.SuspendLayout();
-            this.flowLayoutPanelLoadMode.SuspendLayout();
             this.flowLayoutPanelLauncher.SuspendLayout();
             this.flowLayoutPanelMono.SuspendLayout();
             this.flowLayoutPanelProfiler.SuspendLayout();
@@ -125,7 +121,6 @@ namespace LoadOrderTool.UI {
             this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelExclusions);
             this.flowLayoutPanelTopLevel.Controls.Add(this.checkBoxLHT);
             this.flowLayoutPanelTopLevel.Controls.Add(this.tableLayoutPanelLunchMode);
-            this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelLoadMode);
             this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelLauncher);
             this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelMono);
             this.flowLayoutPanelTopLevel.Controls.Add(this.flowLayoutPanelProfiler);
@@ -356,41 +351,6 @@ namespace LoadOrderTool.UI {
             this.checkBoxLSM.TabIndex = 1;
             this.checkBoxLSM.Text = "LSM";
             this.checkBoxLSM.UseVisualStyleBackColor = true;
-            // 
-            // flowLayoutPanelLoadMode
-            // 
-            this.flowLayoutPanelLoadMode.AutoSize = true;
-            this.flowLayoutPanelLoadMode.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanelLoadMode.Controls.Add(this.checkBoxPoke);
-            this.flowLayoutPanelLoadMode.Controls.Add(this.checkBoxPhased);
-            this.flowLayoutPanelLoadMode.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanelLoadMode.Location = new System.Drawing.Point(4, 342);
-            this.flowLayoutPanelLoadMode.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.flowLayoutPanelLoadMode.Name = "flowLayoutPanelLoadMode";
-            this.flowLayoutPanelLoadMode.Size = new System.Drawing.Size(187, 39);
-            this.flowLayoutPanelLoadMode.TabIndex = 6;
-            // 
-            // checkBoxPoke
-            // 
-            this.checkBoxPoke.AutoSize = true;
-            this.checkBoxPoke.Location = new System.Drawing.Point(107, 5);
-            this.checkBoxPoke.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.checkBoxPoke.Name = "checkBoxPoke";
-            this.checkBoxPoke.Size = new System.Drawing.Size(76, 29);
-            this.checkBoxPoke.TabIndex = 3;
-            this.checkBoxPoke.Text = "Poke";
-            this.checkBoxPoke.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxPhased
-            // 
-            this.checkBoxPhased.AutoSize = true;
-            this.checkBoxPhased.Location = new System.Drawing.Point(4, 5);
-            this.checkBoxPhased.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.checkBoxPhased.Name = "checkBoxPhased";
-            this.checkBoxPhased.Size = new System.Drawing.Size(95, 29);
-            this.checkBoxPhased.TabIndex = 4;
-            this.checkBoxPhased.Text = "Phased";
-            this.checkBoxPhased.UseVisualStyleBackColor = true;
             // 
             // flowLayoutPanelLauncher
             // 
@@ -626,8 +586,6 @@ namespace LoadOrderTool.UI {
             this.tableLayoutPanelLunchMode.PerformLayout();
             this.flowLayoutPanelAssetEditorOptions.ResumeLayout(false);
             this.flowLayoutPanelAssetEditorOptions.PerformLayout();
-            this.flowLayoutPanelLoadMode.ResumeLayout(false);
-            this.flowLayoutPanelLoadMode.PerformLayout();
             this.flowLayoutPanelLauncher.ResumeLayout(false);
             this.flowLayoutPanelLauncher.PerformLayout();
             this.flowLayoutPanelMono.ResumeLayout(false);
@@ -653,15 +611,12 @@ namespace LoadOrderTool.UI {
         private System.Windows.Forms.TextBox textBoxMapPath;
         private System.Windows.Forms.Button buttonSavePath;
         private System.Windows.Forms.Button buttonMapPath;
-        private System.Windows.Forms.CheckBox checkBoxPoke;
-        private System.Windows.Forms.CheckBox checkBoxPhased;
         private System.Windows.Forms.Label labelCommand;
         private RadioButton radioButtonMainMenu;
         private RadioButton radioButtonAssetEditor;
         private RadioButton radioButtonLoadSave;
         private RadioButton radioButtonNewGame;
         private Button buttonLaunch;
-        private FlowLayoutPanel flowLayoutPanelLoadMode;
         private FlowLayoutPanel flowLayoutPanelLauncher;
         private RadioButton radioButtonSteamExe;
         private RadioButton radioButtonCitiesExe;

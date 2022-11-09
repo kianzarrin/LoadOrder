@@ -13,20 +13,6 @@ namespace LoadOrderInjections.Injections {
     using Mono.Cecil;
 
     public static class LoadingApproach {
-        public static Assembly FindDependancySoft(
-            AssemblyName name, Dictionary<Assembly, PluginInfo> asms) {
-            foreach (Assembly asm in asms.Keys) {
-                AssemblyName name2 = asm.GetName();
-                if (name.Name == name2.Name)
-                {
-                    Log.Info($"FindDependancySoft found {asm}");
-                    return asm;
-                } 
-            }
-
-            return null;
-        }
-
         public static Assembly ExistingAssembly(string dllPath) {
             Log.Info(ThisMethod + " dllPath=" + dllPath);
             AssemblyDefinition asm = ReadAssemblyDefinition(dllPath);
@@ -41,100 +27,6 @@ namespace LoadOrderInjections.Injections {
                     return asm2;
             }
             return null;
-        }
-
-        public static void AddAssemblyPrefix(Assembly asm) {
-            try {
-                if (poke && !breadthFirst) {
-                    Log.Info($"Poking {asm} ...", true);
-
-                    var path = GetAssemblyLocation(asm);
-                    var cecilTypes = GetAllCecilTypes(path);
-
-                    Log.Info("poking public types individually");
-                    foreach (var cecilType in cecilTypes) {
-                        if (cecilType.IsPublic || cecilType.IsNestedPublic) {
-                            try {
-                                asm.GetType(cecilType.FullName, true);
-                            } catch (Exception ex) {
-                                Log.Exception(ex, "failed to get " + cecilType.FullName, showInPanel:false);
-                            }
-                        }
-                    }
-                    
-                    Log.Info("calling GetExportedTypes()");
-                    asm.GetExportedTypes(); // public only
-                    Log.Info("GetExportedTypes successful!");
-
-                    var t = asm.GetImplementationOf(typeof(IUserMod));
-                    if(t is not null) { 
-                        Log.Info("call static constructor of IUSerMod implementation.");
-                        t.CallStaticConstructor();
-                        Log.Info("successfully called static constructor of IUserMod.");
-                    }
-
-                    Log.Info("poking types individually");
-                    foreach (var cecilType in cecilTypes) {
-                        try {
-                            asm.GetType(cecilType.FullName, true);
-                        } catch (Exception ex) {
-                            Log.Exception(ex, "failed to get " + cecilType.FullName, showInPanel: false);
-                        }
-                    }
-
-                    Log.Info("calling asm.GetTypes()");
-                    asm.GetTypes(); // including non-public
-                    Log.Info("GetTypes() successful!");
-                }
-            } catch (Exception ex) {
-                Log.Exception(ex);
-            }
-        }
-
-        public static void AddPluginsPrefix(Dictionary<string, PluginManager.PluginInfo> plugins) {
-            if (breadthFirst) {
-                Log.Info("Getting Exported Types", true);
-                foreach (var plugin in plugins.Values) {
-                    try {
-                        foreach (var t in plugin.GetExportedTypes()) {
-                            if (cameraScriptType.IsAssignableFrom(t)) {
-                                InvokeSetter(plugin, nameof(plugin.isCameraScript), true);
-                            }
-                        }
-                    } catch (Exception ex) {
-                        Log.Exception(ex, "get exported types failed for " + plugin);
-                    }
-                }
-
-                Log.Info("activating static constructors of IUSerMod implementations", true);
-                foreach (var plugin in plugins.Values) {
-                    try {
-                        plugin.GetImplementationOf(typeof(IUserMod))?.CallStaticConstructor();
-                    } catch (Exception ex) {
-                        Log.Exception(ex, "get exported types failed for " + plugin);
-                    }
-                }
-
-                Log.Info("Instantiating IUserMod Implementations", true);
-                foreach (var plugin in plugins.Values) {
-                    try {
-                        Logs.PreCreateUserModInstance(plugin);
-                    } catch (Exception ex) {
-                        Log.Exception(ex, "Instantiating IUserMod Implementation failed for " + plugin);
-                    }
-                }
-
-                if (poke) {
-                    foreach (var plugin in plugins.Values) {
-                        try {
-                            plugin.GetAllTypes();
-                        } catch (Exception ex) {
-                            Log.Exception(ex, "GetType() failed for " + plugin);
-                        }
-                    }
-                    Log.Info("GetTypes() successful!");
-                }
-            }
         }
 
         public static AssemblyDefinition ReadAssemblyDefinition(string dllpath) {
