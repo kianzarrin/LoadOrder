@@ -306,13 +306,16 @@ namespace LoadOrderTool.Util {
                     localSize < sizeServer ||
                     updatedLocal < updatedServer.AddHours(-24);
                 string be = sure ? "is" : "may be";
-                reason = $"{det.Class} {be} out of date.\n\t" +
-                    $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
-                const ulong CR = 123; // TODO replace ID.
-                if(det.PublishedFileID == CR)
+                const ulong CR = 2881031511; // compatibility report
+                if (det.PublishedFileID == CR) {
+                    reason = $"Compatibility report Catalog {be} out of date.\n\t" +
+                        $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
                     return DownloadStatus.CatalogOutOfDate;
-                else 
+                } else {
+                    reason = $"{det.Class} {be} out of date.\n\t" +
+                        $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
                     return DownloadStatus.OutOfDate;
+                }
             }
 
             if (localSize < sizeServer) // could be smaller if user has its own files in there.

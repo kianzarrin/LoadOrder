@@ -731,7 +731,7 @@ namespace LoadOrderInjections {
                     updatedLocal < updatedServer.AddHours(-24);
                 string be = sure ? "is" : "may be";
 
-                PublishedFileId CR = new(123); // TODO replace ID.
+                PublishedFileId CR = new(2881031511);
                 if (det.publishedFileId == CR) {
                     reason = $"Compatibility report Catalog {be} out of date.\n\t" +
                     $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
