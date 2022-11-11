@@ -697,23 +697,25 @@ namespace LoadOrderTool.UI {
             } catch(Exception ex) { ex.Log(); }
         }
 
-        bool IsExcludedMod(PublishedFileId id) {
-            var mod = dataGridMods?.ModList?.FirstOrDefault(item => item.PublishedFileId == id);
-            if (mod != null)
-                return !mod.IsIncludedPending;
-            return false;
-        }
+        bool? IsExcludedMod(PublishedFileId id) => !IsIncludedMod(id);
 
-        bool IsExcluded(PublishedFileId id) {
+        bool? IsIncludedMod(PublishedFileId id) {
             var mod = dataGridMods?.ModList?.FirstOrDefault(item => item.PublishedFileId == id);
-            if (mod != null)
-                return !mod.IsIncludedPending;
+            return mod?.IsIncludedPending;
+       }
 
-            var assets = dataGridAssets?.AssetList?.Original;
-            if (assets != null)
-                return assets.Any(item => item.PublishedFileId == id && item.IsIncludedPending);
-            else
-                return false;
+        /// <returns>
+        /// true if mod or any asset with given id is included
+        /// false if mod or all assets with given id are excluded
+        /// null if no mod/assets with the given id exists
+        /// </returns>
+        bool? IsInclude(PublishedFileId id) {
+            var items = ManagerList.GetWSItems().Where(item => item.PublishedFileId == id);
+            if (!items.IsNullorEmpty()) {
+                return items.Any(asset => asset.IsIncludedPending);
+            } else {
+                return null; // no such item.
+            }
         }
 
         string UpdateBrokenDownloadsStatus() {
@@ -722,39 +724,48 @@ namespace LoadOrderTool.UI {
 
             if (loading_) {
                 DownloadWarningLabel.Visible = false;
-                return "";
+                return "loading";
             }
 
             bool red = false, orange = false;
-            string reason = "the following are missing:\n";
+
+            string reason = "the following downloads are broken:\n";
+            string reasonExtended = reason;
 
             var existingIds = ContentUtil.GetSubscribedItems();
             foreach (var item in ConfigWrapper.instance.SteamCache.Items.Where(
                 item => item.Status.IsBroken() &&
                 existingIds.Contains(item.PublishedFileId) &&
-                !IsExcludedMod(item.PublishedFileId)
+                IsInclude(item.PublishedFileId) == true // if it does not exists it does not count
                 )) {
                 red = true;
-                string type = item.Tags != null && item.Tags.Contains("Mod") ? "MOD" : "asset";
-                reason += $"{item.PublishedFileId} [{type}] {item.Name} : {item.Status}\n";
+                string type = item.Tags != null && item.Tags.Contains(value: "Mod") ? "MOD" : "Asset";
+                string m = $"{item.PublishedFileId} [{type}] {item.Name} : {item.Status}";
+                reason += m + "\n";
+                reasonExtended += m + " because " + item.DownloadFailureReason + "\n";
             }
 
             foreach (var item in ContentUtil.GetMissingDirItems()) {
                 orange = true;
-                reason += $"{item} : not downloaded\n";
+                string m = $"{item} : not downloaded";
+                reason += m + "\n";
+                reasonExtended += m + "\n";
             }
 
             DownloadWarningLabel.Visible = red || orange;
             if (red) {
                 DownloadWarningLabel.Text = "There are broken downloads!";
                 DownloadWarningLabel.ForeColor = Color.Red;
-                return DownloadWarningLabel.ToolTipText = reason;
+                DownloadWarningLabel.ToolTipText = reason;
+                return reasonExtended;
             } else if (orange) {
                 DownloadWarningLabel.Text = "There maybe broken downloads!";
                 DownloadWarningLabel.ForeColor = Color.Orange;
-                return DownloadWarningLabel.ToolTipText = reason;
+                DownloadWarningLabel.ToolTipText = reason;
+                return reasonExtended;
+            } else {
+                return "no broken downloads";
             }
-            return "";
         }
 
         public void RefreshAll() {
@@ -848,8 +859,8 @@ namespace LoadOrderTool.UI {
             try {
                 Log.Called();
                 static bool predicate(IWSItem item) {
-                    Assertion.NotNull(item, "item");
-                    Assertion.NotNull(item.SteamCache, $"item: {item.GetType().Name} {item.IncludedPath} {item.PublishedFileId}"); // ws items must have steam cache.
+                    Assertion.NotNull(item, "asset");
+                    Assertion.NotNull(item.SteamCache, $"asset: {item.GetType().Name} {item.IncludedPath} {item.PublishedFileId}"); // ws items must have steam cache.
                     return item.SteamCache.Author.IsNullorEmpty() && item.SteamCache.AuthorID != 0;
                 }
                 var missingAuthors = ManagerList.GetWSItems()
