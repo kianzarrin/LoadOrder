@@ -302,6 +302,7 @@ namespace CO.IO {
                     Log.Debug(m);
                     if (WorkshopContentPath != WSDirPath) {
                         new Exception($"Path mismatch! enabling/disabling may not work.\n" + m).Log();
+                        return;
                     }
                 }
             }
