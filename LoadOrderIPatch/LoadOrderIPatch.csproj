@@ -6,7 +6,7 @@
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-
+    <DefineConstants>$(DefineConstants);IPATCH</DefineConstants>
     <PathMap>$(MSBuildProjectDirectory)/=$(ProjectName)/</PathMap>
     <ManagedDLLPath>../dependencies</ManagedDLLPath>
     <SteamPath>~/Library/Application Support/Steam/</SteamPath>
@@ -22,10 +22,6 @@
       ../libs/
     </AssemblySearchPaths>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="GitInfo" Version="2.1.2">
       <PrivateAssets>all</PrivateAssets>
@@ -54,8 +50,8 @@
     <Compile Remove="Settings\**" />
     <EmbeddedResource Remove="Settings\**" />
     <None Remove="Settings\**" />
-    <Compile Include="..\LoadOrderMod\Data\LoadOrderConfig.cs" Link="Data\LoadOrderConfig.cs" />
-    <EditorConfigFiles Include="..\LoadOrder\.editorconfig" Link=".editorconfig" />
+    <Compile Include="..\LoadOrder\Shared\LoadOrderConfig.cs" Link="Shared\LoadOrderConfig.cs" />
+    <Compile Include="..\LoadOrder\Shared\SharedUtil.cs" Link="Shared\SharedUtil.cs" />
   </ItemGroup>
   
   <Target Name="DeployToModDirectory" AfterTargets="Build">

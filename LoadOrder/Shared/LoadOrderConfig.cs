@@ -1,6 +1,8 @@
 namespace LoadOrderShared {
+    using System;
     using System.IO;
     using System.Xml.Serialization;
+
     public class ItemInfo {
         public string Path; // included path
     }
@@ -9,7 +11,7 @@ namespace LoadOrderShared {
         public int LoadOrder = 1000;
     }
 
-    public class AssetInfo: ItemInfo {
+    public class AssetInfo : ItemInfo {
         public bool Excluded;
     }
 
@@ -23,7 +25,7 @@ namespace LoadOrderShared {
 
         public bool TurnOffSteamPanels = true;
         public bool FastContentManager = true;
-        public bool SoftDLLDependancy = false;
+        //public bool SoftDLLDependancy = false;
         public bool DeleteUnsubscribedItemsOnLoad = false;
         public bool AddHarmonyResolver = true;
         public bool LogAssetLoadingTimes = true;
@@ -39,32 +41,16 @@ namespace LoadOrderShared {
         public AssetInfo[] Assets = new AssetInfo[0];
         public string[] ExcludedDLCs = new string[0];
 
-        public static XmlSerializerNamespaces NoNamespaces {
-            get {
-                var ret = new XmlSerializerNamespaces();
-                ret.Add("", "");
-                return ret;
-            }
-        }
+        public static string FilePath => Path.Combine(SharedUtil.LocalLOMData, FILE_NAME);
 
-        public void Serialize(string dir) {
-            XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));
-            using (FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Create, FileAccess.Write)) {
-                ser.Serialize(fs, this, NoNamespaces);
-            }
-        }
-        
-        public static LoadOrderConfig Deserialize(string dir) {
+        public void Serialize() => SharedUtil.Serialize(this, FilePath);
+
+        public static LoadOrderConfig Deserialize() {
             try {
-                XmlSerializer ser = new XmlSerializer(typeof(LoadOrderConfig));
-                if(!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-                using(FileStream fs = new FileStream(Path.Combine(dir, FILE_NAME), FileMode.Open, FileAccess.Read)) {
-                    return ser.Deserialize(fs) as LoadOrderConfig;
-                }
+                return SharedUtil.Deserialize<LoadOrderConfig>(FilePath);
             }
-            catch {
-                return null;
-            }
+            catch { }
+            return null;
         }
     }
 }

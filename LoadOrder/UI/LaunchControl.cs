@@ -57,9 +57,6 @@ namespace LoadOrderTool.UI {
             radioButtonNewGame.SetTooltip(loadMapTooltip);
             buttonMapPath.SetTooltip(loadMapTooltip);
 
-            checkBoxPoke.SetTooltip("depth-first: poke mods to find potential type resolution problems.");
-            checkBoxPhased.SetTooltip("breadth-first: load mods in phases to avoid potential type resolution problems.");
-
             radioButtonSteamExe.SetTooltip("steam features available in game. auto launches steam");
             radioButtonCitiesExe.SetTooltip("no steam features in game.");
 
@@ -72,7 +69,6 @@ namespace LoadOrderTool.UI {
                 flowLayoutPanelLauncher, // steam.exe cities.exe
                 flowLayoutPanelMono,
                 flowLayoutPanelProfiler,
-                flowLayoutPanelLoadMode, // poke phased
                 tableLayoutPanelExtraArgs, };
             foreach (var item in advancedItems)
                 item.Visible = ConfigWrapper.instance.Advanced;
@@ -128,9 +124,6 @@ namespace LoadOrderTool.UI {
             textBoxSavePath.Text = settings_.SavedGamePath;
             textBoxMapPath.Text = settings_.MapPath;
 
-            checkBoxPhased.Checked = settings_.Phased;
-            checkBoxPoke.Checked = settings_.Poke;
-
             textBoxExtraArgs.Text = settings_.ExtraArgs;
 
             OnAdvancedChanged();
@@ -160,9 +153,6 @@ namespace LoadOrderTool.UI {
 
             settings_.SavedGamePath = textBoxSavePath.Text;
             settings_.MapPath = textBoxMapPath.Text;
-
-            settings_.Phased = checkBoxPhased.Checked;
-            settings_.Poke = checkBoxPoke.Checked;
 
             settings_.DebugMono = radioButtonDebugMono.Checked;
             settings_.ProfilerCities = radioButtonProfilerCities.Checked;
@@ -252,11 +242,6 @@ namespace LoadOrderTool.UI {
                 args.Add("-disableMods");
             if (checkBoxLHT.Checked)
                 args.Add("-LHT");
-            if (checkBoxPhased.Checked)
-                args.Add("-phased");
-            if (checkBoxPoke.Checked)
-                args.Add("-poke");
-
             if (radioButtonMainMenu.Checked) {
                 ;
             } else if (radioButtonAssetEditor.Checked) {

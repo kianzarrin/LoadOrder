@@ -98,7 +98,7 @@ namespace LoadOrderTool.Util {
         public static Process Subscribe(IEnumerable<string> ids, bool unsub = false) => Subscribe(UGCListTransfer.ToNumber(ids), unsub);
         public static Process Subscribe(IEnumerable<ulong> ids, bool unsub = false) {
             if (ids.IsNullorEmpty()) return null;
-            UGCListTransfer.SendList(ids, DataLocation.LocalLOMData, false);
+            UGCListTransfer.SendList(ids, false);
             string command = unsub ?
                 $"-applaunch 255710 -unsubscribe" :
                 $"-applaunch 255710 -subscribe";
@@ -306,9 +306,16 @@ namespace LoadOrderTool.Util {
                     localSize < sizeServer ||
                     updatedLocal < updatedServer.AddHours(-24);
                 string be = sure ? "is" : "may be";
-                reason = $"{det.Class} {be} out of date.\n\t" +
-                    $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
-                return DownloadStatus.OutOfDate;
+                const ulong CR = 2881031511; // compatibility report
+                if (det.PublishedFileID == CR) {
+                    reason = $"Compatibility report Catalog {be} out of date.\n\t" +
+                        $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
+                    return DownloadStatus.CatalogOutOfDate;
+                } else {
+                    reason = $"{det.Class} {be} out of date.\n\t" +
+                        $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
+                    return DownloadStatus.OutOfDate;
+                }
             }
 
             if (localSize < sizeServer) // could be smaller if user has its own files in there.

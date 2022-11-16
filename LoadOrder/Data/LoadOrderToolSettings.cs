@@ -2,7 +2,6 @@ namespace LoadOrderTool {
     using System.IO;
     using System.Xml.Serialization;
     using CO.IO;
-    using LoadOrder.Util;
 
     public class LoadOrderToolSettings {
         public int FormWidth = -1;
@@ -17,7 +16,6 @@ namespace LoadOrderTool {
         public bool LSM = false;
         public bool LHT;
         public int AutoLoad = 0;
-        public bool Phased, Poke;
 
         public bool SteamExe = true;
         public bool DebugMono;
@@ -38,19 +36,13 @@ namespace LoadOrderTool {
         public static void Reset() => instance_ = new LoadOrderToolSettings();
 
         public void Serialize() {
-            XmlSerializer ser = new XmlSerializer(typeof(LoadOrderToolSettings));
-            using (FileStream fs = new FileStream(PATH, FileMode.Create, FileAccess.Write)) {
-                ser.Serialize(fs, this, XMLUtil.NoNamespaces);
-            }
+            LoadOrderShared.SharedUtil.Serialize(this, PATH);
         }
 
         public static LoadOrderToolSettings Deserialize() {
             Log.Info("LoadOrderToolSettings Deserializing ...");
             try {
-                XmlSerializer ser = new XmlSerializer(typeof(LoadOrderToolSettings));
-                using (FileStream fs = new FileStream(PATH, FileMode.Open, FileAccess.Read)) {
-                    return ser.Deserialize(fs) as LoadOrderToolSettings;
-                }
+                return LoadOrderShared.SharedUtil.Deserialize<LoadOrderToolSettings>(PATH);
             } catch {
                 Log.Warning("Deserialize exception caught");
                 return null;

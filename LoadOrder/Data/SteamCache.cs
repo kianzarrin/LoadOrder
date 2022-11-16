@@ -8,7 +8,6 @@ namespace LoadOrderTool.Data {
     using System.Collections.Generic;
     using LoadOrderTool.Util;
     using CO.PlatformServices;
-    using LoadOrder.Util;
 
     public static class DownloadStatusExtension {
         public static bool IsBroken(this SteamCache.DownloadStatus status) {
@@ -27,6 +26,7 @@ namespace LoadOrderTool.Data {
             OK = 1,
             Unknown = 2,
             OutOfDate,
+            CatalogOutOfDate,
             NotDownloaded,
             PartiallyDownloaded,
             Removed,
@@ -93,23 +93,16 @@ namespace LoadOrderTool.Data {
         static string FilePath => Path.Combine(DIR, FILE_NAME);
 
         internal void Serialize() {
-            XmlSerializer ser = new XmlSerializer(typeof(SteamCache));
-            using (FileStream fs = new FileStream(FilePath, FileMode.Create, FileAccess.Write)) {
-                Items = itemTable_.Values.ToArray();
-                People = peopleTable_.Values.ToArray();
-
-                ser.Serialize(fs, this, XMLUtil.NoNamespaces);
-            }
+            Items = itemTable_.Values.ToArray();
+            People = peopleTable_.Values.ToArray();
+            LoadOrderShared.SharedUtil.Serialize(this, FilePath);
         }
 
         internal static SteamCache Deserialize() {
             try {
-                XmlSerializer ser = new XmlSerializer(typeof(SteamCache));
-                using (FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read)) {
-                    var ret = ser.Deserialize(fs) as SteamCache;
-                    ret.BuildIndeces();
-                    return ret;
-                }
+                var ret = LoadOrderShared.SharedUtil.Deserialize<SteamCache>(FilePath);
+                ret.BuildIndeces();
+                return ret;
             } catch {
                 return null;
             }

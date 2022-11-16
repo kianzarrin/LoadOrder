@@ -122,9 +122,8 @@ namespace LoadOrderMod.Util {
             try {
                 var ids = GetBrokenDownloads();
                 Injections.LoadOrderShared.UGCListTransfer.SendList(
-                    ids.Select(id => id.AsUInt64),
-                    ConfigUtil.LocalLoadOrderPath,
-                    false);
+                    ids: ids.Select(id => id.AsUInt64),
+                    missing: false);
 
                 string modPath = PluginUtil.GetLoadOrderMod().modPath;
                 Process.Start("CMD.exe", $"/c \"{modPath}/resub.bat\"");

@@ -9,13 +9,6 @@ namespace LoadOrderMod.Settings.Tabs {
     static class DebugTab {
         public static void Make(ExtUITabstrip tabStrip) {
             UIHelper panelHelper = tabStrip.AddTabPage("Developer");
-            panelHelper.AddCheckbox(
-                "Soft assembly dependency",
-                ConfigUtil.Config.SoftDLLDependancy,
-                val => {
-                    ConfigUtil.Config.SoftDLLDependancy = val;
-                    ConfigUtil.SaveConfig();
-                });
             //panelHelper.AddButton("Ensure All", CheckSubsUtil.EnsureAll);
             //g.AddButton("RequestItemDetails", OnRequestItemDetailsClicked);
             //g.AddButton("QueryItems", OnQueryItemsClicked);

@@ -46,6 +46,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\LoadOrder\Shared\LoadOrderConfig.cs" Link="Shared\LoadOrderConfig.cs" />
+    <Compile Include="..\LoadOrder\Shared\CSCache.cs" Link="Shared\CSCache.cs" />
+    <Compile Include="..\LoadOrder\Shared\SharedUtil.cs" Link="Shared\SharedUtil.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Remove="KianCommons\KianCommons\Backport\**" />
     <Compile Remove="KianCommons\KianCommons\Math\**" />
     <Compile Remove="KianCommons\KianCommons\ObjUnity3D\**" />

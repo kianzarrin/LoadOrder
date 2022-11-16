@@ -7,6 +7,7 @@ namespace LoadOrderIPatch {
     using System.IO;
     using LoadOrderIPatch.Patches;
     using Patch.API;
+    using System.Reflection;
 
     public static class CecilUtil {
         internal static AssemblyDefinition ReadAssemblyDefinition(string dllpath) {
@@ -36,9 +37,21 @@ namespace LoadOrderIPatch {
 
         public static Instruction Duplicate(this Instruction instruction)
         {
-            var ret = Instruction.Create(instruction.OpCode);
-            ret.Operand = instruction.Operand;
-            return ret;
+            if (instruction == null) throw new ArgumentNullException("instruction");
+            if (instruction.OpCode == null) throw new ArgumentException("instruction.Opcode is null");
+            try {
+                if(instruction.Operand == null) {
+                    return Instruction.Create(instruction.OpCode);
+                } else {
+                    var ret = Instruction.Create(OpCodes.Ldarg_0); // hack around.
+                    ret.OpCode = instruction.OpCode;
+                    ret.Operand = instruction.Operand;
+                    return ret;
+                }
+            } catch {
+                Log.Error($"instruction='{instruction}' opcode='{instruction?.OpCode}' operand='{instruction?.Operand}'");
+                throw;
+            }
         }
 
         public static Instruction GetLDArg(this MethodDefinition method, string argName, bool throwOnError = true) {
@@ -61,7 +74,7 @@ namespace LoadOrderIPatch {
         }
 
         /// <summary>
-        /// Post condition: for instance method add one to get argument location
+        /// Post condition: for instance mCreateInstruction add one to get argument location
         /// </summary>
         public static byte GetParameterLoc(this MethodDefinition method, string name) {
             var parameters = method.Parameters;

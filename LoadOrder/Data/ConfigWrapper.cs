@@ -15,7 +15,7 @@ namespace LoadOrderTool.Data {
         public SteamCache SteamCache;
         public CSCache CSCache;
 
-        public LoadingScreenMod.Settings LSMConfig;
+        public LoadingScreenMod.LSMSettings LSMConfig;
 
         bool dirty_;
         public bool Dirty {
@@ -34,11 +34,11 @@ namespace LoadOrderTool.Data {
         public override void Awake() {
             base.Awake();
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            Config = LoadOrderConfig.Deserialize(DataLocation.LocalLOMData)
+            Config = LoadOrderConfig.Deserialize()
                 ?? new LoadOrderConfig();
             SteamCache = SteamCache.Deserialize() ?? new SteamCache();
             ReloadCSCache();
-            LSMConfig = LoadingScreenMod.Settings.Deserialize();
+            LSMConfig = LoadingScreenMod.LSMSettings.Deserialize();
             Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
             if(!CommandLine.Parse.CommandLine)
                 StartSaveThread();
@@ -86,14 +86,14 @@ namespace LoadOrderTool.Data {
         public void Suspend() => Paused = true;
         public void Resume() => Paused = false;
 
-        public void ReloadCSCache() => CSCache = CSCache.Deserialize(DataLocation.LocalLOMData) ?? new CSCache();
+        public void ReloadCSCache() => CSCache = CSCache.Deserialize() ?? new CSCache();
         public void ResetCSCache() {
             CSCache = new CSCache() {
                 WorkShopContentPath = CSCache?.WorkShopContentPath,
                 SteamPath = CSCache?.SteamPath,
                 GamePath = CSCache?.GamePath,
             };
-            CSCache.Serialize(DataLocation.LocalLOMData);
+            CSCache.Serialize();
         }
 
         public void ResetAllConfig() {
@@ -104,7 +104,7 @@ namespace LoadOrderTool.Data {
                 GamePath = DataLocation.GamePath,
                 SteamPath = DataLocation.SteamPath,
             };
-            Config.Serialize(DataLocation.LocalLOMData);
+            Config.Serialize();
 
             ResetCSCache();
             SteamCache = new SteamCache();
@@ -132,10 +132,10 @@ namespace LoadOrderTool.Data {
                 Log.Called();
                 Assertion.Assert(Paused, "pause config before doing this");
                 Dirty = false;
-                Config = LoadOrderConfig.Deserialize(DataLocation.LocalLOMData)
+                Config = LoadOrderConfig.Deserialize()
                     ?? new LoadOrderConfig();
                 ReloadCSCache();
-                LSMConfig = LoadingScreenMod.Settings.Deserialize();
+                LSMConfig = LoadingScreenMod.LSMSettings.Deserialize();
                 Log.Succeeded();
             } catch(Exception ex) {
                 ex.Log();
@@ -154,7 +154,7 @@ namespace LoadOrderTool.Data {
             Dirty = false;
             ManagerList.instance.Save(); // saves but not serialize
             PluginManager.instance.ApplyPendingValues(); // saves to game config and moves folders.
-            Config.Serialize(DataLocation.LocalLOMData);
+            Config.Serialize();
             SteamCache.Serialize();
             LSMConfig = LSMConfig.SyncAndSerialize();
             Log.Info($"SaveConfigImpl() done. (Dirty={Dirty})");

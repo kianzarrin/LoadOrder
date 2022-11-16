@@ -44,7 +44,7 @@ namespace LoadOrderIPatch {
         }
         public static void Exception(this Exception ex) {
             iLogger_.Error("[Exception] [LoadOrderIPatch] " + ex.Message);
-            LogImpl("Exception", ex.ToString() + "\tException logged at:\n" + Environment.StackTrace);
+            LogImpl("Exception", ex.ToString() + "\nException logged at:\n" + Environment.StackTrace);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

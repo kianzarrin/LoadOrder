@@ -19,6 +19,7 @@ namespace LoadOrderInjections {
     public enum DownloadStatus {
         DownloadOK,
         OutOfDate,
+        CatalogOutOfDate,
         NotDownloaded,
         PartiallyDownloaded,
         Gone,
@@ -97,7 +98,7 @@ namespace LoadOrderInjections {
                 List<ulong> ids;
                 if(filePath.IsNullorEmpty()) {
                     string path = Path.Combine(DataLocation.localApplicationData, "LoadOrder");
-                    ids = UGCListTransfer.GetList(path, out _);
+                    ids = UGCListTransfer.GetList(out _);
                 } else {
                     ids = UGCListTransfer.GetListFromFile(filePath, out _);
                 }
@@ -232,16 +233,16 @@ namespace LoadOrderInjections {
                 bool missing;
                 if(filePath.IsNullorEmpty()) {
                     string path = Path.Combine(DataLocation.localApplicationData, "LoadOrder");
-                    ids = UGCListTransfer.GetList(path, out missing);
+                    ids = UGCListTransfer.GetList(out missing);
                     if(missing) {
                         ids.AddRange(SteamUtilities.GetMissingItems().Select(item => item.AsUInt64));
-                        UGCListTransfer.SendList(ids, path, false); // replace missing with actual ids.
+                        UGCListTransfer.SendList(ids, false); // replace missing with actual ids.
                     }
                 } else {
                     ids = UGCListTransfer.GetListFromFile(filePath, out missing);
                     if(missing) {
                         ids.AddRange(SteamUtilities.GetMissingItems().Select(item => item.AsUInt64));
-                        UGCListTransfer.SendList(ids, filePath, false); // replace missing with actual ids.
+                        UGCListTransfer.SendList(ids, false); // replace missing with actual ids.
                     }
                 }
 
@@ -729,9 +730,17 @@ namespace LoadOrderInjections {
                     localSize < sizeServer ||
                     updatedLocal < updatedServer.AddHours(-24);
                 string be = sure ? "is" : "may be";
-                reason = $"{det.Class()} {be} out of date.\n\t" +
+
+                PublishedFileId CR = new(2881031511);
+                if (det.publishedFileId == CR) {
+                    reason = $"Compatibility report Catalog {be} out of date.\n\t" +
                     $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
-                return DownloadStatus.OutOfDate;
+                    return DownloadStatus.CatalogOutOfDate;
+                } else {
+                    reason = $"{det.Class()} {be} out of date.\n\t" +
+                        $"server-time={STR(updatedServer)} |  local-time={STR(updatedLocal)}";
+                    return DownloadStatus.OutOfDate;
+                }
             }
 
             if (localSize < sizeServer) // could be bigger if user has its own files in there.

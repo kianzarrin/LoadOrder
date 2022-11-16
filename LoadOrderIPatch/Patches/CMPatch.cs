@@ -4,12 +4,10 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Patch.API;
 using System;
-using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using static LoadOrderIPatch.Commons;
-using static LoadOrderIPatch.ConfigUtil;
 using ILogger = Patch.API.ILogger;
 
 namespace LoadOrderIPatch.Patches {
@@ -27,40 +25,36 @@ namespace LoadOrderIPatch.Patches {
             ILogger logger,
             string patcherWorkingPath,
             IPaths gamePaths) {
-            logger_ = logger;
-            workingPath_ = patcherWorkingPath;
+            try {
+                logger_ = logger;
+                workingPath_ = patcherWorkingPath;
 
-            bool noReporters = Environment.GetCommandLineArgs().Any(_arg => _arg == "-cold-reload");
-            if (noReporters)
-                NoReportersPatch(assemblyDefinition);
+                bool noReporters = Environment.GetCommandLineArgs().Any(_arg => _arg == "-cold-reload");
+                if (noReporters)
+                    NoReportersPatch(assemblyDefinition);
 
-            if (!poke && Config.SoftDLLDependancy) {
-                FindAssemblySoftPatch(assemblyDefinition);
-            }
+                LoadAssembliesROPatch(assemblyDefinition);
 
-            LoadAssembliesROPatch(assemblyDefinition);
-
-            assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
-            //assemblyDefinition = LoadPluginsPatch(assemblyDefinition); // its loaded in ASCPatch.LoadDLL() instead
-            AddAssemlyPatch(assemblyDefinition);
-            assemblyDefinition = AddPluginsPatch(assemblyDefinition);
+                assemblyDefinition = LoadAssembliesPatch(assemblyDefinition);
+                CreateUserModInstancePatch(assemblyDefinition);
+                AddPluginsPatch(assemblyDefinition); // changed
 #if DEBUG
-            //assemblyDefinition = InsertPrintStackTrace(assemblyDefinition);
+                //assemblyDefinition = InsertPrintStackTrace(assemblyDefinition);
 #endif
 
-            EnsureIncludedExcludedPackagePatch(assemblyDefinition);
+                EnsureIncludedExcludedPackagePatch(assemblyDefinition);
 
-            bool noAssets = Environment.GetCommandLineArgs().Any(_arg => _arg == "-noAssets");
-            if (noAssets) {
-                assemblyDefinition = NoCustomAssetsPatch(assemblyDefinition);
-            } else {
-                ExcludeAssetFilePatch(assemblyDefinition);
-                ExcludeAssetDirPatch(assemblyDefinition);
-            }
-            LoadCloudPackagesPatch(assemblyDefinition);
+                bool noAssets = Environment.GetCommandLineArgs().Any(_arg => _arg == "-noAssets");
+                if (noAssets) {
+                    assemblyDefinition = NoCustomAssetsPatch(assemblyDefinition);
+                } else {
+                    ExcludeAssetFilePatch(assemblyDefinition);
+                    ExcludeAssetDirPatch(assemblyDefinition);
+                }
+                LoadCloudPackagesPatch(assemblyDefinition);
 
-            LoadPluginPatch(assemblyDefinition);
-
+                LoadPluginPatch(assemblyDefinition);
+            } catch(Exception ex) { ex.Log(); }
             return assemblyDefinition;
         }
 
@@ -213,98 +207,52 @@ namespace LoadOrderIPatch.Patches {
         }
 
         /// <summary>
-        /// Load Dependant dll even if the version does not match.
+        /// inject logs in CreateUserModInstance
+        ///  - method called
+        ///  - method successful
+        ///  - before everyGetExportedTypes
         /// </summary>
-        /// <param name="CM"></param>
-        public void FindAssemblySoftPatch(AssemblyDefinition CM) {
-            Log.StartPatching();
-            var cm = CM.MainModule;
-            var mTarget = cm.GetMethod(
-                "ColossalFramework.Plugins.PluginManager.FindPluginAssemblyByName");
-            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
-            var instructions = mTarget.Body.Instructions;
+        public void CreateUserModInstancePatch(AssemblyDefinition CM) {
+            try {
+                Log.StartPatching();
+                var module = CM.MainModule;
 
-            var loi = GetInjectionsAssemblyDefinition(workingPath_);
-            var mInjection = loi.MainModule.GetMethod(
-                "LoadOrderInjections.Injections.LoadingApproach.FindDependancySoft");
-            var mrInjection = cm.ImportReference(mInjection);
+                var type1 = module.GetType("ColossalFramework.Plugins.PluginManager");
+                var type2 = type1.NestedTypes.Single(_t => _t.Name == "PluginInfo");
+                var mTarget = type2.GetMethod("CreateUserModInstance");
 
-            // find return null;
-            Instruction ldnull = null;
-            for (int i = 0; i < instructions.Count; ++i) {
-                if (instructions[i].OpCode == OpCodes.Ldnull &&
-                   instructions[i + 1].OpCode == OpCodes.Ret) {
-                    ldnull = instructions[i];
+                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                var instructions = mTarget.Body.Instructions;
+
+                var loi = GetInjectionsAssemblyDefinition(workingPath_);
+                var tLogs = loi.MainModule.GetType("LoadOrderInjections.Injections.Logs");
+
+                Instruction CallLogsMethod(string name) {
+                    var method = tLogs.GetMethod(name);
+                    var methodReference = module.ImportReference(method);
+                    return Instruction.Create(OpCodes.Call, methodReference);
                 }
-            }
 
-            // replace 'return null' with 'return FindDependancySoft(asmName, asms)'
-            var ldarg1 = Instruction.Create(OpCodes.Ldarg_1);
-            var ldarg2 = Instruction.Create(OpCodes.Ldarg_2);
-            var callInjection = Instruction.Create(OpCodes.Call, mrInjection);
-            ilProcessor.Replace(ldnull, ldarg1);
-            ilProcessor.InsertAfter(ldarg1, ldarg2);
-            ilProcessor.InsertAfter(ldarg2, callInjection);
 
-            Log.Successful();
-        }
+                var loadPluginInfo = Instruction.Create(OpCodes.Ldarg_0);
 
-        public void AddAssemlyPatch(AssemblyDefinition CM) {
-            Log.StartPatching();
-            var module = CM.MainModule;
+                {
+                    var callBeforeCtor = CallLogsMethod("BeforeUserModCtor");
+                    ilProcessor.Prefix(loadPluginInfo.Duplicate(), callBeforeCtor);
+                }
+                {
+                    var callAfterCtor = CallLogsMethod("AfterUserModCtor");
+                    ilProcessor.Prefix(loadPluginInfo.Duplicate(), callAfterCtor);
+                }
+                {
+                    var callGetExportedTypes = instructions.First(_c => _c.Calls("GetExportedTypes"));
+                    var loadAsm = Instruction.Create(OpCodes.Dup); // duplicate argument
+                    var callBeforeGetExportedTypes = CallLogsMethod("BeforeCreateUserModInstanceGetExportedTypes");
+                    ilProcessor.InsertBefore(callGetExportedTypes, loadAsm, callBeforeGetExportedTypes);
+                }
 
-            var type1 = module.GetType("ColossalFramework.Plugins.PluginManager");
-            var type2 = type1.NestedTypes.Single(_t => _t.Name == "PluginInfo");
-            var mTarget = type2.GetMethod("AddAssembly");
-
-            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
-            var instructions = mTarget.Body.Instructions;
-            var first = instructions.First();
-
-            var loi = GetInjectionsAssemblyDefinition(workingPath_);
-
-            if (poke) {
-                Log.Info("poke");
-                var mInjection = loi.MainModule.GetMethod("LoadOrderInjections.Injections.LoadingApproach.AddAssemblyPrefix");
-                var mrInjection = module.ImportReference(mInjection);
-                var callInjection = Instruction.Create(OpCodes.Call, mrInjection);
-                var ldAsm = Instruction.Create(OpCodes.Ldarg_1);
-
-                ilProcessor.InsertBefore(first, callInjection);
-                ilProcessor.InsertBefore(callInjection, ldAsm);
-            }
-
-            if (breadthFirst) {
-                Log.Info("breadthFirst");
-                var callAdd = instructions.First(_c => _c.Calls("Add"));
-                var ret = Instruction.Create(OpCodes.Ret);
-                ilProcessor.InsertAfter(callAdd, ret);
-            }
-
-            var tLogs = loi.MainModule.GetType("LoadOrderInjections.Injections.Logs");
-            {
-                var mBeforeAddAssembliesGetExportedTypes = tLogs.GetMethod("BeforeAddAssembliesGetExportedTypes");
-                var callBeforeAddAssembliesGetExportedTypes = Instruction.Create(
-                    OpCodes.Call, module.ImportReference(mBeforeAddAssembliesGetExportedTypes));
-                var callGetExportedTypes = instructions.First(_c => _c.Calls("GetExportedTypes"));
-                var loadAsm = callGetExportedTypes.Previous.Duplicate();
-                ilProcessor.InsertBefore(callGetExportedTypes, callBeforeAddAssembliesGetExportedTypes);
-                ilProcessor.InsertBefore(callBeforeAddAssembliesGetExportedTypes, loadAsm);
-            }
-
-            {
-                var mLogExceptionInLOM = GetType().GetMethod(nameof(LogExceptionInLOM));
-                var callLogExceptioninLOM = Instruction.Create(
-                    OpCodes.Call, module.ImportReference(mLogExceptionInLOM)); ;
-                var callLogException = instructions.First(_c => _c.Calls("LogException"));
-                var loadException = callLogException.Previous.Duplicate();
-                ilProcessor.InsertBefore(callLogException, loadException, callLogExceptioninLOM);
-            }
-
-            Log.Successful();
-        }
-        public static void LogExceptionInLOM(Exception ex) {
-            Injections.KianCommons.Log.Exception(ex, showInPanel: true);
+                Log.Successful();
+            } catch (Exception ex) { ex.Log(); }
         }
 
         public void LoadCloudPackagesPatch(AssemblyDefinition CM) {
@@ -366,7 +314,8 @@ namespace LoadOrderIPatch.Patches {
         }
 
         /// <summary>
-        /// moved folder to _folder if necessary before calling getfiles.
+        /// if excluded mod is updated then we have both 'folder' and '_folder'.
+        /// this patch moves 'folder' to '_folder'
         /// </summary>
         public void EnsureIncludedExcludedPackagePatch(AssemblyDefinition CM) {
             Log.StartPatching();
@@ -540,72 +489,44 @@ namespace LoadOrderIPatch.Patches {
         }
 
         /// <summary>
-        /// inserts time stamps about adding/enabling plugins.
+        /// inserts time stamps about enabling plugins.
         /// </summary>
-        public AssemblyDefinition AddPluginsPatch(AssemblyDefinition CM)
-        {
-            Log.StartPatching();
-               var tPluginManager = CM.MainModule.Types
-                .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
-            MethodDefinition mTarget = tPluginManager.Methods
-                .First(_m => _m.Name == "AddPlugins");
-            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
-            var codes = mTarget.Body.Instructions.ToList();
+        public void AddPluginsPatch(AssemblyDefinition CM) {
+            try {
+                Log.StartPatching();
+                var tPluginManager = CM.MainModule.Types
+                 .First(_t => _t.FullName == "ColossalFramework.Plugins.PluginManager");
+                MethodDefinition mTarget = tPluginManager.Methods
+                    .First(_m => _m.Name == "AddPlugins");
+                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                var codes = mTarget.Body.Instructions.ToList();
 
-            AssemblyDefinition asm = GetInjectionsAssemblyDefinition(workingPath_);
-            var tLogs = asm.MainModule.Types
-                .First(_t => _t.Name == "Logs");
+                Instruction LoadPlugins = mTarget.GetLDArg("plugins");
+                Instruction InvokeOnEnabled = codes.First(
+                    _c => (_c.Operand as MethodReference)?.Name == "Invoke");
 
-            var tLoadingApproach = asm.MainModule.Types
-                .First(_t => _t.Name == "LoadingApproach");
+                AssemblyDefinition asm = GetInjectionsAssemblyDefinition(workingPath_);
+                var tLogs = asm.MainModule.Types
+                    .First(_t => _t.Name == "Logs");
 
-            MethodDefinition mdPreCreateUserModInstance = tLogs.Methods
-                .First(_m => _m.Name == "PreCreateUserModInstance");
-            MethodReference mrPreCreateUserModInstance = 
-                tPluginManager.Module.ImportReference(mdPreCreateUserModInstance);
+                MethodDefinition mdBeforeEnable = tLogs.Methods
+                    .First(_m => _m.Name == "BeforeEnable");
+                MethodReference mrBeforeEnable = tPluginManager.Module.ImportReference(mdBeforeEnable);
 
-            MethodDefinition mdAddPluginsPrefix = tLoadingApproach.Methods
-                .First(_m => _m.Name == "AddPluginsPrefix");
-            MethodReference mrAddPluginsPrefix = 
-                tPluginManager.Module.ImportReference(mdAddPluginsPrefix);
+                MethodDefinition mdAfterEnable = tLogs.Methods
+                    .First(_m => _m.Name == "AfterEnable");
+                MethodReference mrAfterEnable = tPluginManager.Module.ImportReference(mdAfterEnable);
 
-            MethodDefinition mdBeforeEnable = tLogs.Methods
-                .First(_m => _m.Name == "BeforeEnable");
-            MethodReference mrBeforeEnable = tPluginManager.Module.ImportReference(mdBeforeEnable);
+                Instruction LoadPluginInfo = InvokeOnEnabled.Previous.Previous.Previous; // get pluginInfo in mOnEnabled.Invoke(pluginInfo.userModInstance, null)
+                Instruction callBeforeEnable = Instruction.Create(OpCodes.Call, mrBeforeEnable);
+                Instruction callAfterEnable = Instruction.Create(OpCodes.Call, mrAfterEnable);
 
-            MethodDefinition mdAfterEnable = tLogs.Methods
-                .First(_m => _m.Name == "AfterEnable");
-            MethodReference mrAfterEnable = tPluginManager.Module.ImportReference(mdAfterEnable);
+                // inject calls
+                ilProcessor.InsertBefore(InvokeOnEnabled, LoadPluginInfo.Duplicate(), callBeforeEnable);
+                ilProcessor.InsertAfter(InvokeOnEnabled, LoadPluginInfo.Duplicate(), callAfterEnable);
 
-            // find instructions
-            Instruction first = codes.First();
-
-            Instruction getUserModInstance = codes.First(
-                _c => (_c.Operand as MethodReference)?.Name == "get_userModInstance");
-            Instruction InvokeOnEnabled = codes.First(
-                _c => (_c.Operand as MethodReference)?.Name == "Invoke");
-
-            Instruction LoadPlugins = mTarget.GetLDArg("plugins");
-            Instruction LoadPluginInfo = getUserModInstance.Previous;
-            Instruction callPreCreateUserModInstance = Instruction.Create(OpCodes.Call, mrPreCreateUserModInstance);
-            Instruction callAddPluginsPrefix = Instruction.Create(OpCodes.Call, mrAddPluginsPrefix);
-            Instruction callBeforeEnable = Instruction.Create(OpCodes.Call, mrBeforeEnable);
-            Instruction callAfterEnable = Instruction.Create(OpCodes.Call, mrAfterEnable);
-
-            ilProcessor.InsertBefore(first, callAddPluginsPrefix); // insert call
-            ilProcessor.InsertBefore(callAddPluginsPrefix, LoadPlugins.Duplicate()); // load input argument
-
-            ilProcessor.InsertBefore(getUserModInstance, callPreCreateUserModInstance); // insert call
-            ilProcessor.InsertBefore(callPreCreateUserModInstance, LoadPluginInfo.Duplicate()); // load argument for the call
-
-            ilProcessor.InsertBefore(InvokeOnEnabled, callBeforeEnable); // insert call
-            ilProcessor.InsertBefore(callBeforeEnable, LoadPluginInfo.Duplicate()); // load argument for the call
-
-            ilProcessor.InsertAfter(InvokeOnEnabled, callAfterEnable); // insert call
-            ilProcessor.InsertBefore(callAfterEnable, LoadPluginInfo.Duplicate()); // load argument for the call
-
-            Log.Successful();
-            return CM;
+                Log.Successful();
+            } catch (Exception ex) { ex.Log(); }
         }
     }
 }

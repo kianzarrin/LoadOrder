@@ -3,12 +3,13 @@ namespace LoadOrderMod.Settings.Tabs {
     using ColossalFramework.PlatformServices;
     using ColossalFramework.UI;
     using KianCommons;
-    using LoadOrderShared;
     using System;
     using UnityEngine;
     using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
     using LoadOrderMod.UI;
     using KianCommons.UI;
+    using LoadOrderShared;
+
     static class StartupTab {
         static LoadOrderConfig Config => ConfigUtil.Config;
 

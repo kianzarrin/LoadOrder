@@ -34,11 +34,11 @@ namespace CO.IO {
             string m = "Delayed messages: "; // delayed message;
             CSCache csCache = null;
             try {
-                csCache = CSCache.Deserialize(LocalLOMData);
+                csCache = CSCache.Deserialize();
                 if(csCache == null) {
                     csCache = new CSCache();
                     // backward compatibility.
-                    var data2 = LoadOrderConfig.Deserialize(LocalLOMData);
+                    var data2 = LoadOrderConfig.Deserialize();
                     if(data2 != null) {
                         csCache.WorkShopContentPath = data2.WorkShopContentPath;
                         csCache.GamePath = data2.GamePath;
@@ -128,7 +128,7 @@ namespace CO.IO {
                         csCache.GamePath = GamePath;
                         csCache.SteamPath = SteamPath;
                         csCache.WorkShopContentPath = WorkshopContentPath;
-                        csCache.Serialize(LocalLOMData);
+                        csCache.Serialize();
                     } else {
                         Log.Info(m);
                         Process.GetCurrentProcess().Kill();

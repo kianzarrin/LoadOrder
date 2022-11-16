@@ -9,7 +9,6 @@ namespace LoadOrderMod.Settings {
     using KianCommons;
     using KianCommons.Plugins;
     using LoadOrderMod.Util;
-    using LoadOrderShared;
     using System;
     using System.IO;
     using System.Linq;
@@ -18,6 +17,7 @@ namespace LoadOrderMod.Settings {
     using static KianCommons.ReflectionHelpers;
     using System.Globalization;
     using System.Collections;
+    using LoadOrderShared;
 
     public static class ConfigUtil {
         public static string LocalLoadOrderPath => Path.Combine(DataLocation.localApplicationData, "LoadOrder");
@@ -41,7 +41,7 @@ namespace LoadOrderMod.Settings {
             if (config_ != null) return; // already initialized.
             LogCalled();
             config_ =
-                LoadOrderConfig.Deserialize(LocalLoadOrderPath)
+                LoadOrderConfig.Deserialize()
                 ?? new LoadOrderConfig();
 
             int n = Math.Max(PlatformService.workshop.GetSubscribedItemCount(),  config_.Assets.Length);
@@ -64,7 +64,7 @@ namespace LoadOrderMod.Settings {
                 SaveThread.Dirty = false;
                 if (config_ == null) return;
                 lock (SaveThread.LockObject)
-                    config_.Serialize(LocalLoadOrderPath);
+                    config_.Serialize();
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
@@ -128,10 +128,10 @@ namespace LoadOrderMod.Settings {
             return mod.LoadOrder;
         }
 
-        internal static LoadOrderShared.ModInfo GetModConfig(this PluginInfo p) =>
+        internal static ModInfo GetModConfig(this PluginInfo p) =>
             Config?.Mods?.FirstOrDefault(item => item.Path == p.modPath);
 
-        internal static LoadOrderShared.AssetInfo GetAssetConfig(this Package.Asset a) =>
+        internal static AssetInfo GetAssetConfig(this Package.Asset a) =>
             assetsTable_[a.GetPath()] as AssetInfo;
         
         internal static string GetPath(this Package.Asset a) => a.package.packagePath;

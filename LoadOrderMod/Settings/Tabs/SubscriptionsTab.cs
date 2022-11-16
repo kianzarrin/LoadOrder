@@ -3,8 +3,8 @@ namespace LoadOrderMod.Settings.Tabs {
     using ColossalFramework.UI;
     using KianCommons;
     using LoadOrderMod.Settings;
-    using LoadOrderMod.Util;
     using LoadOrderShared;
+    using LoadOrderMod.Util;
     using System;
     using System.IO;
     using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;

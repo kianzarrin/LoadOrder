@@ -5,13 +5,12 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using CO.IO;
-using LoadOrder.Util;
 using LoadOrderTool;
 
 namespace LoadingScreenMod {
 
     [XmlRoot("LoadingScreenModRevisited")]
-    public class Settings {
+    public class LSMSettings {
         const string FILE_NAME = "LoadingScreenModRevisited.xml";
         static string FILE_PATH => Path.Combine(DataLocation.localApplicationData, FILE_NAME);
 
@@ -50,31 +49,25 @@ namespace LoadingScreenMod {
         }
         #endregion
 
-        public static Settings Deserialize() {
+        public static LSMSettings Deserialize() {
             try {
-                if (File.Exists(FILE_PATH)) {
-                    XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+                return LoadOrderShared.SharedUtil.Deserialize<LSMSettings>( FILE_PATH);
 
-                    using (StreamReader reader = new StreamReader(FILE_PATH))
-                        return (Settings)serializer.Deserialize(reader);
-                }
             } catch (Exception ex) {
                 ex.Log();
             }
-            return new Settings();
+            return new LSMSettings();
         }
 
         private void Serialize() {
             try {
-                var serializer = new XmlSerializer(typeof(Settings));
-                using (StreamWriter writer = new StreamWriter(FILE_PATH))
-                    serializer.Serialize(writer, this, XMLUtil.NoNamespaces);
+                LoadOrderShared.SharedUtil.Serialize(this, FILE_PATH);
             } catch (Exception ex) {
                 ex.Log();
             }
         }
 
-        public Settings SyncAndSerialize() {
+        public LSMSettings SyncAndSerialize() {
             try {
                 var ret = Deserialize();
                 ret.skipFile = this.skipFile;
@@ -88,6 +81,5 @@ namespace LoadingScreenMod {
                 return this;
             }
         }
-
     }
 }

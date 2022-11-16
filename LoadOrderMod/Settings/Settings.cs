@@ -3,13 +3,13 @@ namespace LoadOrderMod.Settings {
     using ColossalFramework.PlatformServices;
     using ColossalFramework.UI;
     using KianCommons;
-    using LoadOrderShared;
     using System;
     using UnityEngine;
     using SteamUtilities = Injections.LoadOrderInjections.SteamUtilities;
     using LoadOrderMod.UI;
     using LoadOrderMod.Settings.Tabs;
     using KianCommons.UI;
+    using LoadOrderShared;
 
     public static class Settings {
         static LoadOrderConfig Config => ConfigUtil.Config;
