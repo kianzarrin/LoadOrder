@@ -13,7 +13,7 @@ namespace LoadOrderTool.Util {
     public static class ContentUtil {
         public const string WS_URL_PREFIX = @"https://steamcommunity.com/sharedfiles/filedetails/?id=";
         public const string DLC_URL_PREFIX = @"https://store.steampowered.com/app/";
-
+        public const string EXCLUDED_FILE_NAME = ".excluded";
         public static string GetItemURL(PublishedFileId id) {
             if (id == PublishedFileId.invalid || id.AsUInt64 == 0)
                 return null;
@@ -163,7 +163,7 @@ namespace LoadOrderTool.Util {
 
         private static bool TryGetID(string dirName, out ulong id) {
             if (dirName.StartsWith("_"))
-                dirName = dirName.Remove(0, 1);
+                dirName = dirName.Substring(1);
             return ulong.TryParse(dirName, out id);
         }
 
@@ -173,72 +173,79 @@ namespace LoadOrderTool.Util {
             return ret;
         }
 
+        public static void Touch(string path) {
+            if (!File.Exists(path)) {
+                File.CreateText(path).Dispose();
+            }
+        }
+
+    public static void TryDelete(string path) {
+        if (File.Exists(path)) {
+            File.Delete(path);
+        }
+    }
+
+    public static bool Exclude(string path) {
+        try {
+            string excludedPath = ToExcludedPath(path);
+            string includedPath = ToIncludedPath(path);
+            if (Directory.Exists(excludedPath)) {
+                if (Directory.Exists(includedPath)) {
+                    Directory.Delete(excludedPath, true);
+                } else {
+                    Directory.Move(excludedPath, includedPath);
+                } 
+            } else if(!Directory.Exists(includedPath)) {
+                Log.Error(message: $"'{path}' does not exist.");
+                return false;
+            }
+            Touch(Path.Combine(includedPath, EXCLUDED_FILE_NAME));
+            return true;
+        } catch(Exception ex) { ex.Log(); }
+        return false;
+    }
+
+        public static bool Include(string path) {
+            try {
+                string excludedPath = ToExcludedPath(path);
+                string includedPath = ToIncludedPath(path);
+                if (Directory.Exists(excludedPath)) {
+                    if (Directory.Exists(includedPath)) {
+                        Directory.Delete(excludedPath, true);
+                    } else {
+                        Directory.Move(excludedPath, includedPath);
+                    }
+                } else if (!Directory.Exists(includedPath)) {
+                    Log.Error(message: $"'{path}' does not exist.");
+                    return false;
+                }
+                TryDelete(Path.Combine(includedPath, EXCLUDED_FILE_NAME));
+                return true;
+            } catch (Exception ex) { ex.Log(); }
+            return false;
+        }
+
         static object ensureLock_ = new object();
         public static void EnsureSubscribedItems() {
+            Log.Called();
             lock (ensureLock_) {
-                List<string> includedPaths = new List<string>();
-                List<string> excludedPaths = new List<string>();
                 foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath)) {
                     var dirName = Path.GetFileName(path);
                     if (!TryGetID(dirName, out ulong id)) continue;
-                    if (dirName.StartsWith("_"))
-                        excludedPaths.Add(path);
-                    else
-                        includedPaths.Add(path);
-                }
-
-                foreach (var excludedPath in excludedPaths) {
-                    var excludedID = Path2ID(excludedPath);
-                    foreach (var includedPath in includedPaths) {
-                        var includedID = Path2ID(includedPath);
-                        if (excludedID == includedID) {
-                            Log.Info($"moving '{includedPath}' to '{excludedPath}'");
-                            Directory.Delete(excludedPath, recursive: true);
-                            Directory.Move(includedPath, excludedPath);
-                            break;
-                        }
+                    if (dirName.StartsWith("_")) {
+                        Exclude(path);
                     }
                 }
             }
         }
 
-        public static string EnsureModAt(string dir) {
-            try {
-                if (!Directory.Exists(dir))
-                    return null;
-
-                var included = ToIncludedPath(dir);
-                var excluded = ToExcludedPath(dir);
-                if (Directory.Exists(included) && Directory.Exists(excluded)) {
-                    Directory.Delete(excluded, recursive: true);
-                    Directory.Move(included, excluded);
-                    return excluded;
-                }
-                return dir;
-            } catch (Exception ex) { ex.Log(); }
-            return null;
-        }
-
         public static void EnsureLocalItemsAt(string parentDir) {
+            Log.Called(parentDir);
             lock (ensureLock_) {
-                List<string> includedPaths = new List<string>();
-                List<string> excludedPaths = new List<string>();
                 foreach (var path in Directory.GetDirectories(parentDir)) {
                     var dirName = Path.GetFileName(path);
-                    if (dirName.StartsWith("_"))
-                        excludedPaths.Add(path);
-                    else
-                        includedPaths.Add(path);
-                }
-
-                foreach (var excludedPath in excludedPaths) {
-                    var excludedDir = Path.GetFileName(excludedPath);
-                    var includedDir = excludedDir.Substring(1);
-                    foreach (var includedPath in includedPaths) {
-                        if (Path.GetFileName(includedPath) == includedDir) {
-                            Directory.Delete(excludedPath, recursive: true);
-                            break;
-                        }
+                    if (dirName.StartsWith("_")) {
+                        Exclude(path);
                     }
                 }
             }

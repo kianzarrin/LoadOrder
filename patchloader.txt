@@ -1,0 +1,14 @@
+Load order status              : included |  excluded   | none-existent or with '_' prefix
+Load order behaviour           : included | ipatch only | N/A
+FPSBooster .excluded behaviour : excluded |  excluded   | included
+
+translation:
+lets assume FPSBooster has '.excluded' file.
+if LoadOrder exists and does not have .excluded file:
+  LoadOrder.ipatch is included (ipatch executed and mod is loaded)
+  FPSBooster is excluded 
+if LoadOrder has '.excluded' file:
+  LoadOrder.ipatch is executed (which prevents LoadOrderMod from loading)
+  FPSBooster is excluded (ipatches are not executed and mod is not loaded).
+if LoadOrder Does not exist (unsubbed):
+  FPSBooster is included (ipatches are executed and mod is loaded)

@@ -8,9 +8,10 @@ using PluginInfo = ColossalFramework.Plugins.PluginManager.PluginInfo;
 using System;
 
 namespace LoadOrderInjections.Injections {
+    /// <summary>
+    /// sort plugins and excludes excluded plugins
+    /// </summary>
     public static class SortPlugins {
-        const int DefaultLoadOrder = LoadOrderShared.LoadOrderConfig.DefaultLoadOrder;
-
         /// <summary>
         /// 1st: harmony mod 
         /// 2nd: harmony 2 
@@ -77,7 +78,9 @@ namespace LoadOrderInjections.Injections {
 
         public static void Sort(Dictionary<string, PluginInfo> plugins) {
             try {
-                var list = plugins.ToList();
+                var list = plugins.
+                    Where(pair => !CMPatchHelpers.IsDirectoryExcluded(pair.Key)).
+                    ToList();
 
                 Log.Info("Sorting assemblies ...", true);
                 list.Sort((p1, p2) => HarmonyComparison(p1.Value, p2.Value));

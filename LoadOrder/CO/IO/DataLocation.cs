@@ -296,11 +296,11 @@ namespace CO.IO {
                 int i = mod.IncludedPath.IndexOf(WSDirName);
                 if (i > 0) {
                     string WSDirPath = mod.IncludedPath.Substring(0, i + WSDirName.Length);
-                    string m =
-                        $"tool uses '{WorkshopContentPath}'\n" +
-                        $"game uses '{WSDirPath}'";
-                    Log.Debug(m);
                     if (WorkshopContentPath != WSDirPath) {
+                        string m =
+                            $"tool uses '{WorkshopContentPath}'\n" +
+                            $"game uses '{WSDirPath}'";
+                        Log.Debug(m);
                         new Exception($"Path mismatch! enabling/disabling may not work.\n" + m).Log();
                         return;
                     }

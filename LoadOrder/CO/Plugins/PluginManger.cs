@@ -48,18 +48,33 @@ namespace CO.Plugins {
 
             private TypeDefinition m_UserModImplementation;
 
-            private string m_Path;
 
             private bool m_IsBuiltin;
 
             private bool m_Unloaded;
 
+            private string m_Path;
+
             /// <summary> dir name without prefix. </summary>
             private string m_CachedName;
 
-            public string dllName => userModImplementation?.Module.Assembly.Name.Name;
+            /// <summary> real mod path (with prefix if any) </summary>
+            public string ModPath => m_Path;
+            /// <summary>the name of the directory that contains the mod</summary>
+            public string dirName => new DirectoryInfo(ModPath).Name;
+
+            public string IncludedPath {
+                get {
+                    if (dirName.StartsWith("_"))
+                        return Path.Combine(parentDirPath, dirName.Substring(1));
+                    else
+                        return ModPath;
+                }
+            }
+
             private string dllPath_;
 
+            public string dllName => userModImplementation?.Module.Assembly.Name.Name;
             public string dllPath {
                 get {
                     if(dllPath_ == null) 
@@ -72,22 +87,6 @@ namespace CO.Plugins {
 
             public bool IsLocal => !IsWorkshop;
             public bool IsWorkshop => PublishedFileId.IsValid;
-
-            public string ModPath => m_Path;
-
-            public string IncludedPath {
-                get {
-                    if (dirName.StartsWith("_"))
-                        return Path.Combine(parentDirPath, dirName.Substring(1));
-                    else
-                        return ModPath;
-                }
-            }
-
-            /// <summary>
-            /// the name of the directory that contains the mod
-            /// </summary>
-            public string dirName => new DirectoryInfo(ModPath).Name;
 
             /// <summary>
             /// full path to the parent of the mod's directory.
@@ -111,11 +110,13 @@ namespace CO.Plugins {
                             modName = SteamCache?.Name;
 
                         if (modName.IsNullorEmpty()) {
-                            displayText_ = DispalyPath;
-                        } else {
-                            string version = UserModAssemblyVersion == null ? "" : "V" + UserModAssemblyVersion;
-                            displayText_ = $"{modName} ({DispalyPath} {version})";
+                            modName = DispalyPath;
                         }
+
+                        string version = UserModAssemblyVersion == null ? "" : "V" + UserModAssemblyVersion;
+                        string dllDetail = $"{DispalyPath} {version}";
+                        displayText_ = $"{modName} ({dllDetail})";
+                        
                     }
                     return displayText_;
                 }
@@ -180,7 +181,6 @@ namespace CO.Plugins {
             public bool IsHarmonyMod() =>
                 name == "2040656402" || dllName == "CitiesHarmony";
 
-
             /// <summary>
             /// precondition: all dependent assemblies are loaded.
             /// </summary>
@@ -200,21 +200,25 @@ namespace CO.Plugins {
             }
 
             public bool IsIncluded {
-                get => !dirName.StartsWith("_");
+                get =>
+                    !dirName.StartsWith("_") &&
+                    !File.Exists(Path.Combine(ModPath, ContentUtil.EXCLUDED_FILE_NAME));
                 set {
                     isIncludedPending_ = value; 
                     if (value == IsIncluded)
                         return;
-                    Log.Debug($"set_IsIncluded current value = {IsIncluded} | target value = {value}");
-                    string parentPath = Directory.GetParent(m_Path).FullName;
-                    string targetDirname =
-                        value
-                        ? dirName.Substring(1)  // drop _ prefix
-                        : "_" + dirName; // add _ prefix
-                    string targetPath = Path.Combine(parentPath, targetDirname);
-                    ContentUtil.EnsureModAt(m_Path);
-                    bool success = MoveToPath(targetPath);
-                    if (!success) {
+                    bool success;
+                    if (value) {
+                        success = ContentUtil.Include(m_Path);
+                    } else {
+                        success = ContentUtil.Exclude(m_Path);
+                    }
+                    if (success) {
+                        // fix mod path if necessary.
+                        string includedPath = ContentUtil.ToIncludedPath(m_Path);
+                        dllPath_ = dllPath_.Replace(m_Path, includedPath);
+                        m_Path = includedPath;
+                    } else {
                         // move failed. reverse value: 
                         isIncludedPending_ = IsIncluded; 
                         var modGrid = LoadOrderWindow.Instance?.dataGridMods;
@@ -222,43 +226,6 @@ namespace CO.Plugins {
                             modGrid.GetRow(this).Cells[modGrid.CIsIncluded.Index].Value = isIncludedPending_;
                     }
                 }
-            }
-
-            /// <returns>true on success</returns>
-            public bool MoveToPath(string targetPath) {
-                try {
-                    string newPath = ContentUtil.EnsureModAt(m_Path);
-                    if (newPath == null)
-                        throw new Exception($"cannot move because could not ensure item.");
-                    Log.Debug($"moving mod from {newPath} to {targetPath}");
-
-                    if (newPath == targetPath)
-                        return true; // no need to move if ensuring moved the directory for us.
-                    if (Directory.Exists(targetPath))
-                        throw new Exception($"cannot move because targetPath already exists ({targetPath})"); // unreachable code.
-                    if (!Directory.Exists(newPath))
-                        throw new Exception($"cannot move because source path does not exists ({newPath})"); // unreachable code.
-
-                    Directory.Move(newPath, targetPath);
-                    
-                    if(Directory.Exists(targetPath)) {
-                        Log.Debug($"move successful!");
-                    } else {
-                        Log.Debug($"FAILED!");
-                        throw new Exception($"failed to move directory from {m_Path} to {targetPath}");
-                    }
-
-                    dllPath_ = dllPath_.Replace(m_Path, targetPath); // update dllPAth
-                    m_Path = targetPath; // must be done last because we need m_Path to know what old path was.
-                } catch (Exception ex) {
-                    //string assemblyName = userModImplementation.GetType().Assembly.GetName().Name;
-                    if ( dllName == "LoadOrderMod")
-                        Log.Error("Cannot move Load Order because LoadOrderTool is in use");
-                    else
-                        Log.Exception(ex, "dllName:" + dllName);
-                    return false;
-                }
-                return true;
             }
 
             private PublishedFileId m_PublishedFileId = PublishedFileId.invalid;

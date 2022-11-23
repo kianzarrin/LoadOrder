@@ -444,13 +444,49 @@ namespace LoadOrderInjections {
             }
         }
 
-        public static void EnsureSubs() {
-            DirectoryInfo d = new DirectoryInfo("");
-        }
-
         public static void DoNothing() {
             new GameObject().AddComponent<Camera>();
             new GameObject("nop go").AddComponent<DoNothingComponent>();
+        }
+    }
+
+    public static class CMPatchHelpers {
+        public static bool IsDirectoryExcluded(string path) {
+            return
+                path.IsNullOrWhiteSpace() ||
+                path[0] == '_' ||
+                Directory.Exists("_" + path) ||
+                File.Exists(Path.Combine(path, SteamUtilities.EXCLUDED_FILE_NAME));
+        }
+
+        public static bool IsIDExcluded(PublishedFileId id) {
+            string path = PlatformService.workshop.GetSubscribedItemPath(id);
+            return IsDirectoryExcluded(path);
+        }
+
+        public static string CheckFiles(string path) {
+            EnsureIncludedOrExcludedFiles(path);
+            return path;
+        }
+
+        public static void EnsureIncludedOrExcludedFiles(string path) {
+            try {
+                foreach (string file in Directory.GetFiles(path, "*", searchOption: SearchOption.AllDirectories))
+                    EnsureFile(file);
+            } catch (Exception ex) {
+                Log.Exception(ex);
+            }
+        }
+
+        public static void EnsureFile(string fullFilePath) {
+            if (string.IsNullOrEmpty(fullFilePath)) return;
+            string included = SteamUtilities.ToIncludedPath(fullFilePath);
+            string excluded = SteamUtilities.ToExcludedPath2(fullFilePath);
+            if (File.Exists(included) && File.Exists(excluded)) {
+                File.Delete(excluded);
+                File.Move(included, excluded);
+                fullFilePath = excluded;
+            }
         }
     }
 
@@ -758,22 +794,29 @@ namespace LoadOrderInjections {
             return files.Sum(_f => new FileInfo(_f).Length);
         }
 
-        public static string GetFinalPath(string path) {
-            if (path.IsNullorEmpty())
-                return null;
-            if (!Directory.Exists(path)) {
-                path = ToExcludedPath(path);
-                if (!Directory.Exists(path))
-                    return null;
-            }
-            return path;
+
+        #region included excluded
+        public static string GetFinalPath(string includedPath) {
+            if (includedPath.IsNullorEmpty()) return null;
+            if (Directory.Exists(includedPath))
+                return includedPath;
+
+            string excludedPath = ToExcludedPath(includedPath);
+            if (Directory.Exists(excludedPath))
+                return excludedPath;
+
+            return null;
         }
 
+        /// <summary>
+        /// puts _ behind directory 
+        /// prints error if it already has _ or if path is empty.
+        /// </summary>
         public static string ToExcludedPath(string includedPath) {
             string p1 = Path.GetDirectoryName(includedPath);
             string p2 = Path.GetFileName(includedPath);
             if (string.IsNullOrEmpty(p1) || string.IsNullOrEmpty(p2)) {
-                Log.Error("LoadOrderInjections.ToExcludedPath()\n" +
+                Log.Error(ThisMethod +
                     $"includedPath={includedPath}\n" +
                     $"p1={p1}\n" +
                     $"p2={p2}\n");
@@ -784,6 +827,18 @@ namespace LoadOrderInjections {
             }
             p2 = "_" + p2;
             return Path.Combine(p1, p2);
+        }
+
+        /// <summary>
+        /// puts _ behind directory if it does not have _ already
+        /// </summary>
+        public static string ToExcludedPath2(string fullPath) {
+            Assertion.Assert(!fullPath.IsNullorEmpty(), "fullPath=" + fullPath);
+            string parent = Path.GetDirectoryName(fullPath);
+            string file = Path.GetFileName(fullPath);
+            if (!file.StartsWith("_"))
+                file = "_" + file;
+            return Path.Combine(parent, file);
         }
 
         public static bool IsPathIncluded(string fullPath) {
@@ -798,23 +853,12 @@ namespace LoadOrderInjections {
                 file = file.Substring(1); //drop _
             return Path.Combine(parent, file);
         }
-        public static string ToExcludedPath2(string fullPath) {
-            Assertion.Assert(!fullPath.IsNullorEmpty(), "fullPath=" + fullPath);
-            string parent = Path.GetDirectoryName(fullPath);
-            string file = Path.GetFileName(fullPath);
-            if (!file.StartsWith("_"))
-                file = "_" + file;
-            return Path.Combine(parent, file);
-        }
+
 
         public static bool IsExcludedMod(PublishedFileId publishedFileId) {
             try {
                 var path = PlatformService.workshop.GetSubscribedItemPath(publishedFileId);
-                if (path == null)
-                    return false; // none-existing item.
-                var excludedPath = ToExcludedPath2(path);
-                return Directory.Exists(excludedPath);
-                return true;
+                return CMPatchHelpers.IsDirectoryExcluded(path);
             } catch (Exception ex) {
                 ex.Log("publishedFileId=" + publishedFileId);
                 throw;
@@ -839,25 +883,70 @@ namespace LoadOrderInjections {
             }
         }
 
-        public static void EnsureIncludedOrExcludedFiles(string path) {
+
+        //public static void EnsureAll() {
+        //    Log.Called();
+        //    var items = PlatformService.workshop.GetSubscribedItems();
+        //    foreach (var id in items) {
+        //        EnsureIncludedOrExcluded(id);
+        //        PlatformService.workshop.RequestItemDetails(id)
+        //            .LogRet($"RequestItemDetails({id.AsUInt64})");
+        //    }
+        //}
+
+        public static void EnsureIncludedOrExcludedAllFast() {
+            var dir = GetWSPath();
+            if (dir != default)
+                EnsureIncludedOrExcludedAllFast(dir);
+        }
+
+        /// <summary>
+        /// I think GetFiles/GetDirectories is cached and therefore the normal EnsureIncludedOrExcluded should work fast
+        /// but just in case it doesn't for some OS then I should use this method
+        /// </summary>
+        public static void EnsureIncludedOrExcludedAllFast(DirectoryInfo RootDir) {
             try {
-                foreach (string file in Directory.GetFiles(path, "*", searchOption: SearchOption.AllDirectories))
-                    EnsureFile(file);
+                Log.Called(RootDir);
+                foreach (var path in Directory.GetDirectories(RootDir.FullName)) {
+                    var dirName = Path.GetFileName(path);
+                    if (dirName.StartsWith("_")) {
+                        Exclude(path);
+                    }
+                }
             } catch (Exception ex) {
-                Log.Exception(ex);
+                Log.Exception(ex, $"EnsureIncludedOrExcluded({RootDir})", showInPanel: false);
+            }
+            Log.Succeeded();
+        }
+
+        public static bool Exclude(string path) {
+            try {
+                string excludedPath = ToExcludedPath2(path);
+                string includedPath = ToIncludedPath(path);
+                if (Directory.Exists(excludedPath)) {
+                    if (Directory.Exists(includedPath)) {
+                        Directory.Delete(excludedPath,true);
+                    } else {
+                        Directory.Move(excludedPath, includedPath);
+                    }
+                } else if (!Directory.Exists(includedPath)) {
+                    return false;
+                }
+                Touch(Path.Combine(includedPath, EXCLUDED_FILE_NAME));
+                return true;
+            } catch (Exception ex) { ex.Log(); }
+            return false;
+        }
+
+
+        public const string EXCLUDED_FILE_NAME = ".excluded";
+        public static void Touch(string path) {
+            if (!File.Exists(path)) {
+                File.CreateText(path).Dispose();
             }
         }
 
-        public static void EnsureFile(string fullFilePath) {
-            if (string.IsNullOrEmpty(fullFilePath)) return;
-            string included = ToIncludedPath(fullFilePath);
-            string excluded = ToExcludedPath2(fullFilePath);
-            if (File.Exists(included) && File.Exists(excluded)) {
-                File.Delete(excluded);
-                File.Move(included, excluded);
-                fullFilePath = excluded;
-            }
-        }
+        #endregion
 
         public static void DeleteUnsubbed() {
             Log.Info("DeleteUnsubbed called ...");
@@ -884,17 +973,6 @@ namespace LoadOrderInjections {
             Log.Succeeded();
         }
 
-        //public static void EnsureAll() {
-        //    Log.Called();
-        //    var items = PlatformService.workshop.GetSubscribedItems();
-        //    foreach (var id in items) {
-        //        EnsureIncludedOrExcluded(id);
-        //        PlatformService.workshop.RequestItemDetails(id)
-        //            .LogRet($"RequestItemDetails({id.AsUInt64})");
-        //    }
-        //}
-
-
         public static DirectoryInfo FindWSDir() {
             foreach (var id in PlatformService.workshop.GetSubscribedItems()) {
                 var path = PlatformService.workshop.GetSubscribedItemPath(id);
@@ -903,43 +981,6 @@ namespace LoadOrderInjections {
                 }
             }
             return null;
-        }
-
-        public static void EnsureIncludedOrExcludedAllFast() {
-            var dir = GetWSPath();
-            if (dir != default)
-                EnsureIncludedOrExcludedAllFast(dir);
-        }
-
-        /// <summary>
-        /// I think GetFiles/GetDirectories is cached and therefore the normal EnsureIncludedOrExcluded should work fast
-        /// but just in case it doesn't for some OS then I should use this method
-        /// </summary>
-        public static void EnsureIncludedOrExcludedAllFast(DirectoryInfo RootDir) {
-            try {
-                Log.Called();
-                var dirs = new HashSet<string>(RootDir.GetDirectories().Select(item => item.FullName));
-                foreach (var dir in dirs.ToArray() /* need clone*/) {
-                    try {
-                        string path1 = ToIncludedPath(dir);
-                        string path2 = ToExcludedPath2(dir);
-                        if (dirs.Contains(path1) && dirs.Contains(path2)) {
-                            Assertion.Assert(Directory.Exists(path1),
-                                $"path1 exists: '{path1}' failed. dirs.Contains(path1)={dirs.Contains(path1)}");
-                            Assertion.Assert(Directory.Exists(path2),
-                                $"path2 exists: '{path2}' failed. dirs.Contains(path2)={dirs.Contains(path2)}");
-                            Directory.Delete(path2, true);
-                            Directory.Move(path1, path2);
-                            dirs.Remove(path1);
-                        }
-                    } catch(Exception ex) {
-                        ex.Log($"dir='{dir}', dirs='{dirs.ToSTR()}'",false);
-                    }
-                }
-            } catch (Exception ex) {
-                Log.Exception(ex, $"EnsureIncludedOrExcluded({RootDir})", showInPanel: false);
-            }
-            Log.Succeeded();
         }
     }
 }
