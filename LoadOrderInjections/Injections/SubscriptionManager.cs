@@ -906,11 +906,11 @@ namespace LoadOrderInjections {
         /// </summary>
         public static void EnsureIncludedOrExcludedAllFast(DirectoryInfo RootDir) {
             try {
-                Log.Called();
+                Log.Called(RootDir);
                 foreach (var path in Directory.GetDirectories(RootDir.FullName)) {
                     var dirName = Path.GetFileName(path);
                     if (dirName.StartsWith("_")) {
-                        Exclude(dirName);
+                        Exclude(path);
                     }
                 }
             } catch (Exception ex) {

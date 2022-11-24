@@ -259,54 +259,58 @@ namespace LoadOrderIPatch.Patches {
         }
 
         public void LoadCloudPackagesPatch(AssemblyDefinition CM) {
-            Log.Called();
-            var module = CM.MainModule;
-            var mTarget = module.GetMethod("ColossalFramework.Packaging.PackageManager.LoadCloudPackages");
-            ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
-            var instructions = mTarget.Body.Instructions;
-            var last = instructions.Last();
+            try {
+                Log.Called();
+                var module = CM.MainModule;
+                var mTarget = module.GetMethod("ColossalFramework.Packaging.PackageManager.LoadCloudPackages");
+                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                var instructions = mTarget.Body.Instructions;
+                var last = instructions.Last();
 
-            var mIsCloudEnabled = typeof(CMPatch).GetMethod(nameof(IsCloudEnabled));
-            var callIsCloudEnabled = Instruction.Create(OpCodes.Call, module.ImportReference(mIsCloudEnabled));
-            var skipIfFalse = Instruction.Create(OpCodes.Brfalse, last);
+                var mIsCloudEnabled = typeof(CMPatch).GetMethod(nameof(IsCloudEnabled));
+                var callIsCloudEnabled = Instruction.Create(OpCodes.Call, module.ImportReference(mIsCloudEnabled));
+                var skipIfFalse = Instruction.Create(OpCodes.Brfalse, last);
 
-            ilProcessor.Prefix(callIsCloudEnabled, skipIfFalse);
-            Log.Successful();
+                ilProcessor.Prefix(callIsCloudEnabled, skipIfFalse);
+                Log.Successful();
+            } catch (Exception ex) { ex.Log(); }
         }
 
         public static bool IsCloudEnabled() => SteamUtilities.IsCloudEnabled();
 
         public AssemblyDefinition NoCustomAssetsPatch(AssemblyDefinition CM) {
-            Log.StartPatching();
-            var module = CM.MainModule;
-            var type = module.GetType("ColossalFramework.Packaging.PackageManager");
-            var mTargets = type.Methods.Where(_m =>
-                _m.Name.StartsWith("Load") && _m.Name.EndsWith("Packages")); //Load*Packages
-            foreach (var mTarget in mTargets) {
-                bool top = mTarget.Name == "LoadPackages" && mTarget.Parameters.Count == 0;
-                if (top) continue;
-                bool loadPath = mTarget.HasParameter("path"); // LoadPackages(string path,bool)
-                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
-                var instructions = mTarget.Body.Instructions;
-                var first = instructions.First();
+            try {
+                Log.StartPatching();
+                var module = CM.MainModule;
+                var type = module.GetType("ColossalFramework.Packaging.PackageManager");
+                var mTargets = type.Methods.Where(_m =>
+                    _m.Name.StartsWith("Load") && _m.Name.EndsWith("Packages")); //Load*Packages
+                foreach (var mTarget in mTargets) {
+                    bool top = mTarget.Name == "LoadPackages" && mTarget.Parameters.Count == 0;
+                    if (top) continue;
+                    bool loadPath = mTarget.HasParameter("path"); // LoadPackages(string path,bool)
+                    ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                    var instructions = mTarget.Body.Instructions;
+                    var first = instructions.First();
 
-                Log.Info("patching " + mTarget.Name);
-                if (loadPath) {
-                    // skip method only if path is asset path
-                    var ret = instructions.Last();
-                    var LdArgPath = mTarget.GetLDArg("path");
-                    var mIsAssetPath = GetType().GetMethod(nameof(IsAssetPath));
-                    var callIsAssetPath = Instruction.Create(OpCodes.Call, module.ImportReference(mIsAssetPath));
-                    var skipIfAsset = Instruction.Create(OpCodes.Brtrue, ret);
-                    ilProcessor.Prefix(LdArgPath, callIsAssetPath, skipIfAsset);
-                } else {
-                    // return to skip method.
-                    var ret = Instruction.Create(OpCodes.Ret);
-                    ilProcessor.Prefix(ret);
+                    Log.Info("patching " + mTarget.Name);
+                    if (loadPath) {
+                        // skip method only if path is asset path
+                        var ret = instructions.Last();
+                        var LdArgPath = mTarget.GetLDArg("path");
+                        var mIsAssetPath = GetType().GetMethod(nameof(IsAssetPath));
+                        var callIsAssetPath = Instruction.Create(OpCodes.Call, module.ImportReference(mIsAssetPath));
+                        var skipIfAsset = Instruction.Create(OpCodes.Brtrue, ret);
+                        ilProcessor.Prefix(LdArgPath, callIsAssetPath, skipIfAsset);
+                    } else {
+                        // return to skip method.
+                        var ret = Instruction.Create(OpCodes.Ret);
+                        ilProcessor.Prefix(ret);
+                    }
                 }
-            }
 
-            Log.Successful();
+                Log.Successful();
+            } catch (Exception ex) { ex.Log(); }
             return CM;
         }
 
@@ -319,70 +323,74 @@ namespace LoadOrderIPatch.Patches {
         /// this patch moves 'file.crp' to '_file.crp'
         /// </summary>
         public void EnsureIncludedExcludedPackagePatch(AssemblyDefinition CM) {
-            Log.StartPatching();
-            var cm = CM.MainModule;
-            var type = cm.GetType("ColossalFramework.Packaging.PackageManager");
-            var mTargets = type.Methods.Where(_m => _m.Name == "LoadPackages");
-            var tCMPatchHelpers = GetInjectionsAssemblyDefinition(workingPath_).MainModule.GetType("LoadOrderInjections.CMPatchHelpers");
-            var mCheckFiles = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.CheckFiles));
-            var mIsDirectoryExcluded = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.IsDirectoryExcluded));
-            var mIsIDExcluded = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.IsIDExcluded));
+            try {
+                Log.StartPatching();
+                var cm = CM.MainModule;
+                var type = cm.GetType("ColossalFramework.Packaging.PackageManager");
+                var mTargets = type.Methods.Where(_m => _m.Name == "LoadPackages");
+                var tCMPatchHelpers = GetInjectionsAssemblyDefinition(workingPath_).MainModule.GetType("LoadOrderInjections.CMPatchHelpers");
+                var mCheckFiles = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.CheckFiles));
+                var mIsDirectoryExcluded = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.IsDirectoryExcluded));
+                var mIsIDExcluded = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.IsIDExcluded));
 
 
-            // insert checkfiles
-            foreach (var mTarget in mTargets) {
-                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
-                var instructions = mTarget.Body.Instructions;
+                // insert checkfiles
+                foreach (var mTarget in mTargets) {
+                    ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                    var instructions = mTarget.Body.Instructions;
 
-                var callGetFiles = instructions.FirstOrDefault(_c => _c.Calls("GetFiles"));
-                if (callGetFiles != null) {
-                    Log.Info($"injecting CheckFiles() in {mTarget}");
-                    
-                    var callCheckFiles = Instruction.Create(OpCodes.Call, cm.ImportReference(mCheckFiles));
-                    ilProcessor.InsertBefore(callGetFiles, callCheckFiles);
+                    var callGetFiles = instructions.FirstOrDefault(_c => _c.Calls("GetFiles"));
+                    if (callGetFiles != null) {
+                        Log.Info($"injecting CheckFiles() in {mTarget}");
+
+                        var callCheckFiles = Instruction.Create(OpCodes.Call, cm.ImportReference(mCheckFiles));
+                        ilProcessor.InsertBefore(callGetFiles, callCheckFiles);
+                    }
                 }
-            }
 
-            Log.Successful();
+                Log.Successful();
+            } catch (Exception ex) { ex.Log(); }
         }
 
         /// <summary>
         /// if asset containing dir is excluded (has _ or .excluded) then asset is skipped.
         /// </summary>
         public void ExcludeAssetDirPatch(AssemblyDefinition CM) {
-            Log.StartPatching();
-            var cm = CM.MainModule;
-            var type = cm.GetType("ColossalFramework.Packaging.PackageManager");
-            var mTargets = type.Methods.Where(_m => _m.Name == "LoadPackages");
-            var tCMPatchHelpers = GetInjectionsAssemblyDefinition(workingPath_).MainModule.GetType("LoadOrderInjections.CMPatchHelpers");
-            var mCheckFiles = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.CheckFiles));
-            var mIsDirectoryExcluded = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.IsDirectoryExcluded));
-            var mIsIDExcluded = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.IsIDExcluded));
+            try {
+                Log.StartPatching();
+                var cm = CM.MainModule;
+                var type = cm.GetType("ColossalFramework.Packaging.PackageManager");
+                var mTargets = type.Methods.Where(_m => _m.Name == "LoadPackages");
+                var tCMPatchHelpers = GetInjectionsAssemblyDefinition(workingPath_).MainModule.GetType("LoadOrderInjections.CMPatchHelpers");
+                var mCheckFiles = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.CheckFiles));
+                var mIsDirectoryExcluded = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.IsDirectoryExcluded));
+                var mIsIDExcluded = tCMPatchHelpers.GetMethod(nameof(CMPatchHeleprs.IsIDExcluded));
 
-            // inject Is*Excluded
-            foreach (var mTarget in mTargets) {
-                ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
-                var instructions = mTarget.Body.Instructions;
-                var last = instructions.Last();
+                // inject Is*Excluded
+                foreach (var mTarget in mTargets) {
+                    ILProcessor ilProcessor = mTarget.Body.GetILProcessor();
+                    var instructions = mTarget.Body.Instructions;
+                    var last = instructions.Last();
 
-                if (mTarget.Parameters[0].ParameterType.Name == "PublishedFileId") {
-                    // public void LoadPackages(PublishedFileId id)
-                    Log.Info($"injecting IsIDExcluded() in {mTarget}");
-                    ilProcessor.Prefix(
-                        mTarget.GetLDArg("id"),
-                        Instruction.Create(OpCodes.Call, cm.ImportReference(mIsIDExcluded)), // call IsIDExcluded(id)
-                        Instruction.Create(OpCodes.Brtrue, last)); // return if excluded
-                } else {
-                    // public void LoadPackages(string path, bool createReporter)
-                    Log.Info($"injecting IsDirectoryExcluded() in {mTarget}");
-                    ilProcessor.Prefix(
-                        mTarget.GetLDArg("path"),
-                        Instruction.Create(OpCodes.Call, cm.ImportReference(mIsDirectoryExcluded)), // call IsDirectoryExcluded(path)
-                        Instruction.Create(OpCodes.Brtrue, last)); // return if excluded
+                    if (mTarget.Parameters.Any(p => p.Name == "id")) {
+                        // public void LoadPackages(PublishedFileId id)
+                        Log.Info($"injecting IsIDExcluded() in {mTarget}");
+                        ilProcessor.Prefix(
+                            mTarget.GetLDArg("id"),
+                            Instruction.Create(OpCodes.Call, cm.ImportReference(mIsIDExcluded)), // call IsIDExcluded(id)
+                            Instruction.Create(OpCodes.Brtrue, last)); // return if excluded
+                    } else if (mTarget.Parameters.Any(p => p.Name == "path")) {
+                        // public void LoadPackages(string path, bool createReporter)
+                        Log.Info($"injecting IsDirectoryExcluded() in {mTarget}");
+                        ilProcessor.Prefix(
+                            mTarget.GetLDArg("path"),
+                            Instruction.Create(OpCodes.Call, cm.ImportReference(mIsDirectoryExcluded)), // call IsDirectoryExcluded(path)
+                            Instruction.Create(OpCodes.Brtrue, last)); // return if excluded
+                    }
                 }
-            }
 
-            Log.Successful();
+                Log.Successful();
+            } catch (Exception ex) { ex.Log(); }
         }
 
         /// <summary>

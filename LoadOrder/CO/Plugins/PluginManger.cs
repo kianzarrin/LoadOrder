@@ -110,11 +110,13 @@ namespace CO.Plugins {
                             modName = SteamCache?.Name;
 
                         if (modName.IsNullorEmpty()) {
-                            displayText_ = DispalyPath;
-                        } else {
-                            string version = UserModAssemblyVersion == null ? "" : "V" + UserModAssemblyVersion;
-                            displayText_ = $"{modName} ({DispalyPath} {version})";
+                            modName = DispalyPath;
                         }
+
+                        string version = UserModAssemblyVersion == null ? "" : "V" + UserModAssemblyVersion;
+                        string dllDetail = $"{DispalyPath} {version}";
+                        displayText_ = $"{modName} ({dllDetail})";
+                        
                     }
                     return displayText_;
                 }
