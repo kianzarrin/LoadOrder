@@ -925,7 +925,7 @@ namespace LoadOrderInjections {
                 string includedPath = ToIncludedPath(path);
                 if (Directory.Exists(excludedPath)) {
                     if (Directory.Exists(includedPath)) {
-                        Directory.Delete(excludedPath);
+                        Directory.Delete(excludedPath,true);
                     } else {
                         Directory.Move(excludedPath, includedPath);
                     }

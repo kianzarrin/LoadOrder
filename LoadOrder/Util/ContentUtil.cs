@@ -179,31 +179,31 @@ namespace LoadOrderTool.Util {
             }
         }
 
-        public static void TryDelete(string path) {
-            if (File.Exists(path)) {
-                File.Delete(path);
-            }
+    public static void TryDelete(string path) {
+        if (File.Exists(path)) {
+            File.Delete(path);
         }
+    }
 
-        public static bool Exclude(string path) {
-            try {
-                string excludedPath = ToExcludedPath(path);
-                string includedPath = ToIncludedPath(path);
-                if (Directory.Exists(excludedPath)) {
-                    if (Directory.Exists(includedPath)) {
-                        Directory.Delete(excludedPath);
-                    } else {
-                        Directory.Move(excludedPath, includedPath);
-                    } 
-                } else if(!Directory.Exists(includedPath)) {
-                    Log.Error(message: $"'{path}' does not exist.");
-                    return false;
-                }
-                Touch(Path.Combine(includedPath, EXCLUDED_FILE_NAME));
-                return true;
-            } catch(Exception ex) { ex.Log(); }
-            return false;
-        }
+    public static bool Exclude(string path) {
+        try {
+            string excludedPath = ToExcludedPath(path);
+            string includedPath = ToIncludedPath(path);
+            if (Directory.Exists(excludedPath)) {
+                if (Directory.Exists(includedPath)) {
+                    Directory.Delete(excludedPath, true);
+                } else {
+                    Directory.Move(excludedPath, includedPath);
+                } 
+            } else if(!Directory.Exists(includedPath)) {
+                Log.Error(message: $"'{path}' does not exist.");
+                return false;
+            }
+            Touch(Path.Combine(includedPath, EXCLUDED_FILE_NAME));
+            return true;
+        } catch(Exception ex) { ex.Log(); }
+        return false;
+    }
 
         public static bool Include(string path) {
             try {
@@ -211,7 +211,7 @@ namespace LoadOrderTool.Util {
                 string includedPath = ToIncludedPath(path);
                 if (Directory.Exists(excludedPath)) {
                     if (Directory.Exists(includedPath)) {
-                        Directory.Delete(excludedPath);
+                        Directory.Delete(excludedPath, true);
                     } else {
                         Directory.Move(excludedPath, includedPath);
                     }
