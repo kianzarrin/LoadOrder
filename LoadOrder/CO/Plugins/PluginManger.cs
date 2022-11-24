@@ -57,6 +57,8 @@ namespace CO.Plugins {
 
             /// <summary> dir name without prefix. </summary>
             private string m_CachedName;
+
+            /// <summary> real mod path (with prefix if any) </summary>
             public string ModPath => m_Path;
             /// <summary>the name of the directory that contains the mod</summary>
             public string dirName => new DirectoryInfo(ModPath).Name;
@@ -198,7 +200,7 @@ namespace CO.Plugins {
             public bool IsIncluded {
                 get =>
                     !dirName.StartsWith("_") &&
-                    !File.Exists(Path.Combine(dirName, ContentUtil.EXCLUDED_FILE_NAME));
+                    !File.Exists(Path.Combine(ModPath, ContentUtil.EXCLUDED_FILE_NAME));
                 set {
                     isIncludedPending_ = value; 
                     if (value == IsIncluded)

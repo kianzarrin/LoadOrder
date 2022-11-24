@@ -163,7 +163,7 @@ namespace LoadOrderTool.Util {
 
         private static bool TryGetID(string dirName, out ulong id) {
             if (dirName.StartsWith("_"))
-                dirName = dirName.Remove(0, 1);
+                dirName = dirName.Substring(1);
             return ulong.TryParse(dirName, out id);
         }
 
@@ -196,6 +196,7 @@ namespace LoadOrderTool.Util {
                         Directory.Move(excludedPath, includedPath);
                     } 
                 } else if(!Directory.Exists(includedPath)) {
+                    Log.Error(message: $"'{path}' does not exist.");
                     return false;
                 }
                 Touch(Path.Combine(includedPath, EXCLUDED_FILE_NAME));
@@ -215,6 +216,7 @@ namespace LoadOrderTool.Util {
                         Directory.Move(excludedPath, includedPath);
                     }
                 } else if (!Directory.Exists(includedPath)) {
+                    Log.Error(message: $"'{path}' does not exist.");
                     return false;
                 }
                 TryDelete(Path.Combine(includedPath, EXCLUDED_FILE_NAME));
@@ -225,23 +227,25 @@ namespace LoadOrderTool.Util {
 
         static object ensureLock_ = new object();
         public static void EnsureSubscribedItems() {
+            Log.Called();
             lock (ensureLock_) {
                 foreach (var path in Directory.GetDirectories(DataLocation.WorkshopContentPath)) {
                     var dirName = Path.GetFileName(path);
                     if (!TryGetID(dirName, out ulong id)) continue;
                     if (dirName.StartsWith("_")) {
-                        Exclude(dirName);
+                        Exclude(path);
                     }
                 }
             }
         }
 
         public static void EnsureLocalItemsAt(string parentDir) {
+            Log.Called(parentDir);
             lock (ensureLock_) {
                 foreach (var path in Directory.GetDirectories(parentDir)) {
                     var dirName = Path.GetFileName(path);
                     if (dirName.StartsWith("_")) {
-                        Exclude(dirName);
+                        Exclude(path);
                     }
                 }
             }
