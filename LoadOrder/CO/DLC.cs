@@ -63,8 +63,8 @@ namespace CO {
         [DLCInfo("Plazas & Promenades", DLCType.Main)]
         PlazasAndPromenadesDLC = 2008400,
 
-        //[DLCInfo("Financial Districts", DLCType.Main)]
-        //FinancialDistrictsDLC = 2148901,
+        [DLCInfo("Financial Districts", DLCType.Main)]
+        FinancialDistrictsDLC = 2148901,
 
         [DLCInfo("Pearls From the East", DLCType.Misc)]
         OrientalBuildings = 563850,
@@ -126,7 +126,7 @@ namespace CO {
         [DLCInfo("CCP: Heart of Korea", DLCType.ContentCreator)]
         ModderPack14 = 2144480,
 
-        //[DLCInfo("CCP: Map Pack 2", DLCType.ContentCreator)]
-        //ModderPack15 = 2148903,
+        [DLCInfo("CCP: Map Pack 2", DLCType.ContentCreator)]
+        ModderPack15 = 2148903,
     }
 }
