@@ -245,7 +245,7 @@ namespace LoadOrderIPatch.Patches {
                 }
                 {
                     var callAfterCtor = CallLogsMethod("AfterUserModCtor");
-                    ilProcessor.Prefix(loadPluginInfo.Duplicate(), callAfterCtor);
+                    ilProcessor.InsertBefore(instructions.Last(), loadPluginInfo.Duplicate(), callAfterCtor); // postfix
                 }
                 {
                     var callGetExportedTypes = instructions.First(_c => _c.Calls("GetExportedTypes"));

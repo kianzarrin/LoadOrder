@@ -15,7 +15,7 @@ namespace LoadOrderInjections.Injections {
         
         }
         public static void BeforeCreateUserModInstanceGetExportedTypes(Assembly assembly) {
-            Log.Debug(ThisMethod + " called for " + assembly);
+            Log.Info(ThisMethod + " called for " + assembly);
         }
         public static void AfterUserModCtor(PluginInfo p) {
             string modName = null;
