@@ -16,7 +16,8 @@ namespace LoadOrderMod.UI.EntryAction {
 
         public override void Awake() {
             base.Awake();
-            tooltip = "copy WS item IDs to clipboard";
+            tooltip = "copy WS item IDs to clipboard\n" +
+                "Hold Ctrl for Mods Only. Hold Alt for Assets only";
         }
 
         protected override void Clicked() {
@@ -24,14 +25,21 @@ namespace LoadOrderMod.UI.EntryAction {
                 Log.Called();
                 if (PackageEntry.asset.Instantiate<SaveGameMetaData>() is SaveGameMetaData saveGameMetaData) {
                     HashSet<string> ids = new();
-                    foreach (var item in saveGameMetaData.mods) {
-                        if (item.modWorkshopID != 0 && item.modWorkshopID != PublishedFileId.invalid.AsUInt64) {
-                            ids.Add(item.modWorkshopID.ToString());
+                    bool bAssets = !Helpers.ControlIsPressed;
+                    bool bMods = !Helpers.AltIsPressed;
+                    if (!bMods && !bAssets) bMods = bAssets = true;
+                    if (bMods) {
+                        foreach (var item in saveGameMetaData.mods) {
+                            if (item.modWorkshopID != 0 && item.modWorkshopID != PublishedFileId.invalid.AsUInt64) {
+                                ids.Add(item.modWorkshopID.ToString());
+                            }
                         }
                     }
-                    foreach (var item in saveGameMetaData.assets) {
-                        if (item.modWorkshopID != 0 && item.modWorkshopID != PublishedFileId.invalid.AsUInt64) {
-                            ids.Add(item.modWorkshopID.ToString());
+                    if (bAssets) {
+                        foreach (var item in saveGameMetaData.assets) {
+                            if (item.modWorkshopID != 0 && item.modWorkshopID != PublishedFileId.invalid.AsUInt64) {
+                                ids.Add(item.modWorkshopID.ToString());
+                            }
                         }
                     }
                     var text = string.Join(" ", ids.ToArray());
