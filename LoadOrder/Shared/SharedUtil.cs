@@ -16,13 +16,8 @@ namespace LoadOrderShared {
 #endif
         internal static XmlWriterSettings Indented => new XmlWriterSettings() { Indent = true };
 
-        internal static XmlSerializerNamespaces NoNamespaces {
-            get {
-                var ret = new XmlSerializerNamespaces();
-                ret.Add("", "");
-                return ret;
-            }
-        }
+        internal static XmlSerializerNamespaces NoNamespaces =>
+            new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
 
         internal static void Serialize<T>(T obj, string filePath) {
             var serializer = new XmlSerializer(typeof(T));
