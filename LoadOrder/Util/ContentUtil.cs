@@ -340,8 +340,7 @@ namespace LoadOrderTool.Util {
             if (Directory.Exists(path)) {
                 foreach (string filePAth in Directory.GetFiles(path, "*", SearchOption.AllDirectories)) {
                     string ext = Path.GetExtension(filePAth);
-                    //if (ext == ".dll" || ext == ".crp" || ext == ".png")
-                    {
+                    if (Path.GetFileName(path) != EXCLUDED_FILE_NAME) {
                         DateTime lastWriteTimeUtc = File.GetLastWriteTimeUtc(filePAth);
                         if (lastWriteTimeUtc > dateTime) {
                             dateTime = lastWriteTimeUtc;

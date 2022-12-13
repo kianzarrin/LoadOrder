@@ -705,9 +705,11 @@ namespace LoadOrderInjections {
             DateTime dateTime = DateTime.MinValue;
             if(Directory.Exists(modPath)) {
                 foreach(string path in Directory.GetFiles(modPath, "*", searchOption: SearchOption.AllDirectories)) {
-                    DateTime lastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
-                    if(lastWriteTimeUtc > dateTime) {
-                        dateTime = lastWriteTimeUtc;
+                    if (Path.GetFileName(path) != EXCLUDED_FILE_NAME) {
+                        DateTime lastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
+                        if (lastWriteTimeUtc > dateTime) {
+                            dateTime = lastWriteTimeUtc;
+                        }
                     }
                 }
             }
