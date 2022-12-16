@@ -22,6 +22,8 @@ namespace LoadOrderShared {
         internal static void Serialize<T>(T obj, string filePath) {
             var serializer = new XmlSerializer(typeof(T));
             using (StreamWriter writer = new StreamWriter(filePath)) {
+                var dirInfo = new FileInfo(filePath).Directory;
+                if (!dirInfo.Exists) dirInfo.Create();
                 using (var xmlWriter = new XmlTextWriter(writer)) {
                     xmlWriter.Formatting = Formatting.Indented;
                     serializer.Serialize(xmlWriter, obj, NoNamespaces);
@@ -32,7 +34,7 @@ namespace LoadOrderShared {
         public static T Deserialize<T>(string filePath) where T : class {
             XmlSerializer ser = new XmlSerializer(typeof(T));
             var dirInfo = new FileInfo(filePath).Directory;
-            if (dirInfo.Exists) dirInfo.Create();
+            if (!dirInfo.Exists) dirInfo.Create();
             using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read)) {
                 return ser.Deserialize(fs) as T;
             }
