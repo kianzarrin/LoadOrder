@@ -62,6 +62,7 @@ namespace KianCommons {
         public static bool Buffered {
             get => filerWrier_ != null;
             set {
+                Log.Called(value);
                 if (value == Buffered) return;
                 if (value) {
                     try {
