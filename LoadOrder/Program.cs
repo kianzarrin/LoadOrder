@@ -56,10 +56,14 @@ namespace LoadOrderTool {
 
 
                 var handle = GetConsoleWindow();
-                if (Parse.CommandLine) {
+                Console.WriteLine("command line args = " + Environment.GetCommandLineArgs());
+                bool commandLine = Parse.CommandLine;
+                if (commandLine) {
                     ShowWindow(handle, SW_SHOW);// Show
+                    Console.WriteLine("showing terminal");
                 } else {
                     ShowWindow(handle, SW_HIDE);// Hide
+                    Console.WriteLine("hiding terminal");
                     //new UI.ProgressWindow().Show();
                 }
 
@@ -67,9 +71,11 @@ namespace LoadOrderTool {
                 _ = DataLocation.GamePath; // run DataLocation static constructor
                 _ = Log.LogFilePath; // run Log static constructor
 
+                Log.Info("command line args = " + Environment.GetCommandLineArgs());
+
                 CacheDLLs();
 
-                if (Parse.CommandLine) {
+                if (commandLine) {
                     Entry.Start();
                 } else {
                     Application.Run(new UI.LoadOrderWindow());
