@@ -303,11 +303,11 @@ namespace CO {
         internal void Load() {
             try {
                 if (this.IsValid()) {
-                    Log.Info("Loading " + this.m_PathName);
+                    Log.Info("Loading " + this.m_PathName,false);
                     Log.Debug(Environment.StackTrace);
                     using (Stream stream = this.CreateReadStream()) {
                         this.Deserialize(stream);
-                        Log.Info(message: "Loaded " + this.m_PathName);
+                        Log.Info(message: "Loaded " + this.m_PathName,false);
                     }
                 }
             } catch (Exception ex) { ex.Log(); }
@@ -316,7 +316,7 @@ namespace CO {
         internal void Save() {
             try {
                 if (!this.dontSave && !string.IsNullOrEmpty(this.pathName)) {
-                    Log.Info(message: "Saving " + this.m_PathName);
+                    Log.Info(message: "Saving " + this.m_PathName, false);
                     lock (this.m_Saving) {
                         using (Stream stream = this.CreateWriteStream()) {
                             this.Serialize(stream);

@@ -515,7 +515,7 @@ namespace CO.Plugins {
             // all dependent assemblies must be loaded before doing this.
             for (int i = 0; i < m_Plugins.Count; ++i) {
                 var p = m_Plugins[i];
-                Log.Info($"hasUserMod:{p.HasUserMod} " + p);
+                Log.Info($"hasUserMod:{p.HasUserMod} " + p, false);
                 ModDataGrid.SetProgress(50 + (i * 40) / m_Plugins.Count);
             }
         }
@@ -575,7 +575,6 @@ namespace CO.Plugins {
                         pluginInfo.IsEnabledPending |= enabled0;
                     }
                 } else if (replace) {
-                    Log.Info("mod profile with path not found: " + pluginInfo.IncludedPath);
                     pluginInfo.LoadOrder = LoadOrderConfig.DefaultLoadOrder;
                     pluginInfo.IsIncludedPending = false;
                     pluginInfo.IsEnabledPending = false;

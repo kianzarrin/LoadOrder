@@ -130,7 +130,7 @@ namespace CO.IO {
                         csCache.WorkShopContentPath = WorkshopContentPath;
                         csCache.Serialize();
                     } else {
-                        Log.Info(m);
+                        Log.Info(m,false);
                         Process.GetCurrentProcess().Kill();
                     }
                 }
@@ -147,7 +147,7 @@ namespace CO.IO {
             } catch (Exception ex) {
                 Log.Exception(ex);
             } finally {
-                Log.Info(m);
+                Log.Info(m,false);
                 VerifyPaths();
                 if (csCache != null) ValidatePathMatch(csCache: csCache);
                 Log.Debug($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
@@ -185,16 +185,16 @@ namespace CO.IO {
         //}
 
         public static void DisplayStatus() {
-            Log.Info("GamePath: " + DataLocation.GamePath);
-            Log.Info("Workshop Content Path: " + DataLocation.WorkshopContentPath);
-            Log.Info("Steam Path: " + DataLocation.SteamPath);
-            Log.Info("Temp Folder: " + DataLocation.tempFolder);
-            Log.Info("Local Application Data: " + DataLocation.localApplicationData);
-            Log.Info($"Executable Directory({DataLocation.CitiesExe}): " + DataLocation.executableDirectory);
-            Log.Info("Save Location: " + DataLocation.saveLocation);
-            Log.Info("Application base: " + DataLocation.applicationBase);
-            Log.Info("Addons path: " + DataLocation.addonsPath);
-            Log.Info("Mods path: " + DataLocation.modsPath);
+            Log.Info("GamePath: " + DataLocation.GamePath, false);
+            Log.Info("Workshop Content Path: " + DataLocation.WorkshopContentPath, false);
+            Log.Info("Steam Path: " + DataLocation.SteamPath, false);
+            Log.Info("Temp Folder: " + DataLocation.tempFolder, false);
+            Log.Info("Local Application Data: " + DataLocation.localApplicationData, false);
+            Log.Info($"Executable Directory({DataLocation.CitiesExe}): " + DataLocation.executableDirectory, false);
+            Log.Info("Save Location: " + DataLocation.saveLocation, false);
+            Log.Info("Application base: " + DataLocation.applicationBase, false);
+            Log.Info("Addons path: " + DataLocation.addonsPath, false);
+            Log.Info("Mods path: " + DataLocation.modsPath, false);
             //Log.Debug("Current directory: " + Environment.CurrentDirectory);
             //Log.Debug("Executing assembly: " + Assembly.GetExecutingAssembly().Location);
         }

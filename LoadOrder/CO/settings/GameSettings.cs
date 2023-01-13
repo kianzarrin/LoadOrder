@@ -82,7 +82,7 @@ namespace CO {
 
         private static void MonitorSave() {
             try {
-                Log.Info("GameSettings Monitor Started...");
+                Log.Info("GameSettings Monitor Started...", false);
                 while (GameSettings.m_Run) {
                     GameSettings.SaveAll();
                     lock (GameSettings.m_LockObject) {
@@ -90,7 +90,7 @@ namespace CO {
                     }
                 }
                 GameSettings.SaveAll();
-                Log.Info("GameSettings Monitor Exiting...");
+                Log.Info("GameSettings Monitor Exiting...", false);
             } catch (Exception ex) {
                 Log.Exception(ex);
             }
@@ -100,7 +100,7 @@ namespace CO {
             base.Awake();
             try {
                 sInstance = this;
-                Log.Info("Creating GameSettings Monitor ...");
+                Log.Info("Creating GameSettings Monitor ...",false);
                 Log.Debug(Environment.StackTrace);
                 m_SaveThread = new Thread(new ThreadStart(GameSettings.MonitorSave));
                 m_SaveThread.Name = "SaveSettingsThread";
@@ -116,7 +116,7 @@ namespace CO {
             GameSettings.m_Run = false;
             lock (GameSettings.m_LockObject)
                 Monitor.Pulse(GameSettings.m_LockObject);
-            Log.Info("GameSettings terminated");
+            Log.Info("GameSettings terminated", false);
         }
     }
 }

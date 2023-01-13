@@ -35,13 +35,13 @@ namespace LoadOrderTool.Util {
                 var asm = AssemblyDefinition.ReadAssembly(dllpath, readerParameters);
 
                 if (asm != null)
-                    Log.Info("Assembly Definition loaded: " + asm);
+                    Log.Info("Assembly Definition loaded: " + asm, false);
                 else
-                    Log.Info("Assembly Definition at " + dllpath + " failed to load.");
+                    Log.Info("Assembly Definition at " + dllpath + " failed to load.", false);
                 
                 return asm;
             } catch (Exception ex) {
-                Log.Info("Assembly Definition at " + dllpath + " failed to load.\n" + ex.Message);
+                Log.Info("Assembly Definition at " + dllpath + " failed to load.\n" + ex.Message, false);
                 return null;
             }
         }
@@ -78,7 +78,7 @@ namespace LoadOrderTool.Util {
                 try {
                     type = type.BaseType?.Resolve();
                 } catch(AssemblyResolutionException) {
-                    Log.Info($"[harmless] GetAllInterfaces({type}) could not resolve {type.BaseType}.");
+                    Log.Info($"[harmless] GetAllInterfaces({type}) could not resolve {type.BaseType}.", false);
                     type = null;
                 } catch (Exception ex) {
                     ex.Log(false);

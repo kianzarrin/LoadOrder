@@ -127,7 +127,7 @@ public class BuildConfig
 
 	internal static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 	{
-		Log.Info("CurrentDomain_AssemblyResolve() called");
+        Log.Called();
 		var name0 = args.Name;
 		if (kIgnoreAssemblies.Contains(name0))
 			return null;
@@ -144,10 +144,10 @@ public class BuildConfig
 			}
 		}
         if (ret != null)
-            Log.Info($"Assembly '{name0}' resolved to '{ret}'");
+            Log.Info($"Assembly '{name0}' resolved to '{ret}'",false);
         else {
             if (name0 == "Mono.Runtime") {
-                Log.Info($"[harmless] Assembly resolution failure. No assembly named '{name0}' was found.");
+                Log.Info($"[harmless] Assembly resolution failure. No assembly named '{name0}' was found.",false);
             } else {
                 Log.Error($"Assembly resolution failure. No assembly named '{name0}' was found.");
             }

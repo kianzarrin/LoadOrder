@@ -39,7 +39,7 @@ namespace LoadOrderTool.Data {
             SteamCache = SteamCache.Deserialize() ?? new SteamCache();
             ReloadCSCache();
             LSMConfig = LoadingScreenMod.LSMSettings.Deserialize();
-            Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms");
+            Log.Info($"LoadOrderConfig.Deserialize took {sw.ElapsedMilliseconds}ms",  false);
             if(!CommandLine.Parse.CommandLine)
                 StartSaveThread();
         }
@@ -50,7 +50,7 @@ namespace LoadOrderTool.Data {
             m_Run = false;
             lock(m_LockObject)
                 Monitor.Pulse(m_LockObject);
-            Log.Info("LoadOrderConfig terminated");
+            Log.Info("LoadOrderConfig terminated", false);
         }
 
         public bool AutoSave {
@@ -157,11 +157,12 @@ namespace LoadOrderTool.Data {
             Config.Serialize();
             SteamCache.Serialize();
             LSMConfig = LSMConfig.SyncAndSerialize();
-            Log.Info($"SaveConfigImpl() done. (Dirty={Dirty})");
+            Log.Debug($"SaveConfigImpl() done. (Dirty={Dirty})");
+            Log.Info("Saved Config");
         }
 
         private void StartSaveThread() {
-            Log.Info("Load Order Config Monitor Started...");
+            Log.Info("Load Order Config Monitor Started...",false);
             m_SaveThread = new Thread(new ThreadStart(MonitorSave));
             m_SaveThread.Name = "SaveSettingsThread";
             m_SaveThread.IsBackground = true;
@@ -181,7 +182,7 @@ namespace LoadOrderTool.Data {
                     }
                 }
 
-                Log.Info("Load Order Config Monitor Exiting...");
+                Log.Info("Load Order Config Monitor Exiting...", false);
             } catch (Exception ex) {
                 Log.Exception(ex);
             }

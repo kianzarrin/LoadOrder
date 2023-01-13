@@ -56,7 +56,7 @@ namespace LoadOrderTool {
 
 
                 var handle = GetConsoleWindow();
-                Console.WriteLine("command line args = " + Environment.GetCommandLineArgs());
+                Console.WriteLine("command line args = " + Environment.GetCommandLineArgs().ToSTR());
                 bool commandLine = Parse.CommandLine;
                 if (commandLine) {
                     ShowWindow(handle, SW_SHOW);// Show
@@ -92,7 +92,7 @@ namespace LoadOrderTool {
                 .Select(File.ReadAllBytes)
                 .ToList();
             string m = $"caching {res.Count} dlls took {timer.ElapsedMilliseconds}ms";
-            Log.Info(m, true);
+            Log.Info(m, false);
             //MessageBox.Show(m);
             //Process.GetCurrentProcess().Kill();
 

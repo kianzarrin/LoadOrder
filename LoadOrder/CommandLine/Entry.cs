@@ -36,12 +36,17 @@ namespace LoadOrderTool.CommandLine {
             ManagerList.instance.Load();
 
             if (Profile != null) {
-                Log.Info("loading profile ...");
+                Log.Info($"loading profile {Path.GetFileName(path)} ...");
                 ManagerList.instance.LoadFromProfile(Profile, replace: true);
-                Log.Info("saving profile ...");
+                Log.Info("saving changes ...");
                 ConfigWrapper.instance.SaveConfig();
+                GameSettings.SaveAll();
                 Log.Info("Successful!");
             }
+
+            ConfigWrapper.instance.Terminate();
+            GameSettings.instance.Terminate();
+
         }
     }
 }
